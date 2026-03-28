@@ -11,9 +11,10 @@ import { User } from '@supabase/supabase-js';
 
 interface HeaderProps {
   user: User | null;
+  isCollapsed?: boolean;
 }
 
-export function Header({ user }: HeaderProps) {
+export function Header({ user, isCollapsed = false }: HeaderProps) {
   const { t } = useI18n();
   const [profileOpen, setProfileOpen] = useState(false);
   const router = useRouter();
@@ -27,9 +28,13 @@ export function Header({ user }: HeaderProps) {
   const firstName = user?.user_metadata?.first_name || 'Amigo';
   const lastName = user?.user_metadata?.last_name || '';
   const initials = firstName.charAt(0) + (lastName ? lastName.charAt(0) : '');
+  const avatarUrl = user?.user_metadata?.avatar_url;
 
   return (
-    <header className="h-16 border-b border-white/10 bg-[var(--color-base-200)]/40 backdrop-blur-xl flex items-center justify-between px-6 sticky top-0 z-30">
+    <header 
+      className="h-16 border-b border-white/10 bg-[var(--color-base-200)]/40 backdrop-blur-xl flex items-center justify-between px-6 fixed top-0 right-0 z-50 transition-all duration-300"
+      style={{ left: isCollapsed ? '5rem' : '16rem' }}
+    >
       
       {/* Left: Search */}
       <div className="w-full max-w-sm">
@@ -68,8 +73,12 @@ export function Header({ user }: HeaderProps) {
             onClick={() => setProfileOpen(!profileOpen)}
             className="flex items-center gap-2 outline-none p-1 rounded-full hover:bg-white/5 transition-colors focus:ring-2 focus:ring-[var(--color-primary)]/50"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[var(--color-primary)] to-[var(--color-accent-blue)] flex items-center justify-center shadow-md shadow-[var(--color-primary)]/20 text-white font-bold text-xs uppercase">
-              {initials}
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[var(--color-primary)] to-[var(--color-accent-blue)] flex items-center justify-center shadow-md shadow-[var(--color-primary)]/20 text-white font-bold text-xs uppercase overflow-hidden">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={firstName} className="w-full h-full object-cover" />
+              ) : (
+                initials
+              )}
             </div>
             <div className="hidden md:flex flex-col items-start mr-1">
               <span className="text-sm font-semibold leading-tight text-white">{firstName} {lastName}</span>
@@ -88,7 +97,13 @@ export function Header({ user }: HeaderProps) {
                   <p className="text-xs text-[color:var(--color-base-content)] opacity-60 truncate">{user?.email}</p>
                 </div>
                 
-                <button className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[color:var(--color-base-content)] opacity-80 hover:opacity-100 hover:bg-white/5 rounded-md transition-colors text-left">
+                <button 
+                  onClick={() => {
+                    setProfileOpen(false);
+                    router.push('/profile');
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[color:var(--color-base-content)] opacity-80 hover:opacity-100 hover:bg-white/5 rounded-md transition-colors text-left"
+                >
                   <UserIcon className="w-4 h-4" />
                   {t('dashboard.profile')}
                 </button>

@@ -11,9 +11,21 @@ import { useI18n } from '@/lib/i18n';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
 
+function getGreeting(language: 'en' | 'es'): { text: string; emoji: string } {
+  const hour = new Date().getHours();
+  if (hour < 12) {
+    return { text: language === 'en' ? 'Good morning' : 'Buenos días', emoji: '☀️' };
+  } else if (hour < 18) {
+    return { text: language === 'en' ? 'Good afternoon' : 'Buenas tardes', emoji: '🌤️' };
+  } else {
+    return { text: language === 'en' ? 'Good evening' : 'Buenas noches', emoji: '🌙' };
+  }
+}
+
 export default function DashboardPage() {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const [user, setUser] = useState<User | null>(null);
+  const [greeting, setGreeting] = useState<{ text: string; emoji: string } | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -22,7 +34,8 @@ export default function DashboardPage() {
       setUser(data.user);
     }
     loadUser();
-  }, [supabase]);
+    setGreeting(getGreeting(language));
+  }, [supabase, language]);
 
   const firstName = user?.user_metadata?.first_name || 'Admin';
 
@@ -45,16 +58,17 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-8 max-w-7xl mx-auto pb-10 relative z-20">
-      
-      {/* Welcome Header */}
+    <div className="overflow-y-auto p-6 md:p-8 h-full w-full">
+      <div className="flex flex-col gap-8 max-w-7xl mx-auto pb-10 relative z-20">
+        
+        {/* Personalized Greeting */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white tracking-tight">
-            {t('welcome.hello', { name: firstName })}
+            {greeting?.emoji} {greeting?.text}, {firstName}
           </h1>
-          <p className="text-[color:var(--color-base-content)] opacity-70 mt-1">
-             Este es el resumen de tu portal.
+          <p className="text-slate-400 mt-1">
+            {language === 'en' ? 'What will you create today?' : '¿Qué vas a crear hoy?'}
           </p>
         </div>
         
@@ -91,7 +105,7 @@ export default function DashboardPage() {
         />
         <StatCard 
           title={t('dashboard.revenue')} 
-          value="$45,231" 
+          value="45.231 €" 
           icon={<DollarSign className="w-5 h-5" />} 
           trend={18.4} 
           trendText={t('dashboard.vsLastMonth')} 
@@ -135,6 +149,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      </div>
     </div>
   );
 }

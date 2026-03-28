@@ -1,7 +1,12 @@
-import React from 'react';
+"use client";
+
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Hexagon, LayoutGrid, Languages, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Hexagon, LayoutGrid, ChevronLeft, ChevronRight, Home, CreditCard, Shield, Mail } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -9,7 +14,69 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isCollapsed, toggleCollapse }: SidebarProps) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
+  const supabase = createClient();
+  const pathname = usePathname();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadUserRole() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      
+      const { data } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+        
+      if (mounted && data?.role === 'admin') {
+        setIsAdmin(true);
+      }
+    }
+    loadUserRole();
+    return () => { mounted = false; };
+  }, [supabase]);
+
+  const navItems: Array<{ label: string; href: string; icon: any; isActive: boolean; isChild?: boolean }> = [
+    {
+      label: language === 'en' ? 'Dashboard' : 'Dashboard',
+      href: '/',
+      icon: Home,
+      isActive: pathname === '/'
+    },
+    {
+      label: language === 'en' ? 'Micro Apps' : 'Micro Apps',
+      href: '/apps',
+      icon: LayoutGrid,
+      isActive: pathname.startsWith('/apps')
+    },
+    {
+      label: language === 'en' ? 'Plans' : 'Planes',
+      href: '/plans',
+      icon: CreditCard,
+      isActive: pathname.startsWith('/plans')
+    }
+  ];
+
+  if (isAdmin) {
+    navItems.push(
+      {
+        label: language === 'en' ? 'Admin' : 'Admin',
+        href: '/admin',
+        icon: Shield,
+        isActive: pathname === '/admin'
+      },
+      {
+        label: language === 'en' ? 'Email' : 'Email',
+        href: '/admin/email',
+        icon: Mail,
+        isActive: pathname.startsWith('/admin/email'),
+        isChild: true
+      }
+    );
+  }
 
   return (
     <aside
@@ -19,16 +86,15 @@ export function Sidebar({ isCollapsed, toggleCollapse }: SidebarProps) {
       )}
     >
       <div className="flex items-center h-16 px-4 border-b border-white/10 shrink-0 relative">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center shadow-lg shadow-[var(--color-primary)]/20 shrink-0">
+        <Link href="/" className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center shadow-[0_0_15px_rgba(124,58,237,0.5)] shrink-0">
           <Hexagon className="w-5 h-5 text-white" />
-        </div>
+        </Link>
         {!isCollapsed && (
-          <span className="ml-3 font-bold text-lg glow-text whitespace-nowrap overflow-hidden">
+          <Link href="/" className="ml-3 font-bold text-lg glow-text whitespace-nowrap overflow-hidden">
             {t('app.name')}
-          </span>
+          </Link>
         )}
         
-        {/* Toggle Button */}
         <button
           onClick={toggleCollapse}
           className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--color-base-300)] border border-white/10 flex items-center justify-center text-[color:var(--color-base-content)] hover:text-white hover:border-white/30 transition-colors z-50 shadow-md"
@@ -37,32 +103,32 @@ export function Sidebar({ isCollapsed, toggleCollapse }: SidebarProps) {
         </button>
       </div>
 
-      <div className="flex-1 py-6 px-3 flex flex-col gap-6 overflow-y-auto">
+      <div className="flex-1 py-6 px-3 flex flex-col gap-6 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10">
         <div className="flex flex-col gap-1">
-          {!isCollapsed && (
-            <div className="px-3 mb-2 text-xs font-semibold text-[color:var(--color-base-content)] opacity-50 uppercase tracking-wider">
-              {t('dashboard.microApps')}
-            </div>
-          )}
-          
-          <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg bg-[var(--color-primary)]/10 text-[color:var(--color-primary)] border border-[var(--color-primary)]/20 transition-all hover:bg-[var(--color-primary)]/20">
-            <Languages className="w-5 h-5 shrink-0" />
-            {!isCollapsed && (
-              <span className="font-medium whitespace-nowrap overflow-hidden">
-                {t('dashboard.app1')}
-              </span>
-            )}
-          </button>
-
-          {/* Dummy extra nav item */}
-          <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-[color:var(--color-base-content)] opacity-70 hover:opacity-100 hover:bg-white/5 transition-all outline-transparent">
-            <LayoutGrid className="w-5 h-5 shrink-0" />
-            {!isCollapsed && (
-              <span className="font-medium whitespace-nowrap overflow-hidden">
-                Dashboard
-              </span>
-            )}
-          </button>
+          {navItems.map((item) => (
+            <Link 
+              key={item.href} 
+              href={item.href}
+              className={cn(
+                "group flex items-center gap-3 w-full rounded-lg transition-all active:scale-[0.98]",
+                (item as any).isChild && !isCollapsed ? "ml-4 pl-4 py-2 text-xs border-l border-white/10" : "px-3 py-2.5",
+                item.isActive 
+                  ? "bg-[var(--color-primary)]/20 text-white shadow-inner border border-[var(--color-primary)]/30" 
+                  : "text-white/70 hover:text-white hover:bg-white/10 border border-transparent"
+              )}
+            >
+              <item.icon className={cn(
+                "shrink-0 transition-colors",
+                (item as any).isChild && !isCollapsed ? "w-4 h-4" : "w-5 h-5",
+                item.isActive ? "text-white" : "text-white group-hover:text-[var(--color-primary)]"
+              )} />
+              {!isCollapsed && (
+                <span className="font-medium whitespace-nowrap overflow-hidden text-sm">
+                  {item.label}
+                </span>
+              )}
+            </Link>
+          ))}
         </div>
       </div>
     </aside>

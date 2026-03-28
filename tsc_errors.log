@@ -1,0 +1,11 @@
+﻿.next/types/validator.ts(25,44): error TS2344: Type 'Route' does not satisfy the constraint '"/"'.
+  Type 'LayoutRoutes' is not assignable to type '"/"'.
+    Type '"/admin"' is not assignable to type '"/"'.
+.next/types/validator.ts(25,75): error TS2344: Type 'Route' does not satisfy the constraint '"/"'.
+  Type 'LayoutRoutes' is not assignable to type '"/"'.
+    Type '"/admin"' is not assignable to type '"/"'.
+src/components/admin/AddUserModal.tsx(5,26): error TS2307: Cannot find module '@/components/ui/use-toast' or its corresponding type declarations.
+src/components/admin/PlansGrid.tsx(5,26): error TS2307: Cannot find module '@/components/ui/use-toast' or its corresponding type declarations.
+src/components/admin/UserPlanAction.tsx(5,26): error TS2307: Cannot find module '@/components/ui/use-toast' or its corresponding type declarations.
+src/components/microapps/MicroAppRunner.tsx(54,7): error TS2554: Expected 2 arguments, but got 1.
+src/components/plans/DynamicPlansGrid.tsx(5,26): error TS2307: Cannot find module '@/components/ui/use-toast' or its corresponding type declarations.
