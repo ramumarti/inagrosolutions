@@ -1,16 +1,22 @@
 import nodemailer from 'nodemailer';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SECRET_KEY!
-);
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error('Supabase admin environment variables are missing');
+  }
+  return createClient(url, key);
+}
 
 export async function getSmtpTransport() {
+  const supabaseAdmin = getAdminClient();
   const { data, error } = await supabaseAdmin
     .from('smtp_settings')
     .select('*')
     .single();
+
 
   if (error || !data || !data.is_verified) {
     return null;
@@ -104,10 +110,12 @@ export async function sendEmail(options: {
       return { success: false, message: 'SMTP not configured or unverified' };
     }
 
+    const supabaseAdmin = getAdminClient();
     const { data: settings } = await supabaseAdmin
       .from('smtp_settings')
       .select('from_email, from_name')
       .single();
+
 
     const fromAddress = settings?.from_name 
       ? `"${settings.from_name}" <${settings.from_email}>` 
