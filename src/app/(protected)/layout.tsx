@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Header } from '@/components/dashboard/Header';
 import { createClient } from '@/lib/supabase/client';
@@ -13,6 +14,8 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
   const [user, setUser] = useState<User | null>(null);
   const { t, language } = useI18n();
   const supabase = createClient();
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     // Initial fetch
@@ -29,6 +32,24 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       subscription.unsubscribe();
     };
   }, [supabase]);
+
+  // Check if user needs onboarding (no explotaciones created yet)
+  useEffect(() => {
+    if (!user || pathname === '/onboarding') return;
+    
+    async function checkOnboarding() {
+      const { data, error } = await supabase
+        .from('explotaciones')
+        .select('id')
+        .eq('user_id', user!.id)
+        .limit(1);
+      
+      if (!error && (!data || data.length === 0)) {
+        router.push('/onboarding');
+      }
+    }
+    checkOnboarding();
+  }, [user, pathname, supabase, router]);
 
   return (
     <div className="flex h-screen w-full bg-[var(--color-base-100)] text-[color:var(--color-base-content)] overflow-hidden font-sans">
