@@ -6,12 +6,12 @@
   --color-base-300: #201018;
   --color-base-content: #FFE0E0;
   
-  --color-primary: #EF4444;
+  --color-primary: #10B981; /* Emerald 500 */
   --color-primary-content: #FFFFFF;
   
-  --color-accent-warm: #F97316;
-  --color-accent-pink: #F472B6;
-  --color-accent-blue: #FB923C;
+  --color-accent-warm: #84CC16; /* Lime 500 */
+  --color-accent-pink: #22C55E; /* Green 500 */
+  --color-accent-blue: #10B981; /* Emerald 500 */
 
   --color-background: var(--color-base-100);
   --color-foreground: var(--color-base-content);

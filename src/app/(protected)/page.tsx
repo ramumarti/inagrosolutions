@@ -8,6 +8,8 @@ import { ActivityTimeline } from '@/components/dashboard/ActivityTimeline';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { NotebookHero } from '@/components/dashboard/NotebookHero';
+import { DailyActivity } from '@/components/agriculture/DailyActivity';
+import { ModuleGrid } from '@/components/agriculture/ModuleGrid';
 import { useI18n } from '@/lib/i18n';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
@@ -117,47 +119,62 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Charts section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <LineChart title={t('dashboard.revenueTrend')} dataPoints={mockLineData} />
-        </div>
-        <div className="lg:col-span-1">
-          <BarChart title={t('dashboard.userGrowth')} data={mockBarData} />
-        </div>
-      </div>
+      {/* Dashboard Activo: Alertas y Hoy en la parcela */}
+      <DailyActivity />
 
-      {/* Bottom section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Actions */}
-        <GlassCard className="lg:col-span-1 p-6 flex flex-col max-w-none">
-          <h3 className="text-lg font-bold text-white mb-6">Trámites y Gestiones</h3>
-          <div className="flex flex-col gap-3 mt-auto">
-            <Link href="/cuaderno/labores/nuevo">
-              <GlowButton variant="ghost" className="w-full justify-start py-3 bg-white/5 border-transparent text-left hover:bg-white/10 group">
-                <ClipboardCheck className="w-4 h-4 mr-3 text-emerald-400" />
-                Nueva Labor Agrícola
+      {/* Grid de Módulos Modulares */}
+      <ModuleGrid />
+
+      {/* Bottom section: Trámites rápidos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
+        {/* Quick Actions / SIEX Control */}
+        <GlassCard className="p-8 flex flex-col border border-emerald-500/10">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="bg-emerald-500/10 p-3 rounded-2xl border border-emerald-500/20">
+               <FileText className="w-6 h-6 text-emerald-400" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white tracking-tight">SIEX & Tramitaciones</h3>
+              <p className="text-white/40 text-xs">Cumple con la normativa PAC 2026 de forma automática.</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-auto">
+            <Link href="/cuaderno/labores/nuevo" className="w-full">
+              <GlowButton variant="ghost" className="w-full justify-start py-4 bg-white/[0.03] border-white/5 text-left hover:bg-emerald-500/10 hover:border-emerald-500/30 group">
+                <Plus className="w-4 h-4 mr-3 text-emerald-400 group-hover:scale-125 transition-transform" />
+                Nueva Labor
               </GlowButton>
             </Link>
-            <Link href="/cuaderno/ajustes">
-              <GlowButton variant="ghost" className="w-full justify-start py-3 bg-white/5 border-transparent text-left hover:bg-white/10 group">
-                <FileText className="w-4 h-4 mr-3 text-amber-500" />
-                Descargar Cuaderno SIEX
-              </GlowButton>
-            </Link>
-            <Link href="/cuaderno/premium">
-              <GlowButton variant="ghost" className="w-full justify-start py-3 bg-white/5 border-transparent text-left hover:bg-white/10 group">
-                <Leaf className="w-4 h-4 mr-3 text-cyan-400" />
-                Analítica de Rendimiento
+            <Link href="/cuaderno/ajustes" className="w-full">
+              <GlowButton variant="ghost" className="w-full justify-start py-4 bg-white/[0.03] border-white/5 text-left hover:bg-emerald-500/10 hover:border-emerald-500/30 group">
+                <FileText className="w-4 h-4 mr-3 text-amber-500 group-hover:scale-125 transition-transform" />
+                Exportar SIEX
               </GlowButton>
             </Link>
           </div>
         </GlassCard>
 
-        {/* Timeline */}
-        <div className="lg:col-span-2">
-          <ActivityTimeline title={t('dashboard.recentActivity')} items={mockTimeline} />
-        </div>
+        {/* Soporte Agrónomo Directo */}
+        <GlassCard className="p-8 flex flex-col border border-blue-500/10 bg-blue-500/[0.03]">
+          <div className="flex items-center gap-4 mb-8">
+             <div className="bg-blue-500/10 p-3 rounded-2xl border border-blue-500/20">
+                <ClipboardCheck className="w-6 h-6 text-blue-400" />
+             </div>
+             <div>
+               <h3 className="text-xl font-bold text-white tracking-tight">Atención Técnica</h3>
+               <p className="text-white/40 text-xs">Consulta tus dudas con nuestros expertos agrónomos.</p>
+             </div>
+          </div>
+          <div className="flex flex-col gap-4">
+             <p className="text-sm text-white/60 italic leading-relaxed">
+               "Estamos analizando los datos foliares de tus parcelas. Te recomendamos esperar 48h para el abonado nitrogenado según la previsión de lluvias."
+             </p>
+             <GlowButton variant="primary" className="w-fit text-xs font-black uppercase tracking-widest px-8">
+                Abrir Chat Técnico
+             </GlowButton>
+          </div>
+        </GlassCard>
       </div>
 
       </div>
