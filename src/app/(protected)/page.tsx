@@ -13,6 +13,7 @@ import { useI18n } from '@/lib/i18n';
 import { createClient } from '@/lib/supabase/client';
 import { SiexConnector } from '@/components/agriculture/SiexConnector';
 import { PestAlerts } from '@/components/agriculture/PestAlerts';
+import { SmartAssistant } from '@/components/agriculture/SmartAssistant';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 
@@ -105,9 +106,10 @@ export default function DashboardPage() {
         {/* Grid de Módulos Modulares */}
         <ModuleGrid />
 
-        {/* Sección de Actividad y Tramitación */}
+        {/* SECCIÓN DE IA Y TRAMITACIÓN */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-32">
-          <div className="lg:col-span-2 space-y-12">
+          <div className="lg:col-span-2 space-y-8">
+            <SmartAssistant />
             <ParcelActivityTimeline />
           </div>
           

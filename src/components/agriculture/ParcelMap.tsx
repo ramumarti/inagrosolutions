@@ -3,7 +3,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { MapPin, Layers, Maximize2, Loader2 } from 'lucide-react';
+import { MapPin, Layers, Maximize2, Loader2, MousePointer2, Save, Trash2 } from 'lucide-react';
+import { GlowButton } from '@/components/ui/GlowButton';
 
 interface ParcelaData {
   id: string;
@@ -30,36 +31,40 @@ export function ParcelMap({ className = '' }: { className?: string }) {
   const [parcelas, setParcelas] = useState<ParcelaData[]>([]);
   const [loading, setLoading] = useState(true);
   const [mapReady, setMapReady] = useState(false);
+  const [drawingMode, setDrawingMode] = useState(false);
+  const [tempPolygon, setTempPolygon] = useState<any>(null);
+  
   const supabase = createClient();
 
   // Load parcelas from DB
-  useEffect(() => {
-    async function loadParcelas() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+  const loadParcelas = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-      const { data: exps } = await supabase
-        .from('explotaciones')
-        .select('id')
-        .eq('user_id', user.id);
+    const { data: exps } = await supabase
+      .from('explotaciones')
+      .select('id')
+      .eq('user_id', user.id);
 
-      if (!exps || exps.length === 0) {
-        setLoading(false);
-        return;
-      }
-
-      const { data } = await supabase
-        .from('parcelas')
-        .select('*')
-        .in('explotacion_id', exps.map(e => e.id));
-
-      if (data) setParcelas(data);
+    if (!exps || exps.length === 0) {
       setLoading(false);
+      return;
     }
+
+    const { data } = await supabase
+      .from('parcelas')
+      .select('*')
+      .in('explotacion_id', exps.map(e => e.id));
+
+    if (data) setParcelas(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
     loadParcelas();
   }, [supabase]);
 
-  // Initialize Leaflet map
+  // Initialize Leaflet map with Geoman
   useEffect(() => {
     if (typeof window === 'undefined' || mapReady) return;
 
@@ -68,25 +73,54 @@ export function ParcelMap({ className = '' }: { className?: string }) {
     async function initMap() {
       const L = (await import('leaflet')).default;
       await import('leaflet/dist/leaflet.css');
+      await import('@geoman-io/leaflet-geoman-free');
+      await import('@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css');
 
       if (!mounted || !mapContainerRef.current || mapRef.current) return;
 
-      // Default center: Jaén (olive oil capital)
       const map = L.map(mapContainerRef.current, {
         zoomControl: false,
         attributionControl: false,
       }).setView([37.7796, -3.7849], 13);
 
-      // Dark satellite tile layer
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 19,
       }).addTo(map);
 
-      // Labels overlay
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        subdomains: 'abcd',
-      }).addTo(map);
+      // Add Geoman drawing tools controls
+      (map as any).pm.setLang('es');
+      (map as any).pm.addControls({
+        position: 'topright',
+        drawMarker: false,
+        drawCircleMarker: false,
+        drawPolyline: false,
+        drawRectangle: true,
+        drawPolygon: true,
+        drawCircle: false,
+        cutPolygon: false,
+        removalMode: true,
+        editMode: true,
+      });
+
+      // Global style for areas
+      (map as any).pm.setGlobalOptions({ 
+        templineStyle: { color: '#10B981' }, 
+        hintlineStyle: { color: '#10B981', dashArray: [5, 5] },
+        pathOptions: { color: '#10B981', fillColor: '#10B981', fillOpacity: 0.3 }
+      });
+
+      // Events for drawing
+      map.on('pm:create', (e: any) => {
+        const shape = e.layer;
+        const geojson = shape.toGeoJSON();
+        setTempPolygon(geojson);
+        setDrawingMode(true);
+      });
+
+      map.on('pm:remove', (e: any) => {
+        setTempPolygon(null);
+        setDrawingMode(false);
+      });
 
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
@@ -98,55 +132,48 @@ export function ParcelMap({ className = '' }: { className?: string }) {
     return () => { mounted = false; };
   }, [mapReady]);
 
-  // Add parcela markers when data is ready
+  // Render stored parcelas
   useEffect(() => {
     if (!mapReady || !mapRef.current || parcelas.length === 0) return;
 
     const L = require('leaflet');
     const map = mapRef.current;
+    
+    // Clear previous layers if any (except background)
+    map.eachLayer((layer: any) => {
+      if (layer instanceof L.Polygon || layer instanceof L.Marker) {
+        if (!layer.pm_ignore) map.removeLayer(layer);
+      }
+    });
+
     const bounds: any[] = [];
 
     parcelas.forEach(parcela => {
-      if (parcela.coordenadas?.lat && parcela.coordenadas?.lng) {
-        const pos: [number, number] = [parcela.coordenadas.lat, parcela.coordenadas.lng];
-        bounds.push(pos);
+      const color = CROP_COLORS[parcela.cultivo || ''] || '#10B981';
 
-        const color = CROP_COLORS[parcela.cultivo || ''] || '#10B981';
+      // 1. If it's a polygon (coordenadas.type === 'Feature')
+      if (parcela.coordenadas?.type === 'Feature' || parcela.coordenadas?.geometry) {
+        const geojsonLayer = L.geoJSON(parcela.coordenadas, {
+          style: { color, fillColor: color, fillOpacity: 0.2, weight: 2 },
+          onEachFeature: (feature: any, layer: any) => {
+             layer.bindPopup(`<strong>${parcela.nombre}</strong><br>${parcela.hectareas} ha`);
+          }
+        }).addTo(map);
+        bounds.push(geojsonLayer.getBounds());
+      } 
+      // 2. If it's just a point (fallback)
+      else if (parcela.coordenadas?.lat && parcela.coordenadas?.lng) {
+        const pos: [number, number] = [parcela.coordenadas.lat, parcela.coordenadas.lng];
+        bounds.push([pos, pos]);
 
         const icon = L.divIcon({
           className: 'custom-parcel-marker',
-          html: `
-            <div style="
-              background: ${color}; 
-              width: 32px; height: 32px; 
-              border-radius: 50%; 
-              border: 3px solid white;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-              display: flex; align-items: center; justify-content: center;
-            ">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-            </div>
-          `,
-          iconSize: [32, 32],
-          iconAnchor: [16, 32],
+          html: `<div style="background: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4);"></div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
         });
 
-        L.marker(pos, { icon })
-          .bindPopup(`
-            <div style="font-family: system-ui; min-width: 200px;">
-              <h3 style="font-weight: 800; font-size: 14px; margin: 0 0 4px;">${parcela.nombre}</h3>
-              <p style="color: #666; font-size: 11px; margin: 0 0 8px;">
-                ${parcela.cultivo || 'Sin cultivo'} ${parcela.variedad ? '(' + parcela.variedad + ')' : ''}
-              </p>
-              <div style="display: flex; gap: 12px; font-size: 11px;">
-                <span><strong>${parcela.hectareas}</strong> ha</span>
-                <span>${parcela.sistema_riego || 'Sin riego'}</span>
-              </div>
-            </div>
-          `)
-          .addTo(map);
+        L.marker(pos, { icon }).addTo(map);
       }
     });
 
@@ -155,63 +182,81 @@ export function ParcelMap({ className = '' }: { className?: string }) {
     }
   }, [mapReady, parcelas]);
 
+  const saveNewParcel = async () => {
+    if (!tempPolygon) return;
+    // For now we just console log as the user would need to pick which parcel this belongs to
+    // In a real flow, this would open a modal to select/create a parcel
+    console.log("Saving geometry:", tempPolygon);
+    alert("Geometría capturada. En una versión PRO, esto vincularía la parcela al Catastro/SIGPAC automáticamente.");
+    setTempPolygon(null);
+    setDrawingMode(false);
+    if (mapRef.current) mapRef.current.pm.disableDraw();
+  };
+
   return (
-    <GlassCard className={`p-0 overflow-hidden border border-emerald-500/10 ${className}`}>
+    <GlassCard className={`p-0 overflow-hidden border border-emerald-500/10 h-full relative ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-black/20 backdrop-blur-md absolute top-0 left-0 right-0 z-20">
         <div className="flex items-center gap-3">
           <div className="bg-emerald-500/10 p-2 rounded-xl border border-emerald-500/20">
             <MapPin className="w-4 h-4 text-emerald-400" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white">Mapa de Parcelas</h3>
-            <p className="text-[10px] text-white/30">
-              {parcelas.length} parcela{parcelas.length !== 1 ? 's' : ''} registrada{parcelas.length !== 1 ? 's' : ''}
-            </p>
+            <h3 className="text-sm font-bold text-white tracking-tight">SIGPAC & Mapas Satelitales</h3>
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="text-[10px] text-white/40 uppercase tracking-widest font-black">
+                {parcelas.length} Parcelas Activas
+              </p>
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="p-2 text-white/30 hover:text-emerald-400 transition-colors">
-            <Layers className="w-4 h-4" />
-          </button>
-          <button className="p-2 text-white/30 hover:text-emerald-400 transition-colors">
-            <Maximize2 className="w-4 h-4" />
-          </button>
-        </div>
+
+        {drawingMode ? (
+          <div className="flex items-center gap-2 animate-in slide-in-from-right-4">
+             <GlowButton variant="ghost" className="text-[10px] py-2 px-3 border-white/10" onClick={() => {
+                setTempPolygon(null);
+                setDrawingMode(false);
+                if (mapRef.current) mapRef.current.pm.GlobalRemoval.disable();
+             }}>
+               <Trash2 className="w-3 h-3 mr-2" /> Cancelar
+             </GlowButton>
+             <GlowButton variant="primary" className="text-[10px] py-2 px-4 shadow-[0_0_20px_rgba(16,185,129,0.4)]" onClick={saveNewParcel}>
+               <Save className="w-3 h-3 mr-2" /> Guardar Área
+             </GlowButton>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/5">
+               <button className="p-2 bg-emerald-600 rounded-md text-white shadow-lg" title="Dibujar Polígono">
+                  <MousePointer2 className="w-3 h-3" />
+               </button>
+            </div>
+            <button className="p-2 text-white/30 hover:text-emerald-400 transition-colors">
+              <Layers className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Map Container */}
-      <div className="relative" style={{ height: '400px' }}>
+      <div className="relative w-full h-full min-h-[400px]">
         {loading && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60">
+          <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/60">
             <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
           </div>
         )}
         <div ref={mapContainerRef} className="w-full h-full z-10" />
         
-        {/* Parcelas info overlay */}
-        {!loading && parcelas.length > 0 && (
-          <div className="absolute bottom-4 left-4 z-20 flex gap-2 flex-wrap">
-            {parcelas.slice(0, 4).map(p => (
-              <div 
-                key={p.id} 
-                className="bg-black/70 backdrop-blur-md rounded-lg px-3 py-2 border border-white/10 text-[10px]"
-              >
-                <span className="font-bold text-white">{p.nombre}</span>
-                <span className="text-white/50 ml-2">{p.hectareas} ha</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {!loading && parcelas.length === 0 && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40">
-            <div className="text-center">
-              <MapPin className="w-10 h-10 text-white/20 mx-auto mb-3" />
-              <p className="text-white/40 text-xs">Sin parcelas con coordenadas registradas</p>
+        {/* Leyenda crops */}
+        <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-2">
+          {Object.entries(CROP_COLORS).slice(0, 3).map(([crop, color]) => (
+            <div key={crop} className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/5">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+              <span className="text-[10px] font-bold text-white/70 uppercase tracking-tighter">{crop}</span>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
     </GlassCard>
   );
