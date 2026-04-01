@@ -1,12 +1,14 @@
 import Stripe from 'stripe';
 
-const stripeKey = process.env.STRIPE_SECRET_KEY || 'sk_test_mock_for_build_purposes';
+if (!process.env.STRIPE_SECRET_KEY) {
+  // Use a placeholder if not set, this will fail elegantly or warn
+  console.warn("STRIPE_SECRET_KEY is missing. Stripe won't work real-time.");
+}
 
-export const stripe = new Stripe(stripeKey, {
-  // https://github.com/stripe/stripe-node#configuration
-  apiVersion: '2026-03-25.dahlia',
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
+  apiVersion: '2025-01-27' as any,
   appInfo: {
-    name: 'Cuaderno Digital Modular',
-    version: '0.1.0'
-  }
+    name: 'InagroSolutions',
+    version: '0.1.0',
+  },
 });

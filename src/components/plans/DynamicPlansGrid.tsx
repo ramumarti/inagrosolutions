@@ -54,15 +54,24 @@ export function DynamicPlansGrid({ plans, currentPlanId }: { plans: PlanInfo[], 
 
     setLoadingId(plan.id);
     try {
-      const res = await fetch('/api/stripe/checkout', {
+      const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId: plan.id }), // En producción usar el Price ID real de Stripe
+        body: JSON.stringify({ 
+          priceId: plan.id, // En producción este ID debe ser el PriceID de Stripe asignado en la DB
+          successUrl: window.location.origin + '/dashboard',
+          cancelUrl: window.location.href 
+        }),
       });
       const data = await res.json();
-      if (data.url) router.push(data.url);
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL received");
+      }
     } catch (err) {
-      toast('Error al conectar con Stripe', 'error');
+      console.error(err);
+      toast(language === 'en' ? 'Stripe connection error' : 'Error al conectar con Stripe', 'error');
     } finally {
       setLoadingId(null);
     }
