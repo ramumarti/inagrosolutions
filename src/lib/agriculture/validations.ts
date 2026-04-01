@@ -7,7 +7,7 @@
 export type SistemaProduccion = 'convencional' | 'integrado' | 'ecologico';
 export type TipoOlivar = 'tradicional' | 'intensivo' | 'superintensivo';
 
-interface RuleResult {
+export interface RuleResult {
   valid: boolean;
   message?: string;
   level: 'error' | 'warning' | 'info';

@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { AgriculturalValidator } from '@/lib/agriculture/validations';
+import { AgriculturalValidator, RuleResult } from '@/lib/agriculture/validations';
 import { NextResponse } from 'next/server';
 
 /**
@@ -34,9 +34,10 @@ export async function POST(request: Request) {
     }
 
     // 2. APPLY SPECIFIC BUSINESS LOGIC
-    let validation = { valid: true, message: '', level: 'info' as 'error' | 'warning' | 'info' };
+    let validation: RuleResult = { valid: true, message: '', level: 'info' };
 
     switch (table) {
+
       case 'tratamientos_fitosanitarios':
         validation = AgriculturalValidator.validateTratamiento(parcela, payload);
         break;

@@ -1,7 +1,7 @@
 "use client";
 
 import { Download, FileSpreadsheet, Settings2, UserCircle, DatabaseBackup } from "lucide-react";
-import { exportarCuadernoSIEX } from "@/lib/export-siex";
+import { exportarCuadernoCompletoSIEX, ReporteTratamiento } from "@/lib/export-siex";
 import { useSyncStore } from "@/store/syncStore";
 import { useEffect } from "react";
 
@@ -14,7 +14,7 @@ export default function AjustesPage() {
 
   const handleExportSIEX = () => {
     // Simulación de carga desde base de datos Supabase:
-    const mockData = [
+    const mockTratamientos: ReporteTratamiento[] = [
       {
         "Referencia Parcela (SIGPAC)": "12:34:56:78",
         "Nombre Finca": "El Olivar",
@@ -37,8 +37,14 @@ export default function AjustesPage() {
       }
     ];
 
-    exportarCuadernoSIEX(mockData, "PAC_SIEX_Trazabilidad");
+    exportarCuadernoCompletoSIEX(
+      mockTratamientos, 
+      [], // No fertilizers for this mock
+      [], // No harvest for this mock
+      "PAC_SIEX_Trazabilidad"
+    );
   };
+
 
   return (
     <div className="max-w-lg mx-auto pb-24 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
