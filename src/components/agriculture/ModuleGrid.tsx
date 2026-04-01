@@ -107,6 +107,14 @@ export function ModuleGrid() {
       color: "border-b-amber-600"
     },
     {
+      title: "Fertilización",
+      description: "Registro de abonado N-P-K, dosis y plan de fertilización de suelos.",
+      icon: Tractor,
+      href: "/cuaderno/fertilizacion/nuevo",
+      isLocked: false,
+      color: "border-b-emerald-600"
+    },
+    {
       title: "Integración Sensores",
       description: "Monitorización en tiempo real de humedad, temperatura y humedad foliar.",
       icon: Smartphone,
@@ -127,7 +135,7 @@ export function ModuleGrid() {
           Ver todo el cuaderno
         </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
         {modules.map((mod, i) => (
           <ModuleCard key={i} {...mod} />
         ))}

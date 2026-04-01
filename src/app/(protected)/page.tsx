@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Users, Activity, MousePointerClick, DollarSign, Plus, FileText, Settings, Leaf, Sprout, Map, ClipboardCheck } from 'lucide-react';
-import { StatCard } from '@/components/dashboard/StatCard';
-import { BarChart, LineChart } from '@/components/dashboard/CssChart';
-import { ActivityTimeline } from '@/components/dashboard/ActivityTimeline';
+import { Plus, FileText, ClipboardCheck, Settings } from 'lucide-react';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { NotebookHero } from '@/components/dashboard/NotebookHero';
-import { DailyActivity } from '@/components/agriculture/DailyActivity';
 import { ModuleGrid } from '@/components/agriculture/ModuleGrid';
+import { ParcelMap } from '@/components/agriculture/ParcelMap';
+import { WeatherWidget } from '@/components/agriculture/WeatherWidget';
+import { ParcelActivityTimeline } from '@/components/agriculture/ParcelActivityTimeline';
 import { useI18n } from '@/lib/i18n';
 import { createClient } from '@/lib/supabase/client';
+import { SiexConnector } from '@/components/agriculture/SiexConnector';
+import { PestAlerts } from '@/components/agriculture/PestAlerts';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 
@@ -41,141 +42,93 @@ export default function DashboardPage() {
     setGreeting(getGreeting(language));
   }, [supabase, language]);
 
-  const firstName = user?.user_metadata?.first_name || 'Admin';
-
-  const mockBarData = [
-    { label: 'Mon', value: 40, max: 100 },
-    { label: 'Tue', value: 65, max: 100 },
-    { label: 'Wed', value: 45, max: 100 },
-    { label: 'Thu', value: 80, max: 100 },
-    { label: 'Fri', value: 95, max: 100 },
-    { label: 'Sat', value: 55, max: 100 },
-    { label: 'Sun', value: 30, max: 100 },
-  ];
-
-  const mockLineData = [20, 35, 25, 60, 45, 80, 75, 95, 85, 110];
-
-  const mockTimeline = [
-    { id: '1', content: t('dashboard.activity1'), time: t('dashboard.time1'), iconType: 'user' as const },
-    { id: '2', content: t('dashboard.activity2'), time: t('dashboard.time2'), iconType: 'server' as const },
-    { id: '3', content: t('dashboard.activity3'), time: t('dashboard.time3'), iconType: 'database' as const },
-  ];
+  const firstName = user?.user_metadata?.first_name || 'Agricultor';
 
   return (
     <div className="overflow-y-auto p-6 md:p-8 h-full w-full">
       <div className="flex flex-col gap-8 max-w-7xl mx-auto pb-10 relative z-20">
         
-        {/* Personalized Greeting */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">
-            {greeting?.emoji} {greeting?.text}, {firstName}
-          </h1>
-          <p className="text-slate-400 mt-1">
-            {language === 'en' ? 'What will you create today?' : '¿Qué vas a crear hoy?'}
-          </p>
+        {/* Header con Saludo y Clima */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-end">
+          <div className="lg:col-span-2">
+            <h1 className="text-4xl font-black text-white tracking-tight leading-none">
+              {greeting?.emoji} {greeting?.text}, <span className="text-emerald-400">{firstName}</span>
+            </h1>
+            <p className="text-white/30 mt-2 text-sm max-w-md font-medium uppercase tracking-widest">
+              Centro de Mando de tu Explotación • <span className="text-white/60">Campaña 2026</span>
+            </p>
+          </div>
+          <div className="lg:col-span-1">
+             <div className="flex justify-end gap-3">
+                <Link href="/cuaderno/labores/nuevo">
+                  <GlowButton variant="primary" className="text-xs py-3 px-6 font-black uppercase tracking-widest">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Registrar Labor
+                  </GlowButton>
+                </Link>
+             </div>
+          </div>
         </div>
-        
-        <div className="flex items-center gap-3">
-          <GlowButton variant="primary" className="text-sm py-2">
-            <Plus className="w-4 h-4 mr-2" />
-            {t('dashboard.action1')}
-          </GlowButton>
+
+        {/* Hero Central: Cuaderno Digital Olivares */}
+        <NotebookHero />
+
+        {/* Sección Crítica: Mapa y Clima */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <ParcelMap className="h-full min-h-[450px]" />
+          </div>
+          <div className="lg:col-span-1 flex flex-col gap-6">
+            <WeatherWidget locationName="Jaén, Andalucía" />
+            
+            {/* ALERTAS DE PLAGAS */}
+            <PestAlerts />
+            
+            {/* Tarjeta de Soporte Técnico / Alerta IA */}
+            <GlassCard className="p-6 border border-amber-500/10 bg-amber-500/[0.03]">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-amber-500/10 p-2 rounded-xl">
+                  <ClipboardCheck className="w-5 h-5 text-amber-400" />
+                </div>
+                <h4 className="text-sm font-bold text-white uppercase tracking-wider">Aviso Técnico</h4>
+              </div>
+              <p className="text-xs text-white/60 italic leading-relaxed mb-4">
+                "Previsión de lluvias en 48h. Se recomienda adelantar el abonado nitrogenado en las parcelas de bajo rendimiento para maximizar absorción."
+              </p>
+              <GlowButton variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest py-3 border-amber-500/20 text-amber-500 hover:bg-amber-500/10">
+                Consultar con Agrónomo
+              </GlowButton>
+            </GlassCard>
+          </div>
         </div>
-      </div>
 
-      {/* Hero Central: Cuaderno Digital Olivares */}
-      <NotebookHero />
+        {/* Grid de Módulos Modulares */}
+        <ModuleGrid />
 
-      {/* Stats Grid - Agricultura Focus */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard 
-          title="Superficie Registrada" 
-          value="45,2 ha" 
-          icon={<Map className="w-5 h-5 text-emerald-400" />} 
-          trend={8.2} 
-          trendText="Vs mes anterior" 
-        />
-        <StatCard 
-          title="Tratamientos (2026)" 
-          value="12" 
-          icon={<Sprout className="w-5 h-5 text-green-400" />} 
-          trend={24} 
-          trendText="+3 tratamientos este mes" 
-        />
-        <StatCard 
-          title="Eficiencia ROI (Premium)" 
-          value="+18.4%" 
-          icon={<DollarSign className="w-5 h-5 text-yellow-400" />} 
-          trend={2.1} 
-          trendText="Mejora en márgenes" 
-        />
-        <StatCard 
-          title="Sincronización SIEX" 
-          value="Al día" 
-          icon={<Activity className="w-5 h-5 text-blue-400" />} 
-          trend={100} 
-          trendText="Estado operacional" 
-        />
-      </div>
-
-      {/* Dashboard Activo: Alertas y Hoy en la parcela */}
-      <DailyActivity />
-
-      {/* Grid de Módulos Modulares */}
-      <ModuleGrid />
-
-      {/* Bottom section: Trámites rápidos */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
-        {/* Quick Actions / SIEX Control */}
-        <GlassCard className="p-8 flex flex-col border border-emerald-500/10">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="bg-emerald-500/10 p-3 rounded-2xl border border-emerald-500/20">
-               <FileText className="w-6 h-6 text-emerald-400" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-white tracking-tight">SIEX & Tramitaciones</h3>
-              <p className="text-white/40 text-xs">Cumple con la normativa PAC 2026 de forma automática.</p>
-            </div>
+        {/* Sección de Actividad y Tramitación */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-32">
+          <div className="lg:col-span-2 space-y-12">
+            <ParcelActivityTimeline />
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-auto">
-            <Link href="/cuaderno/labores/nuevo" className="w-full">
-              <GlowButton variant="ghost" className="w-full justify-start py-4 bg-white/[0.03] border-white/5 text-left hover:bg-emerald-500/10 hover:border-emerald-500/30 group">
-                <Plus className="w-4 h-4 mr-3 text-emerald-400 group-hover:scale-125 transition-transform" />
-                Nueva Labor
-              </GlowButton>
-            </Link>
-            <Link href="/cuaderno/ajustes" className="w-full">
-              <GlowButton variant="ghost" className="w-full justify-start py-4 bg-white/[0.03] border-white/5 text-left hover:bg-emerald-500/10 hover:border-emerald-500/30 group">
-                <FileText className="w-4 h-4 mr-3 text-amber-500 group-hover:scale-125 transition-transform" />
-                Exportar SIEX
-              </GlowButton>
-            </Link>
-          </div>
-        </GlassCard>
+          <div className="lg:col-span-1 space-y-8">
+            {/* Nuevo Control SIEX PRO */}
+            <SiexConnector />
 
-        {/* Soporte Agrónomo Directo */}
-        <GlassCard className="p-8 flex flex-col border border-blue-500/10 bg-blue-500/[0.03]">
-          <div className="flex items-center gap-4 mb-8">
-             <div className="bg-blue-500/10 p-3 rounded-2xl border border-blue-500/20">
-                <ClipboardCheck className="w-6 h-6 text-blue-400" />
-             </div>
-             <div>
-               <h3 className="text-xl font-bold text-white tracking-tight">Atención Técnica</h3>
-               <p className="text-white/40 text-xs">Consulta tus dudas con nuestros expertos agrónomos.</p>
-             </div>
+            {/* Publicidad / Upsell Premium */}
+            <GlassCard className="p-8 bg-gradient-to-br from-indigo-900/40 to-emerald-900/20 border border-white/5">
+              <h4 className="text-sm font-black text-white uppercase tracking-widest mb-2">Pasa a Premium</h4>
+              <p className="text-xs text-white/40 leading-relaxed mb-6">
+                Accede a mapas térmicos de clorofila y alertas de plagas por satélite cada 5 días.
+              </p>
+              <Link href="/plans">
+                <GlowButton variant="primary" className="w-full text-xs py-3 font-black uppercase tracking-widest">
+                  Ver Planes Avanzados
+                </GlowButton>
+              </Link>
+            </GlassCard>
           </div>
-          <div className="flex flex-col gap-4">
-             <p className="text-sm text-white/60 italic leading-relaxed">
-               "Estamos analizando los datos foliares de tus parcelas. Te recomendamos esperar 48h para el abonado nitrogenado según la previsión de lluvias."
-             </p>
-             <GlowButton variant="primary" className="w-fit text-xs font-black uppercase tracking-widest px-8">
-                Abrir Chat Técnico
-             </GlowButton>
-          </div>
-        </GlassCard>
-      </div>
+        </div>
 
       </div>
     </div>
