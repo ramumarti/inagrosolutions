@@ -1,15 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Users, Activity, MousePointerClick, DollarSign, Plus, FileText, Settings } from 'lucide-react';
+import { Users, Activity, MousePointerClick, DollarSign, Plus, FileText, Settings, Leaf, Sprout, Map, ClipboardCheck } from 'lucide-react';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { BarChart, LineChart } from '@/components/dashboard/CssChart';
 import { ActivityTimeline } from '@/components/dashboard/ActivityTimeline';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { NotebookHero } from '@/components/dashboard/NotebookHero';
 import { useI18n } from '@/lib/i18n';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
+import Link from 'next/link';
 
 function getGreeting(language: 'en' | 'es'): { text: string; emoji: string } {
   const hour = new Date().getHours();
@@ -80,35 +82,38 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Hero Central: Cuaderno Digital Olivares */}
+      <NotebookHero />
+
+      {/* Stats Grid - Agricultura Focus */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
-          title={t('dashboard.users')} 
-          value="12,489" 
-          icon={<Users className="w-5 h-5" />} 
-          trend={12.5} 
-          trendText={t('dashboard.vsLastMonth')} 
+          title="Superficie Registrada" 
+          value="45,2 ha" 
+          icon={<Map className="w-5 h-5 text-emerald-400" />} 
+          trend={8.2} 
+          trendText="Vs mes anterior" 
         />
         <StatCard 
-          title={t('dashboard.sessions')} 
-          value="3,214" 
-          icon={<Activity className="w-5 h-5" />} 
-          trend={5.2} 
-          trendText={t('dashboard.vsLastMonth')} 
+          title="Tratamientos (2026)" 
+          value="12" 
+          icon={<Sprout className="w-5 h-5 text-green-400" />} 
+          trend={24} 
+          trendText="+3 tratamientos este mes" 
         />
         <StatCard 
-          title={t('dashboard.conversions')} 
-          value="8.4%" 
-          icon={<MousePointerClick className="w-5 h-5" />} 
-          trend={-2.1} 
-          trendText={t('dashboard.vsLastMonth')} 
+          title="Eficiencia ROI (Premium)" 
+          value="+18.4%" 
+          icon={<DollarSign className="w-5 h-5 text-yellow-400" />} 
+          trend={2.1} 
+          trendText="Mejora en márgenes" 
         />
         <StatCard 
-          title={t('dashboard.revenue')} 
-          value="45.231 €" 
-          icon={<DollarSign className="w-5 h-5" />} 
-          trend={18.4} 
-          trendText={t('dashboard.vsLastMonth')} 
+          title="Sincronización SIEX" 
+          value="Al día" 
+          icon={<Activity className="w-5 h-5 text-blue-400" />} 
+          trend={100} 
+          trendText="Estado operacional" 
         />
       </div>
 
@@ -126,20 +131,26 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Quick Actions */}
         <GlassCard className="lg:col-span-1 p-6 flex flex-col max-w-none">
-          <h3 className="text-lg font-bold text-white mb-6">{t('dashboard.quickActions')}</h3>
+          <h3 className="text-lg font-bold text-white mb-6">Trámites y Gestiones</h3>
           <div className="flex flex-col gap-3 mt-auto">
-            <GlowButton variant="ghost" className="w-full justify-start py-3 bg-white/5 border-transparent text-left hover:bg-white/10">
-              <Plus className="w-4 h-4 mr-3 text-[color:var(--color-primary)]" />
-              {t('dashboard.action1')}
-            </GlowButton>
-            <GlowButton variant="ghost" className="w-full justify-start py-3 bg-white/5 border-transparent text-left hover:bg-white/10">
-              <FileText className="w-4 h-4 mr-3 text-[color:var(--color-accent-pink)]" />
-              {t('dashboard.action2')}
-            </GlowButton>
-            <GlowButton variant="ghost" className="w-full justify-start py-3 bg-white/5 border-transparent text-left hover:bg-white/10">
-              <Settings className="w-4 h-4 mr-3 text-[color:var(--color-accent-blue)]" />
-              {t('dashboard.action3')}
-            </GlowButton>
+            <Link href="/cuaderno/labores/nuevo">
+              <GlowButton variant="ghost" className="w-full justify-start py-3 bg-white/5 border-transparent text-left hover:bg-white/10 group">
+                <ClipboardCheck className="w-4 h-4 mr-3 text-emerald-400" />
+                Nueva Labor Agrícola
+              </GlowButton>
+            </Link>
+            <Link href="/cuaderno/ajustes">
+              <GlowButton variant="ghost" className="w-full justify-start py-3 bg-white/5 border-transparent text-left hover:bg-white/10 group">
+                <FileText className="w-4 h-4 mr-3 text-amber-500" />
+                Descargar Cuaderno SIEX
+              </GlowButton>
+            </Link>
+            <Link href="/cuaderno/premium">
+              <GlowButton variant="ghost" className="w-full justify-start py-3 bg-white/5 border-transparent text-left hover:bg-white/10 group">
+                <Leaf className="w-4 h-4 mr-3 text-cyan-400" />
+                Analítica de Rendimiento
+              </GlowButton>
+            </Link>
           </div>
         </GlassCard>
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Hexagon, LayoutGrid, ChevronLeft, ChevronRight, Home, CreditCard, Shield, Mail } from 'lucide-react';
+import { Hexagon, LayoutGrid, ChevronLeft, ChevronRight, Home, CreditCard, Shield, Mail, Leaf } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -51,6 +51,12 @@ export function Sidebar({ isCollapsed, toggleCollapse }: SidebarProps) {
       href: '/apps',
       icon: LayoutGrid,
       isActive: pathname.startsWith('/apps')
+    },
+    {
+      label: language === 'en' ? 'Digital Notebook' : 'Cuaderno Digital',
+      href: '/cuaderno',
+      icon: Leaf,
+      isActive: pathname.startsWith('/cuaderno')
     },
     {
       label: language === 'en' ? 'Plans' : 'Planes',
