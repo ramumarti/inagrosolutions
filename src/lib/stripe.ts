@@ -1,6 +1,8 @@
 import Stripe from 'stripe';
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', {
+const stripeKey = process.env.STRIPE_SECRET_KEY || 'sk_test_mock_for_build_purposes';
+
+export const stripe = new Stripe(stripeKey, {
   // https://github.com/stripe/stripe-node#configuration
   apiVersion: '2026-03-25.dahlia',
   appInfo: {
