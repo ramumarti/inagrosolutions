@@ -11,31 +11,50 @@ export interface ReporteTratamiento {
   "Operario": string;
 }
 
-/**
- * Recibe un array de objetos planos y los transforma a un Excel nativo 
- * compatible con los requerimientos del SIEX de la PAC.
- */
-export function exportarCuadernoSIEX(datos: ReporteTratamiento[], nombreArchivo: string = "Cuaderno_Fitosanitario") {
-  const anio = new Date().getFullYear();
-  
-  // Transformar JSON a formato libro Excel
-  const worksheet = XLSX.utils.json_to_sheet(datos);
-  const workbook = XLSX.utils.book_new();
-  
-  XLSX.utils.book_append_sheet(workbook, worksheet, `Campaña ${anio}`);
-
-  // Ajuste automático del tamaño de columnas para legibilidad
-  worksheet["!cols"] = [
-    { wch: 20 }, // SIGPAC
-    { wch: 15 }, // Nombre
-    { wch: 18 }, // Fecha
-    { wch: 25 }, // Reg MAPA
-    { wch: 25 }, // Producto Comercial
-    { wch: 15 }, // Dosis
-    { wch: 20 }, // Sup
-    { wch: 20 }, // Operario
-  ];
-
-  // Disparar descarga directa en el dispositivo (funciona Offline/PWA)
-  XLSX.writeFile(workbook, `${nombreArchivo}_${anio}.xlsx`);
+export interface ReporteFertilizacion {
+  "SIGPAC": string;
+  "Fecha": string;
+  "Tipo": string;
+  "Producto": string;
+  "Cantidad (kg/ha)": number;
+  "Metodo": string;
+  "Justificacion": string;
 }
+
+export interface ReporteProduccion {
+  "Finca": string;
+  "Parcela (SIGPAC)": string;
+  "Fecha Recoleccion": string;
+  "Cantidad Cosechada (kg)": number;
+  "Destino": string;
+  "Lote": string;
+}
+
+/**
+ * Genera un libro Excel multihidra compatible con SIEX y PAC.
+ */
+export function exportarCuadernoCompletoSIEX(
+  fitos: ReporteTratamiento[],
+  fertilizantes: ReporteFertilizacion[],
+  cosechas: ReporteProduccion[],
+  nombreArchivo: string = "Cuaderno_Explotacion_Digital"
+) {
+  const workbook = XLSX.utils.book_new();
+  const anio = new Date().getFullYear();
+
+  // 1. Hoja de Tratamientios
+  const wsFitos = XLSX.utils.json_to_sheet(fitos);
+  XLSX.utils.book_append_sheet(workbook, wsFitos, "Tratamientos Fitosanitarios");
+
+  // 2. Hoja de Fertilización
+  const wsFert = XLSX.utils.json_to_sheet(fertilizantes);
+  XLSX.utils.book_append_sheet(workbook, wsFert, "Fertilizacion");
+
+  // 3. Hoja de Producción/Recolección
+  const wsProd = XLSX.utils.json_to_sheet(cosechas);
+  XLSX.utils.book_append_sheet(workbook, wsProd, "Recoleccion y Ventas");
+
+  // Descarga del archivo
+  XLSX.writeFile(workbook, `${nombreArchivo}_CAMPAÑA_${anio}.xlsx`);
+}
+

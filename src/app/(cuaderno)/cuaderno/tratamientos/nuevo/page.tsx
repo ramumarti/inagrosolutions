@@ -7,10 +7,14 @@ import { searchProductosMAPA, ProductoMAPA } from "@/lib/mapa-api";
 import { addToQueue } from "@/lib/offline-db";
 import { useSyncStore } from "@/store/syncStore";
 
+import { createClient } from "@/lib/supabase/client";
+import { ParcelSelector } from "@/components/agriculture/ParcelSelector";
+
 export default function NuevoTratamientoPage() {
   const router = useRouter();
   const { isOnline, syncNow } = useSyncStore();
 
+  const [parcelaId, setParcelaId] = useState<string>("");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ProductoMAPA[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<ProductoMAPA | null>(null);
@@ -39,7 +43,10 @@ export default function NuevoTratamientoPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedProduct || !dosis) return;
+    if (!selectedProduct || !dosis || !parcelaId) {
+      alert("Por favor selecciona una parcela y producto");
+      return;
+    }
 
     setIsSaving(true);
     try {
@@ -48,7 +55,7 @@ export default function NuevoTratamientoPage() {
         table: "tratamientos_fitosanitarios",
         action: "INSERT",
         payload: {
-          parcela_id: "00000000-0000-0000-0000-000000000000", // TODO: Añadir selector de Parcelas Reales
+          parcela_id: parcelaId,
           fecha: new Date().toISOString(),
           producto_mapa_id: selectedProduct.numRegistro,
           nombre_producto: selectedProduct.nombreComercial,
@@ -70,9 +77,9 @@ export default function NuevoTratamientoPage() {
   };
 
   return (
-    <div className="max-w-lg mx-auto pb-24 relative">
+    <div className="max-w-lg mx-auto pb-24 relative px-4 sm:px-0">
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="p-2.5 bg-white rounded-full text-gray-600 hover:bg-gray-100 shadow-sm border border-gray-100">
+        <button onClick={() => router.back()} className="p-2.5 bg-white rounded-full text-gray-600 hover:bg-gray-100 shadow-sm border border-gray-100 transition-colors">
           <ArrowLeft size={20} />
         </button>
         <h1 className="text-xl font-bold text-gray-800">Nuevo Tratamiento</h1>
@@ -86,6 +93,14 @@ export default function NuevoTratamientoPage() {
       )}
 
       <form onSubmit={handleSave} className="space-y-6">
+        {/* Parcela Selector */}
+        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+          <ParcelSelector 
+            onSelect={setParcelaId} 
+            selectedId={parcelaId} 
+          />
+        </div>
+
         {/* API MAPA Buscador */}
         <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm space-y-4">
           <div>
@@ -144,7 +159,7 @@ export default function NuevoTratamientoPage() {
                 <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Dosis</label>
                 <input 
                   type="number" step="0.01" required
-                  className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500/50 font-bold text-lg text-gray-900 placeholder:font-normal placeholder:text-gray-400"
+                  className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500/50 font-bold text-lg text-gray-900 placeholder:font-normal placeholder:text-gray-400 font-sans"
                   placeholder="0.00"
                   value={dosis} onChange={(e) => setDosis(e.target.value)}
                 />
@@ -184,3 +199,4 @@ export default function NuevoTratamientoPage() {
     </div>
   );
 }
+
