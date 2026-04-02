@@ -8,14 +8,21 @@ import { Header } from '@/components/dashboard/Header';
 import { createClient } from '@/lib/supabase/client';
 import { useI18n } from '@/lib/i18n';
 import { User } from '@supabase/supabase-js';
+import { cn } from '@/lib/utils';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const { t, language } = useI18n();
   const supabase = createClient();
   const pathname = usePathname();
   const router = useRouter();
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileSidebarOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     // Initial fetch
@@ -58,14 +65,25 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       <div className="fixed bottom-[20%] right-[20%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full bg-[var(--color-accent-blue)]/10 blur-[120px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '14s', animationDelay: '3s' }} />
       
       {/* Sidebar */}
-      <Sidebar isCollapsed={isSidebarCollapsed} toggleCollapse={() => setSidebarCollapsed(!isSidebarCollapsed)} />
+      <Sidebar 
+        isCollapsed={isSidebarCollapsed} 
+        toggleCollapse={() => setSidebarCollapsed(!isSidebarCollapsed)} 
+        isMobileOpen={isMobileSidebarOpen}
+        closeMobile={() => setMobileSidebarOpen(false)}
+      />
 
       {/* Main Content Area */}
       <div 
-        className="flex-1 flex flex-col transition-all duration-300 relative z-10 h-screen overflow-hidden w-full"
-        style={{ marginLeft: isSidebarCollapsed ? '5rem' : '16rem' }}
+        className={cn(
+          "flex-1 flex flex-col transition-all duration-300 relative z-10 h-screen overflow-hidden w-full",
+          isSidebarCollapsed ? "md:ml-20" : "md:ml-64"
+        )}
       >
-        <Header user={user} isCollapsed={isSidebarCollapsed} />
+        <Header 
+          user={user} 
+          isCollapsed={isSidebarCollapsed} 
+          toggleMobileSidebar={() => setMobileSidebarOpen(!isMobileSidebarOpen)}
+        />
         
         {/* pt-16 to naturally clear fixed header without negative margins */}
         <main className="flex-1 w-full pt-16 h-full relative z-10 overflow-y-auto">

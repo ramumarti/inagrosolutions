@@ -2,19 +2,21 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Bell, Settings, LogOut, User as UserIcon } from 'lucide-react';
+import { Search, Bell, Settings, LogOut, User as UserIcon, Menu } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { useI18n } from '@/lib/i18n';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   user: User | null;
   isCollapsed?: boolean;
+  toggleMobileSidebar?: () => void;
 }
 
-export function Header({ user, isCollapsed = false }: HeaderProps) {
+export function Header({ user, isCollapsed = false, toggleMobileSidebar }: HeaderProps) {
   const { t } = useI18n();
   const [profileOpen, setProfileOpen] = useState(false);
   const router = useRouter();
@@ -32,13 +34,22 @@ export function Header({ user, isCollapsed = false }: HeaderProps) {
 
   return (
     <header 
-      className="h-16 border-b border-white/10 bg-[var(--color-base-200)]/40 backdrop-blur-xl flex items-center justify-between px-6 fixed top-0 right-0 z-50 transition-all duration-300"
-      style={{ left: isCollapsed ? '5rem' : '16rem' }}
+      className={cn(
+        "h-16 border-b border-white/10 bg-[var(--color-base-200)]/40 backdrop-blur-xl flex items-center justify-between px-4 md:px-6 fixed top-0 right-0 z-40 transition-all duration-300 left-0",
+        isCollapsed ? "md:left-20" : "md:left-64"
+      )}
     >
       
-      {/* Left: Search */}
-      <div className="w-full max-w-sm">
-        <div className="relative">
+      {/* Left: Hamburger (Mobile) + Search (Desktop) */}
+      <div className="flex items-center gap-4 w-full max-w-sm">
+        <button 
+          onClick={toggleMobileSidebar}
+          className="p-2 -ml-2 text-white/70 hover:text-white md:hidden"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+        
+        <div className="relative hidden md:block w-full">
           <Input 
             type="text" 
             placeholder={t('dashboard.search')} 
