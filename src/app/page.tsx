@@ -170,6 +170,35 @@ export default function LandingPage() {
            </div>
         </section>
 
+        {/* App Context Image Section */}
+        <section className="py-32 px-6">
+           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-20">
+              <div className="md:w-1/2 space-y-8">
+                 <h2 className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.5em]">El Cuaderno en Acción</h2>
+                 <p className="text-[54px] font-black tracking-tighter text-white leading-none">Diseñado para el <span className="text-emerald-400">campo real</span>.</p>
+                 <p className="text-xl text-white/50 leading-relaxed max-w-lg">
+                    InagroSolutions no es solo software de oficina. Es una herramienta robusta pensada para ser usada bajo el sol, con guantes, y en los terrenos más exigentes del olivar español.
+                 </p>
+                 <ul className="space-y-4">
+                    {['Lectura clara bajo luz solar directa', 'Interfaz preparada para uso táctil rápido', 'Sincronización instantánea con SIGPAC'].map((item, i) => (
+                       <li key={i} className="flex items-center gap-3 text-white/70 font-bold">
+                          <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                          {item}
+                       </li>
+                    ))}
+                 </ul>
+              </div>
+              <div className="md:w-1/2 relative group">
+                 <div className="absolute inset-0 bg-emerald-500/20 blur-[80px] rounded-full -z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                 <img 
+                    src="/usage_context.png" 
+                    alt="Farmer using Digital Field Notebook" 
+                    className="w-full rounded-[48px] shadow-2xl border-4 border-white/5 grayscale-[30%] hover:grayscale-0 transition-all duration-700"
+                 />
+              </div>
+           </div>
+        </section>
+
         {/* Global CTA */}
         <section className="py-32 px-6">
            <GlassCard className="max-w-5xl mx-auto p-16 md:p-24 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border-emerald-500/20 text-center relative overflow-hidden flex flex-col items-center">
