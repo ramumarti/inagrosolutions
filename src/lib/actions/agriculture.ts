@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server';
-import { CreateExplotacionSchema, CreateParcelaSchema } from '@/lib/agriculture/schemas';
+import { CreateExplotacionSchema, CreateParcelaSchema, CreateFertilizacionSchema } from '@/lib/agriculture/schemas';
 import { revalidatePath } from 'next/cache';
 
 /**
@@ -82,5 +82,39 @@ export async function createParcelaAction(data: any) {
   } catch (error: any) {
     console.error('Parcela Error:', error);
     return { success: false, error: "Error al registrar la parcela" };
+  }
+}
+
+export async function createFertilizacionAction(data: any) {
+  const supabase = await createClient();
+  
+  try {
+    const result = CreateFertilizacionSchema.safeParse(data);
+    if (!result.success) {
+      return { success: false, error: "Datos de abonado inválidos", details: result.error.format() };
+    }
+
+    const { data: record, error: dbError } = await supabase
+      .from('fertilizaciones')
+      .insert([{
+        parcela_id: result.data.parcela_id,
+        fecha: result.data.fecha.toISOString(),
+        tipo_abono: result.data.producto,
+        dosis: result.data.cantidad,
+        unidad_dosis: result.data.unidad,
+        metodo_aplicacion: result.data.metodo,
+        justificacion: result.data.justificacion,
+      }])
+      .select()
+      .single();
+
+    if (dbError) throw dbError;
+
+    revalidatePath('/cuaderno');
+    return { success: true, data: record };
+
+  } catch (error: any) {
+    console.error('Fertilization Error:', error);
+    return { success: false, error: "Error al registrar el abonado" };
   }
 }

@@ -157,6 +157,14 @@ export default function HoyPage() {
             <span className="text-[10px] font-black uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Plagas</span>
           </button>
         </Link>
+        <Link href="/cuaderno/fertilizacion/nuevo">
+          <button className="w-full bg-white/5 p-5 rounded-[28px] border border-white/5 shadow-sm flex flex-col items-center hover:bg-white/10 transition-all active:scale-95 group">
+            <div className="bg-blue-500/10 p-4 rounded-2xl mb-3 text-blue-400 group-hover:scale-110 transition-transform">
+               <Droplets size={24} />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Abonado</span>
+          </button>
+        </Link>
       </div>
 
       <div className="pt-6">

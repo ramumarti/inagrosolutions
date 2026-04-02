@@ -1,209 +1,169 @@
-"use client";
+'use client'
 
-import React, { useState, useEffect } from "react";
-import { ArrowLeft, Save, Beaker, Sprout, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { GlassCard } from "@/components/ui/GlassCard";
-import { GlowButton } from "@/components/ui/GlowButton";
-
-interface Parcela {
-  id: string;
-  nombre: string;
-}
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, Save, Droplets, Info } from 'lucide-react';
+import { ParcelSelector } from '@/components/agriculture/ParcelSelector';
+import { createFertilizacionAction } from '@/lib/actions/agriculture';
 
 export default function NuevaFertilizacionPage() {
   const router = useRouter();
-  const supabase = createClient();
   
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [parcelas, setParcelas] = useState<Parcela[]>([]);
+  const [parcelaId, setParcelaId] = useState('');
+  const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
+  const [tipo, setTipo] = useState<'organico' | 'mineral'>('mineral');
+  const [producto, setProducto] = useState('');
+  const [cantidad, setCantidad] = useState('');
+  const [unidad, setUnidad] = useState('kg/ha');
+  const [metodo, setMetodo] = useState('localizado');
+  const [justificacion, setJustificacion] = useState('');
   
-  const [form, setForm] = useState({
-    parcela_id: "",
-    tipo_abono: "",
-    dosis: "",
-    unidad_dosis: "kg/ha",
-    n_p_k: "",
-    fecha: new Date().toISOString().split('T')[0]
-  });
-
-  useEffect(() => {
-    async function loadParcelas() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: exps } = await supabase
-        .from('explotaciones')
-        .select('id')
-        .eq('user_id', user.id);
-
-      if (exps && exps.length > 0) {
-        const { data } = await supabase
-          .from('parcelas')
-          .select('id, nombre')
-          .in('explotacion_id', exps.map(e => e.id));
-        
-        if (data) {
-          setParcelas(data);
-          if (data.length > 0) setForm(f => ({ ...f, parcela_id: data[0].id }));
-        }
-      }
-      setLoading(false);
-    }
-    loadParcelas();
-  }, [supabase]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.parcela_id || !form.tipo_abono || !form.dosis) return;
+    setError(null);
 
-    setSaving(true);
-    try {
-      const { error } = await supabase.from('fertilizaciones').insert({
-        parcela_id: form.parcela_id,
-        fecha: new Date(form.fecha).toISOString(),
-        tipo_abono: form.tipo_abono,
-        dosis: parseFloat(form.dosis),
-        unidad_dosis: form.unidad_dosis,
-        n_p_k: form.n_p_k || null
-      });
+    if (!parcelaId || !producto || !cantidad || !metodo) {
+      setError("Por favor completa los campos obligatorios");
+      return;
+    }
 
-      if (error) throw error;
+    setIsSaving(true);
+    const result = await createFertilizacionAction({
+      parcela_id: parcelaId,
+      fecha: new Date(fecha),
+      tipo,
+      producto,
+      cantidad: parseFloat(cantidad),
+      unidad,
+      metodo,
+      justificacion
+    });
+
+    if (result.success) {
       router.push('/cuaderno');
-    } catch (err) {
-      console.error(err);
-      alert("Error al guardar la fertilización");
-    } finally {
-      setSaving(false);
+    } else {
+      setError(result.error || "Error al guardar el abonado");
+      setIsSaving(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-lg mx-auto pb-32 relative px-4 sm:px-0 z-10 animate-in fade-in duration-500">
+    <div className="max-w-lg mx-auto pb-32 px-4 sm:px-0 relative z-10 animate-in fade-in duration-500">
       <div className="flex items-center gap-3 mb-8 pt-4">
         <button 
-          onClick={() => router.back()} 
+          onClick={() => router.push('/cuaderno')} 
           className="p-2.5 bg-white/5 rounded-2xl text-white/70 hover:bg-white/10 shadow-sm border border-white/10 transition-all active:scale-95"
         >
           <ArrowLeft size={20} />
         </button>
-        <div>
-          <h1 className="text-2xl font-black text-white tracking-tight uppercase">Nueva Fertilización</h1>
-          <p className="text-white/30 text-[10px] font-bold uppercase tracking-widest mt-1">Plan de Abonado Obligatorio</p>
-        </div>
+        <h1 className="text-2xl font-black text-white tracking-tight uppercase">Nueva Fertilización</h1>
       </div>
 
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-500 px-6 py-4 rounded-[28px] mb-6 text-[10px] font-black uppercase tracking-widest">
+           ⚠️ {error}
+        </div>
+      )}
+
       <form onSubmit={handleSave} className="space-y-6">
-        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl space-y-6">
-          
-          <div className="space-y-6">
-            {/* Parcela */}
-            <div className="space-y-3">
-              <label className="text-[10px] font-black text-white/30 uppercase tracking-widest flex items-center gap-2 pl-1">
-                <Sprout className="w-3 h-3 text-white/40" /> Parcela Seleccionada
-              </label>
-              <div className="relative">
-                <select
-                  value={form.parcela_id}
-                  onChange={e => setForm({...form, parcela_id: e.target.value})}
-                  className="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-5 py-4 text-white font-bold text-base focus:outline-none focus:border-emerald-500/50 transition-all appearance-none cursor-pointer"
-                >
-                  {parcelas.map(p => (
-                    <option key={p.id} value={p.id} className="bg-zinc-900">{p.nombre}</option>
-                  ))}
-                </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
-                  <ArrowLeft size={16} className="-rotate-90" />
-                </div>
+        {/* Parcela Selector */}
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl">
+           <ParcelSelector onSelect={setParcelaId} selectedId={parcelaId} />
+        </div>
+
+        {/* Datos del Abonado */}
+        <div className="bg-white/5 p-8 rounded-[40px] border border-white/10 shadow-2xl backdrop-blur-xl space-y-6">
+           <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                 <label className="block text-[10px] font-black text-white/30 mb-2 uppercase tracking-widest pl-1">Tipo de Abono</label>
+                 <div className="grid grid-cols-2 gap-2">
+                    {['mineral', 'organico'].map((t) => (
+                       <button
+                        key={t} type="button"
+                        onClick={() => setTipo(t as any)}
+                        className={`py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${tipo === t ? 'bg-blue-600 border-blue-500 text-white' : 'bg-white/5 border-white/10 text-white/40'}`}
+                       >
+                          {t}
+                       </button>
+                    ))}
+                 </div>
               </div>
-            </div>
 
-            {/* Fecha */}
-            <div className="space-y-3">
-              <label className="text-[10px] font-black text-white/30 uppercase tracking-widest pl-1 leading-none">Fecha de Aplicación</label>
-              <input
-                type="date"
-                value={form.fecha}
-                onChange={e => setForm({...form, fecha: e.target.value})}
-                className="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-5 py-4 text-white font-bold text-base focus:outline-none focus:border-emerald-500/50 transition-all"
-              />
-            </div>
+              <div className="col-span-2">
+                 <label className="block text-[10px] font-black text-white/30 mb-2 uppercase tracking-widest pl-1">Nombre Comercial / Producto</label>
+                 <input 
+                  type="text" required
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/50 font-bold text-white"
+                  placeholder="Ej: NPK 15-15-15"
+                  value={producto} onChange={(e) => setProducto(e.target.value)}
+                 />
+              </div>
 
-            {/* Tipo Abono */}
-            <div className="space-y-3">
-              <label className="text-[10px] font-black text-white/30 uppercase tracking-widest flex items-center gap-2 pl-1 leading-none">
-                <Beaker className="w-3 h-3 text-white/40" /> Fertilizante (Tipo / Marca)
-              </label>
-              <input
-                value={form.tipo_abono}
-                onChange={e => setForm({...form, tipo_abono: e.target.value})}
-                className="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-5 py-4 text-white text-base placeholder:text-white/10 focus:outline-none focus:border-emerald-500/50 transition-all font-medium shadow-inner"
-                placeholder="Ej: NPK 15-15-15, Purines..."
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              {/* Dosis */}
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-white/30 uppercase tracking-widest pl-1 leading-none">Dosis</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={form.dosis}
-                  onChange={e => setForm({...form, dosis: e.target.value})}
-                  className="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-5 py-4 text-white font-black text-xl shadow-inner focus:outline-none focus:border-emerald-500/50 transition-all"
+              <div>
+                 <label className="block text-[10px] font-black text-white/30 mb-2 uppercase tracking-widest pl-1">Cantidad</label>
+                 <input 
+                  type="number" step="0.01" required
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/50 font-black text-white text-xl"
                   placeholder="0.00"
-                />
+                  value={cantidad} onChange={(e) => setCantidad(e.target.value)}
+                 />
               </div>
 
-              {/* Unidad */}
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-white/30 uppercase tracking-widest pl-1 leading-none">Unidad</label>
-                <select
-                  value={form.unidad_dosis}
-                  onChange={e => setForm({...form, unidad_dosis: e.target.value})}
-                  className="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-5 py-4 text-white font-bold text-base appearance-none cursor-pointer focus:outline-none focus:border-emerald-500/50 transition-all"
-                >
-                  <option value="kg/ha" className="bg-zinc-900">kg / ha</option>
-                  <option value="L/ha" className="bg-zinc-900">L / ha</option>
-                  <option value="kg/árbol" className="bg-zinc-900">kg / ár.</option>
-                  <option value="m3/ha" className="bg-zinc-900">m³ / ha</option>
-                </select>
+              <div>
+                 <label className="block text-[10px] font-black text-white/30 mb-2 uppercase tracking-widest pl-1">Unidad</label>
+                 <select 
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/50 font-bold text-white appearance-none"
+                  value={unidad} onChange={(e) => setUnidad(e.target.value)}
+                 >
+                    <option value="kg/ha">kg/ha</option>
+                    <option value="L/ha">L/ha</option>
+                    <option value="kg/pie">kg/pie</option>
+                 </select>
               </div>
-            </div>
+           </div>
 
-            {/* N-P-K (Riqueza) */}
-            <div className="space-y-3">
-              <label className="text-[10px] font-black text-white/30 uppercase tracking-widest pl-1 leading-none">Riqueza N-P-K <span className="text-white/10 font-bold lowercase">(opcional)</span></label>
-              <input
-                value={form.n_p_k}
-                onChange={e => setForm({...form, n_p_k: e.target.value})}
-                className="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-5 py-4 text-white text-base placeholder:text-white/10 focus:outline-none focus:border-emerald-500/50 transition-all font-mono"
-                placeholder="Ej: 8-24-8"
+           <div>
+              <label className="block text-[10px] font-black text-white/30 mb-2 uppercase tracking-widest pl-1">Método de Aplicación</label>
+              <select 
+               className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/50 font-bold text-white appearance-none"
+               value={metodo} onChange={(e) => setMetodo(e.target.value)}
+              >
+                 <option value="localizado">Localizado (Pie)</option>
+                 <option value="voleo">A Voleo</option>
+                 <option value="fertirrigacion">Fertirrigación</option>
+                 <option value="foliar">Foliar</option>
+              </select>
+           </div>
+
+           <div>
+              <label className="block text-[10px] font-black text-white/30 mb-2 uppercase tracking-widest pl-1">Justificación / Notas</label>
+              <textarea 
+               className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/50 font-medium text-white text-sm"
+               rows={3}
+               placeholder="Obligatorio para cumplimiento SIEX si es abono excepcional..."
+               value={justificacion} onChange={(e) => setJustificacion(e.target.value)}
               />
-            </div>
-          </div>
+           </div>
+        </div>
 
-          <div className="pt-4">
-            <GlowButton 
-              variant="primary" 
-              className="w-full py-6 text-lg font-black uppercase tracking-[0.15em] rounded-[24px] shadow-2xl shadow-emerald-900/20 active:scale-[0.98] transition-all"
-              isLoading={saving}
-              disabled={!form.tipo_abono || !form.dosis || !form.parcela_id}
-            >
-              <Save className="w-5 h-5 mr-3" /> Registrar Abono
-            </GlowButton>
-          </div>
+        <button 
+          type="submit" 
+          disabled={isSaving}
+          className="w-full flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-black py-6 rounded-[28px] shadow-2xl shadow-blue-900/40 transition-all disabled:opacity-50 active:scale-[0.98] text-lg uppercase tracking-widest group"
+        >
+          {isSaving ? "Guardando..." : <><Save size={24} className="group-hover:translate-y-[-2px] transition-transform" /> Registrar Abonado</>}
+        </button>
+
+        <div className="p-6 bg-blue-500/5 border border-blue-500/10 rounded-[32px] flex items-start gap-4">
+           <div className="p-2 bg-blue-500/20 rounded-xl text-blue-400">
+              <Info size={18} />
+           </div>
+           <p className="text-[10px] text-white/40 font-bold leading-relaxed uppercase tracking-widest">
+              Recuerda que para el SIEX, los abonados minerales deben realizarse siguiendo el plan de abonado anual registrado para cada finca.
+           </p>
         </div>
       </form>
     </div>
