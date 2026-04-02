@@ -135,7 +135,7 @@ export default function LandingPage() {
                ].map((feat, i) => (
                  <GlassCard key={i} className="p-10 border-white/5 hover:bg-white/[0.04] transition-all group">
                     <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-emerald-400 mb-8 border border-white/10 group-hover:scale-110 transition-transform">
-                       {React.cloneElement(feat.icon as React.ReactElement, { size: 28 })}
+                       {React.cloneElement(feat.icon as React.ReactElement<{ size?: number }>, { size: 28 })}
                     </div>
                     <h3 className="text-xl font-black text-white mb-4 uppercase tracking-tight">{feat.title}</h3>
                     <p className="text-white/40 leading-relaxed font-medium">{feat.desc}</p>
