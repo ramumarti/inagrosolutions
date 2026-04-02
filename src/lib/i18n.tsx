@@ -72,8 +72,8 @@ const translations: Record<Language, Translations> = {
   },
   es: {
     "app.name": "IASOLUTIONS",
-    "app.tagline": "La herramienta profesional para la agricultura moderna",
-    "login.hero_title": "Tu Cuaderno de Campo Digital",
+    "app.tagline": "Gestión profesional de micro-aplicaciones SaaS",
+    "login.hero_title": "Tu Portal de Gestión Inteligente",
     "login.title": "Bienvenido de nuevo",
     "login.email": "Correo electrónico",
     "login.password": "Contraseña",

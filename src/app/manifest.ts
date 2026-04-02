@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Cuaderno Digital Modular',
-    short_name: 'Cuaderno MAPA',
-    description: 'Cuaderno Digital Agrícola para Cumplimiento SIEX y PAC',
+    name: 'IASOLUTIONS Enterprise',
+    short_name: 'IASOLUTIONS',
+    description: 'Gestión avanzada de micro-aplicaciones y herramientas SaaS.',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
