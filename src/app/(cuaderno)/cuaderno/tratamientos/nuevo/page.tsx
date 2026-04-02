@@ -22,56 +22,74 @@ export default function NuevoTratamientoPage() {
   const [dosis, setDosis] = useState("");
   const [unidad, setUnidad] = useState("L/ha");
   const [superficie, setSuperficie] = useState("");
+  const [ropo, setRopo] = useState("");
+  const [plaga, setPlaga] = useState("");
   
   const [isSearching, setIsSearching] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  // Fetch user's profile to pre-fill ROPO if available
   useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      if (query.length >= 3 && !selectedProduct) {
-        setIsSearching(true);
-        const data = await searchProductosMAPA(query);
-        setResults(data);
-        setIsSearching(false);
-      } else {
-        setResults([]);
+    async function loadProfile() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.from('profiles').select('carnet_ropo').eq('id', user.id).single();
+        if (data?.carnet_ropo) setRopo(data.carnet_ropo);
       }
-    }, 400);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [query, selectedProduct]);
+    }
+    loadProfile();
+  }, []);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedProduct || !dosis || !parcelaId) {
-      alert("Por favor selecciona una parcela y producto");
+    setError(null);
+
+    if (!selectedProduct || !dosis || !parcelaId || !ropo) {
+      setError("Por favor completa los campos obligatorios (Parcela, Producto, Dosis y ROPO)");
       return;
     }
 
     setIsSaving(true);
+    
     try {
-      // Registrar "Mutación" para la DB local/remota
-      await addToQueue({
-        table: "tratamientos_fitosanitarios",
-        action: "INSERT",
-        payload: {
-          parcela_id: parcelaId,
-          fecha: new Date().toISOString(),
-          producto_mapa_id: selectedProduct.numRegistro,
-          nombre_producto: selectedProduct.nombreComercial,
-          dosis: parseFloat(dosis),
-          unidad_dosis: unidad,
-          superficie_tratada: parseFloat(superficie) || null,
-        }
-      });
+      const payload = {
+        parcela_id: parcelaId,
+        fecha: new Date(),
+        producto: selectedProduct.nombreComercial,
+        numero_registro: selectedProduct.numRegistro,
+        dosis: parseFloat(dosis),
+        unidad: unidad,
+        ropo: ropo,
+        plaga_objetivo: plaga,
+        nivel_plaga: 10, // Simulated for validation
+      };
 
-      if (isOnline) {
-        await syncNow();
+      if (!isOnline) {
+        await addToQueue({
+          table: "tratamientos_fitosanitarios",
+          action: "INSERT",
+          payload
+        });
+        router.push("/cuaderno");
+        return;
       }
 
-      router.push("/cuaderno");
-    } catch (error) {
-      console.error(error);
+      // USE THE NEW PROFESIONAL SERVICE ACTION
+      const { createTreatmentAction } = await import("@/lib/actions/treatments");
+      const result = await createTreatmentAction(payload);
+
+      if (result.success) {
+        router.push("/cuaderno/tratamientos");
+      } else {
+        setError(result.error || "Error al guardar el tratamiento");
+        setIsSaving(false);
+      }
+
+    } catch (err: any) {
+      console.error(err);
+      setError("Error inesperado al procesar el tratamiento");
       setIsSaving(false);
     }
   };
@@ -88,10 +106,9 @@ export default function NuevoTratamientoPage() {
         <h1 className="text-2xl font-black text-white tracking-tight uppercase">Nuevo Tratamiento</h1>
       </div>
 
-      {!isOnline && (
-        <div className="bg-amber-500/5 border border-amber-500/10 text-amber-500 px-4 py-4 rounded-[24px] flex items-center gap-3 mb-6 shadow-sm backdrop-blur-xl">
-          <WifiOff size={22} className="text-amber-600" />
-          <p className="text-[10px] font-black leading-tight uppercase tracking-[0.15em]">Modo Offline Activo</p>
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-500 px-6 py-4 rounded-[28px] mb-6 text-xs font-bold uppercase tracking-widest animate-in shake-in duration-500">
+           ⚠️ {error}
         </div>
       )}
 
@@ -163,37 +180,50 @@ export default function NuevoTratamientoPage() {
           )}
         </div>
 
-        {/* Dosificación */}
+        {/* Dosificación y Detalles Legales */}
         {selectedProduct && (
           <div className="space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-500">
-            <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl grid grid-cols-2 gap-4">
-              <div className="col-span-1">
-                <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Dosis</label>
+            <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-1">
+                  <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Dosis</label>
+                  <input 
+                    type="number" step="0.01" required
+                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/50 font-black text-white text-xl"
+                    placeholder="0.00"
+                    value={dosis} onChange={(e) => setDosis(e.target.value)}
+                  />
+                </div>
+                <div className="col-span-1">
+                  <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Unidad</label>
+                  <select 
+                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/50 font-bold text-white text-base appearance-none cursor-pointer"
+                    value={unidad} onChange={(e) => setUnidad(e.target.value)}
+                  >
+                    <option value="L/ha" className="bg-zinc-900">L/ha</option>
+                    <option value="kg/ha" className="bg-zinc-900">kg/ha</option>
+                    <option value="%" className="bg-zinc-900">%</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Carnet ROPO (Obligatorio)</label>
                 <input 
-                  type="number" step="0.01" required
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/50 font-black text-white text-xl"
-                  placeholder="0.00"
-                  value={dosis} onChange={(e) => setDosis(e.target.value)}
+                  type="text" required
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/50 font-bold text-white text-base"
+                  placeholder="Ej: 23/12345/A"
+                  value={ropo} onChange={(e) => setRopo(e.target.value)}
                 />
               </div>
-              <div className="col-span-1">
-                <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Unidad</label>
-                <select 
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/50 font-bold text-white text-base appearance-none cursor-pointer"
-                  value={unidad} onChange={(e) => setUnidad(e.target.value)}
-                >
-                  <option value="L/ha" className="bg-zinc-900">L/ha</option>
-                  <option value="kg/ha" className="bg-zinc-900">kg/ha</option>
-                  <option value="%" className="bg-zinc-900">%</option>
-                </select>
-              </div>
-              <div className="col-span-2 mt-2">
-                <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Superficie (ha)</label>
+
+              <div>
+                <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Plaga Objetivo / Justificación</label>
                 <input 
-                  type="number" step="0.01"
+                  type="text"
                   className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/50 font-bold text-white text-base"
-                  placeholder="Ej: 2.5 (Opcional)"
-                  value={superficie} onChange={(e) => setSuperficie(e.target.value)}
+                  placeholder="Ej: Mosca del Olivo (Bactrocera oleae)"
+                  value={plaga} onChange={(e) => setPlaga(e.target.value)}
                 />
               </div>
             </div>
@@ -203,7 +233,7 @@ export default function NuevoTratamientoPage() {
               disabled={isSaving}
               className="w-full flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-black py-6 rounded-[28px] shadow-2xl shadow-emerald-900/40 transition-all disabled:opacity-50 disabled:grayscale active:scale-[0.98] text-lg uppercase tracking-widest group mb-12"
             >
-              {isSaving ? "Guardando..." : <><Save size={24} className="group-hover:rotate-12 transition-transform" /> Aplicar Tratamiento</>}
+              {isSaving ? "Validando y Guardando..." : <><Save size={24} className="group-hover:rotate-12 transition-transform" /> Confirmar Tratamiento</>}
             </button>
           </div>
         )}
