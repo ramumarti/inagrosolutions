@@ -47,7 +47,7 @@ export default function LandingPage() {
              <Link href="/login">
                 <button className="px-6 py-2 text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-white transition-all">Acceso Usuario</button>
              </Link>
-             <Link href="/cuaderno">
+             <Link href="#pricing">
                 <GlowButton variant="primary" className="px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest">
                    Comenzar Ahora
                 </GlowButton>
@@ -75,7 +75,7 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-               <Link href="/cuaderno">
+               <Link href="#pricing">
                   <GlowButton variant="primary" className="w-full sm:w-auto px-12 py-6 rounded-2xl text-base font-black uppercase tracking-widest shadow-2xl shadow-emerald-500/20 group">
                     Explorar Demo <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform" />
                   </GlowButton>
@@ -170,6 +170,79 @@ export default function LandingPage() {
            </div>
         </section>
 
+        {/* Pricing Section */}
+        <section id="pricing" className="py-32 px-6 relative">
+          <div className="max-w-7xl mx-auto">
+             <div className="text-center mb-24">
+                <h2 className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.5em] mb-4">Planes y Precios</h2>
+                <p className="text-[40px] font-black tracking-tighter text-white leading-none">Escala tu explotación sin límites.</p>
+             </div>
+
+             <div className="grid md:grid-cols-3 gap-8">
+                {[
+                  { 
+                    name: "Gratuito", 
+                    price: "0€", 
+                    period: "para siempre",
+                    features: ["Gestión hasta 5 parcelas", "Cuaderno Digital Básico", "Alertas meteorológicas", "Sincronización manual"],
+                    cta: "Empezar Gratis",
+                    highlight: false
+                  },
+                  { 
+                    name: "Profesional", 
+                    price: "19€", 
+                    period: "al mes / finca",
+                    features: ["Parcelas ilimitadas", "Exportación SIEX Oficial", "Predictor IA Avanzado", "Sincronización Offline", "Soporte Prioritario"],
+                    cta: "Prueba Pro",
+                    highlight: true
+                  },
+                  { 
+                    name: "Empresarial", 
+                    price: "Personalizado", 
+                    period: "grandes explotaciones",
+                    features: ["Gestión Multi-Usuario", "API de Integración", "Consultoría Agronómica", "Formación presencial", "Seguridad Avanzada"],
+                    cta: "Contactar Ventas",
+                    highlight: false
+                  }
+                ].map((plan, i) => (
+                  <GlassCard 
+                    key={i} 
+                    className={`p-12 relative flex flex-col ${plan.highlight ? 'border-emerald-500/30 bg-emerald-500/[0.03] scale-105 z-10 shadow-[0_20px_50px_rgba(16,185,129,0.1)]' : 'border-white/5'}`}
+                  >
+                    {plan.highlight && (
+                       <div className="absolute top-0 right-12 -translate-y-1/2 bg-emerald-500 text-black text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-full">
+                          Más popular
+                       </div>
+                    )}
+                    <h3 className="text-xs font-black text-white/40 uppercase tracking-[0.3em] mb-2">{plan.name}</h3>
+                    <div className="flex items-baseline gap-2 mb-8">
+                       <span className="text-5xl font-black text-white tracking-tighter">{plan.price}</span>
+                       <span className="text-[10px] font-medium text-white/30 uppercase tracking-widest">{plan.period}</span>
+                    </div>
+                    <ul className="space-y-6 mb-12 flex-1">
+                       {plan.features.map((feat, j) => (
+                          <li key={j} className="flex items-start gap-3 text-sm text-white/60 font-medium">
+                             <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                             </div>
+                             {feat}
+                          </li>
+                       ))}
+                    </ul>
+                    <Link href={plan.name === "Empresarial" ? "mailto:ventas@inagrosolutions.com" : "/cuaderno"}>
+                       <GlowButton 
+                        variant={plan.highlight ? "primary" : "ghost"} 
+                        className="w-full py-5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em]"
+                       >
+                          {plan.cta}
+                       </GlowButton>
+                    </Link>
+                  </GlassCard>
+                ))}
+             </div>
+          </div>
+        </section>
+
         {/* App Context Image Section */}
         <section className="py-32 px-6">
            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-20">
@@ -209,7 +282,7 @@ export default function LandingPage() {
               <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-white mb-10 leading-none">Únete a la nueva <br />era agrícola</h2>
               <p className="text-xl text-white/60 mb-14 max-w-xl mx-auto font-medium">Empieza a gestionar tus cultivos con InagroSolutions hoy mismo de forma gratuita.</p>
               
-              <Link href="/cuaderno">
+              <Link href="#pricing">
                  <GlowButton variant="primary" className="px-16 py-8 rounded-3xl text-xl font-black uppercase tracking-[0.2em] shadow-2xl">
                     Crear mi Cuaderno <ArrowRight className="ml-4" />
                  </GlowButton>
