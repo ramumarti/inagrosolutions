@@ -103,9 +103,9 @@ export default function LandingPage() {
                    </div>
                 </div>
                 <img 
-                  src="https://images.unsplash.com/photo-1542601906990-b4d3fb75bb6a?auto=format&fit=crop&q=80&w=2400" 
+                  src="/mockup.png" 
                   alt="App Interface Mockup" 
-                  className="w-full rounded-[24px] opacity-20 grayscale brightness-50 group-hover:opacity-60 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000"
+                  className="w-full rounded-[24px] opacity-40 grayscale brightness-50 group-hover:opacity-100 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
                    <div className="bg-[#060105]/60 backdrop-blur-lg border border-white/10 px-8 py-4 rounded-3xl text-sm font-black uppercase tracking-widest text-emerald-400">
