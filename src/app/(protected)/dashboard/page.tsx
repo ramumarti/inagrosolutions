@@ -52,11 +52,6 @@ export default function DashboardPage() {
           </div>
           
           <div className="flex gap-4">
-             <Link href="/apps">
-               <GlowButton variant="secondary" className="px-6 py-3 rounded-xl text-[10px] border-white/5">
-                 Explorar Apps
-               </GlowButton>
-             </Link>
              <GlowButton variant="primary" className="px-8 py-3 rounded-xl text-[10px]">
                <Plus size={16} className="mr-2" />
                Nuevo Proyecto
