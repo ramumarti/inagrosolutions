@@ -2,10 +2,10 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'ty
 import { User } from '../../users/entities/user.entity';
 import { Parcel } from '../../parcels/entities/parcel.entity';
 
-@Entity()
+@Entity('agri_farms')
 export class Farm {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   nombre: string;

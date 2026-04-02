@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Parcel } from '../../parcels/entities/parcel.entity';
 
-@Entity()
+@Entity('agri_treatments')
 export class Treatment {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   producto: string;

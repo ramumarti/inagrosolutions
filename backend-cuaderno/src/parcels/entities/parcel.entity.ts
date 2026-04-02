@@ -2,10 +2,10 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'ty
 import { Farm } from '../../farms/entities/farm.entity';
 import { Treatment } from '../../treatments/entities/treatment.entity';
 
-@Entity()
+@Entity('agri_parcels')
 export class Parcel {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   referencia_sigpac: string;
