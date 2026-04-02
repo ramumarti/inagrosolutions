@@ -47,7 +47,17 @@ export const CreateFertilizacionSchema = z.object({
   justificacion: z.string().optional(),
 });
 
+export const CreatePlagaSchema = z.object({
+  parcela_id: z.string().uuid({ message: "La parcela es obligatoria" }),
+  fecha: z.string().or(z.date()).transform((val) => new Date(val)),
+  tipo_plaga: z.string().min(1, { message: "El tipo de plaga es obligatorio" }),
+  nivel: z.number().min(0).max(100, { message: "El nivel debe estar entre 0 y 100%" }),
+  umbral: z.number().optional().default(5),
+  recomendacion: z.string().optional(),
+});
+
 export type CreateTreatmentDto = z.infer<typeof CreateTreatmentSchema>;
 export type CreateExplotacionDto = z.infer<typeof CreateExplotacionSchema>;
 export type CreateParcelaDto = z.infer<typeof CreateParcelaSchema>;
 export type CreateFertilizacionDto = z.infer<typeof CreateFertilizacionSchema>;
+export type CreatePlagaDto = z.infer<typeof CreatePlagaSchema>;

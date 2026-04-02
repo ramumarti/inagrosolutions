@@ -3,21 +3,19 @@
 import { useState } from "react";
 import { ArrowLeft, Save, Bug, AlertCircle, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { addToQueue } from "@/lib/offline-db";
-import { useSyncStore } from "@/store/syncStore";
-
+import { createPlagaAction } from "@/lib/actions/agriculture";
 import { ParcelSelector } from "@/components/agriculture/ParcelSelector";
 
 export default function NuevaPlagaPage() {
   const router = useRouter();
-  const { isOnline, syncNow } = useSyncStore();
-
+  
   const [parcelaId, setParcelaId] = useState<string>("");
   const [tipoPlaga, setTipoPlaga] = useState("Mosca del Olivo");
   const [nivel, setNivel] = useState("");
   const [umbral, setUmbral] = useState("5.0"); // Threshold 5% for Integrated
   const [recomendacion, setRecomendacion] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const plagasComunes = [
     "Mosca del Olivo (Bactrocera oleae)",
@@ -33,27 +31,21 @@ export default function NuevaPlagaPage() {
     if (!nivel || !parcelaId) return;
 
     setIsSaving(true);
-    try {
-      await addToQueue({
-        table: "plagas",
-        action: "INSERT",
-        payload: {
-          parcela_id: parcelaId,
-          fecha: new Date().toISOString(),
-          tipo_plaga: tipoPlaga,
-          nivel: parseFloat(nivel),
-          umbral: parseFloat(umbral),
-          recomendacion: recomendacion || null,
-        }
-      });
+    setError(null);
 
-      if (isOnline) {
-        await syncNow();
-      }
+    const result = await createPlagaAction({
+      parcela_id: parcelaId,
+      fecha: new Date(),
+      tipo_plaga: tipoPlaga,
+      nivel: parseFloat(nivel),
+      umbral: parseFloat(umbral),
+      recomendacion: recomendacion || ""
+    });
 
+    if (result.success) {
       router.push("/cuaderno");
-    } catch (error) {
-      console.error(error);
+    } else {
+      setError(result.error || "Error al guardar el monitoreo");
       setIsSaving(false);
     }
   };

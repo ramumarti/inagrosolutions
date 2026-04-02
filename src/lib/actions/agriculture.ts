@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server';
-import { CreateExplotacionSchema, CreateParcelaSchema, CreateFertilizacionSchema } from '@/lib/agriculture/schemas';
+import { CreateExplotacionSchema, CreateParcelaSchema, CreateFertilizacionSchema, CreatePlagaSchema } from '@/lib/agriculture/schemas';
 import { revalidatePath } from 'next/cache';
 
 /**
@@ -118,3 +118,37 @@ export async function createFertilizacionAction(data: any) {
     return { success: false, error: "Error al registrar el abonado" };
   }
 }
+
+export async function createPlagaAction(data: any) {
+  const supabase = await createClient();
+  
+  try {
+    const result = CreatePlagaSchema.safeParse(data);
+    if (!result.success) {
+      return { success: false, error: "Datos de monitoreo inválidos", details: result.error.format() };
+    }
+
+    const { data: record, error: dbError } = await supabase
+      .from('plagas')
+      .insert([{
+        parcela_id: result.data.parcela_id,
+        fecha: result.data.fecha.toISOString(),
+        tipo_plaga: result.data.tipo_plaga,
+        nivel: result.data.nivel,
+        umbral: result.data.umbral,
+        recomendacion: result.data.recomendacion
+      }])
+      .select()
+      .single();
+
+    if (dbError) throw dbError;
+
+    revalidatePath('/cuaderno');
+    return { success: true, data: record };
+
+  } catch (error: any) {
+    console.error('Plaga Error:', error);
+    return { success: false, error: "Error al registrar el monitoreo" };
+  }
+}
+
