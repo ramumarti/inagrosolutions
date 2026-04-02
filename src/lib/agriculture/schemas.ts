@@ -18,4 +18,24 @@ export const CreateTreatmentSchema = z.object({
   nivel_plaga: z.number().optional().default(0),
 });
 
+export const CreateExplotacionSchema = z.object({
+  nombre: z.string().min(3, { message: "El nombre debe tener al menos 3 caracteres" }),
+  ubicacion: z.string().optional(),
+  num_registro_siex: z.string().optional(),
+  superficie_total: z.number().nonnegative().default(0),
+});
+
+export const CreateParcelaSchema = z.object({
+  explotacion_id: z.string().uuid({ message: "La explotación es obligatoria" }),
+  referencia_sigpac: z.string().min(5, { message: "Referencia SIGPAC inválida" }),
+  nombre: z.string().min(1, { message: "El nombre es obligatorio" }),
+  superficie: z.number().positive({ message: "La superficie debe ser mayor que cero" }),
+  tipo_olivar: z.enum(['tradicional', 'intensivo', 'superintensivo']).default('tradicional'),
+  sistema_produccion: z.enum(['convencional', 'integrado', 'ecologico']).default('convencional'),
+  variedad: z.string().optional(),
+  sistema_riego: z.enum(['secano', 'regadio']).default('secano'),
+});
+
 export type CreateTreatmentDto = z.infer<typeof CreateTreatmentSchema>;
+export type CreateExplotacionDto = z.infer<typeof CreateExplotacionSchema>;
+export type CreateParcelaDto = z.infer<typeof CreateParcelaSchema>;

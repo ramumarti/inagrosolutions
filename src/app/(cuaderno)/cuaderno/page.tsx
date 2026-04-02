@@ -1,6 +1,6 @@
 "use client";
 
-import { Sprout, Tractor, CloudRain, AlertTriangle, FileText, Droplets, Bug, ShoppingBasket, Trash2, FileSpreadsheet, HelpCircle, Loader2 } from "lucide-react";
+import { Sprout, Tractor, CloudRain, AlertTriangle, FileText, Droplets, Bug, ShoppingBasket, Trash2, FileSpreadsheet, HelpCircle, Loader2, Layers, Plus } from "lucide-react";
 import Link from "next/link";
 import { SmartAssistant } from "@/components/agriculture/SmartAssistant";
 import { useState } from "react";
@@ -155,6 +155,25 @@ export default function HoyPage() {
                <Bug size={24} />
             </div>
             <span className="text-[10px] font-black uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">Plagas</span>
+          </button>
+        </Link>
+      </div>
+
+      <div className="pt-6">
+        <Link href="/cuaderno/explotaciones">
+          <button className="w-full bg-emerald-500/10 p-6 rounded-[32px] border border-emerald-500/20 shadow-xl flex items-center justify-between hover:bg-emerald-500/20 transition-all active:scale-[0.98] group">
+            <div className="flex items-center gap-5">
+              <div className="w-16 h-16 bg-emerald-500/20 rounded-[24px] flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-all">
+                <Layers size={32} />
+              </div>
+              <div className="text-left">
+                <h3 className="text-lg font-black text-white uppercase tracking-tight">Gestionar Fincas</h3>
+                <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Configura tus parcelas y SIEX</p>
+              </div>
+            </div>
+            <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white/20 group-hover:text-white group-hover:bg-white/10 transition-all">
+              <Plus size={20} />
+            </div>
           </button>
         </Link>
       </div>
