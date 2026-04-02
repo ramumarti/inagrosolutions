@@ -40,7 +40,10 @@ export function ParcelSelector({ onSelect, selectedId }: ParcelSelectorProps) {
 
   return (
     <div className="relative">
-      <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Parcela de trabajo</label>
+      <label className="flex items-center gap-1.5 text-[10px] font-black text-gray-400 mb-2 uppercase tracking-widest pl-1">
+        <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
+        Parcela de trabajo
+      </label>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}

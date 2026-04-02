@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/Badge";
 import { Download, FileSpreadsheet, Settings2, UserCircle, DatabaseBackup } from "lucide-react";
 import { exportarCuadernoCompletoSIEX, ReporteTratamiento } from "@/lib/export-siex";
 import { useSyncStore } from "@/store/syncStore";
@@ -61,9 +62,9 @@ export default function AjustesPage() {
           <div>
             <h2 className="font-bold text-gray-800 text-lg">Agricultor Principal</h2>
             <div className="flex items-center gap-2 mt-1 mt-0.5">
-              <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded-md uppercase tracking-wide">
+              <Badge variant="success" className="px-3 py-1 font-black">
                 Plan Básico
-              </span>
+              </Badge>
             </div>
           </div>
         </div>

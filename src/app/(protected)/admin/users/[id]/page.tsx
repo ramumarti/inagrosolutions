@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ChevronLeft, Key, User, Calendar, CreditCard, Activity, Copy, Clock } from 'lucide-react';
 import { getUserAccessibleApps } from '@/lib/access';
 import { UserPlanAction } from '@/components/admin/UserPlanAction';
-
+import { Badge } from '@/components/ui/Badge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
@@ -112,11 +112,17 @@ export default async function AdminUserDetailPage(props: { params: Promise<{ id:
               </div>
 
               {/* Plan Name + Price */}
-              <div className="p-4 rounded-xl bg-black/20 border border-white/5 flex items-center justify-between">
-                <span className="text-white/60">Current:</span>
-                <span className="font-semibold text-white">
-                  {planData ? `${planData.name_en} (${planData.price_monthly} €)` : 'No Plan'}
-                </span>
+              <div className="p-4 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between shadow-inner backdrop-blur-md">
+                <span className="text-white/40 text-xs font-bold uppercase tracking-widest pl-1">Current Plan</span>
+                {planData ? (
+                  <Badge variant="premium" className="px-4 py-1.5 text-xs shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                    {planData.name_en}
+                  </Badge>
+                ) : (
+                  <Badge variant="neutral" className="px-4 py-1.5 text-xs">
+                    No Plan
+                  </Badge>
+                )}
               </div>
 
               {/* Enhanced Info Grid */}
@@ -191,9 +197,9 @@ export default async function AdminUserDetailPage(props: { params: Promise<{ id:
               {accessibleSlugs.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {accessibleSlugs.map(slug => (
-                    <span key={slug} className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-300 text-sm font-medium border border-emerald-500/20">
+                    <Badge key={slug} variant="primary" className="px-3 py-1.5 text-xs">
                       {slug}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
               ) : (
@@ -235,13 +241,13 @@ export default async function AdminUserDetailPage(props: { params: Promise<{ id:
                             </td>
                             <td className="py-3 px-2">
                               {isSuccess ? (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                <Badge variant="success" className="px-3 py-1">
                                   Success
-                                </span>
+                                </Badge>
                               ) : (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">
+                                <Badge variant="error" className="px-3 py-1">
                                   {ex.status}
-                                </span>
+                                </Badge>
                               )}
                             </td>
                             <td className="py-3 pl-2 text-right text-white/50 text-sm">

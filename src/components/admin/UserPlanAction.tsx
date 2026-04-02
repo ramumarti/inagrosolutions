@@ -5,6 +5,7 @@ import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/Toast';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { Loader2 } from 'lucide-react';
+import { Select, SelectOption } from '@/components/ui/Select';
 
 interface UserPlanActionProps {
   userId: string;
@@ -39,20 +40,22 @@ export function UserPlanAction({ userId, currentPlanId, plans }: UserPlanActionP
 
   const hasChanged = selectedPlanId !== (currentPlanId || '');
 
+  const selectOptions: SelectOption[] = [
+    { value: '', label: language === 'en' ? 'Remove Plan (No Plan)' : 'Remover Plan (Sin Plan)' },
+    ...plans.map(p => ({
+      value: p.id,
+      label: `${language === 'en' ? p.name_en : p.name_es} - ${p.price_monthly} €/mo`
+    }))
+  ];
+
   return (
     <div className="flex flex-col gap-4 mt-2">
-      <select 
+      <Select 
         value={selectedPlanId} 
-        onChange={e => setSelectedPlanId(e.target.value)}
-        className="w-full px-3 py-2.5 bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[var(--color-primary)]/50 focus:ring-1 focus:ring-[var(--color-primary)]/50"
-      >
-        <option value="">{language === 'en' ? 'Remove Plan (No Plan)' : 'Remover Plan (Sin Plan)'}</option>
-        {plans.map(p => (
-          <option key={p.id} value={p.id}>
-            {language === 'en' ? p.name_en : p.name_es} - {p.price_monthly} €/mo
-          </option>
-        ))}
-      </select>
+        onChange={setSelectedPlanId}
+        options={selectOptions}
+        className="w-full"
+      />
 
       <GlowButton 
         onClick={handleSave} 
