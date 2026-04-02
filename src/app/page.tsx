@@ -61,17 +61,21 @@ export default function LandingPage() {
         <section className="relative pt-24 pb-32 px-6 overflow-hidden">
           <div className="max-w-5xl mx-auto text-center relative z-10">
             <div className="flex justify-center mb-10">
-               <div className="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2 text-[10px] font-black text-emerald-400 tracking-[0.2em] uppercase animate-bounce">
-                  <Sparkles size={12} /> Campaña 2026 Abierta
+               <div className="px-6 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-3 text-[10px] font-black text-emerald-400 tracking-[0.2em] uppercase animate-in slide-in-from-top-10 duration-1000">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                  Certificado SIEX / PAC 2026 
                </div>
             </div>
             
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-8 glow-text animate-in fade-in slide-in-from-bottom-10 duration-1000">
-              Tu Cuaderno de <br /> Campo <span className="text-white">Inteligente</span>
+            <h1 className="text-6xl md:text-9xl font-black tracking-tighter leading-none mb-8 glow-text animate-in fade-in slide-in-from-bottom-10 duration-1000 uppercase">
+              REVOLUCIÓN <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600">
+                SIEX 2026
+              </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-white/40 font-medium max-w-2xl mx-auto mb-14 leading-relaxed">
-              Cumplimiento SIEX / PAC automático, telemetría en tiempo real y gestión inteligente de cultivos a un solo toque.
+            <p className="text-xl md:text-2xl text-white/50 font-medium max-w-2xl mx-auto mb-14 leading-relaxed italic">
+              Tu Cuaderno de Campo Digital <span className="text-white font-black">100% Homologado</span>. Automatización total de registros oficiales para el olivar moderno.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">

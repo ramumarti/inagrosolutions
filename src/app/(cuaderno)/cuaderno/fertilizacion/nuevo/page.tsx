@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Droplets, Info } from 'lucide-react';
 import { ParcelSelector } from '@/components/agriculture/ParcelSelector';
+import { RegistrationAICoach } from '@/components/agriculture/RegistrationAICoach';
 import { createFertilizacionAction } from '@/lib/actions/agriculture';
 
 export default function NuevaFertilizacionPage() {
@@ -67,6 +68,14 @@ export default function NuevaFertilizacionPage() {
            ⚠️ {error}
         </div>
       )}
+
+      {/* IA COACH */}
+      <div className="mb-8">
+        <RegistrationAICoach 
+          module="fertilization" 
+          currentData={{ parcelId: parcelaId, type: tipo, product: producto }} 
+        />
+      </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Parcela Selector */}

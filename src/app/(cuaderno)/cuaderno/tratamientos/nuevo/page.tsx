@@ -9,6 +9,7 @@ import { useSyncStore } from "@/store/syncStore";
 
 import { createClient } from "@/lib/supabase/client";
 import { ParcelSelector } from "@/components/agriculture/ParcelSelector";
+import { RegistrationAICoach } from "@/components/agriculture/RegistrationAICoach";
 
 export default function NuevoTratamientoPage() {
   const router = useRouter();
@@ -111,6 +112,14 @@ export default function NuevoTratamientoPage() {
            ⚠️ {error}
         </div>
       )}
+
+      {/* AI TECH ASSISTANT */}
+      <div className="mb-8">
+        <RegistrationAICoach 
+          module="treatment" 
+          currentData={{ parcelId: parcelaId, product: selectedProduct?.nombreComercial, pest: plaga }} 
+        />
+      </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Parcela Selector */}

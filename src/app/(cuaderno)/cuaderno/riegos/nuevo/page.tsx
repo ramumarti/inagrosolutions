@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Droplets, Clock, Info } from 'lucide-react';
 import { ParcelSelector } from '@/components/agriculture/ParcelSelector';
+import { RegistrationAICoach } from '@/components/agriculture/RegistrationAICoach';
 import { createRiegoAction } from '@/lib/actions/agriculture';
 
 export default function NuevoRiegoPage() {
@@ -61,6 +62,14 @@ export default function NuevoRiegoPage() {
            ⚠️ {error}
         </div>
       )}
+
+      {/* IA COACH */}
+      <div className="mb-8">
+        <RegistrationAICoach 
+          module="irrigation" 
+          currentData={{ parcelId: parcelaId, volume: parseFloat(volumen || '0') }} 
+        />
+      </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl">
