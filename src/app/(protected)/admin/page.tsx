@@ -13,14 +13,13 @@ export default async function AdminUsersPage() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const [usersResponse, plansResponse, totalUsersRes, usersWithPlanRes, totalExecsRes, webhookLogsRes, recentExecsRes, recentPaymentsRes] = await Promise.all([
+  const [usersResponse, plansResponse, totalUsersRes, usersWithPlanRes, totalExplotacionesRes, webhookLogsRes, recentPaymentsRes] = await Promise.all([
     supabaseAdmin.from('users').select('*, plans(name_en, name_es, slug)').order('created_at', { ascending: false }),
     supabaseAdmin.from('plans').select('id, name_en, name_es, sort_order').eq('is_active', true).order('sort_order', { ascending: true }),
     supabaseAdmin.from('users').select('id', { count: 'exact', head: true }),
     supabaseAdmin.from('users').select('id', { count: 'exact', head: true }).not('plan_id', 'is', null),
-    supabaseAdmin.from('app_executions').select('id', { count: 'exact', head: true }),
+    supabaseAdmin.from('explotaciones').select('id', { count: 'exact', head: true }),
     supabaseAdmin.from('webhook_logs').select('normalized_payload').eq('status', 'processed'),
-    supabaseAdmin.from('app_executions').select('id, created_at, users(first_name, last_name), micro_apps(name_en, name_es)').order('created_at', { ascending: false }).limit(5),
     supabaseAdmin.from('webhook_logs').select('id, normalized_payload, created_at').eq('status', 'processed').order('created_at', { ascending: false }).limit(5)
   ]);
 
@@ -28,8 +27,7 @@ export default async function AdminUsersPage() {
   const plans = plansResponse.data || [];
   const totalUsers = totalUsersRes.count || 0;
   const usersWithPlan = usersWithPlanRes.count || 0;
-  const totalExecutions = totalExecsRes.count || 0;
-  const recentExecs = (recentExecsRes.data || []) as any[];
+  const totalExplotaciones = totalExplotacionesRes.count || 0;
   const recentPayments = (recentPaymentsRes.data || []) as any[];
 
   // Calculate simulated revenue from webhook logs
@@ -41,7 +39,7 @@ export default async function AdminUsersPage() {
   const stats = [
     { label: 'Total Users', labelEs: 'Total Usuarios', value: totalUsers.toLocaleString(), icon: Users, color: 'text-blue-400' },
     { label: 'Users with Plan', labelEs: 'Usuarios con Plan', value: usersWithPlan.toLocaleString(), icon: CreditCard, color: 'text-indigo-400' },
-    { label: 'Total Executions', labelEs: 'Ejecuciones Totales', value: totalExecutions.toLocaleString(), icon: Activity, color: 'text-amber-400' },
+    { label: 'Total Farms', labelEs: 'Explotaciones Totales', value: totalExplotaciones.toLocaleString(), icon: Activity, color: 'text-amber-400' },
     { label: 'Simulated Revenue', labelEs: 'Ingresos Simulados', value: `${simulatedRevenue.toFixed(2)} €`, icon: DollarSign, color: 'text-blue-400' },
   ];
 
@@ -62,14 +60,6 @@ export default async function AdminUsersPage() {
       descriptionEs: `💰 Pago de ${p.normalized_payload?.amount || 0} € recibido de ${p.normalized_payload?.customer_email || 'unknown'}`,
       timestamp: p.created_at,
       iconType: 'payment' as const
-    })),
-    ...recentExecs.map(e => ({
-      id: e.id,
-      type: 'execution' as const,
-      descriptionEn: `🤖 ${e.users?.first_name || 'User'} used ${e.micro_apps?.name_en || 'an app'}`,
-      descriptionEs: `🤖 ${e.users?.first_name || 'Usuario'} usó ${e.micro_apps?.name_es || 'una app'}`,
-      timestamp: e.created_at,
-      iconType: 'execution' as const
     }))
   ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 10);
 

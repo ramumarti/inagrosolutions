@@ -90,29 +90,29 @@ export default function LandingPage() {
             <div className="relative z-10 space-y-8 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
                 <Sparkles size={14} className="text-indigo-400" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Portal SaaS Empresarial V2.0</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Cuaderno Digital Avanzado</span>
               </div>
               
               <h1 className="text-6xl md:text-8xl font-black leading-none tracking-tighter">
-                TU NEGOCIO, <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600">
+                TU CAMPO, <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-emerald-500 to-green-600">
                   SIN LÍMITES.
                 </span>
               </h1>
 
               <p className="text-lg md:text-xl text-white/40 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                Gestión avanzada de micro-aplicaciones, control corporativo y automatización empresarial en una sola plataforma unificada.
+                Gestión integral de explotaciones, cumplimiento SIEX, fertilización y cuadernos agrícolas en una sola plataforma corporativa.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                  <Link href="#pricing">
-                   <GlowButton variant="primary" className="px-10 py-5 rounded-2xl text-base group">
-                     Empieza Gratis <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform" />
+                   <GlowButton variant="primary" className="px-10 py-5 rounded-2xl text-base group bg-gradient-to-r from-emerald-500 to-green-600 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+                     Empezar Gratis <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform" />
                    </GlowButton>
                  </Link>
                  <Link href="/login">
                     <GlowButton variant="secondary" className="px-10 py-5 rounded-2xl text-base">
-                      Acceso Empresa
+                      Acceso Agricultor
                     </GlowButton>
                  </Link>
               </div>
@@ -149,18 +149,18 @@ export default function LandingPage() {
       <section id="funciones" className="py-32 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center mb-24 text-center">
-            <h2 className="text-[10px] font-black uppercase text-indigo-500 tracking-[0.8em] mb-4">Core Ecosystem</h2>
-            <p className="text-[40px] md:text-5xl font-black tracking-tighter text-white">Potencia tu Transformación Digital</p>
+            <h2 className="text-[10px] font-black uppercase text-emerald-500 tracking-[0.8em] mb-4">Cuaderno Digital</h2>
+            <p className="text-[40px] md:text-5xl font-black tracking-tighter text-white">Potencia tu Explotación Agrícola</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: <Zap />, title: "Ready-to-Use", desc: "Despliega micro-aplicaciones en segundos con nuestra arquitectura sin fricción." },
-              { icon: <ShieldCheck />, title: "Seguridad Pro", desc: "Encriptación de grado militar y control de acceso granular para tu equipo." },
-              { icon: <Target />, title: "Escalabilidad", desc: "Desde startups hasta multinacionales. Crecemos con tus necesidades operativas." },
-              { icon: <BarChart4 />, title: "Analytics", desc: "Métricas en tiempo real de uso y rendimiento de todas tus herramientas." },
-              { icon: <Globe />, title: "Multi-idioma", desc: "Localizado para equipos globales en múltiples idiomas y regiones." },
-              { icon: <Lock />, title: "Privacidad", desc: "Cumplimiento 100% GDPR y normativas locales de soberanía de datos." }
+              { icon: <Zap />, title: "Ready-to-Use", desc: "Genera cuadernos de explotación en segundos, 100% compatibles con SIEX y PAC." },
+              { icon: <ShieldCheck />, title: "Seguridad Pro", desc: "Cumplimiento normativo estricto y control de acceso por perfiles para tu finca." },
+              { icon: <Target />, title: "Escalabilidad", desc: "Desde pequeños agricultores hasta grandes cooperativas. Crecemos contigo." },
+              { icon: <BarChart4 />, title: "Analytics", desc: "Métricas en tiempo real, alertas de plagas y consumo de fertilizantes." },
+              { icon: <Globe />, title: "Conectividad", desc: "Sincronización con sensores IoT y bases de datos oficiales (MAPA)." },
+              { icon: <Lock />, title: "Privacidad", desc: "Datos protegidos y privatización total de tus fincas." }
             ].map((feat, i) => (
               <GlassCard key={i} className="p-10 border-white/5 hover:bg-white/[0.04] transition-all group">
                 <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-indigo-400 mb-8 border border-white/10 group-hover:scale-110 transition-transform">
