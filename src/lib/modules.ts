@@ -53,7 +53,7 @@ export const TIER_CONFIG: Record<AgriTier, {
     label_es: 'Premium',
     label_en: 'Premium',
     max_ha: Infinity,
-    price_monthly: 49.99,
+    price_monthly: 89.99,
     color: '#F59E0B',
     gradient: 'from-amber-500 to-amber-700',
   },

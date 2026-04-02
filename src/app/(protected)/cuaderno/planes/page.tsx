@@ -71,7 +71,7 @@ export default function CuadernoPlanes() {
                 </div>
                 <h3 className="text-xl font-black text-white mb-1">{info.label_es}</h3>
                 <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">
-                  Hasta {info.max_ha === Infinity ? '∞' : info.max_ha} ha
+                  {info.max_ha === Infinity ? 'Más de 100 ha' : `Hasta ${info.max_ha} ha`}
                 </p>
               </div>
 

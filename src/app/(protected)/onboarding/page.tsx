@@ -240,7 +240,7 @@ export default function OnboardingPage() {
                         </div>
                         <p className="font-black text-white text-sm mb-0.5">{info.label_es}</p>
                         <p className="text-[9px] text-white/30 font-bold">
-                          {info.price_monthly === 0 ? 'Gratis' : `${info.price_monthly.toString().replace('.', ',')} €/mes`} • ≤{info.max_ha === Infinity ? '∞' : info.max_ha} ha
+                          {info.price_monthly === 0 ? 'Gratis' : `${info.price_monthly.toString().replace('.', ',')} €/mes`} • {info.max_ha === Infinity ? '> 100' : `≤${info.max_ha}`} ha
                         </p>
                       </button>
                     );
