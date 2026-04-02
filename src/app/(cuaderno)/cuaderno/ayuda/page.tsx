@@ -25,10 +25,26 @@ export default function HelpPage() {
   const [search, setSearch] = useState("");
 
   const faqs = [
-    { q: "¿Cómo registro mi cosecha?", icon: <FileCheck2 className="text-emerald-400" /> },
-    { q: "¿Es obligatorio el SIEX?", icon: <BookOpen className="text-amber-400" /> },
-    { q: "Sincronización offline", icon: <Smartphone className="text-blue-400" /> },
-    { q: "Videotutoriales Olivar", icon: <Video className="text-rose-400" /> }
+    { 
+      q: "¿Cómo registro mi cosecha?", 
+      icon: <FileCheck2 className="text-emerald-400" />, 
+      href: "/cuaderno/ayuda/manual#intro" 
+    },
+    { 
+      q: "¿Es obligatorio el SIEX?", 
+      icon: <BookOpen className="text-amber-400" />, 
+      href: "/cuaderno/ayuda/manual#siex" 
+    },
+    { 
+      q: "Sincronización offline", 
+      icon: <Smartphone className="text-blue-400" />, 
+      href: "/cuaderno/ayuda/manual#offline" 
+    },
+    { 
+      q: "Videotutoriales Olivar", 
+      icon: <Video className="text-rose-400" />, 
+      href: "/cuaderno/ayuda/manual#intro" 
+    }
   ];
 
   return (
@@ -68,16 +84,17 @@ export default function HelpPage() {
       {/* Topics Grid */}
       <div className="grid grid-cols-2 gap-4 mb-12">
         {faqs.map((faq, i) => (
-          <GlassCard 
-            key={i}
-            className="p-6 flex flex-col items-start gap-4 hover:bg-white/[0.08] transition-all cursor-pointer group hover:-translate-y-1"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-xl shadow-inner border border-white/5 group-hover:bg-white/10 group-hover:scale-105 transition-all">
-               {faq.icon}
-            </div>
-            <h4 className="font-black text-white text-sm leading-snug tracking-tight">{faq.q}</h4>
-            <ChevronRight className="self-end text-white/10 group-hover:text-white transition-colors" size={16} />
-          </GlassCard>
+          <Link href={faq.href} key={i}>
+            <GlassCard 
+              className="p-6 h-full flex flex-col items-start gap-4 hover:bg-white/[0.08] transition-all cursor-pointer group hover:-translate-y-1"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-xl shadow-inner border border-white/5 group-hover:bg-white/10 group-hover:scale-105 transition-all">
+                 {faq.icon}
+              </div>
+              <h4 className="font-black text-white text-sm leading-snug tracking-tight">{faq.q}</h4>
+              <ChevronRight className="self-end text-white/10 group-hover:text-white transition-colors mt-auto" size={16} />
+            </GlassCard>
+          </Link>
         ))}
       </div>
 
