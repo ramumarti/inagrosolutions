@@ -13,36 +13,40 @@ export default function CuadernoLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
+    <div className="flex flex-col min-h-screen bg-[var(--color-base-100)] text-white font-sans relative overflow-x-hidden">
+      {/* Background Orbs (Consistent with Dashboard) */}
+      <div className="fixed top-[10%] left-[10%] w-[70vw] h-[70vw] max-w-[600px] max-h-[600px] rounded-full bg-[var(--color-primary)]/10 blur-[120px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '12s' }} />
+      <div className="fixed bottom-[10%] right-[10%] w-[60vw] h-[60vw] max-w-[500px] max-h-[500px] rounded-full bg-emerald-500/5 blur-[120px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '15s', animationDelay: '2s' }} />
+
       {/* Top App Bar (Premium Digital Identity) */}
-      <header className="bg-emerald-900 text-white py-3 px-4 shadow-lg sticky top-0 z-50 flex justify-center items-center backdrop-blur-sm bg-opacity-95 border-b border-white/5">
-        <h1 className="text-sm font-black tracking-[0.2em] uppercase">SIEX <span className="font-light opacity-80">CUADERNO</span></h1>
+      <header className="bg-[var(--color-base-200)]/40 text-white py-4 px-4 shadow-lg sticky top-0 z-50 flex justify-center items-center backdrop-blur-xl border-b border-white/10">
+        <h1 className="text-xs font-black tracking-[0.3em] uppercase">SIEX <span className="text-[var(--color-primary)] font-light opacity-80 pl-1">CUADERNO</span></h1>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-grow p-4 mb-20 overflow-y-auto">
+      <main className="flex-grow p-4 mb-24 relative z-10">
         {children}
       </main>
 
       {/* Bottom Navigation (Mobile Premium) */}
-      <nav className="fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around items-center h-20 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] z-50 pb-safe px-2">
-        <Link href="/cuaderno" className="flex flex-col items-center justify-center w-full h-full text-emerald-800 transition-all active:scale-90">
-          <div className="bg-emerald-50 p-2 rounded-xl mb-1 mt-0.5">
-            <Home size={20} className="fill-emerald-800/10" />
+      <nav className="fixed bottom-0 w-full bg-[var(--color-base-300)]/80 backdrop-blur-2xl border-t border-white/10 flex justify-around items-center h-20 shadow-[0_-8px_40px_rgba(0,0,0,0.4)] z-50 pb-safe px-2">
+        <Link href="/cuaderno" className="flex flex-col items-center justify-center w-full h-full text-emerald-400 transition-all active:scale-90">
+          <div className="bg-emerald-500/10 p-2 rounded-xl mb-1 mt-0.5 border border-emerald-500/10">
+            <Home size={20} className="fill-emerald-400/10" />
           </div>
           <span className="text-[10px] font-black uppercase tracking-wider">Hoy</span>
         </Link>
-        <Link href="/cuaderno/labores" className="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-emerald-800 transition-all active:scale-90">
+        <Link href="/cuaderno/labores" className="flex flex-col items-center justify-center w-full h-full text-white/40 hover:text-emerald-400 transition-all active:scale-90">
           <NotebookPen size={22} className="mb-1" />
           <span className="text-[10px] font-bold uppercase tracking-[0.05em]">Registro</span>
         </Link>
-        <Link href="/cuaderno/premium" className="flex flex-col items-center justify-center w-full h-full text-indigo-600 transition-all active:scale-95">
+        <Link href="/cuaderno/premium" className="flex flex-col items-center justify-center w-full h-full text-indigo-400 transition-all active:scale-95">
           <div className="relative mb-1">
-             <svg className="w-6 h-6 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+             <svg className="w-6 h-6 animate-pulse drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
           </div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-indigo-700">Premium</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-indigo-300">Premium</span>
         </Link>
-        <Link href="/cuaderno/ajustes" className="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-emerald-800 transition-all active:scale-90">
+        <Link href="/cuaderno/ajustes" className="flex flex-col items-center justify-center w-full h-full text-white/40 hover:text-emerald-400 transition-all active:scale-90">
           <Settings size={22} className="mb-1" />
           <span className="text-[10px] font-bold uppercase tracking-[0.05em]">Ajustes</span>
         </Link>
