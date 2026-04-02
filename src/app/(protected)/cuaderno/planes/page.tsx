@@ -77,7 +77,7 @@ export default function CuadernoPlanes() {
 
               <div className="mb-8">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-white">{info.price_monthly === 0 ? 'Gratis' : `${info.price_monthly}€`}</span>
+                  <span className="text-3xl font-black text-white">{info.price_monthly === 0 ? 'Gratis' : `${info.price_monthly.toString().replace('.', ',')} €`}</span>
                   {info.price_monthly > 0 && <span className="text-xs text-white/20 font-bold">/mes</span>}
                 </div>
               </div>
@@ -121,7 +121,7 @@ export default function CuadernoPlanes() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
             { q: '¿Puedo cambiar de plan en cualquier momento?', a: 'Sí, puedes mejorar o reducir tu plan sin perder datos registrados.' },
-            { q: '¿Los módulos obligatorios son siempre gratis?', a: 'Los módulos de registro legal (SIEX, fitosanitarios, fertilización, labores) están incluidos en todos los planes.' },
+            { q: '¿Los módulos obligatorios están incluidos en el plan básico?', a: 'Los módulos de registro legal (SIEX, fitosanitarios, fertilización, labores) están incluidos en todos los planes.' },
             { q: '¿Qué pasa si supero las hectáreas de mi plan?', a: 'Recibirás una notificación para actualizar al plan correspondiente. Tus datos seguirán accesibles.' },
             { q: '¿Puedo contratar módulos adicionales sin cambiar de plan?', a: 'Sí, los módulos opcionales como Control de Costes o Sensores IoT se pueden contratar individualmente.' },
           ].map((faq, i) => (

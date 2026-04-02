@@ -29,7 +29,7 @@ export const TIER_CONFIG: Record<AgriTier, {
     label_es: 'Básico',
     label_en: 'Basic',
     max_ha: 5,
-    price_monthly: 0,
+    price_monthly: 3.99,
     color: '#6366F1',
     gradient: 'from-indigo-500 to-indigo-700',
   },

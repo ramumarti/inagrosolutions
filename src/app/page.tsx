@@ -185,18 +185,18 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-3 gap-8">
              {/* Starter */}
              <GlassCard className="p-10 border-white/10 flex flex-col items-center text-center">
-                <span className="text-[10px] font-black uppercase text-white/30 tracking-widest mb-4">Starter</span>
+                <span className="text-[10px] font-black uppercase text-white/30 tracking-widest mb-4">Básico</span>
                 <div className="flex items-baseline gap-1 mb-8">
-                  <span className="text-5xl font-black">€0</span>
-                  <span className="text-white/20 font-black text-xs uppercase">/Forever</span>
+                  <span className="text-5xl font-black">€3.99</span>
+                  <span className="text-white/20 font-black text-xs uppercase">/mes</span>
                 </div>
                 <ul className="space-y-4 mb-10 w-full text-white/50 text-sm font-medium">
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> 1 Micro-App Activa</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> 1 Explotación Agrícola</li>
                    <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> 2 Usuarios</li>
                    <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Soporte Comunidad</li>
                 </ul>
                 <Link href="/register" className="w-full">
-                  <GlowButton variant="secondary" className="w-full py-4 rounded-2xl text-xs">Empezar Gratis</GlowButton>
+                  <GlowButton variant="secondary" className="w-full py-4 rounded-2xl text-xs">Empezar Básico</GlowButton>
                 </Link>
              </GlassCard>
 
