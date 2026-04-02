@@ -65,7 +65,7 @@ function LoginContent() {
       </div>
       
       <h1 className="text-3xl font-bold mb-2 glow-text text-center">
-        {t('app.name')}
+        {t('login.hero_title')}
       </h1>
       <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-sm">
         {t('app.tagline')}
