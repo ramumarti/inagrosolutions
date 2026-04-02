@@ -49,6 +49,12 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
       isActive: pathname === '/dashboard'
     },
     {
+      label: language === 'en' ? 'Cuaderno Pro' : 'Cuaderno Pro',
+      href: '/cuaderno-pro',
+      icon: Leaf,
+      isActive: pathname.startsWith('/cuaderno-pro')
+    },
+    {
       label: language === 'en' ? 'Micro Apps' : 'Micro Apps',
       href: '/apps',
       icon: LayoutGrid,
