@@ -114,10 +114,10 @@ export default function HelpPage() {
             <span className="text-[10px] font-black uppercase tracking-widest">Web Oficial SIEX / MAPA</span>
             <ExternalLink size={14} className="group-hover:rotate-12 transition-transform" />
          </a>
-         <a href="#" className="flex items-center justify-between p-4 bg-white/5 rounded-2xl text-white/40 hover:text-white transition-all group border border-white/5">
-            <span className="text-[10px] font-black uppercase tracking-widest">Manual de Usuario (PDF)</span>
+         <Link href="/cuaderno/ayuda/manual" className="flex items-center justify-between p-4 bg-white/5 rounded-2xl text-white/40 hover:text-white transition-all group border border-white/5">
+            <span className="text-[10px] font-black uppercase tracking-widest">Manual de Usuario (Digital + PDF)</span>
             <BookOpen size={14} className="group-hover:rotate-12 transition-transform" />
-         </a>
+         </Link>
       </div>
     </div>
   );
