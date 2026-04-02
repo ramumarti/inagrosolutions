@@ -99,7 +99,7 @@ export default function LandingPage() {
                       <div className="w-3 h-3 rounded-full bg-emerald-500/30" />
                    </div>
                    <div className="flex-1 bg-white/5 h-6 rounded-lg text-[10px] flex items-center justify-center text-white/20 font-black uppercase tracking-[0.2em] px-4 whitespace-nowrap overflow-hidden">
-                      app.inagrosolutions.es / (cuaderno) / dashboard
+                      app.inagrosolutions.com / (cuaderno) / dashboard
                    </div>
                 </div>
                 <img 
