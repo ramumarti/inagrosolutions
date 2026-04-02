@@ -7,8 +7,8 @@ type Translations = Record<string, string>;
 
 const translations: Record<Language, Translations> = {
   en: {
-    "app.name": "IASOLUTIONS",
-    "app.tagline": "Your micro applications portal",
+    "app.name": "Digital Field Notebook",
+    "app.tagline": "The professional tool for modern agriculture",
     "login.title": "Welcome Back",
     "login.email": "Email",
     "login.password": "Password",
@@ -70,8 +70,8 @@ const translations: Record<Language, Translations> = {
     "legal.lastUpdated": "Last updated",
   },
   es: {
-    "app.name": "IASOLUTIONS",
-    "app.tagline": "Tu portal de micro aplicaciones",
+    "app.name": "Tu Cuaderno de Campo Digital",
+    "app.tagline": "La herramienta profesional para la agricultura moderna",
     "login.title": "Bienvenido de nuevo",
     "login.email": "Correo electrónico",
     "login.password": "Contraseña",
