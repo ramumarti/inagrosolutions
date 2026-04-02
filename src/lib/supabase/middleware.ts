@@ -41,9 +41,9 @@ export async function updateSession(request: NextRequest) {
   ]
   const isPublicRoute = publicPaths.includes(pathname) || pathname.startsWith('/api') || pathname.startsWith('/auth')
 
-  if (user && (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password')) {
+  if (user && (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password' || pathname === '/')) {
     const url = request.nextUrl.clone()
-    url.pathname = '/'
+    url.pathname = '/dashboard'
     return NextResponse.redirect(url)
   }
 

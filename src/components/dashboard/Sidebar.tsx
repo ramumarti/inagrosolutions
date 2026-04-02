@@ -44,9 +44,9 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
   const navItems: Array<{ label: string; href: string; icon: any; isActive: boolean; isChild?: boolean }> = [
     {
       label: language === 'en' ? 'Dashboard' : 'Dashboard',
-      href: '/',
+      href: '/dashboard',
       icon: Home,
-      isActive: pathname === '/'
+      isActive: pathname === '/dashboard'
     },
     {
       label: language === 'en' ? 'Micro Apps' : 'Micro Apps',
@@ -104,11 +104,11 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         )}
       >
         <div className="flex items-center h-16 px-4 border-b border-white/10 shrink-0 relative">
-          <Link href="/" className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center shadow-[0_0_15px_rgba(124,58,237,0.5)] shrink-0">
+          <Link href="/dashboard" className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center shadow-[0_0_15px_rgba(124,58,237,0.5)] shrink-0">
             <Hexagon className="w-5 h-5 text-white" />
           </Link>
           {(!isCollapsed || isMobileOpen) && (
-            <Link href="/" className="ml-3 font-bold text-lg glow-text whitespace-nowrap overflow-hidden">
+            <Link href="/dashboard" className="ml-3 font-bold text-lg glow-text whitespace-nowrap overflow-hidden">
               {t('app.name')}
             </Link>
           )}
