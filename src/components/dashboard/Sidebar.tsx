@@ -51,12 +51,21 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
   }, [pathname]);
 
   const navItems: Array<{ label: string; href: string; icon: any; isActive: boolean; isChild?: boolean; section?: string }> = [
-    {
-      label: 'Dashboard',
-      href: '/dashboard',
-      icon: Home,
-      isActive: pathname === '/dashboard'
-    },
+    ...(isAdmin ? [
+      {
+        label: 'Administración',
+        href: '/admin',
+        icon: Shield,
+        isActive: pathname === '/admin'
+      },
+      {
+        label: 'Gestión de Emails',
+        href: '/admin/email',
+        icon: Mail,
+        isActive: pathname.startsWith('/admin/email'),
+        isChild: true
+      }
+    ] : [])
   ];
 
   // Cuaderno Digital section
@@ -72,23 +81,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
 
   const bottomNav: typeof navItems = [];
 
-  if (isAdmin) {
-    bottomNav.push(
-      {
-        label: 'Admin',
-        href: '/admin',
-        icon: Shield,
-        isActive: pathname === '/admin'
-      },
-      {
-        label: 'Email',
-        href: '/admin/email',
-        icon: Mail,
-        isActive: pathname.startsWith('/admin/email'),
-        isChild: true
-      }
-    );
-  }
+
 
   const renderNavLink = (item: typeof navItems[0]) => (
     <Link 
