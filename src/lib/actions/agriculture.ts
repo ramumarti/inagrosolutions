@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server';
-import { CreateExplotacionSchema, CreateParcelaSchema, CreateFertilizacionSchema, CreatePlagaSchema } from '@/lib/agriculture/schemas';
+import { CreateExplotacionSchema, CreateParcelaSchema, CreateFertilizacionSchema, CreatePlagaSchema, CreateRiegoSchema } from '@/lib/agriculture/schemas';
 import { revalidatePath } from 'next/cache';
 
 /**
@@ -151,4 +151,37 @@ export async function createPlagaAction(data: any) {
     return { success: false, error: "Error al registrar el monitoreo" };
   }
 }
+
+export async function createRiegoAction(data: any) {
+  const supabase = await createClient();
+  
+  try {
+    const result = CreateRiegoSchema.safeParse(data);
+    if (!result.success) {
+      return { success: false, error: "Datos de riego inválidos", details: result.error.format() };
+    }
+
+    const { data: record, error: dbError } = await supabase
+      .from('riegos')
+      .insert([{
+        parcela_id: result.data.parcela_id,
+        fecha: result.data.fecha.toISOString(),
+        volumen_m3: result.data.volumen_m3,
+        horas_riego: result.data.horas,
+        metodo: result.data.metodo
+      }])
+      .select()
+      .single();
+
+    if (dbError) throw dbError;
+
+    revalidatePath('/cuaderno');
+    return { success: true, data: record };
+
+  } catch (error: any) {
+    console.error('Riego Error:', error);
+    return { success: false, error: "Error al registrar el riego" };
+  }
+}
+
 

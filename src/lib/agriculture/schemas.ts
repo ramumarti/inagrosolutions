@@ -56,8 +56,17 @@ export const CreatePlagaSchema = z.object({
   recomendacion: z.string().optional(),
 });
 
+export const CreateRiegoSchema = z.object({
+  parcela_id: z.string().uuid({ message: "La parcela es obligatoria" }),
+  fecha: z.string().or(z.date()).transform((val) => new Date(val)),
+  volumen_m3: z.number().positive({ message: "El volumen debe ser mayor que cero" }),
+  horas: z.number().optional(),
+  metodo: z.string().optional().default('goteo'),
+});
+
 export type CreateTreatmentDto = z.infer<typeof CreateTreatmentSchema>;
 export type CreateExplotacionDto = z.infer<typeof CreateExplotacionSchema>;
 export type CreateParcelaDto = z.infer<typeof CreateParcelaSchema>;
 export type CreateFertilizacionDto = z.infer<typeof CreateFertilizacionSchema>;
 export type CreatePlagaDto = z.infer<typeof CreatePlagaSchema>;
+export type CreateRiegoDto = z.infer<typeof CreateRiegoSchema>;
