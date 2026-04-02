@@ -13,6 +13,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { WeatherAlertService, SmartAlert } from '@/lib/agriculture/weather-alerts';
+import { Badge } from '@/components/ui/Badge';
 
 export function SmartAssistant() {
   const [alerts, setAlerts] = useState<SmartAlert[]>([]);
@@ -88,10 +89,10 @@ export function SmartAssistant() {
         <div className="flex-1">
           <div className="flex items-center justify-between mb-2">
             <h4 className={`text-sm font-black uppercase tracking-wider ${currentColors.title}`}>{alert.title}</h4>
-            <div className="flex items-center gap-1.5 px-2 py-1">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-[9px] font-black uppercase text-emerald-500 tracking-[0.1em]">Predictor IA</span>
-            </div>
+            <Badge variant="success" className="gap-1.5 px-2.5 py-1 border-emerald-500/10 bg-emerald-500/5 shadow-sm animate-pulse">
+              <Sparkles className="w-3 h-3 text-emerald-400" />
+              Predictor IA
+            </Badge>
           </div>
           <p className="text-sm text-gray-400 font-medium leading-relaxed max-w-sm mb-5 pr-4">
             {alert.description}
