@@ -1,0 +1,43 @@
+﻿Ôû▓ Next.js 16.2.1 (webpack)
+- Environments: .env.local
+
+node.exe : ÔÜá The 
+"middleware" file 
+convention is deprecated. 
+Please use "proxy" 
+instead. Learn more: https
+://nextjs.org/docs/message
+s/middleware-to-proxy
+En línea: 1 Carácter: 1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (Ô  
+  Üá The "middle...lewa   
+ re-to-proxy:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+  Creating an optimized production build ...
+Ô£ô (serwist) Bundling the service worker script with the URL '/sw.js' and the scope '/'...
+Failed to compile.
+
+./src/app/api/farms/route.
+ts
+Module not found: Can't 
+resolve 
+'@/services/farmService'
+
+https://nextjs.org/docs/me
+ssages/module-not-found
+
+
+> Build failed because of 
+webpack errors

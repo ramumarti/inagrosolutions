@@ -2,7 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Hexagon, LayoutGrid, ChevronLeft, ChevronRight, Home, CreditCard, Shield, Mail, Leaf } from 'lucide-react';
+import { 
+  Hexagon, LayoutGrid, ChevronLeft, ChevronRight, Home, CreditCard, 
+  Shield, Mail, Leaf, Bug, Droplets, MapPin, Wallet, Crown,
+  BookOpen, FileDown, Bell
+} from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,6 +24,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
   const supabase = createClient();
   const pathname = usePathname();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [cuadernoOpen, setCuadernoOpen] = useState(pathname.startsWith('/cuaderno'));
 
   useEffect(() => {
     let mounted = true;
@@ -41,21 +46,33 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
     return () => { mounted = false; };
   }, [supabase]);
 
-  const navItems: Array<{ label: string; href: string; icon: any; isActive: boolean; isChild?: boolean }> = [
+  useEffect(() => {
+    if (pathname.startsWith('/cuaderno')) setCuadernoOpen(true);
+  }, [pathname]);
+
+  const navItems: Array<{ label: string; href: string; icon: any; isActive: boolean; isChild?: boolean; section?: string }> = [
     {
-      label: language === 'en' ? 'Dashboard' : 'Dashboard',
+      label: 'Dashboard',
       href: '/dashboard',
       icon: Home,
       isActive: pathname === '/dashboard'
     },
+  ];
+
+  // Cuaderno Digital section
+  const cuadernoItems: Array<{ label: string; href: string; icon: any; isActive: boolean }> = [
+    { label: language === 'en' ? 'Overview' : 'Panel', href: '/cuaderno', icon: BookOpen, isActive: pathname === '/cuaderno' },
+    { label: language === 'en' ? 'Treatments' : 'Tratamientos', href: '/cuaderno', icon: Bug, isActive: false },
+    { label: language === 'en' ? 'Tasks' : 'Labores', href: '/cuaderno', icon: Leaf, isActive: false },
+    { label: language === 'en' ? 'Fertilization' : 'Fertilización', href: '/cuaderno', icon: Droplets, isActive: false },
+    { label: language === 'en' ? 'Parcels' : 'Parcelas', href: '/cuaderno', icon: MapPin, isActive: false },
+    { label: language === 'en' ? 'Export' : 'Exportación', href: '/cuaderno', icon: FileDown, isActive: false },
+    { label: language === 'en' ? 'Plans' : 'Planes', href: '/cuaderno/planes', icon: Crown, isActive: pathname === '/cuaderno/planes' },
+  ];
+
+  const bottomNav: typeof navItems = [
     {
-      label: language === 'en' ? 'Cuaderno Pro' : 'Cuaderno Pro',
-      href: '/cuaderno-pro',
-      icon: Leaf,
-      isActive: pathname.startsWith('/cuaderno-pro')
-    },
-    {
-      label: language === 'en' ? 'Micro Apps' : 'Micro Apps',
+      label: 'Micro Apps',
       href: '/apps',
       icon: LayoutGrid,
       isActive: pathname.startsWith('/apps')
@@ -69,15 +86,15 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
   ];
 
   if (isAdmin) {
-    navItems.push(
+    bottomNav.push(
       {
-        label: language === 'en' ? 'Admin' : 'Admin',
+        label: 'Admin',
         href: '/admin',
         icon: Shield,
         isActive: pathname === '/admin'
       },
       {
-        label: language === 'en' ? 'Email' : 'Email',
+        label: 'Email',
         href: '/admin/email',
         icon: Mail,
         isActive: pathname.startsWith('/admin/email'),
@@ -85,6 +102,31 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
       }
     );
   }
+
+  const renderNavLink = (item: typeof navItems[0]) => (
+    <Link 
+      key={item.href + item.label} 
+      href={item.href}
+      className={cn(
+        "group flex items-center gap-3 w-full rounded-lg transition-all active:scale-[0.98]",
+        item.isChild && !isCollapsed ? "ml-4 pl-4 py-2 text-xs border-l border-white/10" : "px-3 py-2.5",
+        item.isActive 
+          ? "bg-[var(--color-primary)]/20 text-white shadow-inner border border-[var(--color-primary)]/30" 
+          : "text-white/70 hover:text-white hover:bg-white/10 border border-transparent"
+      )}
+    >
+      <item.icon className={cn(
+        "shrink-0 transition-colors",
+        item.isChild && !isCollapsed ? "w-4 h-4" : "w-5 h-5",
+        item.isActive ? "text-white" : "text-white group-hover:text-[var(--color-primary)]"
+      )} />
+      {(!isCollapsed || isMobileOpen) && (
+        <span className="font-medium whitespace-nowrap overflow-hidden text-sm">
+          {item.label}
+        </span>
+      )}
+    </Link>
+  );
 
   return (
     <>
@@ -121,33 +163,56 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
           </button>
         </div>
 
-        <div className="flex-1 py-6 px-3 flex flex-col gap-6 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10">
-          <div className="flex flex-col gap-1">
-            {navItems.map((item) => (
-              <Link 
-                key={item.href} 
-                href={item.href}
-                className={cn(
-                  "group flex items-center gap-3 w-full rounded-lg transition-all active:scale-[0.98]",
-                  (item as any).isChild && !isCollapsed ? "ml-4 pl-4 py-2 text-xs border-l border-white/10" : "px-3 py-2.5",
-                  item.isActive 
-                    ? "bg-[var(--color-primary)]/20 text-white shadow-inner border border-[var(--color-primary)]/30" 
-                    : "text-white/70 hover:text-white hover:bg-white/10 border border-transparent"
-                )}
-              >
-                <item.icon className={cn(
-                  "shrink-0 transition-colors",
-                  (item as any).isChild && !isCollapsed ? "w-4 h-4" : "w-5 h-5",
-                  item.isActive ? "text-white" : "text-white group-hover:text-[var(--color-primary)]"
-                )} />
-                {(!isCollapsed || isMobileOpen) && (
-                  <span className="font-medium whitespace-nowrap overflow-hidden text-sm">
+        <div className="flex-1 py-6 px-3 flex flex-col gap-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10">
+          {/* Main nav */}
+          {navItems.map(renderNavLink)}
+
+          {/* Cuaderno Digital Section */}
+          <div className="mt-2">
+            <button
+              onClick={() => setCuadernoOpen(!cuadernoOpen)}
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all",
+                pathname.startsWith('/cuaderno')
+                  ? "bg-emerald-500/10 text-white border border-emerald-500/20"
+                  : "text-white/70 hover:text-white hover:bg-white/10 border border-transparent"
+              )}
+            >
+              <BookOpen className={cn("w-5 h-5 shrink-0", pathname.startsWith('/cuaderno') ? 'text-emerald-400' : 'text-white/50')} />
+              {(!isCollapsed || isMobileOpen) && (
+                <>
+                  <span className="font-medium text-sm flex-1 text-left">Cuaderno Digital</span>
+                  <ChevronRight className={cn("w-4 h-4 transition-transform text-white/30", cuadernoOpen && "rotate-90")} />
+                </>
+              )}
+            </button>
+            
+            {cuadernoOpen && (!isCollapsed || isMobileOpen) && (
+              <div className="ml-4 mt-1 space-y-0.5 pl-4 border-l border-white/5 animate-in slide-in-from-top-2 duration-200">
+                {cuadernoItems.map(item => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-bold transition-all",
+                      item.isActive
+                        ? "text-emerald-400 bg-emerald-500/10"
+                        : "text-white/30 hover:text-white/60 hover:bg-white/5"
+                    )}
+                  >
+                    <item.icon size={14} />
                     {item.label}
-                  </span>
-                )}
-              </Link>
-            ))}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
+
+          {/* Separator */}
+          <div className="my-4 border-t border-white/5" />
+
+          {/* Bottom nav */}
+          {bottomNav.map(renderNavLink)}
         </div>
       </aside>
     </>

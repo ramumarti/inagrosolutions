@@ -1,0 +1,16 @@
+[96msrc/app/(protected)/cuaderno/page.tsx[0m:[93m148[0m:[93m14[0m - [91merror[0m[90m TS2678: [0mType '"fitosanitarios"' is not comparable to type '"parcelas" | "fertilizacion" | "labores" | "alertas" | "costes" | "tratamientos" | "cosechas" | "trazabilidad" | "dashboards" | "sensores" | "exportacion"'.
+
+[7m148[0m         case 'fitosanitarios':
+[7m   [0m [91m             ~~~~~~~~~~~~~~~~[0m
+
+[96msrc/store/syncStore.ts[0m:[93m4[0m:[93m60[0m - [91merror[0m[90m TS2307: [0mCannot find module '@/lib/offline-db' or its corresponding type declarations.
+
+[7m4[0m import { getQueue, removeFromQueue, PendingMutation } from '@/lib/offline-db';
+[7m [0m [91m                                                           ~~~~~~~~~~~~~~~~~~[0m
+
+
+Found 2 errors in 2 files.
+
+Errors  Files
+     1  src/app/(protected)/cuaderno/page.tsx[90m:148[0m
+     1  src/store/syncStore.ts[90m:4[0m

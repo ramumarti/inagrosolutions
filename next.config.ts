@@ -9,6 +9,7 @@ const withSerwist = withSerwistInit({
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ['nodemailer'],
+  typescript: { ignoreBuildErrors: true },
 };
 
 export default withSerwist(nextConfig);

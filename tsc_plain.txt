@@ -1,0 +1,2 @@
+src/app/(protected)/cuaderno/page.tsx(148,14): error TS2678: Type '"fitosanitarios"' is not comparable to type '"parcelas" | "fertilizacion" | "labores" | "alertas" | "costes" | "tratamientos" | "cosechas" | "trazabilidad" | "dashboards" | "sensores" | "exportacion"'.
+src/store/syncStore.ts(4,60): error TS2307: Cannot find module '@/lib/offline-db' or its corresponding type declarations.
