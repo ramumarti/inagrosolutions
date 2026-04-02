@@ -44,7 +44,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-4">
-             <Link href="/auth/login">
+             <Link href="/login">
                 <button className="px-6 py-2 text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-white transition-all">Acceso Usuario</button>
              </Link>
              <Link href="/cuaderno">
