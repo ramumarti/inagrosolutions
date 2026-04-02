@@ -8,8 +8,8 @@ type Translations = Record<string, string>;
 const translations: Record<Language, Translations> = {
   en: {
     "app.name": "IASOLUTIONS",
-    "app.tagline": "The professional tool for modern agriculture",
-    "login.hero_title": "Digital Field Notebook",
+    "app.tagline": "Professional SaaS management for micro-applications",
+    "login.hero_title": "Intelligent Management Portal",
     "login.title": "Welcome Back",
     "login.email": "Email",
     "login.password": "Password",

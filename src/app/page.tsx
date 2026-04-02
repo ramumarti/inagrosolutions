@@ -31,7 +31,7 @@ const GlowButton = ({ children, variant = 'primary', className = "" }: { childre
   <button className={`
     font-black uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center
     ${variant === 'primary' 
-      ? 'bg-gradient-to-r from-emerald-500 to-blue-600 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]' 
+      ? 'bg-gradient-to-r from-indigo-500 to-blue-600 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]' 
       : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'}
     ${className}
   `}>
@@ -43,10 +43,10 @@ export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   return (
-    <div className="min-h-screen bg-[#050510] text-white selection:bg-emerald-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-[#050510] text-white selection:bg-indigo-500/30 overflow-x-hidden">
       {/* Dynamic Background Elements */}
       <div className="fixed inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[150px] rounded-full" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[150px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[150px] rounded-full" />
         <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-600/5 blur-[120px] rounded-full" />
       </div>
@@ -55,7 +55,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 transition-all duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-             <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg transform rotate-3">
+             <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg transform rotate-3">
                <Layers size={22} className="text-white" />
              </div>
              <span className="text-2xl font-black tracking-tighter glow-text">IASOLUTIONS</span>
@@ -88,14 +88,14 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div className="relative z-10 space-y-8 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                <Sparkles size={14} className="text-emerald-400" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Portal SaaS Empresarial V2.0</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
+                <Sparkles size={14} className="text-indigo-400" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Portal SaaS Empresarial V2.0</span>
               </div>
               
               <h1 className="text-6xl md:text-8xl font-black leading-none tracking-tighter">
                 TU NEGOCIO, <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-blue-500 to-purple-600">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600">
                   SIN LÍMITES.
                 </span>
               </h1>
@@ -119,10 +119,10 @@ export default function LandingPage() {
             </div>
 
             <div className="relative group">
-              <div className="absolute inset-0 bg-emerald-500/20 blur-[120px] rounded-full group-hover:bg-blue-600/20 transition-all duration-1000" />
+              <div className="absolute inset-0 bg-indigo-500/20 blur-[120px] rounded-full group-hover:bg-blue-600/20 transition-all duration-1000" />
               <GlassCard className="p-4 border-white/20 bg-white/[0.03] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] transform hover:scale-[1.02] transition-all duration-700">
                 <div className="h-[400px] w-full bg-[#080815] rounded-[24px] border border-white/5 overflow-hidden relative">
-                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent" />
+                   <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent" />
                    {/* Simulated Dashboard UI */}
                    <div className="p-8 space-y-6">
                       <div className="flex items-center gap-4">
@@ -136,7 +136,7 @@ export default function LandingPage() {
                          <div className="h-32 bg-white/5 rounded-2xl border border-white/5" />
                          <div className="h-32 bg-white/5 rounded-2xl border border-white/5" />
                       </div>
-                      <div className="h-24 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-2xl border border-white/5" />
+                      <div className="h-24 bg-gradient-to-r from-indigo-500/10 to-blue-500/10 rounded-2xl border border-white/5" />
                    </div>
                 </div>
               </GlassCard>
@@ -149,7 +149,7 @@ export default function LandingPage() {
       <section id="funciones" className="py-32 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center mb-24 text-center">
-            <h2 className="text-[10px] font-black uppercase text-emerald-500 tracking-[0.8em] mb-4">Core Ecosystem</h2>
+            <h2 className="text-[10px] font-black uppercase text-indigo-500 tracking-[0.8em] mb-4">Core Ecosystem</h2>
             <p className="text-[40px] md:text-5xl font-black tracking-tighter text-white">Potencia tu Transformación Digital</p>
           </div>
 
@@ -163,7 +163,7 @@ export default function LandingPage() {
               { icon: <Lock />, title: "Privacidad", desc: "Cumplimiento 100% GDPR y normativas locales de soberanía de datos." }
             ].map((feat, i) => (
               <GlassCard key={i} className="p-10 border-white/5 hover:bg-white/[0.04] transition-all group">
-                <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-emerald-400 mb-8 border border-white/10 group-hover:scale-110 transition-transform">
+                <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-indigo-400 mb-8 border border-white/10 group-hover:scale-110 transition-transform">
                    {React.cloneElement(feat.icon as React.ReactElement<{ size?: number }>, { size: 28 })}
                 </div>
                 <h3 className="text-xl font-black text-white mb-4 uppercase tracking-tight">{feat.title}</h3>
@@ -191,9 +191,9 @@ export default function LandingPage() {
                   <span className="text-white/20 font-black text-xs uppercase">/Forever</span>
                 </div>
                 <ul className="space-y-4 mb-10 w-full text-white/50 text-sm font-medium">
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-emerald-500" /> 1 Micro-App Activa</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-emerald-500" /> 2 Usuarios</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-emerald-500" /> Soporte Comunidad</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> 1 Micro-App Activa</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> 2 Usuarios</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Soporte Comunidad</li>
                 </ul>
                 <Link href="/register" className="w-full">
                   <GlowButton variant="secondary" className="w-full py-4 rounded-2xl text-xs">Empezar Gratis</GlowButton>
@@ -201,18 +201,18 @@ export default function LandingPage() {
              </GlassCard>
 
              {/* Professional */}
-             <GlassCard className="p-10 border-emerald-500/30 bg-emerald-500/[0.02] flex flex-col items-center text-center scale-105 shadow-[0_30px_60px_-15px_rgba(16,185,129,0.15)] relative">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-emerald-500 text-black text-[9px] font-black uppercase tracking-widest rounded-full">Más Popular</div>
-                <span className="text-[10px] font-black uppercase text-emerald-400 tracking-widest mb-4 font-bold">Professional</span>
+             <GlassCard className="p-10 border-indigo-500/30 bg-indigo-500/[0.02] flex flex-col items-center text-center scale-105 shadow-[0_30px_60px_-15px_rgba(16,185,129,0.15)] relative">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-indigo-500 text-black text-[9px] font-black uppercase tracking-widest rounded-full">Más Popular</div>
+                <span className="text-[10px] font-black uppercase text-indigo-400 tracking-widest mb-4 font-bold">Professional</span>
                 <div className="flex items-baseline gap-1 mb-8">
                   <span className="text-5xl font-black">€29</span>
-                  <span className="text-emerald-400/30 font-black text-xs uppercase">/mes</span>
+                  <span className="text-indigo-400/30 font-black text-xs uppercase">/mes</span>
                 </div>
                 <ul className="space-y-4 mb-10 w-full text-white/70 text-sm font-black">
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-emerald-500" /> Micro-Apps Ilimitadas</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-emerald-500" /> Hasta 10 Usuarios</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-emerald-500" /> API Access</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-emerald-500" /> Soporte Prioritario</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Micro-Apps Ilimitadas</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Hasta 10 Usuarios</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> API Access</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Soporte Prioritario</li>
                 </ul>
                 <Link href="/register" className="w-full">
                   <GlowButton variant="primary" className="w-full py-4 rounded-2xl text-xs">Escoger Pro</GlowButton>
@@ -227,9 +227,9 @@ export default function LandingPage() {
                   <span className="text-white/20 font-black text-xs uppercase">/mes</span>
                 </div>
                 <ul className="space-y-4 mb-10 w-full text-white/50 text-sm font-medium">
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-emerald-500" /> White Labeling</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-emerald-500" /> Usuarios Ilimitados</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-emerald-500" /> SLA Garantizado</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> White Labeling</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Usuarios Ilimitados</li>
+                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> SLA Garantizado</li>
                 </ul>
                 <Link href="/login" className="w-full">
                   <GlowButton variant="secondary" className="w-full py-4 rounded-2xl text-xs">Contactar Ventas</GlowButton>

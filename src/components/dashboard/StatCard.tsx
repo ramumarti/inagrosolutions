@@ -35,7 +35,7 @@ export function StatCard({ title, value, icon, trend, trendText, className }: St
         <div className="flex items-center gap-2 mt-2">
           <div className={cn(
             "flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full",
-            isPositive ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"
+            isPositive ? "bg-blue-500/10 text-blue-400" : "bg-red-500/10 text-red-400"
           )}>
             {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
             {Math.abs(trend)}%

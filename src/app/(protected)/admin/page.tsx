@@ -40,9 +40,9 @@ export default async function AdminUsersPage() {
 
   const stats = [
     { label: 'Total Users', labelEs: 'Total Usuarios', value: totalUsers.toLocaleString(), icon: Users, color: 'text-blue-400' },
-    { label: 'Users with Plan', labelEs: 'Usuarios con Plan', value: usersWithPlan.toLocaleString(), icon: CreditCard, color: 'text-emerald-400' },
+    { label: 'Users with Plan', labelEs: 'Usuarios con Plan', value: usersWithPlan.toLocaleString(), icon: CreditCard, color: 'text-indigo-400' },
     { label: 'Total Executions', labelEs: 'Ejecuciones Totales', value: totalExecutions.toLocaleString(), icon: Activity, color: 'text-amber-400' },
-    { label: 'Simulated Revenue', labelEs: 'Ingresos Simulados', value: `${simulatedRevenue.toFixed(2)} €`, icon: DollarSign, color: 'text-green-400' },
+    { label: 'Simulated Revenue', labelEs: 'Ingresos Simulados', value: `${simulatedRevenue.toFixed(2)} €`, icon: DollarSign, color: 'text-blue-400' },
   ];
 
   // Combine activities for the feed

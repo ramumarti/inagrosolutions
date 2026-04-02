@@ -27,7 +27,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="w-8 h-8 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
       </div>
     );
   }
@@ -40,11 +40,11 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-2">
-               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-               <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none">Sistema Operativo</span>
+               <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+               <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none">Sistema Operativo</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-none">
-              Bienvenido, <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">{firstName}</span>
+              Bienvenido, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-500">{firstName}</span>
             </h1>
             <p className="text-white/30 mt-4 text-xs font-bold uppercase tracking-[0.2em]">
               Panel de Control Central • <span className="text-white/60 italic">Vercel Enterprise Edition</span>
@@ -67,7 +67,7 @@ export default function DashboardPage() {
         {/* Quick Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            { label: 'Uso de API', value: '84%', icon: <Activity size={20} />, color: 'emerald' },
+            { label: 'Uso de API', value: '84%', icon: <Activity size={20} />, color: 'indigo' },
             { label: 'Micro-Apps', value: '12', icon: <Boxes size={20} />, color: 'blue' },
             { label: 'Proyectos', value: '3', icon: <LayoutGrid size={20} />, color: 'purple' },
             { label: 'Storage', value: '1.2 GB', icon: <Database size={20} />, color: 'amber' }
@@ -97,7 +97,7 @@ export default function DashboardPage() {
                     {[1, 2, 3].map((_, i) => (
                       <div key={i} className="flex items-center justify-between py-4 border-b border-white/5 last:border-0 group cursor-pointer hover:px-2 transition-all">
                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/20 group-hover:text-emerald-400 group-hover:bg-emerald-500/10 transition-all">
+                            <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/20 group-hover:text-indigo-400 group-hover:bg-indigo-500/10 transition-all">
                                <Plus size={18} />
                             </div>
                             <div>
@@ -114,11 +114,11 @@ export default function DashboardPage() {
               <GlassCard className="p-8 border-white/5">
                  <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black text-white uppercase tracking-tight">Proyectos Favoritos</h3>
-                    <button className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] hover:text-white transition-colors">Ver Todos</button>
+                    <button className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] hover:text-white transition-colors">Ver Todos</button>
                  </div>
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="p-6 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all cursor-pointer">
-                       <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400 mb-4 font-black text-lg">C</div>
+                       <div className="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400 mb-4 font-black text-lg">C</div>
                        <p className="font-black text-white mb-1">CRM Corporativo</p>
                        <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest">v1.2.4 • En Linea</p>
                     </div>
@@ -134,14 +134,14 @@ export default function DashboardPage() {
            <div className="lg:col-span-1 space-y-8">
               <GlassCard className="p-8 border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent">
                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-blue-600 p-[1px]">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-400 to-blue-600 p-[1px]">
                        <div className="w-full h-full bg-[#0a0a1a] rounded-[15px] flex items-center justify-center text-white">
                           <UserIcon size={24} />
                        </div>
                     </div>
                     <div>
                        <p className="font-black text-white leading-none mb-1">{firstName}</p>
-                       <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Plan Professional</p>
+                       <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">Plan Professional</p>
                     </div>
                  </div>
                  <div className="space-y-3">
@@ -151,7 +151,7 @@ export default function DashboardPage() {
                        </button>
                     </Link>
                     <Link href="/plans" className="block">
-                       <button className="w-full py-4 px-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest text-emerald-400 hover:bg-emerald-500/20 transition-all flex items-center justify-between">
+                       <button className="w-full py-4 px-6 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:bg-indigo-500/20 transition-all flex items-center justify-between">
                           Mejorar Plan <ArrowRight size={14} />
                        </button>
                     </Link>

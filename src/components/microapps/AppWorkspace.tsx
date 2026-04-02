@@ -116,7 +116,7 @@ export function AppWorkspace({ appId, currentExecutionId, schema }: AppWorkspace
             <div key={k} className="flex flex-col gap-1">
               <span className="text-xs text-[color:var(--color-primary)] font-semibold">{getLabel(k)}</span>
               {v === 'true' || v === true ? (
-                <Check className="w-4 h-4 text-green-500" />
+                <Check className="w-4 h-4 text-blue-500" />
               ) : v === 'false' || v === false ? (
                 <X className="w-4 h-4 text-red-500" />
               ) : (

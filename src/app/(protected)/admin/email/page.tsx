@@ -180,9 +180,9 @@ export default function EmailConfigPage() {
       </div>
 
       {isVerified ? (
-        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex items-center gap-3">
-          <ShieldCheck className="w-5 h-5 text-emerald-400" />
-          <span className="text-emerald-200 text-sm font-medium">
+        <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 flex items-center gap-3">
+          <ShieldCheck className="w-5 h-5 text-indigo-400" />
+          <span className="text-indigo-200 text-sm font-medium">
             {language === 'en' 
               ? `✅ SMTP Configured and Verified — Last checked: ${new Date(verifiedAt!).toLocaleDateString()}` 
               : `✅ SMTP Configurado y Verificado — Última verificación: ${new Date(verifiedAt!).toLocaleDateString()}`}

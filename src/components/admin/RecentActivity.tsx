@@ -35,7 +35,7 @@ export function RecentActivity({ activities }: RecentActivityProps) {
   const getIcon = (type: string) => {
     switch (type) {
       case 'user': return <UserPlus className="w-5 h-5 text-blue-400" />;
-      case 'payment': return <CreditCard className="w-5 h-5 text-green-400" />;
+      case 'payment': return <CreditCard className="w-5 h-5 text-blue-400" />;
       case 'execution': return <Zap className="w-5 h-5 text-amber-400" />;
       default: return <Activity className="w-5 h-5 text-white/50" />;
     }
@@ -44,7 +44,7 @@ export function RecentActivity({ activities }: RecentActivityProps) {
   const getBg = (type: string) => {
     switch (type) {
       case 'user': return 'bg-blue-500/10 border-blue-500/20';
-      case 'payment': return 'bg-green-500/10 border-green-500/20';
+      case 'payment': return 'bg-blue-500/10 border-blue-500/20';
       case 'execution': return 'bg-amber-500/10 border-amber-500/20';
       default: return 'bg-white/5 border-white/10';
     }

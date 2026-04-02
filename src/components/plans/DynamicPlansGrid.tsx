@@ -14,17 +14,15 @@ const ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
 };
 
 const PLAN_COLORS: Record<string, string> = {
-  'basico_agri': 'from-emerald-600/20 to-emerald-900/40 border-emerald-500/30 text-emerald-400',
-  'avanzado_agri': 'from-blue-600/20 to-blue-900/40 border-blue-500/30 text-blue-400',
-  'profesional_agri': 'from-orange-600/20 to-orange-900/40 border-orange-500/30 text-orange-400',
-  'premium_agri': 'from-purple-600/20 to-purple-900/40 border-purple-500/30 text-purple-400',
+  'starter': 'from-indigo-600/20 to-indigo-900/40 border-indigo-500/30 text-indigo-400',
+  'professional': 'from-blue-600/20 to-blue-900/40 border-blue-500/30 text-blue-400',
+  'enterprise': 'from-purple-600/20 to-purple-900/40 border-purple-500/30 text-purple-400',
 };
 
 const PLAN_ACCENTS: Record<string, string> = {
-  'basico_agri': 'bg-emerald-500',
-  'avanzado_agri': 'bg-blue-500',
-  'profesional_agri': 'bg-orange-500',
-  'premium_agri': 'bg-purple-500',
+  'starter': 'bg-indigo-500',
+  'professional': 'bg-blue-500',
+  'enterprise': 'bg-purple-500',
 };
 
 interface PlanInfo {
@@ -37,7 +35,6 @@ interface PlanInfo {
   price_monthly: number;
   items_en: string[];
   items_es: string[];
-  plan_apps: any;
 }
 
 export function DynamicPlansGrid({ plans, currentPlanId }: { plans: PlanInfo[], currentPlanId: string | null }) {
@@ -58,7 +55,7 @@ export function DynamicPlansGrid({ plans, currentPlanId }: { plans: PlanInfo[], 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          priceId: plan.id, // En producción este ID debe ser el PriceID de Stripe asignado en la DB
+          priceId: plan.id,
           successUrl: window.location.origin + '/dashboard',
           cancelUrl: window.location.href 
         }),
@@ -78,17 +75,17 @@ export function DynamicPlansGrid({ plans, currentPlanId }: { plans: PlanInfo[], 
   };
 
   return (
-    <div className="w-full flex-col flex items-center gap-12 pt-8 pb-20">
+    <div className="w-full flex-col flex items-center gap-12 pt-8 pb-20 animate-in fade-in duration-700">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl md:text-6xl font-black tracking-tighter bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(34,197,94,0.3)]">
-          {language === 'en' ? 'Agricultural Plans' : 'Modelos de la App'}
+        <h1 className="text-4xl md:text-6xl font-black tracking-tighter bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(59,130,246,0.3)] uppercase">
+          {language === 'en' ? 'Choose Your Plan' : 'Elige tu Plan'}
         </h1>
-        <p className="text-white/60 text-lg max-w-2xl mx-auto">
-          {language === 'en' ? 'Scientific management for crops. Choose the level that matches your farm.' : 'Gestión científica para tus cultivos. Elige el nivel que mejor se adapte a tu explotación.'}
+        <p className="text-white/40 text-lg max-w-2xl mx-auto font-medium uppercase tracking-widest text-xs">
+          {language === 'en' ? 'Scalable solutions for your business' : 'Soluciones escalables para tu empresa'}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
         {plans.map(plan => {
           const isCurrent = plan.id === currentPlanId;
           const colorClass = PLAN_COLORS[plan.slug] || 'from-white/5 to-white/5 border-white/10';
@@ -98,33 +95,33 @@ export function DynamicPlansGrid({ plans, currentPlanId }: { plans: PlanInfo[], 
             <div 
               key={plan.id} 
               className={cn(
-                "relative flex flex-col p-8 rounded-[2rem] bg-gradient-to-br border backdrop-blur-xl transition-all duration-500 group",
+                "relative flex flex-col p-10 rounded-[2.5rem] bg-gradient-to-br border backdrop-blur-xl transition-all duration-500 group",
                 colorClass,
                 isCurrent ? "ring-2 ring-white/20 shadow-2xl scale-[1.05] z-10" : "hover:scale-[1.02]"
               )}
             >
               {isCurrent && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-xl bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap shadow-xl">
-                  {language === 'en' ? 'Active Subscription' : 'Suscripción Activa'}
+                  {language === 'en' ? 'Active' : 'Activo'}
                 </div>
               )}
 
               <div className="space-y-6 mb-8">
                 <div className="space-y-1">
-                   <h3 className="text-3xl font-black text-white italic tracking-tighter">
+                   <h3 className="text-3xl font-black text-white tracking-tighter uppercase">
                      {language === 'en' ? plan.name_en : plan.name_es}
                    </h3>
-                   <div className={cn("h-1 w-12 rounded-full", accentClass)} />
+                   <div className={cn("h-1 w-12 rounded-full opacity-50", accentClass)} />
                 </div>
                 
-                <p className="text-white/70 text-sm font-medium leading-tight">
+                <p className="text-white/40 text-xs font-bold uppercase tracking-widest leading-relaxed">
                   {language === 'en' ? plan.description_en : plan.description_es}
                 </p>
                 
                 <div className="flex items-baseline gap-1 py-4">
-                  <span className="text-5xl font-black text-white">{Math.floor(plan.price_monthly)}</span>
-                  <span className="text-2xl font-bold text-white/80">€</span>
-                  <span className="text-white/40 text-sm font-medium">/mes</span>
+                  <span className="text-6xl font-black text-white tracking-tighter">{Math.floor(plan.price_monthly)}</span>
+                  <span className="text-2xl font-bold text-white/50">€</span>
+                  <span className="text-white/20 text-[10px] font-black uppercase tracking-widest ml-2">/mes</span>
                 </div>
               </div>
 
@@ -132,12 +129,12 @@ export function DynamicPlansGrid({ plans, currentPlanId }: { plans: PlanInfo[], 
                 onClick={() => handleCTA(plan)} 
                 disabled={loadingId === plan.id}
                 className={cn(
-                  "w-full justify-center py-6 text-sm font-bold uppercase tracking-widest rounded-2xl shadow-lg border-b-4 active:border-b-0 active:translate-y-1 transition-all",
+                  "w-full justify-center py-6 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl transition-all",
                   accentClass,
-                  "text-white border-black/20 hover:brightness-110"
+                  "text-white hover:brightness-110 active:scale-95"
                 )}
               >
-                {loadingId === plan.id ? '...' : (language === 'en' ? 'Get Access' : 'Acceso Instantáneo')}
+                {loadingId === plan.id ? '...' : (isCurrent ? (language === 'en' ? 'Manage' : 'Gestionar') : (language === 'en' ? 'Select Plan' : 'Elegir Plan'))}
               </GlowButton>
 
               <div className="space-y-6 flex-grow pt-8 border-t border-white/5 mt-8">

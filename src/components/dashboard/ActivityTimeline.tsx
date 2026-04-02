@@ -22,7 +22,7 @@ export function ActivityTimeline({ title, items }: { title: string, items: Timel
   const getColor = (type: string) => {
     switch(type) {
       case 'user': return 'from-[var(--color-primary)] to-[var(--color-accent-blue)]';
-      case 'server': return 'from-green-500 to-emerald-400';
+      case 'server': return 'from-blue-500 to-indigo-400';
       case 'database': return 'from-[var(--color-accent-pink)] to-[var(--color-accent-warm)]';
       default: return 'from-gray-500 to-gray-400';
     }

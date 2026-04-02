@@ -81,15 +81,15 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-[#050510] flex items-center justify-center p-6 md:p-12 overflow-hidden relative">
       {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="w-full max-w-xl space-y-12 relative z-10">
 
         {/* Header */}
         <div className="text-center space-y-4">
            <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
-              <Zap size={14} className="text-emerald-400" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Activación de Cuenta</span>
+              <Zap size={14} className="text-indigo-400" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Activación de Cuenta</span>
            </div>
            <h1 className="text-4xl font-black text-white tracking-tight">Configura tu Espacio</h1>
            <p className="text-white/30 text-sm font-medium uppercase tracking-widest">Personaliza IASOLUTIONS para tu equipo</p>
@@ -99,16 +99,16 @@ export default function OnboardingPage() {
         <div className="flex items-center justify-center gap-4">
           {steps.map((s, i) => (
             <React.Fragment key={s.num}>
-              <div className={`flex flex-col items-center gap-2 ${step >= s.num ? 'text-emerald-400' : 'text-white/10'}`}>
+              <div className={`flex flex-col items-center gap-2 ${step >= s.num ? 'text-indigo-400' : 'text-white/10'}`}>
                  <div className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all ${
-                   step === s.num ? 'bg-emerald-500/20 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 
-                   step > s.num ? 'bg-emerald-500 text-black border-emerald-500' : 'bg-white/5 border-white/10'
+                   step === s.num ? 'bg-indigo-500/20 border-indigo-500/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 
+                   step > s.num ? 'bg-indigo-500 text-black border-indigo-500' : 'bg-white/5 border-white/10'
                  }`}>
                     {step > s.num ? <Check size={18} /> : <s.icon size={18} />}
                  </div>
               </div>
               {i < steps.length - 1 && (
-                <div className={`w-12 h-[2px] rounded-full ${step > s.num ? 'bg-emerald-500' : 'bg-white/5'}`} />
+                <div className={`w-12 h-[2px] rounded-full ${step > s.num ? 'bg-indigo-500' : 'bg-white/5'}`} />
               )}
             </React.Fragment>
           ))}
@@ -122,14 +122,14 @@ export default function OnboardingPage() {
                    <div className="space-y-2">
                       <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">Nombre</label>
                       <input 
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white text-sm outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white text-sm outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all"
                         value={perfil.first_name} onChange={e => setPerfil({...perfil, first_name: e.target.value})}
                       />
                    </div>
                    <div className="space-y-2">
                       <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">Apellidos</label>
                       <input 
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white text-sm outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white text-sm outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all"
                         value={perfil.last_name} onChange={e => setPerfil({...perfil, last_name: e.target.value})}
                       />
                    </div>
@@ -147,7 +147,7 @@ export default function OnboardingPage() {
                 <div className="space-y-2">
                    <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">Nombre de la Empresa</label>
                    <input 
-                     className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white text-sm outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all font-black uppercase tracking-tight"
+                     className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white text-sm outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all font-black uppercase tracking-tight"
                      placeholder="Ej: CORP S.A."
                      value={perfil.empresa} onChange={e => setPerfil({...perfil, empresa: e.target.value})}
                    />
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
                           key={role}
                           onClick={() => setPerfil({...perfil, role})}
                           className={`py-4 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
-                            perfil.role === role ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400' : 'bg-white/5 border-white/10 text-white/20'
+                            perfil.role === role ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-400' : 'bg-white/5 border-white/10 text-white/20'
                           }`}
                         >
                            {role}
@@ -181,7 +181,7 @@ export default function OnboardingPage() {
 
            {step === 3 && (
              <div className="space-y-8 text-center animate-in fade-in zoom-in-95 duration-500">
-                <div className="w-20 h-20 bg-emerald-500/20 border border-emerald-500/30 rounded-3xl flex items-center justify-center text-emerald-400 mx-auto mb-6 shadow-2xl">
+                <div className="w-20 h-20 bg-indigo-500/20 border border-indigo-500/30 rounded-3xl flex items-center justify-center text-indigo-400 mx-auto mb-6 shadow-2xl">
                    <Rocket size={40} className="animate-bounce" />
                 </div>
                 <div>

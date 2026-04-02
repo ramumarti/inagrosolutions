@@ -198,7 +198,7 @@ export function PlansGrid({ initialPlans, allApps, initialPlanApps }: PlansGridP
                 <ul className="space-y-2">
                   {(language === 'en' ? plan.items_en : plan.items_es).map((item, i) => (
                     <li key={i} className="flex gap-2 text-sm text-white/80">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <Check className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
                       <span>{item}</span>
                     </li>
                   ))}
