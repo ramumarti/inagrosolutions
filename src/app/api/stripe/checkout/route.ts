@@ -48,8 +48,8 @@ export async function POST(req: NextRequest) {
       ],
       mode: 'subscription',
       // Redirigir de vuelta a una URL configurada o localhost
-      success_url: `${req.nextUrl.origin}/cuaderno/ajustes?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.nextUrl.origin}/cuaderno/planes`,
+      success_url: `${req.nextUrl.origin}/settings?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.nextUrl.origin}/plans`,
       metadata: {
         userId: user.id,
       },

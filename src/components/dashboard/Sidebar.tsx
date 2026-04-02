@@ -55,12 +55,6 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
       isActive: pathname.startsWith('/apps')
     },
     {
-      label: language === 'en' ? 'Digital Notebook' : 'Cuaderno Digital',
-      href: '/cuaderno',
-      icon: Leaf,
-      isActive: pathname.startsWith('/cuaderno')
-    },
-    {
       label: language === 'en' ? 'Plans' : 'Planes',
       href: '/plans',
       icon: CreditCard,
