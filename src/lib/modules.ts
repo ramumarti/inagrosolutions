@@ -45,7 +45,7 @@ export const TIER_CONFIG: Record<AgriTier, {
     label_es: 'Avanzado',
     label_en: 'Advanced',
     max_ha: 100,
-    price_monthly: 24.99,
+    price_monthly: 39.99,
     color: '#8B5CF6',
     gradient: 'from-violet-500 to-violet-700',
   },
