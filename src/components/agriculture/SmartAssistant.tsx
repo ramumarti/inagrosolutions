@@ -15,12 +15,16 @@ import {
 import { WeatherAlertService, SmartAlert } from '@/lib/agriculture/weather-alerts';
 import { Badge } from '@/components/ui/Badge';
 
+import { useRouter } from 'next/navigation';
+
 export function SmartAssistant() {
+  const router = useRouter();
   const [alerts, setAlerts] = useState<SmartAlert[]>([]);
 
   useEffect(() => {
-    // Integration point for weather API
-    // For now, simulate real-time telemetry from the olive grove
+    // 💡 LIVE SIMULATION (Integration point for weather/telemetry API)
+    // We simulate current conditions: 18°C, 85% humidity (triggering High Repilo Risk)
+    // In production, this data comes from local weather stations (AEMET/SIAR)
     const currentTelemetry = {
       temp: 18,
       humidity: 85,
@@ -81,23 +85,29 @@ export function SmartAssistant() {
   const Icon = IconMap[alert.icon] || AlertCircle;
 
   return (
-    <div className={`p-6 mb-8 rounded-[40px] border ${currentColors.border} ${currentColors.bg} ${currentColors.shadow} transition-all duration-700 animate-in fade-in slide-in-from-bottom-6 backdrop-blur-xl relative z-10`}>
+    <div className={`p-6 mb-8 rounded-[40px] border ${currentColors.border} ${currentColors.bg} ${currentColors.shadow} backdrop-blur-xl relative z-10 animate-in fade-in slide-in-from-bottom-6 duration-700`}>
       <div className="flex items-start gap-4">
-        <div className={`p-4 rounded-2xl border ${currentColors.iconBox}`}>
-          <Icon className={`w-7 h-7 ${currentColors.text}`} />
+        <div className={`p-4 rounded-3xl border ${currentColors.iconBox} shadow-inner`}>
+          <Icon className={`w-8 h-8 ${currentColors.text}`} />
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between mb-2">
-            <h4 className={`text-sm font-black uppercase tracking-wider ${currentColors.title}`}>{alert.title}</h4>
+            <div>
+              <h4 className={`text-[15px] font-black uppercase tracking-tight ${currentColors.title}`}>{alert.title}</h4>
+              <p className="text-[10px] text-white/30 font-bold uppercase tracking-[0.1em] mt-0.5">Analizando Telemetría en Vivo</p>
+            </div>
             <Badge variant="success" className="gap-1.5 px-3 py-1 border-emerald-500/20 bg-emerald-500/10 text-emerald-300 shadow-md animate-pulse">
               <Sparkles className="w-3 h-3 text-emerald-400" />
-              Predictor IA
+              PREDICTOR IA
             </Badge>
           </div>
           <p className="text-sm text-white/50 font-medium leading-relaxed max-w-sm mb-5 pr-4">
             {alert.description}
           </p>
-          <button className={`group text-[11px] font-black uppercase ${currentColors.text} flex items-center gap-2 hover:translate-x-1 transition-all`}>
+          <button 
+            onClick={() => router.push(alert.id === 'repilo' ? '/cuaderno/tratamientos' : '/cuaderno')}
+            className={`group text-[11px] font-black uppercase ${currentColors.text} flex items-center gap-2 hover:translate-x-1 transition-all underline underline-offset-8 decoration-2 decoration-current/30 hover:decoration-current`}
+          >
              Optimizar Operación <ArrowRight size={14} className="group-hover:translate-x-1 transition-all" />
           </button>
         </div>
