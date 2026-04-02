@@ -33,7 +33,8 @@ export async function updateSession(request: NextRequest) {
   const isLegalRoute = pathname === '/privacy-policy' || pathname === '/cookie-policy' || pathname === '/legal-notice'
   const isAuthRoute = pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password'
   const isApiRoute = pathname.startsWith('/api')
-  const isPublicRoute = pathname.startsWith('/auth') || isAuthRoute || isLegalRoute || isApiRoute
+  const isLandingRoute = pathname === '/'
+  const isPublicRoute = pathname.startsWith('/auth') || isAuthRoute || isLegalRoute || isApiRoute || isLandingRoute
 
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone()
