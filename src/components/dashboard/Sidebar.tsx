@@ -70,14 +70,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
     { label: language === 'en' ? 'Plans' : 'Planes', href: '/cuaderno/planes', icon: Crown, isActive: pathname === '/cuaderno/planes' },
   ];
 
-  const bottomNav: typeof navItems = [
-    {
-      label: 'Micro Apps',
-      href: '/apps',
-      icon: LayoutGrid,
-      isActive: pathname.startsWith('/apps')
-    }
-  ];
+  const bottomNav: typeof navItems = [];
 
   if (isAdmin) {
     bottomNav.push(
