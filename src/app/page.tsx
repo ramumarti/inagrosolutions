@@ -184,15 +184,23 @@ export default function LandingPage() {
                     name: "Gratuito", 
                     price: "0€", 
                     period: "para siempre",
-                    features: ["Gestión hasta 5 parcelas", "Cuaderno Digital Básico", "Alertas meteorológicas", "Sincronización manual"],
+                    features: ["Gestión hasta 2 parcelas", "Cuaderno Digital Básico", "Alertas meteorológicas"],
                     cta: "Empezar Gratis",
+                    highlight: false
+                  },
+                  { 
+                    name: "Básico", 
+                    price: "9€", 
+                    period: "al mes",
+                    features: ["Registro de Tratamientos", "Productos Fitosanitarios", "Uso y Dosis", "Modo Simple"],
+                    cta: "Elegir Básico",
                     highlight: false
                   },
                   { 
                     name: "Profesional", 
                     price: "19€", 
                     period: "al mes / finca",
-                    features: ["Parcelas ilimitadas", "Exportación SIEX Oficial", "Predictor IA Avanzado", "Sincronización Offline", "Soporte Prioritario"],
+                    features: ["Parcelas ilimitadas", "Exportación SIEX Oficial", "Predictor IA Avanzado", "Sincronización Offline"],
                     cta: "Prueba Pro",
                     highlight: true
                   },
@@ -200,39 +208,44 @@ export default function LandingPage() {
                     name: "Empresarial", 
                     price: "Personalizado", 
                     period: "grandes explotaciones",
-                    features: ["Gestión Multi-Usuario", "API de Integración", "Consultoría Agronómica", "Formación presencial", "Seguridad Avanzada"],
+                    features: ["Gestión Multi-Usuario", "API de Integración", "Consultoría Agronómica", "Formación VIP"],
                     cta: "Contactar Ventas",
                     highlight: false
                   }
                 ].map((plan, i) => (
                   <GlassCard 
                     key={i} 
-                    className={`p-12 relative flex flex-col ${plan.highlight ? 'border-emerald-500/30 bg-emerald-500/[0.03] scale-105 z-10 shadow-[0_20px_50px_rgba(16,185,129,0.1)]' : 'border-white/5'}`}
+                    className={`p-8 relative flex flex-col ${plan.highlight ? 'border-emerald-500/30 bg-emerald-500/[0.03] scale-105 z-10 shadow-[0_20px_50px_rgba(16,185,129,0.1)]' : 'border-white/5'}`}
                   >
                     {plan.highlight && (
-                       <div className="absolute top-0 right-12 -translate-y-1/2 bg-emerald-500 text-black text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-full">
+                       <div className="absolute top-0 right-8 -translate-y-1/2 bg-emerald-500 text-black text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-full">
                           Más popular
                        </div>
                     )}
                     <h3 className="text-xs font-black text-white/40 uppercase tracking-[0.3em] mb-2">{plan.name}</h3>
-                    <div className="flex items-baseline gap-2 mb-8">
-                       <span className="text-5xl font-black text-white tracking-tighter">{plan.price}</span>
-                       <span className="text-[10px] font-medium text-white/30 uppercase tracking-widest">{plan.period}</span>
+                    <div className="flex items-baseline gap-1 mb-6">
+                       <span className="text-4xl font-black text-white tracking-tighter">{plan.price}</span>
+                       <span className="text-[9px] font-medium text-white/30 uppercase tracking-widest">{plan.period}</span>
                     </div>
-                    <ul className="space-y-6 mb-12 flex-1">
+                    <ul className="space-y-4 mb-8 flex-1">
                        {plan.features.map((feat, j) => (
-                          <li key={j} className="flex items-start gap-3 text-sm text-white/60 font-medium">
-                             <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                          <li key={j} className="flex items-start gap-2 text-[13px] text-white/60 font-medium">
+                             <div className="w-4 h-4 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 mt-0.5">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                              </div>
                              {feat}
                           </li>
                        ))}
                     </ul>
+                    {plan.name === "Básico" && (
+                       <div className="mb-6 self-start px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[9px] font-black uppercase tracking-widest text-emerald-400">
+                          Modo Simple
+                       </div>
+                    )}
                     <Link href={plan.name === "Empresarial" ? "mailto:ventas@inagrosolutions.com" : "/cuaderno"}>
                        <GlowButton 
                         variant={plan.highlight ? "primary" : "ghost"} 
-                        className="w-full py-5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em]"
+                        className="w-full py-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em]"
                        >
                           {plan.cta}
                        </GlowButton>
