@@ -30,13 +30,18 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
   
-  const isLegalRoute = pathname === '/privacy-policy' || pathname === '/cookie-policy' || pathname === '/legal-notice'
-  const isAuthRoute = pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password'
-  const isApiRoute = pathname.startsWith('/api')
-  const isLandingRoute = pathname === '/'
-  const isPublicRoute = pathname.startsWith('/auth') || isAuthRoute || isLegalRoute || isApiRoute || isLandingRoute
+  const publicPaths = [
+    '/',
+    '/login',
+    '/signup',
+    '/forgot-password',
+    '/privacy-policy',
+    '/cookie-policy',
+    '/legal-notice'
+  ]
+  const isPublicRoute = publicPaths.includes(pathname) || pathname.startsWith('/api') || pathname.startsWith('/auth')
 
-  if (user && isAuthRoute) {
+  if (user && (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password')) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     return NextResponse.redirect(url)
