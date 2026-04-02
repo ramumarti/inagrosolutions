@@ -1,10 +1,70 @@
 "use client";
 
-import { Sprout, Tractor, CloudRain, AlertTriangle, FileText, Droplets, Bug, ShoppingBasket, Trash2, FileSpreadsheet, HelpCircle } from "lucide-react";
+import { Sprout, Tractor, CloudRain, AlertTriangle, FileText, Droplets, Bug, ShoppingBasket, Trash2, FileSpreadsheet, HelpCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { SmartAssistant } from "@/components/agriculture/SmartAssistant";
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { exportarCuadernoCompletoSIEX } from "@/lib/export-siex";
 
 export default function HoyPage() {
+  const [isExporting, setIsExporting] = useState(false);
+  const supabase = createClient();
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const { data: fitos } = await supabase
+        .from('tratamientos_fitosanitarios')
+        .select('*, parcelas(nombre, referencia_sigpac)');
+      
+      const { data: ferts } = await supabase
+        .from('fertilizaciones')
+        .select('*, parcelas(nombre, referencia_sigpac)');
+      
+      const { data: prods } = await supabase
+        .from('produccion')
+        .select('*, parcelas(nombre, referencia_sigpac)');
+
+      const fitosMapped = (fitos || []).map(f => ({
+        "Referencia Parcela (SIGPAC)": f.parcelas?.referencia_sigpac || 'Sin Ref',
+        "Nombre Finca": f.parcelas?.nombre || 'General',
+        "Fecha Tratamiento": new Date(f.fecha).toLocaleDateString(),
+        "Producto (Num Reg MAPA)": String(f.producto_mapa_id || 'N/A'),
+        "Nombre Comercial": f.nombre_producto || 'Desconocido',
+        "Dosis (L/ha)": f.dosis || 0,
+        "Superficie (ha)": f.superficie_tratada || 1,
+        "Operario": "Firma Digital Inagro"
+      }));
+
+      const fertsMapped = (ferts || []).map(f => ({
+        "SIGPAC": f.parcelas?.referencia_sigpac || 'Sin Ref',
+        "Fecha": new Date(f.fecha).toLocaleDateString(),
+        "Tipo": "Abonado",
+        "Producto": f.tipo_abono || 'Genérico',
+        "Cantidad (kg/ha)": f.dosis || 0,
+        "Metodo": "Localizado",
+        "Justificacion": "SIEX Compliance"
+      }));
+
+      const harvestsMapped = (prods || []).map(p => ({
+        "Finca": p.parcelas?.nombre || 'General',
+        "Parcela (SIGPAC)": p.parcelas?.referencia_sigpac || 'Sin Ref',
+        "Fecha Recoleccion": new Date(p.fecha).toLocaleDateString(),
+        "Cantidad Cosechada (kg)": p.cantidad_kg || 0,
+        "Destino": "Almazara Local",
+        "Lote": `L-${new Date().getFullYear()}`
+      }));
+
+      exportarCuadernoCompletoSIEX(fitosMapped, fertsMapped, harvestsMapped);
+    } catch (err) {
+      console.error(err);
+      alert("Error al exportar cuaderno");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-lg mx-auto pb-32 px-4 sm:px-0 relative z-10">
       {/* Cabecera Premium (Mi Cuaderno) */}
@@ -14,14 +74,25 @@ export default function HoyPage() {
           <p className="text-[11px] text-white/30 font-bold tracking-[0.25em] uppercase mt-2">Campaña 2026</p>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/cuaderno/ayuda">
-            <button className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl text-blue-400 shadow-sm border border-white/10 hover:bg-white/10 transition-all active:scale-90">
-              <HelpCircle size={22} />
+          <div className="group relative">
+            <Link href="/cuaderno/ayuda">
+              <button className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl text-blue-400 shadow-sm border border-white/10 hover:bg-white/10 transition-all active:scale-90">
+                <HelpCircle size={22} />
+              </button>
+            </Link>
+            <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-zinc-900 border border-white/10 text-white text-[9px] font-black uppercase px-2 py-1 rounded-md z-50">Ayuda</span>
+          </div>
+
+          <div className="group relative">
+            <button 
+              onClick={handleExport}
+              disabled={isExporting}
+              className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl text-emerald-400 shadow-sm border border-white/10 hover:bg-white/10 transition-all active:scale-90 disabled:opacity-50"
+            >
+              {isExporting ? <Loader2 size={22} className="animate-spin" /> : <FileSpreadsheet size={22} />}
             </button>
-          </Link>
-          <button className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl text-emerald-400 shadow-sm border border-white/10 hover:bg-white/10 transition-all active:scale-90">
-            <FileSpreadsheet size={22} />
-          </button>
+            <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 scale-0 group-hover:scale-100 transition-all bg-zinc-900 border border-white/10 text-white text-[9px] font-black uppercase px-2 py-1 rounded-md z-50 whitespace-nowrap">Exportar SIEX</span>
+          </div>
         </div>
       </div>
 
