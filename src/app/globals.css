@@ -6,12 +6,12 @@
   --color-base-300: #101025;
   --color-base-content: #F0F0FF;
   
-  --color-primary: #6366F1; /* Indigo 500 */
-  --color-primary-content: #FFFFFF;
+  --color-primary: #00FF66; /* Neon Green */
+  --color-primary-content: #000000;
   
-  --color-accent-warm: #8B5CF6; /* Violet 500 */
-  --color-accent-pink: #3B82F6; /* Blue 500 */
-  --color-accent-blue: #0EA5E9; /* Sky 500 */
+  --color-accent-warm: #10B981; /* Emerald 500 */
+  --color-accent-pink: #00E65C; /* Darker Neon Green */
+  --color-accent-blue: #34D399; /* Emerald 400 */
 
   --color-background: var(--color-base-100);
   --color-foreground: var(--color-base-content);
@@ -28,11 +28,13 @@
   }
   
   .glow-text {
-    background: linear-gradient(to right, var(--color-primary), var(--color-accent-pink), var(--color-accent-warm));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
+    color: var(--color-primary);
+    text-shadow: 0 0 15px rgba(0, 255, 102, 0.5), 0 0 30px rgba(0, 255, 102, 0.2);
+    /* Remove gradient clip properties overrides if they apply */
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    background-clip: unset;
   }
 }
 
