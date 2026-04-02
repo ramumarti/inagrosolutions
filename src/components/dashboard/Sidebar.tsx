@@ -76,12 +76,6 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
       href: '/apps',
       icon: LayoutGrid,
       isActive: pathname.startsWith('/apps')
-    },
-    {
-      label: language === 'en' ? 'Plans' : 'Planes',
-      href: '/plans',
-      icon: CreditCard,
-      isActive: pathname.startsWith('/plans')
     }
   ];
 
