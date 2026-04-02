@@ -61,17 +61,20 @@ export default function NuevaPlagaPage() {
   const isAboveThreshold = parseFloat(nivel) >= parseFloat(umbral);
 
   return (
-    <div className="max-w-lg mx-auto pb-24 relative px-4 sm:px-0">
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="p-2.5 bg-white rounded-full text-gray-600 hover:bg-gray-100 shadow-sm border border-gray-100 transition-colors">
+    <div className="max-w-lg mx-auto pb-32 relative px-4 sm:px-0 z-10 animate-in fade-in duration-500">
+      <div className="flex items-center gap-3 mb-8 pt-4">
+        <button 
+          onClick={() => router.push('/cuaderno/plagas')} 
+          className="p-2.5 bg-white/5 rounded-2xl text-white/70 hover:bg-white/10 shadow-sm border border-white/10 transition-all active:scale-95"
+        >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold text-gray-800">Monitoreo de Plaga</h1>
+        <h1 className="text-2xl font-black text-white tracking-tight uppercase">Monitoreo Plaga</h1>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Parcela Selector */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl">
           <ParcelSelector 
             onSelect={setParcelaId} 
             selectedId={parcelaId} 
@@ -79,61 +82,61 @@ export default function NuevaPlagaPage() {
         </div>
 
         {/* Selector de Plaga */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm space-y-4">
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Plaga Detectada</label>
-            <div className="grid grid-cols-1 gap-2">
-              {plagasComunes.map((plaga) => (
-                <button
-                  key={plaga}
-                  type="button"
-                  onClick={() => setTipoPlaga(plaga)}
-                  className={`text-left p-4 rounded-2xl border transition-all flex items-center justify-between ${
-                    tipoPlaga === plaga 
-                      ? "bg-red-50 border-red-200 text-red-900 ring-2 ring-red-500/20 shadow-sm" 
-                      : "bg-gray-50 border-gray-100 text-gray-600 hover:border-gray-200"
-                  }`}
-                >
-                  <span className="font-bold text-sm tracking-tight">{plaga}</span>
-                  {tipoPlaga === plaga && <Bug size={18} className="text-red-500 animate-pulse" />}
-                </button>
-              ))}
-            </div>
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl space-y-4">
+          <label className="block text-[10px] font-black text-white/30 mb-4 uppercase tracking-widest pl-1 leading-none">Plaga Detectada</label>
+          <div className="grid grid-cols-1 gap-2.5">
+            {plagasComunes.map((plaga) => (
+              <button
+                key={plaga}
+                type="button"
+                onClick={() => setTipoPlaga(plaga)}
+                className={`text-left p-5 rounded-2xl border transition-all flex items-center justify-between group ${
+                  tipoPlaga === plaga 
+                    ? "bg-rose-500/10 border-rose-500/30 text-white shadow-xl shadow-rose-900/10" 
+                    : "bg-white/[0.02] border-white/5 text-white/40 hover:bg-white/5"
+                }`}
+              >
+                <span className={`font-black uppercase tracking-tight text-[12px] ${tipoPlaga === plaga ? "text-rose-400" : ""}`}>{plaga}</span>
+                {tipoPlaga === plaga && <Bug size={18} className="text-rose-500 animate-pulse" />}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Nivel de Infestación */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm space-y-5">
-          <div className="grid grid-cols-2 gap-5">
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl space-y-8">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Nivel (%)</label>
+              <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1">Nivel (%)</label>
               <input 
                 type="number" step="0.1" required
-                className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all font-black text-2xl text-gray-900"
+                className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-4 focus:ring-rose-500/20 focus:border-rose-500/50 transition-all font-black text-2xl text-white shadow-inner"
                 placeholder="0.0"
                 value={nivel} onChange={(e) => setNivel(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Umbral Trat.</label>
+              <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1">Umbral</label>
               <input 
                 type="number" step="0.1"
-                className="w-full px-5 py-4 bg-gray-100 border border-gray-200 rounded-2xl outline-none text-gray-500 font-bold text-lg"
-                value={umbral} onChange={(e) => setUmbral(e.target.value)}
+                className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none text-white/20 font-bold text-lg cursor-not-allowed opacity-50"
+                value={umbral} readOnly
               />
             </div>
           </div>
 
           {nivel && (
-            <div className={`p-4 rounded-2xl flex items-start gap-4 transition-all animate-in zoom-in-95 duration-300 ${
-              isAboveThreshold ? "bg-red-100 text-red-900 border border-red-200" : "bg-green-100 text-green-900 border border-green-200"
+            <div className={`p-5 rounded-2xl flex items-start gap-4 transition-all animate-in zoom-in-95 duration-500 border ${
+              isAboveThreshold 
+                ? "bg-rose-500/10 text-rose-200 border-rose-500/20" 
+                : "bg-emerald-500/10 text-emerald-200 border-emerald-500/20"
             }`}>
-              {isAboveThreshold ? <AlertCircle className="shrink-0" size={24} /> : <Info className="shrink-0" size={24} />}
+              {isAboveThreshold ? <AlertCircle className="shrink-0 text-rose-500" size={24} /> : <Info className="shrink-0 text-emerald-500" size={24} />}
               <div>
-                <p className="font-extrabold text-sm uppercase tracking-wide">
+                <p className="font-black text-[11px] uppercase tracking-widest mb-1">
                   {isAboveThreshold ? "Umbral Superado" : "Nivel Controlado"}
                 </p>
-                <p className="text-xs font-semibold mt-1 opacity-80 leading-relaxed">
+                <p className="text-xs font-semibold leading-relaxed opacity-60">
                   {isAboveThreshold 
                     ? "Se recomienda realizar tratamiento fitosanitario inmediato para evitar daños económicos." 
                     : "El nivel de infestación es seguro bajo producción integrada. No es necesario tratar aún."}
@@ -144,22 +147,22 @@ export default function NuevaPlagaPage() {
         </div>
 
         {/* Observaciones */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
-          <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Comentarios / Recomendación</label>
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl">
+          <label className="block text-[10px] font-black text-white/30 mb-4 uppercase tracking-widest pl-1 leading-none">Comentarios</label>
           <textarea 
             rows={3}
-            className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all font-medium text-gray-800 placeholder:text-gray-400"
-            placeholder="Ej: Detectado foco en fachada norte del cerete..."
+            className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-4 focus:ring-rose-500/20 focus:border-rose-500/50 transition-all font-medium text-white/70 placeholder:text-white/10 resize-none shadow-inner"
+            placeholder="Ej: Detectado foco en fachada norte..."
             value={recomendacion} onChange={(e) => setRecomendacion(e.target.value)}
           />
         </div>
 
         <button 
           type="submit" 
-          disabled={isSaving || !nivel}
-          className="w-full flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold py-5 rounded-2xl shadow-xl shadow-red-600/30 transition-all disabled:opacity-70 disabled:scale-[0.98] active:scale-[0.98] text-lg mt-4"
+          disabled={isSaving || !nivel || !parcelaId}
+          className="w-full flex items-center justify-center gap-3 bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-black py-6 rounded-[28px] shadow-2xl shadow-rose-900/40 transition-all disabled:opacity-50 disabled:grayscale active:scale-[0.98] text-lg uppercase tracking-widest group mb-12"
         >
-          {isSaving ? "Guardando Registro..." : <><Save size={22} /> Guardar Monitoreo</>}
+          {isSaving ? "Guardando Registro..." : <><Save size={24} className="group-hover:rotate-12 transition-transform" /> Guardar Monitoreo</>}
         </button>
       </form>
     </div>

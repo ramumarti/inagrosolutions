@@ -49,17 +49,20 @@ export default function NuevoRiegoPage() {
   };
 
   return (
-    <div className="max-w-lg mx-auto pb-24 relative px-4 sm:px-0">
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="p-2.5 bg-white rounded-full text-gray-600 hover:bg-gray-100 shadow-sm border border-gray-100 transition-colors">
+    <div className="max-w-lg mx-auto pb-32 relative px-4 sm:px-0 z-10 animate-in fade-in duration-500">
+      <div className="flex items-center gap-3 mb-8 pt-4">
+        <button 
+          onClick={() => router.push('/cuaderno/riegos')} 
+          className="p-2.5 bg-white/5 rounded-2xl text-white/70 hover:bg-white/10 shadow-sm border border-white/10 transition-all active:scale-95"
+        >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold text-gray-800">Registrar Riego</h1>
+        <h1 className="text-2xl font-black text-white tracking-tight uppercase">Registrar Riego</h1>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Parcela Selector */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl">
           <ParcelSelector 
             onSelect={setParcelaId} 
             selectedId={parcelaId} 
@@ -67,52 +70,54 @@ export default function NuevoRiegoPage() {
         </div>
 
         {/* Volumen de Riego */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm space-y-5">
-          <div className="flex items-center gap-2 text-cyan-600 mb-2">
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl space-y-6">
+          <div className="flex items-center gap-2 text-cyan-400 mb-2">
             <Ruler size={18} />
-            <span className="text-xs font-black uppercase tracking-widest">Caudal / Volumen</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Caudal / Volumen</span>
           </div>
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Cantidad</label>
+              <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Cantidad</label>
               <input 
                 type="number" step="0.01" required
-                className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500 transition-all font-black text-2xl text-gray-900"
+                className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-4 focus:ring-cyan-500/20 focus:border-cyan-500/50 transition-all font-black text-2xl text-white shadow-inner"
                 placeholder="0.00"
                 value={volumen} onChange={(e) => setVolumen(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Unidad</label>
+              <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Unidad</label>
               <select 
-                className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-4 focus:ring-cyan-500/10 focus:border-cyan-500 font-bold text-lg"
+                className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-cyan-500/50 font-bold text-white text-base appearance-none cursor-pointer"
                 value={unidad} onChange={(e) => setUnidad(e.target.value)}
               >
-                <option value="m3">m³ (Total)</option>
-                <option value="L/árbol">L / Árbol</option>
-                <option value="h">Horas</option>
+                <option value="m3" className="bg-zinc-900">m³ (Total)</option>
+                <option value="L/árbol" className="bg-zinc-900">L / Árbol</option>
+                <option value="h" className="bg-zinc-900">Horas</option>
               </select>
             </div>
           </div>
         </div>
 
         {/* Sistema y Frecuencia */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm space-y-5">
-          <div className="flex items-center gap-2 text-blue-600 mb-2">
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl space-y-8">
+          <div className="flex items-center gap-2 text-blue-400 mb-2">
             <Clock size={18} />
-            <span className="text-xs font-black uppercase tracking-widest">Ajustes de Operación</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Ajustes de Operación</span>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Sistema</label>
+              <label className="block text-[10px] font-black text-white/30 mb-4 uppercase tracking-widest pl-1 leading-none">Sistema de Riego</label>
               <div className="grid grid-cols-2 gap-3">
                 {["Goteo", "Aspersión", "Inundación", "Micro"].map((s) => (
                   <button
                     key={s}
                     type="button"
                     onClick={() => setSistema(s)}
-                    className={`py-3 px-4 rounded-xl border text-sm font-bold transition-all ${
-                      sistema === s ? "bg-blue-600 border-blue-700 text-white shadow-lg" : "bg-gray-50 border-gray-100 text-gray-600"
+                    className={`py-4 px-4 rounded-2xl border text-[11px] font-black uppercase tracking-widest transition-all ${
+                      sistema === s 
+                        ? "bg-blue-600 border-blue-500 text-white shadow-xl shadow-blue-900/40" 
+                        : "bg-white/[0.02] border-white/5 text-white/40 hover:bg-white/5"
                     }`}
                   >
                     {s}
@@ -121,15 +126,15 @@ export default function NuevoRiegoPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Frecuencia</label>
+              <label className="block text-[10px] font-black text-white/30 mb-4 uppercase tracking-widest pl-1 leading-none">Frecuencia</label>
               <select 
-                className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-bold text-gray-800"
+                className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/50 font-bold text-white appearance-none cursor-pointer"
                 value={frecuencia} onChange={(e) => setFrecuencia(e.target.value)}
               >
-                <option value="Diario">A diario</option>
-                <option value="Semanal">Semanal</option>
-                <option value="Alterno">Días alternos</option>
-                <option value="Unico">Evento único</option>
+                <option value="Diario" className="bg-zinc-900">A diario</option>
+                <option value="Semanal" className="bg-zinc-900">Semanal</option>
+                <option value="Alterno" className="bg-zinc-900">Días alternos</option>
+                <option value="Unico" className="bg-zinc-900">Evento único</option>
               </select>
             </div>
           </div>
@@ -137,10 +142,10 @@ export default function NuevoRiegoPage() {
 
         <button 
           type="submit" 
-          disabled={isSaving || !volumen}
-          className="w-full flex items-center justify-center gap-3 bg-cyan-600 hover:bg-cyan-700 active:bg-cyan-800 text-white font-bold py-5 rounded-2xl shadow-xl shadow-cyan-600/30 transition-all disabled:opacity-70 disabled:scale-[0.98] active:scale-[0.98] text-lg mt-4"
+          disabled={isSaving || !volumen || !parcelaId}
+          className="w-full flex items-center justify-center gap-3 bg-cyan-600 hover:bg-cyan-500 transition-all active:scale-[0.98] text-white font-black py-6 rounded-[28px] shadow-2xl shadow-cyan-900/40 disabled:opacity-50 disabled:grayscale text-lg uppercase tracking-widest group mb-12"
         >
-          {isSaving ? "Guardando Riego..." : <><Droplets size={22} /> Confirmar Registro</>}
+          {isSaving ? "Guardando Riego..." : <><Droplets size={24} className="group-hover:animate-bounce" /> Confirmar Registro</>}
         </button>
       </form>
     </div>

@@ -36,51 +36,59 @@ export function ParcelSelector({ onSelect, selectedId }: ParcelSelectorProps) {
 
   const selectedParcela = parcelas.find(p => p.id === selectedId);
 
-  if (loading) return <div className="h-16 animate-pulse bg-gray-50 rounded-2xl border border-gray-100" />;
+  if (loading) return <div className="h-20 animate-pulse bg-white/5 rounded-[24px] border border-white/10" />;
 
   return (
     <div className="relative">
-      <label className="flex items-center gap-1.5 text-[10px] font-black text-gray-400 mb-2 uppercase tracking-widest pl-1">
-        <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
+      <label className="flex items-center gap-2 text-[10px] font-black text-white/30 mb-3 uppercase tracking-[0.2em] pl-1 leading-none">
+        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
         Parcela de trabajo
       </label>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-green-300 transition-all text-left"
+        className={`w-full flex items-center justify-between p-5 bg-white/[0.03] border rounded-[22px] shadow-sm hover:bg-white/[0.05] transition-all text-left group ${
+          isOpen ? "border-emerald-500/50 bg-white/[0.05]" : "border-white/10"
+        }`}
       >
-        <div className="flex items-center gap-3">
-          <div className="bg-green-100 p-2 rounded-xl text-green-600">
-            <MapPin size={20} />
+        <div className="flex items-center gap-4">
+          <div className={`p-2.5 rounded-xl transition-colors ${selectedParcela ? "bg-emerald-500/20 text-emerald-400" : "bg-white/5 text-white/20"}`}>
+            <MapPin size={22} className={selectedParcela ? "animate-bounce" : ""} />
           </div>
           <div>
-            <p className="font-bold text-gray-900 text-sm">{selectedParcela?.nombre || "Seleccionar..."}</p>
-            {selectedParcela && <p className="text-xs text-gray-500">{selectedParcela.referencia_sigpac}</p>}
+            <p className="font-black text-white text-base tracking-tight uppercase">{selectedParcela?.nombre || "Seleccionar..."}</p>
+            {selectedParcela && <p className="text-[10px] font-bold text-white/30 mt-0.5 tracking-wider">{selectedParcela.referencia_sigpac}</p>}
           </div>
         </div>
-        <ChevronDown size={20} className={`text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown size={20} className={`text-white/20 transition-transform duration-300 ${isOpen ? "rotate-180 text-emerald-500" : ""}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-2 bg-white border border-gray-100 shadow-2xl rounded-2xl overflow-hidden max-h-64 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
-          {parcelas.map(p => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => {
-                onSelect(p.id);
-                setIsOpen(false);
-              }}
-              className="w-full flex items-center justify-between p-4 hover:bg-green-50 border-b border-gray-50 last:border-0 transition-colors"
-            >
-              <div>
-                <p className="font-bold text-gray-800 text-sm">{p.nombre}</p>
-                <p className="text-xs text-gray-500 truncate max-w-[240px] mt-0.5">{p.referencia_sigpac}</p>
-              </div>
-              {selectedId === p.id && <Check size={18} className="text-green-600" />}
-            </button>
-          ))}
-          {parcelas.length === 0 && <p className="p-4 text-sm text-gray-500 italic">No hay parcelas creadas.</p>}
+        <div className="absolute z-[100] w-full mt-3 bg-[#0a0a0b] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-[28px] overflow-hidden backdrop-blur-3xl animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="max-h-72 overflow-y-auto divide-y divide-white/5 scrollbar-hide">
+            {parcelas.map(p => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => {
+                  onSelect(p.id);
+                  setIsOpen(false);
+                }}
+                className="w-full flex items-center justify-between px-6 py-5 hover:bg-white/5 transition-all group"
+              >
+                <div className="text-left">
+                  <p className={`font-black uppercase tracking-tight text-sm ${selectedId === p.id ? "text-emerald-400" : "text-white/80"}`}>{p.nombre}</p>
+                  <p className="text-[10px] font-bold text-white/20 truncate max-w-[200px] mt-1 tracking-widest">{p.referencia_sigpac}</p>
+                </div>
+                {selectedId === p.id && (
+                  <div className="bg-emerald-500/20 p-1.5 rounded-lg text-emerald-500 animate-in zoom-in-50 duration-200">
+                    <Check size={16} />
+                  </div>
+                )}
+              </button>
+            ))}
+            {parcelas.length === 0 && <p className="p-6 text-xs text-white/20 font-bold uppercase tracking-widest text-center italic">No hay parcelas creadas.</p>}
+          </div>
         </div>
       )}
     </div>

@@ -47,31 +47,34 @@ export default function NuevaProduccionPage() {
   };
 
   return (
-    <div className="max-w-lg mx-auto pb-24 relative px-4 sm:px-0">
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="p-2.5 bg-white rounded-full text-gray-600 hover:bg-gray-100 shadow-sm border border-gray-100 transition-colors">
+    <div className="max-w-lg mx-auto pb-32 relative px-4 sm:px-0 z-10 animate-in fade-in duration-500">
+      <div className="flex items-center gap-3 mb-8 pt-4">
+        <button 
+          onClick={() => router.back()} 
+          className="p-2.5 bg-white/5 rounded-2xl text-white/70 hover:bg-white/10 shadow-sm border border-white/10 transition-all active:scale-95"
+        >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold text-gray-800">Registrar Cosecha</h1>
+        <h1 className="text-2xl font-black text-white tracking-tight uppercase">Registrar Cosecha</h1>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Parcela Selector */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl">
           <ParcelSelector onSelect={setParcelaId} selectedId={parcelaId} />
         </div>
 
         {/* Datos de Recolección */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm space-y-5">
-          <div className="flex items-center gap-2 text-purple-600 mb-2">
-            <ShoppingBasket size={18} />
-            <span className="text-xs font-black uppercase tracking-widest">Producción Neta</span>
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl space-y-6">
+          <div className="flex items-center gap-2 text-purple-400 mb-2">
+            <ShoppingBasket size={20} />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Producción Neta</span>
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Kilos Recolectados (kg)</label>
+            <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest leading-none">Kilos Recolectados (kg)</label>
             <input 
               type="number" step="1" required
-              className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 transition-all font-black text-2xl text-gray-900"
+              className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-3xl outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all font-black text-3xl text-white placeholder:text-white/10 shadow-inner"
               placeholder="0"
               value={cantidad} onChange={(e) => setCantidad(e.target.value)}
             />
@@ -79,27 +82,27 @@ export default function NuevaProduccionPage() {
         </div>
 
         {/* Destino y Trazabilidad */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm space-y-5">
-          <div className="space-y-4">
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl space-y-8">
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide flex items-center gap-2">
-                <Truck size={16} /> Destino / Almazara
+              <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest leading-none flex items-center gap-2">
+                <Truck size={14} className="text-purple-400" /> Destino / Almazara
               </label>
               <input 
                 type="text"
-                className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-purple-500 font-bold text-gray-800"
+                className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-purple-500/50 font-bold text-white placeholder:text-white/10"
                 placeholder="Nombre de la cooperativa..."
                 value={destino} onChange={(e) => setDestino(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide flex items-center gap-2">
-                <Hash size={16} /> Lote de Trazabilidad
+              <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest leading-none flex items-center gap-2">
+                <Hash size={14} className="text-purple-400" /> Lote de Trazabilidad
               </label>
               <input 
                 type="text"
-                className="w-full px-5 py-4 bg-gray-100 border border-gray-200 rounded-2xl outline-none text-gray-500 font-mono font-bold"
-                value={lote} onChange={(e) => setLote(e.target.value)}
+                className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none text-white/20 font-mono font-bold cursor-not-allowed opacity-50"
+                value={lote} readOnly
               />
             </div>
           </div>
@@ -108,9 +111,9 @@ export default function NuevaProduccionPage() {
         <button 
           type="submit" 
           disabled={isSaving || !cantidad || !parcelaId}
-          className="w-full flex items-center justify-center gap-3 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-bold py-5 rounded-2xl shadow-xl shadow-purple-600/30 transition-all disabled:opacity-70 disabled:scale-[0.98] active:scale-[0.98] text-lg mt-4"
+          className="w-full flex items-center justify-center gap-3 bg-purple-600 hover:bg-purple-500 active:bg-purple-700 text-white font-black py-6 rounded-[28px] shadow-2xl shadow-purple-900/40 transition-all disabled:opacity-50 disabled:grayscale active:scale-[0.98] text-lg uppercase tracking-widest group"
         >
-          {isSaving ? "Guardando Cosecha..." : <><Save size={22} /> Confirmar Recolección</>}
+          {isSaving ? "Guardando Cosecha..." : <><Save size={24} className="group-hover:rotate-12 transition-transform" /> Confirmar Recolección</>}
         </button>
       </form>
     </div>

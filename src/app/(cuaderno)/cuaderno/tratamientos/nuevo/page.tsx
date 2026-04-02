@@ -77,110 +77,122 @@ export default function NuevoTratamientoPage() {
   };
 
   return (
-    <div className="max-w-lg mx-auto pb-24 relative px-4 sm:px-0">
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="p-2.5 bg-white rounded-full text-gray-600 hover:bg-gray-100 shadow-sm border border-gray-100 transition-colors">
+    <div className="max-w-lg mx-auto pb-32 relative px-4 sm:px-0 z-10 animate-in fade-in duration-500">
+      <div className="flex items-center gap-3 mb-8 pt-4">
+        <button 
+          onClick={() => router.push('/cuaderno/tratamientos')} 
+          className="p-2.5 bg-white/5 rounded-2xl text-white/70 hover:bg-white/10 shadow-sm border border-white/10 transition-all active:scale-95"
+        >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold text-gray-800">Nuevo Tratamiento</h1>
+        <h1 className="text-2xl font-black text-white tracking-tight uppercase">Nuevo Tratamiento</h1>
       </div>
 
       {!isOnline && (
-        <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-4 rounded-2xl flex items-center gap-3 mb-6 shadow-sm">
+        <div className="bg-amber-500/5 border border-amber-500/10 text-amber-500 px-4 py-4 rounded-[24px] flex items-center gap-3 mb-6 shadow-sm backdrop-blur-xl">
           <WifiOff size={22} className="text-amber-600" />
-          <p className="text-sm font-medium leading-tight">Sin conexión. El tratamiento se guardará localmente y se enviará cuando recuperes señal.</p>
+          <p className="text-[10px] font-black leading-tight uppercase tracking-[0.15em]">Modo Offline Activo</p>
         </div>
       )}
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Parcela Selector */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl">
           <ParcelSelector 
             onSelect={setParcelaId} 
             selectedId={parcelaId} 
           />
         </div>
 
-        {/* API MAPA Buscador */}
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm space-y-4">
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Fitosanitario</label>
-            {!selectedProduct ? (
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input 
-                  type="text" 
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-green-500 focus:border-green-500/50 outline-none transition-all font-medium text-gray-800"
-                  placeholder="Ej: Cobre, Glifosato..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-                {isSearching && <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-green-600 animate-pulse">Buscando...</span>}
-              </div>
-            ) : (
-              <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-2xl">
-                <div>
-                  <p className="font-extrabold text-green-950 text-base">{selectedProduct.nombreComercial}</p>
-                  <p className="text-xs text-green-800 font-medium mt-0.5">Reg: {selectedProduct.numRegistro} • {selectedProduct.materiaActiva}</p>
+        {/* Producto MAPA */}
+        <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl space-y-4">
+          <label className="block text-[10px] font-black text-white/30 uppercase tracking-widest leading-none mb-2 pl-1">Buscador Oficial MAPA</label>
+          {!selectedProduct ? (
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+              <input 
+                type="text"
+                className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/50 font-bold text-white placeholder:text-white/10 transition-all"
+                placeholder="Buscar por nombre o Nº Registro..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              {isSearching && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <div className="w-5 h-5 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
                 </div>
-                <button type="button" onClick={() => { setSelectedProduct(null); setQuery(""); }} className="text-xs font-bold text-green-800 bg-green-200 px-3 py-1.5 rounded-xl uppercase tracking-wider">
-                  Cambiar
+              )}
+            </div>
+          ) : (
+            <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-between animate-in zoom-in-95 duration-300">
+               <div className="flex items-center gap-3">
+                 <div className="p-2 bg-emerald-500/20 rounded-xl text-emerald-400"><Sprout size={18} /></div>
+                 <div>
+                    <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Producto Validado</p>
+                    <p className="text-white font-bold text-xs line-clamp-1">{selectedProduct.nombreComercial}</p>
+                 </div>
+               </div>
+               <button 
+                type="button" 
+                onClick={() => { setSelectedProduct(null); setQuery(""); }}
+                className="text-[10px] font-black text-white/20 hover:text-white uppercase tracking-widest underline underline-offset-4"
+               >
+                 Cambiar
+               </button>
+            </div>
+          )}
+
+          {/* Opciones */}
+          {results.length > 0 && !selectedProduct && (
+            <div className="mt-2 bg-black/40 border border-white/10 rounded-2xl overflow-hidden divide-y divide-white/5 animate-in slide-in-from-top-2 duration-300 max-h-60 overflow-y-auto">
+              {results.map((prod) => (
+                <button
+                  key={prod.numRegistro}
+                  type="button"
+                  className="w-full px-5 py-4 text-left hover:bg-white/5 transition-colors flex flex-col gap-1"
+                  onClick={() => {
+                    setSelectedProduct(prod);
+                    setResults([]);
+                  }}
+                >
+                  <span className="text-white font-black text-sm uppercase tracking-tight">{prod.nombreComercial}</span>
+                  <span className="text-[10px] text-white/30 font-bold">Nº Registro: {prod.numRegistro} • {prod.materiaActiva}</span>
                 </button>
-              </div>
-            )}
-            
-            {/* Opciones */}
-            {results.length > 0 && !selectedProduct && (
-              <div className="mt-2 bg-white border border-gray-100 shadow-xl rounded-2xl overflow-hidden max-h-64 overflow-y-auto">
-                {results.map(prod => (
-                  <button 
-                    key={prod.numRegistro}
-                    type="button"
-                    className="w-full text-left p-4 hover:bg-green-50 border-b border-gray-50 last:border-0 transition-colors"
-                    onClick={() => {
-                      setSelectedProduct(prod);
-                      setResults([]);
-                    }}
-                  >
-                    <p className="font-bold text-gray-800 text-sm">{prod.nombreComercial}</p>
-                    <p className="text-xs text-gray-500 mt-1">{prod.materiaActiva} (Reg: {prod.numRegistro})</p>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Formulario Dosis */}
+        {/* Dosificación */}
         {selectedProduct && (
-          <div className="space-y-4 animate-in slide-in-from-bottom-2 fade-in duration-300">
-            <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm grid grid-cols-2 gap-5">
+          <div className="space-y-6 animate-in slide-in-from-bottom-2 fade-in duration-500">
+            <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 shadow-2xl backdrop-blur-xl grid grid-cols-2 gap-4">
               <div className="col-span-1">
-                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Dosis</label>
+                <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Dosis</label>
                 <input 
                   type="number" step="0.01" required
-                  className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500/50 font-bold text-lg text-gray-900 placeholder:font-normal placeholder:text-gray-400 font-sans"
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/50 font-black text-white text-xl"
                   placeholder="0.00"
                   value={dosis} onChange={(e) => setDosis(e.target.value)}
                 />
               </div>
               <div className="col-span-1">
-                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Unidad</label>
+                <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Unidad</label>
                 <select 
-                  className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-green-500 font-bold text-gray-900"
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/50 font-bold text-white text-base appearance-none cursor-pointer"
                   value={unidad} onChange={(e) => setUnidad(e.target.value)}
                 >
-                  <option value="L/ha">L / ha</option>
-                  <option value="kg/ha">kg / ha</option>
-                  <option value="%">%</option>
+                  <option value="L/ha" className="bg-zinc-900">L/ha</option>
+                  <option value="kg/ha" className="bg-zinc-900">kg/ha</option>
+                  <option value="%" className="bg-zinc-900">%</option>
                 </select>
               </div>
-              <div className="col-span-2">
-                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Superficie (ha)</label>
+              <div className="col-span-2 mt-2">
+                <label className="block text-[10px] font-black text-white/30 mb-3 uppercase tracking-widest pl-1 leading-none">Superficie (ha)</label>
                 <input 
                   type="number" step="0.01"
-                  className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-green-500 font-medium text-gray-900"
-                  placeholder="Opcional. Por defecto toda la parcela."
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500/50 font-bold text-white text-base"
+                  placeholder="Ej: 2.5 (Opcional)"
                   value={superficie} onChange={(e) => setSuperficie(e.target.value)}
                 />
               </div>
@@ -189,9 +201,9 @@ export default function NuevoTratamientoPage() {
             <button 
               type="submit" 
               disabled={isSaving}
-              className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-bold py-5 rounded-2xl shadow-lg shadow-green-600/30 transition-all disabled:opacity-70 disabled:scale-[0.98] active:scale-[0.98] text-lg mt-4"
+              className="w-full flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-black py-6 rounded-[28px] shadow-2xl shadow-emerald-900/40 transition-all disabled:opacity-50 disabled:grayscale active:scale-[0.98] text-lg uppercase tracking-widest group mb-12"
             >
-              {isSaving ? "Guardando Local..." : <><Save size={22} className="mb-0.5" /> Confirmar Tratamiento</>}
+              {isSaving ? "Guardando..." : <><Save size={24} className="group-hover:rotate-12 transition-transform" /> Aplicar Tratamiento</>}
             </button>
           </div>
         )}
