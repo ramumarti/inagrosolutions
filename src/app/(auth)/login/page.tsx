@@ -33,7 +33,8 @@ function LoginContent() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        router.push('/dashboard');
+        router.push('/cuaderno');
+        router.refresh();
       }
     });
 
