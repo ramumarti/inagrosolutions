@@ -59,7 +59,7 @@ export default function SignupPage() {
   };
 
   return (
-    <GlassCard className="flex flex-col items-center">
+    <GlassCard className="flex flex-col items-center w-full max-w-md mx-auto p-8 sm:p-10">
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center mb-6 shadow-lg shadow-[var(--color-primary)]/30">
         <Hexagon className="w-8 h-8 text-white" />
       </div>
