@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useI18n } from '@/lib/i18n';
 import { User } from '@supabase/supabase-js';
 import { cn } from '@/lib/utils';
+import { MobilePWAWidget } from '@/components/cuaderno/MobilePWAWidget';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -64,6 +65,8 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       <div className="fixed top-[20%] left-[20%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full bg-[var(--color-primary)]/10 blur-[120px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '10s' }} />
       <div className="fixed bottom-[20%] right-[20%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full bg-[var(--color-accent-blue)]/10 blur-[120px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '14s', animationDelay: '3s' }} />
       
+      <MobilePWAWidget />
+
       {/* Sidebar */}
       <Sidebar 
         isCollapsed={isSidebarCollapsed} 
