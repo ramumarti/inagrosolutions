@@ -5,12 +5,12 @@ import { cn } from '@/lib/utils';
 import { 
   Hexagon, LayoutGrid, ChevronLeft, ChevronRight, Home, CreditCard, 
   Shield, Mail, Leaf, Bug, Droplets, MapPin, Wallet, Crown,
-  BookOpen, FileDown, Bell
+  BookOpen, FileDown, Bell, Users, Building2, Scale
 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { useAuthContext } from '@/lib/auth/tenant-context';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -21,49 +21,73 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, closeMobile }: SidebarProps) {
   const { language, t } = useI18n();
-  const supabase = createClient();
+  const { user, hasRole, isSuperadmin } = useAuthContext();
   const pathname = usePathname();
-  const [isAdmin, setIsAdmin] = useState(false);
   const [cuadernoOpen, setCuadernoOpen] = useState(pathname.startsWith('/cuaderno'));
-
-  useEffect(() => {
-    let mounted = true;
-    async function loadUserRole() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      
-      const { data } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-        
-      if (mounted && data?.role === 'admin') {
-        setIsAdmin(true);
-      }
-    }
-    loadUserRole();
-    return () => { mounted = false; };
-  }, [supabase]);
 
   useEffect(() => {
     if (pathname.startsWith('/cuaderno')) setCuadernoOpen(true);
   }, [pathname]);
 
   const navItems: Array<{ label: string; href: string; icon: any; isActive: boolean; isChild?: boolean; section?: string }> = [
-    ...(isAdmin ? [
+    ...(isSuperadmin ? [
       {
-        label: 'Administración',
-        href: '/admin',
-        icon: Shield,
-        isActive: pathname === '/admin'
+        label: 'Superadmin',
+        href: '/superadmin',
+        icon: Crown,
+        isActive: pathname === '/superadmin'
       },
       {
-        label: 'Gestión de Emails',
-        href: '/admin/email',
-        icon: Mail,
-        isActive: pathname.startsWith('/admin/email'),
-        isChild: true
+        label: 'Tenants',
+        href: '/superadmin/tenants',
+        icon: Building2,
+        isActive: pathname.startsWith('/superadmin/tenants')
+      }
+    ] : []),
+    ...(hasRole(['tenant_admin']) && !isSuperadmin ? [
+      {
+        label: 'Tenant Admin',
+        href: '/tenant',
+        icon: Shield,
+        isActive: pathname === '/tenant'
+      },
+      {
+        label: 'Usuarios',
+        href: '/tenant/users',
+        icon: Users,
+        isActive: pathname.startsWith('/tenant/users')
+      },
+      {
+        label: 'Entradas Almazara',
+        href: '/tenant/harvests',
+        icon: Scale,
+        isActive: pathname.startsWith('/tenant/harvests')
+      },
+      {
+        label: 'Configuración',
+        href: '/tenant/settings',
+        icon: Hexagon,
+        isActive: pathname.startsWith('/tenant/settings')
+      }
+    ] : []),
+    ...(hasRole(['technician', 'tenant_admin']) && !isSuperadmin ? [
+      {
+        label: 'Técnico',
+        href: '/technician',
+        icon: BookOpen,
+        isActive: pathname === '/technician'
+      },
+      {
+        label: 'Mis Clientes',
+        href: '/technician/farmers',
+        icon: Users,
+        isActive: pathname.startsWith('/technician/farmers')
+      },
+      {
+        label: 'Tablero Tareas',
+        href: '/technician/tasks',
+        icon: Bell,
+        isActive: pathname.startsWith('/technician/tasks')
       }
     ] : [])
   ];
@@ -73,6 +97,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
     { label: language === 'en' ? 'Overview' : 'Panel', href: '/cuaderno', icon: BookOpen, isActive: pathname === '/cuaderno' },
     { label: language === 'en' ? 'Treatments' : 'Tratamientos', href: '/cuaderno', icon: Bug, isActive: false },
     { label: language === 'en' ? 'Tasks' : 'Labores', href: '/cuaderno', icon: Leaf, isActive: false },
+    { label: language === 'en' ? 'Resources' : 'Recursos', href: '/cuaderno/recursos', icon: Users, isActive: pathname === '/cuaderno/recursos' },
     { label: language === 'en' ? 'Fertilization' : 'Fertilización', href: '/cuaderno', icon: Droplets, isActive: false },
     { label: language === 'en' ? 'Parcels' : 'Parcelas', href: '/cuaderno', icon: MapPin, isActive: false },
     { label: language === 'en' ? 'Export' : 'Exportación', href: '/cuaderno', icon: FileDown, isActive: false },
