@@ -69,23 +69,23 @@ export function TrazabilidadModule({ explotacionId, parcelas }: TrazabilidadModu
     }
   };
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all placeholder:text-white/15";
-  const labelClass = "text-[10px] font-black text-white/40 uppercase tracking-widest block mb-2";
+  const inputClass = "w-full bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-white text-base outline-none focus:ring-2 focus:ring-orange-500/50 transition-all placeholder:text-white/30";
+  const labelClass = "text-sm font-bold text-white/80 block mb-2";
 
   if (isAdding) {
     return (
       <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
         <div className="flex items-center justify-between pb-6 border-b border-white/5">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center border border-orange-500/10">
-              <Package className="w-6 h-6 text-orange-400" />
+            <div className="w-16 h-16 shrink-0 bg-orange-500/10 rounded-xl flex items-center justify-center border border-orange-500/10">
+              <Package className="w-8 h-8 text-orange-400" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-white uppercase tracking-tight">Nuevo Lote de Cosecha</h3>
-              <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Trazabilidad desde el campo</p>
+              <h3 className="text-xl font-black text-white tracking-tight">Nuevo Lote de Cosecha</h3>
+              <p className="text-sm text-white/60 font-bold">Trazabilidad desde el campo</p>
             </div>
           </div>
-          <button type="button" onClick={() => setIsAdding(false)} className="px-4 py-2 text-xs font-bold text-white/60 hover:text-white transition-colors">
+          <button type="button" onClick={() => setIsAdding(false)} className="px-5 py-3 bg-white/5 rounded-xl text-sm font-bold text-white/80 hover:bg-white/10 hover:text-white transition-colors">
             Cancelar
           </button>
         </div>
@@ -123,7 +123,7 @@ export function TrazabilidadModule({ explotacionId, parcelas }: TrazabilidadModu
           </div>
         </div>
 
-        <GlowButton type="submit" variant="primary" className="w-full py-4 rounded-2xl text-[11px]" isLoading={loading}>
+        <GlowButton type="submit" variant="primary" className="w-full py-5 rounded-2xl text-base font-bold" isLoading={loading}>
           Generar Trazabilidad
         </GlowButton>
       </form>
@@ -134,16 +134,16 @@ export function TrazabilidadModule({ explotacionId, parcelas }: TrazabilidadModu
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/5">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center border border-orange-500/10">
-            <Package className="w-6 h-6 text-orange-400" />
+          <div className="w-16 h-16 shrink-0 bg-orange-500/10 rounded-xl flex items-center justify-center border border-orange-500/10">
+            <Package className="w-8 h-8 text-orange-400" />
           </div>
           <div>
-            <h3 className="text-lg font-black text-white uppercase tracking-tight">Cosechas y Trazabilidad</h3>
-            <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Seguimiento de Lotes y Producción</p>
+            <h3 className="text-xl font-black text-white tracking-tight">Cosechas y Trazabilidad</h3>
+            <p className="text-sm text-white/60 font-bold">Seguimiento de Lotes y Producción</p>
           </div>
         </div>
-        <GlowButton variant="secondary" className="px-4 py-2.5 text-[10px] flex items-center gap-2" onClick={() => setIsAdding(true)}>
-          <Plus size={14} /> Registrar Cosecha
+        <GlowButton variant="secondary" className="px-5 py-4 w-full sm:w-auto text-base font-bold flex items-center justify-center gap-2" onClick={() => setIsAdding(true)}>
+          <Plus size={20} /> Registrar Cosecha
         </GlowButton>
       </div>
 

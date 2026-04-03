@@ -77,8 +77,8 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
     }
   };
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/30 transition-all placeholder:text-white/15";
-  const labelClass = "text-[10px] font-black text-white/40 uppercase tracking-widest block mb-2";
+  const inputClass = "w-full bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-white text-base outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-white/30";
+  const labelClass = "text-sm font-bold text-white/80 block mb-2";
 
   if (success) {
     return (
@@ -97,12 +97,12 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center gap-3 pb-6 border-b border-white/5">
-        <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/10">
-          <Bug className="w-6 h-6 text-blue-400" />
+        <div className="w-16 h-16 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/10 shrink-0">
+          <Bug className="w-8 h-8 text-blue-400" />
         </div>
         <div>
-          <h3 className="text-lg font-black text-white uppercase tracking-tight">Nuevo Tratamiento Fitosanitario</h3>
-          <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Registro obligatorio SIEX • RD 1311/2012</p>
+          <h3 className="text-xl font-black text-white tracking-tight">Nuevo Tratamiento</h3>
+          <p className="text-sm text-white/60 font-bold">Fitosanitarios • Oficial SIEX</p>
         </div>
       </div>
 
@@ -135,7 +135,7 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
         </div>
 
         <div>
-          <label className={labelClass}><Calendar size={10} className="inline mr-1" />Fecha *</label>
+          <label className={labelClass}><Calendar size={14} className="inline mr-1" />Fecha *</label>
           <input
             type="date"
             className={inputClass}
@@ -145,7 +145,7 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
         </div>
 
         <div>
-          <label className={labelClass}><Beaker size={10} className="inline mr-1" />Producto *</label>
+          <label className={labelClass}><Beaker size={14} className="inline mr-1" />Producto *</label>
           <input
             className={inputClass}
             placeholder="Nombre del producto fitosanitario"
@@ -166,7 +166,7 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className={labelClass}><Ruler size={10} className="inline mr-1" />Dosis *</label>
+            <label className={labelClass}><Ruler size={14} className="inline mr-1" />Dosis *</label>
             <input
               type="number"
               step="0.01"
@@ -206,7 +206,7 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
         </div>
 
         <div>
-          <label className={labelClass}><Tractor size={10} className="inline mr-1" />Maquinaria</label>
+          <label className={labelClass}><Tractor size={14} className="inline mr-1" />Maquinaria</label>
           <input
             className={inputClass}
             placeholder="Equipo utilizado"
@@ -216,7 +216,7 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
         </div>
 
         <div>
-          <label className={labelClass}><User size={10} className="inline mr-1" />Operario</label>
+          <label className={labelClass}><User size={14} className="inline mr-1" />Operario</label>
           <input
             className={inputClass}
             placeholder="Nombre del aplicador"
@@ -230,7 +230,7 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
         <GlowButton
           type="submit"
           variant="primary"
-          className="w-full py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest"
+          className="w-full py-5 rounded-2xl text-base font-bold"
           isLoading={saving}
         >
           Registrar Tratamiento

@@ -42,7 +42,7 @@ export default function CuadernoPage() {
       <div className="flex items-center justify-center h-full">
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-          <p className="text-[10px] text-white/30 font-black uppercase tracking-widest">Cargando Cuaderno Digital...</p>
+          <p className="text-sm text-white/70 font-bold uppercase tracking-wide">Cargando Cuaderno Digital...</p>
         </div>
       </div>
     );
@@ -89,8 +89,8 @@ export default function CuadernoPage() {
 
           {/* Module Overview Grid */}
           <div>
-            <h3 className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-4">Módulos del Cuaderno</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <h3 className="text-sm font-extrabold text-white/50 uppercase tracking-wide mb-4">Módulos del Cuaderno</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {modulos.map(m => {
                 const Icon = ICON_MAP[m.icono] || Package;
                 const active = hasModule(m.slug);
@@ -113,8 +113,8 @@ export default function CuadernoPage() {
                         <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                       </div>
                     )}
-                    <Icon size={20} className={`mb-3 ${active ? 'text-white/60 group-hover:text-white' : 'text-white/20'} transition-colors`} />
-                    <p className="text-[10px] font-black text-white/60 uppercase tracking-widest">{m.nombre_es}</p>
+                    <Icon size={24} className={`mb-3 ${active ? 'text-white/80 group-hover:text-white' : 'text-white/20'} transition-colors`} />
+                    <p className="text-sm font-bold text-white/90 leading-tight">{m.nombre_es}</p>
                   </button>
                 );
               })}
@@ -129,15 +129,15 @@ export default function CuadernoPage() {
                   {tierInfo.label_es[0]}
                 </div>
                 <div>
-                  <p className="text-sm font-black text-white">Plan {tierInfo.label_es}</p>
-                  <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">
+                  <p className="text-xl font-black text-white">Plan {tierInfo.label_es}</p>
+                  <p className="text-sm text-white/70 font-bold">
                     {profile.totalHectareas.toFixed(1)} ha • {profile.modulosActivos.length} módulos activos
                   </p>
                 </div>
               </div>
               {profile.tier !== 'premium' && (
-                <a href="/cuaderno/planes" className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-[10px] font-black text-white/50 uppercase tracking-widest hover:text-white hover:bg-white/10 transition-all">
-                  Mejorar Plan <ArrowRight size={12} />
+                <a href="/cuaderno/planes" className="flex items-center gap-2 px-5 py-3 bg-white/5 rounded-xl border border-white/10 text-sm font-bold text-white/80 hover:text-white hover:bg-white/10 transition-all">
+                  Mejorar Plan <ArrowRight size={16} />
                 </a>
               )}
             </div>
@@ -191,8 +191,8 @@ export default function CuadernoPage() {
                   <MapPin className="w-6 h-6 text-emerald-400" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-white uppercase tracking-tight">Mis Parcelas</h3>
-                  <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Identificación SIGPAC • Geolocalización</p>
+                  <h3 className="text-xl font-black text-white tracking-tight">Mis Parcelas</h3>
+                  <p className="text-sm text-white/60 font-bold">Identificación SIGPAC • Geolocalización</p>
                 </div>
               </div>
               {profile.parcelas.length === 0 ? (
@@ -202,11 +202,11 @@ export default function CuadernoPage() {
                   {profile.parcelas.map((p: any) => (
                     <GlassCard key={p.id} className="p-5 border-white/5 hover:bg-white/[0.03] transition-all">
                       <div className="flex items-start justify-between mb-3">
-                        <h4 className="font-black text-white text-sm">{p.nombre}</h4>
-                        <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg border border-emerald-500/10">{p.hectareas} ha</span>
+                        <h4 className="font-black text-white text-lg">{p.nombre}</h4>
+                        <span className="text-sm font-black text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/10">{p.hectareas} ha</span>
                       </div>
-                      {p.cultivo && <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">{p.cultivo} {p.variedad ? `• ${p.variedad}` : ''}</p>}
-                      {p.referencia_sigpac && <p className="text-[9px] text-white/20 mt-1 font-mono">SIGPAC: {p.referencia_sigpac}</p>}
+                      {p.cultivo && <p className="text-sm text-white/70 font-bold">{p.cultivo} {p.variedad ? `• ${p.variedad}` : ''}</p>}
+                      {p.referencia_sigpac && <p className="text-xs text-white/50 mt-2 font-mono bg-white/5 py-1 px-2 rounded w-fit">SIGPAC: {p.referencia_sigpac}</p>}
                     </GlassCard>
                   ))}
                 </div>
@@ -252,7 +252,7 @@ export default function CuadernoPage() {
       {/* Module sidebar */}
       <aside className="hidden lg:flex w-56 shrink-0 border-r border-white/5 flex-col py-6 overflow-y-auto">
         <div className="px-4 mb-6">
-          <h2 className="text-[10px] font-black text-white/20 uppercase tracking-widest">Cuaderno Digital</h2>
+          <h2 className="text-sm font-extrabold text-white/50 uppercase tracking-widest">Cuaderno Digital</h2>
         </div>
         <nav className="flex-1 px-2 space-y-0.5">
           {tabs.map(tab => {
@@ -270,9 +270,9 @@ export default function CuadernoPage() {
                     : 'text-white/40 hover:text-white hover:bg-white/5 border border-transparent'
                 }`}
               >
-                <Icon size={16} className={activeTab === tab.key ? 'text-emerald-400' : isLocked ? 'text-white/10' : 'text-white/30 group-hover:text-white/60'} />
-                <span className="text-[10px] font-black uppercase tracking-widest truncate flex-1">{tab.label}</span>
-                {isLocked && <Lock size={10} className="text-white/10 shrink-0" />}
+                <Icon size={20} className={activeTab === tab.key ? 'text-emerald-400' : isLocked ? 'text-white/10' : 'text-white/50 group-hover:text-white'} />
+                <span className="text-sm font-bold truncate flex-1">{tab.label}</span>
+                {isLocked && <Lock size={14} className="text-white/10 shrink-0" />}
               </button>
             );
           })}
@@ -296,8 +296,8 @@ export default function CuadernoPage() {
                       : 'text-white/40 border border-transparent'
                   }`}
                 >
-                  <Icon size={14} />
-                  <span className="text-[9px] font-black uppercase tracking-widest">{tab.label}</span>
+                  <Icon size={18} />
+                  <span className="text-sm font-bold truncate">{tab.label}</span>
                 </button>
               );
             })}

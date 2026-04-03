@@ -51,8 +51,8 @@ export function LaborForm({ parcelas, onSuccess }: LaborFormProps) {
     }
   };
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all placeholder:text-white/15";
-  const labelClass = "text-[10px] font-black text-white/40 uppercase tracking-widest block mb-2";
+  const inputClass = "w-full bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-white text-base outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all placeholder:text-white/30";
+  const labelClass = "text-sm font-bold text-white/80 block mb-2";
 
   if (success) {
     return (
@@ -68,12 +68,12 @@ export function LaborForm({ parcelas, onSuccess }: LaborFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center gap-3 pb-6 border-b border-white/5">
-        <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/10">
-          <Leaf className="w-6 h-6 text-emerald-400" />
+        <div className="w-16 h-16 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/10 shrink-0">
+          <Leaf className="w-8 h-8 text-emerald-400" />
         </div>
         <div>
-          <h3 className="text-lg font-black text-white uppercase tracking-tight">Nueva Labor Agrícola</h3>
-          <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Registro del cuaderno de campo</p>
+          <h3 className="text-xl font-black text-white tracking-tight">Nueva Labor Agrícola</h3>
+          <p className="text-sm text-white/60 font-bold">Registro de intervenciones en la parcela</p>
         </div>
       </div>
 
@@ -116,7 +116,7 @@ export function LaborForm({ parcelas, onSuccess }: LaborFormProps) {
         </div>
       </div>
 
-      <GlowButton type="submit" variant="primary" className="w-full py-4 rounded-2xl text-[11px]" isLoading={saving}>
+      <GlowButton type="submit" variant="primary" className="w-full py-5 rounded-2xl text-base font-bold" isLoading={saving}>
         Registrar Labor
       </GlowButton>
     </form>

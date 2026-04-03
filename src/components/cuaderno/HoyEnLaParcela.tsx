@@ -24,27 +24,27 @@ export function HoyEnLaParcela({ resumen, alertasPendientes, onAction }: HoyEnLa
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+            <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
+            <span className="text-sm font-bold text-emerald-400 capitalize">
               {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
             </span>
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight">
             {saludo}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Agricultor</span>
           </h1>
-          <p className="text-white/30 mt-2 text-xs font-bold uppercase tracking-[0.2em]">
+          <p className="text-white/80 mt-2 text-base font-medium">
             {resumen.nombre_explotacion} • {resumen.total_hectareas.toFixed(1)} ha
           </p>
         </div>
 
         <div className="flex gap-3">
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-white/5 rounded-xl border border-white/5">
-            <Sun size={14} className="text-amber-400" />
-            <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">24°C</span>
+          <div className="flex items-center gap-2 px-5 py-3 bg-white/10 rounded-xl border border-white/10">
+            <Sun size={20} className="text-amber-400" />
+            <span className="text-sm font-bold text-white">24°C</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-white/5 rounded-xl border border-white/5">
-            <CloudRain size={14} className="text-blue-400" />
-            <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">0%</span>
+          <div className="flex items-center gap-2 px-5 py-3 bg-white/10 rounded-xl border border-white/10">
+            <CloudRain size={20} className="text-blue-400" />
+            <span className="text-sm font-bold text-white">0%</span>
           </div>
         </div>
       </div>
@@ -57,23 +57,23 @@ export function HoyEnLaParcela({ resumen, alertasPendientes, onAction }: HoyEnLa
           { label: 'Labores Hoy', value: resumen.labores_hoy, icon: Leaf, color: 'violet' },
           { label: 'Alertas', value: alertasPendientes, icon: Bell, color: alertasPendientes > 0 ? 'amber' : 'emerald' },
         ].map((stat, i) => (
-          <GlassCard key={i} className="p-5 border-white/5 hover:bg-white/[0.03] transition-all cursor-pointer group">
-            <div className="flex items-center justify-between mb-3">
-              <div className={`p-2 bg-${stat.color}-500/10 rounded-xl text-${stat.color}-400 border border-${stat.color}-500/10`}>
-                <stat.icon size={18} />
+          <GlassCard key={i} className="p-6 border-white/10 bg-white/5 hover:bg-white/10 transition-all cursor-pointer group rounded-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <div className={`p-3 bg-${stat.color}-500/20 rounded-xl text-${stat.color}-400 border border-${stat.color}-500/20`}>
+                <stat.icon size={24} />
               </div>
               {stat.label === 'Alertas' && alertasPendientes > 0 && (
-                <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                <div className="w-3 h-3 bg-amber-500 rounded-full animate-pulse" />
               )}
             </div>
-            <div className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-0.5">{stat.label}</div>
-            <div className="text-2xl font-black text-white tracking-tight">{stat.value}</div>
+            <div className="text-sm font-bold text-white/70 tracking-wide mb-1">{stat.label}</div>
+            <div className="text-4xl font-black text-white tracking-tight">{stat.value}</div>
           </GlassCard>
         ))}
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Registrar Tratamiento', icon: Bug, tab: 'fitosanitarios', color: 'from-blue-500/20 to-blue-600/20 hover:from-blue-500/30 hover:to-blue-600/30 border-blue-500/20' },
           { label: 'Nueva Labor', icon: Leaf, tab: 'labores', color: 'from-emerald-500/20 to-emerald-600/20 hover:from-emerald-500/30 hover:to-emerald-600/30 border-emerald-500/20' },
@@ -84,10 +84,10 @@ export function HoyEnLaParcela({ resumen, alertasPendientes, onAction }: HoyEnLa
             type="button"
             key={i}
             onClick={() => onAction && onAction(action.tab)}
-            className={`flex items-center text-left gap-3 w-full p-4 bg-gradient-to-br ${action.color} border rounded-xl transition-all active:scale-[0.98] group`}
+            className={`flex flex-col items-center justify-center text-center gap-3 w-full p-6 min-h-[120px] bg-gradient-to-br ${action.color} border border-white/10 rounded-2xl transition-all active:scale-[0.98] group`}
           >
-            <action.icon size={18} className="text-white/60 group-hover:text-white transition-colors shrink-0" />
-            <span className="text-[10px] font-black text-white/70 uppercase tracking-widest group-hover:text-white transition-colors">{action.label}</span>
+            <action.icon size={28} className="text-white/80 group-hover:text-white transition-colors shrink-0" />
+            <span className="text-[15px] font-bold text-white leading-tight">{action.label}</span>
           </button>
         ))}
       </div>
