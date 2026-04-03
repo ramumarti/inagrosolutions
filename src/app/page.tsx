@@ -1,23 +1,24 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
   ArrowRight, 
   ShieldCheck, 
-  Zap, 
-  Database, 
+  Leaf, 
+  WifiOff, 
   Smartphone, 
-  Globe, 
+  FileDown, 
   Lock,
-  ChevronRight,
   Menu,
   X,
   CreditCard,
   Target,
   BarChart4,
-  Layers,
-  Sparkles
+  MapPin,
+  Sparkles,
+  Tractor,
+  Droplets
 } from 'lucide-react';
 
 // Reusable Components
@@ -29,10 +30,10 @@ const GlassCard = ({ children, className = "" }: { children: React.ReactNode, cl
 
 const GlowButton = ({ children, variant = 'primary', className = "" }: { children: React.ReactNode, variant?: 'primary' | 'secondary', className?: string }) => (
   <button className={`
-    font-black uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center
+    font-bold transition-all active:scale-95 flex items-center justify-center
     ${variant === 'primary' 
-      ? 'bg-gradient-to-r from-indigo-500 to-blue-600 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]' 
-      : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'}
+      ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]' 
+      : 'bg-white/5 text-white/90 hover:bg-white/10 border border-white/20'}
     ${className}
   `}>
     {children}
@@ -40,45 +41,46 @@ const GlowButton = ({ children, variant = 'primary', className = "" }: { childre
 );
 
 export default function LandingPage() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#050510] text-white selection:bg-indigo-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a100d] text-white selection:bg-emerald-500/30 overflow-x-hidden font-sans">
       {/* Dynamic Background Elements */}
       <div className="fixed inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[150px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[150px] rounded-full" />
-        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-600/5 blur-[120px] rounded-full" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-green-600/10 blur-[150px] rounded-full pointer-events-none" />
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 transition-all duration-300">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 bg-[#0a100d]/80 backdrop-blur-md border-b border-white/5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-             <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg transform rotate-3">
-               <Layers size={22} className="text-white" />
+             <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg transform rotate-3">
+               <Leaf size={26} className="text-white" />
              </div>
-             <span className="text-2xl font-black tracking-tighter glow-text">IASOLUTIONS</span>
+             <span className="text-2xl font-black tracking-tighter text-white">INAGROSOLUTIONS</span>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
-            {['Funciones', 'Planes', 'Seguridad'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 hover:text-white transition-colors">{item}</a>
+            {['Ventajas', 'Funcionamiento', 'Planes'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-bold text-white/70 hover:text-white transition-colors">
+                {item}
+              </a>
             ))}
             <Link href="/login">
-              <GlowButton variant="secondary" className="px-6 py-2.5 rounded-xl text-[10px]">
-                Iniciar Sesión
+              <GlowButton variant="secondary" className="px-6 py-3 rounded-xl text-sm">
+                Acceso Agricultor
               </GlowButton>
             </Link>
-            <Link href="#pricing">
-              <GlowButton variant="primary" className="px-8 py-2.5 rounded-xl text-[10px]">
-                Empieza Ya
+            <Link href="#planes">
+              <GlowButton variant="primary" className="px-8 py-3 rounded-xl text-sm">
+                Probar Gratis
               </GlowButton>
             </Link>
           </div>
 
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-white">
-            {isMenuOpen ? <X /> : <Menu />}
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-white/80 p-2">
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </nav>
@@ -86,57 +88,67 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative pt-48 pb-32 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="relative z-10 space-y-8 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
-                <Sparkles size={14} className="text-indigo-400" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Cuaderno Digital Avanzado</span>
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                <ShieldCheck size={18} className="text-emerald-400" />
+                <span className="text-sm font-bold text-emerald-400">100% Adaptado a Normativa SIEX y PAC</span>
               </div>
               
-              <h1 className="text-6xl md:text-8xl font-black leading-none tracking-tighter">
-                TU CAMPO, <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-emerald-500 to-green-600">
-                  SIN LÍMITES.
+              <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tight text-white">
+                El Cuaderno Digital <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-500">
+                  Creado por y para Agricultores.
                 </span>
               </h1>
 
-              <p className="text-lg md:text-xl text-white/40 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                Gestión integral de explotaciones, cumplimiento SIEX, fertilización y cuadernos agrícolas en una sola plataforma corporativa.
+              <p className="text-lg md:text-xl text-white/80 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
+                Olvídate del papeleo. Registra tus tratamientos y labores directamente desde el tractor en tu móvil, <strong>incluso sin cobertura de internet</strong>. Genera informes oficiales (XML / Excel) con un solo clic.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                 <Link href="#pricing">
-                   <GlowButton variant="primary" className="px-10 py-5 rounded-2xl text-base group bg-gradient-to-r from-emerald-500 to-green-600 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]">
-                     Empezar Gratis <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform" />
+                 <Link href="#planes">
+                   <GlowButton variant="primary" className="px-10 py-5 rounded-2xl text-lg w-full sm:w-auto">
+                     Ver Planes <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform" />
                    </GlowButton>
                  </Link>
                  <Link href="/login">
-                    <GlowButton variant="secondary" className="px-10 py-5 rounded-2xl text-base">
-                      Acceso Agricultor
+                    <GlowButton variant="secondary" className="px-10 py-5 rounded-2xl text-lg w-full sm:w-auto">
+                      Iniciar Sesión
                     </GlowButton>
                  </Link>
               </div>
             </div>
 
-            <div className="relative group">
-              <div className="absolute inset-0 bg-indigo-500/20 blur-[120px] rounded-full group-hover:bg-blue-600/20 transition-all duration-1000" />
-              <GlassCard className="p-4 border-white/20 bg-white/[0.03] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] transform hover:scale-[1.02] transition-all duration-700">
-                <div className="h-[400px] w-full bg-[#080815] rounded-[24px] border border-white/5 overflow-hidden relative">
-                   <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent" />
-                   {/* Simulated Dashboard UI */}
-                   <div className="p-8 space-y-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-white/5 animate-pulse" />
-                        <div className="space-y-2">
-                          <div className="w-32 h-3 bg-white/10 rounded-full" />
-                          <div className="w-20 h-2 bg-white/5 rounded-full" />
+            <div className="relative group hidden lg:block">
+              <div className="absolute inset-0 bg-emerald-500/20 blur-[120px] rounded-full group-hover:bg-green-600/20 transition-all duration-1000" />
+              <GlassCard className="p-4 border-white/20 bg-white/[0.03] shadow-2xl transform hover:scale-[1.02] transition-all duration-700">
+                <div className="h-[450px] w-full bg-[#0a100d] rounded-[24px] border border-white/10 overflow-hidden relative flex flex-col justify-between">
+                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent" />
+                   {/* Simulated App UI */}
+                   <div className="p-6 relative z-10">
+                      <div className="flex justify-between items-center mb-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                            <Tractor size={20} className="text-emerald-400" />
+                          </div>
+                          <div>
+                            <div className="w-32 h-4 bg-white/80 rounded" />
+                            <div className="w-20 h-3 bg-white/40 rounded mt-2" />
+                          </div>
+                        </div>
+                        <div className="px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-xs font-bold flex items-center gap-1">
+                          <WifiOff size={12} /> Sin Cobertura
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                         <div className="h-32 bg-white/5 rounded-2xl border border-white/5" />
-                         <div className="h-32 bg-white/5 rounded-2xl border border-white/5" />
+                      
+                      <div className="space-y-3">
+                         <div className="h-16 bg-white/10 rounded-xl border border-white/5 flex items-center px-4" />
+                         <div className="h-16 bg-white/10 rounded-xl border border-white/5 flex items-center px-4" />
                       </div>
-                      <div className="h-24 bg-gradient-to-r from-indigo-500/10 to-blue-500/10 rounded-2xl border border-white/5" />
+                   </div>
+                   <div className="p-6 relative z-10 w-full">
+                     <div className="h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white font-bold opacity-80" />
                    </div>
                 </div>
               </GlassCard>
@@ -146,28 +158,29 @@ export default function LandingPage() {
       </section>
 
       {/* Features Matrix */}
-      <section id="funciones" className="py-32 px-6">
+      <section id="ventajas" className="py-24 px-6 bg-white/[0.02] border-y border-white/5">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center mb-24 text-center">
-            <h2 className="text-[10px] font-black uppercase text-emerald-500 tracking-[0.8em] mb-4">Cuaderno Digital</h2>
-            <p className="text-[40px] md:text-5xl font-black tracking-tighter text-white">Potencia tu Explotación Agrícola</p>
+          <div className="flex flex-col items-center mb-16 text-center">
+            <h2 className="text-sm font-black uppercase text-emerald-500 tracking-widest mb-4">Por qué elegirnos</h2>
+            <p className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">Diseñado para la realidad del campo</p>
+            <p className="text-lg text-white/70 max-w-2xl font-medium">Sabemos que el agricultor no tiene tiempo que perder frente al ordenador. Nuestra tecnología se adapta a tus necesidades diarias.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { icon: <Zap />, title: "Ready-to-Use", desc: "Genera cuadernos de explotación en segundos, 100% compatibles con SIEX y PAC." },
-              { icon: <ShieldCheck />, title: "Seguridad Pro", desc: "Cumplimiento normativo estricto y control de acceso por perfiles para tu finca." },
-              { icon: <Target />, title: "Escalabilidad", desc: "Desde pequeños agricultores hasta grandes cooperativas. Crecemos contigo." },
-              { icon: <BarChart4 />, title: "Analytics", desc: "Métricas en tiempo real, alertas de plagas y consumo de fertilizantes." },
-              { icon: <Globe />, title: "Conectividad", desc: "Sincronización con sensores IoT y bases de datos oficiales (MAPA)." },
-              { icon: <Lock />, title: "Privacidad", desc: "Datos protegidos y privatización total de tus fincas." }
+              { icon: <WifiOff />, title: "Uso sin Cobertura (Offline)", desc: "Apúntalo todo desde el tractor en la PWA de tu móvil aunque no tengas señal. Se subirá automáticamente al recuperar el internet." },
+              { icon: <FileDown />, title: "Reportes Oficiales Automáticos", desc: "Cumple la ley sin esfuerzo. Exporta tu cuaderno oficial al formato XML requerido para la PAC y el SIEX en 1 segundo." },
+              { icon: <Tractor />, title: "Fácil de Usar, Textos Grandes", desc: "Interfaz intuitiva, contrastes altos y botones muy grandes. Pensado para usarse rápido y sin conocimientos avanzados." },
+              { icon: <Droplets />, title: "Control de Fitosanitarios y Abonos", desc: "Calcula Dosis y mantén el registro estricto legal de tus tratamientos. Incluye validadores para evitar multas." },
+              { icon: <MapPin />, title: "Sincronización de Parcelas", desc: "Registra y agrupa las fincas, organiza qué siembras y lleva el Histórico por polígono de forma sencilla." },
+              { icon: <BarChart4 />, title: "Control de Costes y Trazabilidad", desc: "Averigua si tu finca es rentable. Sigue todos los gastos por labor y mantén la trazabilidad de tus lotes de cosecha." }
             ].map((feat, i) => (
-              <GlassCard key={i} className="p-10 border-white/5 hover:bg-white/[0.04] transition-all group">
-                <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-indigo-400 mb-8 border border-white/10 group-hover:scale-110 transition-transform">
-                   {React.cloneElement(feat.icon as React.ReactElement<{ size?: number }>, { size: 28 })}
+              <GlassCard key={i} className="p-8 border-white/10 hover:bg-white/[0.06] transition-all group rounded-2xl">
+                <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 border border-emerald-500/20 group-hover:scale-110 transition-transform">
+                   {React.cloneElement(feat.icon as React.ReactElement<{ size?: number }>, { size: 32 })}
                 </div>
-                <h3 className="text-xl font-black text-white mb-4 uppercase tracking-tight">{feat.title}</h3>
-                <p className="text-white/40 leading-relaxed font-medium">{feat.desc}</p>
+                <h3 className="text-xl font-bold text-white mb-3">{feat.title}</h3>
+                <p className="text-white/70 leading-relaxed font-medium text-base">{feat.desc}</p>
               </GlassCard>
             ))}
           </div>
@@ -175,64 +188,70 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-32 px-6 relative bg-white/[0.01]">
+      <section id="planes" className="py-32 px-6 relative">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl font-black tracking-tighter text-white mb-4">Planes para Equipos Ganadores</h2>
-            <p className="text-white/40 uppercase font-black text-[10px] tracking-widest">Escoge tu camino hacia el éxito</p>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">Planes Sencillos y Transparentes</h2>
+            <p className="text-lg text-white/70 max-w-2xl mx-auto font-medium">Invierte menos tiempo en burocracia y más tiempo en cultivar. Escoge la solución que se adapte al tamaño de tu explotación.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 items-stretch">
              {/* Starter */}
-             <GlassCard className="p-10 border-white/10 flex flex-col items-center text-center">
-                <span className="text-[10px] font-black uppercase text-white/30 tracking-widest mb-4">Básico</span>
+             <GlassCard className="p-10 border-white/10 flex flex-col rounded-3xl h-full">
+                <h3 className="text-2xl font-black text-white mb-2">Agricultor Básico</h3>
+                <p className="text-white/60 mb-6 font-medium text-sm">Perfecto para fincas pequeñas que necesitan el cuaderno digital obligatorio.</p>
                 <div className="flex items-baseline gap-1 mb-8">
-                  <span className="text-5xl font-black">€3.99</span>
-                  <span className="text-white/20 font-black text-xs uppercase">/mes</span>
+                  <span className="text-5xl font-black text-white">€15</span>
+                  <span className="text-white/50 font-bold text-base">/mes</span>
                 </div>
-                <ul className="space-y-4 mb-10 w-full text-white/50 text-sm font-medium">
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> 1 Explotación Agrícola</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> 2 Usuarios</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Soporte Comunidad</li>
+                <ul className="space-y-4 mb-10 flex-1 text-white/80 font-medium text-base">
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Cuaderno Digital Legalizado</li>
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Exportación Oficial PDF/XML</li>
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Uso Móvil Offline (Agua/Sol sin internet)</li>
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Gestión hasta 5 parcelas</li>
                 </ul>
-                <Link href="/register" className="w-full">
-                  <GlowButton variant="secondary" className="w-full py-4 rounded-2xl text-xs">Empezar Básico</GlowButton>
+                <Link href="/login" className="w-full mt-auto">
+                  <GlowButton variant="secondary" className="w-full py-5 rounded-2xl text-base">Empezar Ahora</GlowButton>
                 </Link>
              </GlassCard>
 
              {/* Professional */}
-             <GlassCard className="p-10 border-indigo-500/30 bg-indigo-500/[0.02] flex flex-col items-center text-center scale-105 shadow-[0_30px_60px_-15px_rgba(16,185,129,0.15)] relative">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-indigo-500 text-black text-[9px] font-black uppercase tracking-widest rounded-full">Más Popular</div>
-                <span className="text-[10px] font-black uppercase text-indigo-400 tracking-widest mb-4 font-bold">Professional</span>
-                <div className="flex items-baseline gap-1 mb-8">
-                  <span className="text-5xl font-black">€29</span>
-                  <span className="text-indigo-400/30 font-black text-xs uppercase">/mes</span>
+             <GlassCard className="p-10 border-emerald-500/40 bg-emerald-500/5 flex flex-col rounded-3xl scale-100 md:scale-105 shadow-[0_30px_80px_-15px_rgba(16,185,129,0.2)] relative z-10 h-full mt-4 md:mt-0">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-2 bg-emerald-500 text-white text-sm font-bold rounded-full shadow-lg">
+                  El Más Popular
                 </div>
-                <ul className="space-y-4 mb-10 w-full text-white/70 text-sm font-black">
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Micro-Apps Ilimitadas</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Hasta 10 Usuarios</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> API Access</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Soporte Prioritario</li>
+                <h3 className="text-2xl font-black text-emerald-400 mb-2">Profesional (Cooperativas)</h3>
+                <p className="text-white/60 mb-6 font-medium text-sm">Ideal para explotaciones rentables que buscan optimizar rendimientos.</p>
+                <div className="flex items-baseline gap-1 mb-8">
+                  <span className="text-5xl font-black text-white">€39</span>
+                  <span className="text-emerald-400/50 font-bold text-base">/mes</span>
+                </div>
+                <ul className="space-y-4 mb-10 flex-1 text-white font-medium text-base">
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-400 shrink-0" /> <b>Módulos Ilimitados: Trazabilidad, Costes y Analíticas</b></li>
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-400 shrink-0" /> Fincas y Parcelas ilimitadas</li>
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-400 shrink-0" /> Integración Inteligente de Clima Global</li>
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-400 shrink-0" /> Calendario agrícola pro y Reportes multi-trabajador</li>
                 </ul>
-                <Link href="/register" className="w-full">
-                  <GlowButton variant="primary" className="w-full py-4 rounded-2xl text-xs">Escoger Pro</GlowButton>
+                <Link href="/login" className="w-full mt-auto">
+                  <GlowButton variant="primary" className="w-full py-5 rounded-2xl text-base bg-emerald-500">Suscribirse Pro</GlowButton>
                 </Link>
              </GlassCard>
 
              {/* Enterprise */}
-             <GlassCard className="p-10 border-white/10 flex flex-col items-center text-center">
-                <span className="text-[10px] font-black uppercase text-white/30 tracking-widest mb-4">Enterprise</span>
+             <GlassCard className="p-10 border-white/10 flex flex-col rounded-3xl h-full mt-4 md:mt-0">
+                <h3 className="text-2xl font-black text-white mb-2">IoT & Sensores Integrados</h3>
+                <p className="text-white/60 mb-6 font-medium text-sm">Para explotaciones tecnificadas que miden la humedad y riego.</p>
                 <div className="flex items-baseline gap-1 mb-8">
-                  <span className="text-5xl font-black">€99</span>
-                  <span className="text-white/20 font-black text-xs uppercase">/mes</span>
+                  <span className="text-5xl font-black text-white">€89</span>
+                  <span className="text-white/50 font-bold text-base">/mes</span>
                 </div>
-                <ul className="space-y-4 mb-10 w-full text-white/50 text-sm font-medium">
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> White Labeling</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> Usuarios Ilimitados</li>
-                   <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} className="text-indigo-500" /> SLA Garantizado</li>
+                <ul className="space-y-4 mb-10 flex-1 text-white/80 font-medium text-base">
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Todo incluido en Profesional</li>
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Conexión con Sensores IoT de Parcela</li>
+                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Soporte Telefónico Preferente Local</li>
                 </ul>
-                <Link href="/login" className="w-full">
-                  <GlowButton variant="secondary" className="w-full py-4 rounded-2xl text-xs">Contactar Ventas</GlowButton>
+                <Link href="/login" className="w-full mt-auto">
+                  <GlowButton variant="secondary" className="w-full py-5 rounded-2xl text-base">Contactar Soporte</GlowButton>
                 </Link>
              </GlassCard>
           </div>
@@ -240,19 +259,23 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-20 px-6 border-t border-white/5 bg-black/50">
+      <footer className="py-24 px-6 border-t border-white/5 bg-[#050806]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white text-black rounded-lg flex items-center justify-center font-black">I</div>
-              <span className="text-xl font-black tracking-tighter">IASOLUTIONS</span>
+              <div className="w-10 h-10 bg-emerald-500 text-white rounded-lg flex items-center justify-center border border-emerald-400">
+                <Leaf size={24} />
+              </div>
+              <span className="text-2xl font-black tracking-tighter text-white">INAGROSOLUTIONS</span>
            </div>
-           <div className="flex gap-10 text-[10px] font-black uppercase tracking-widest text-white/30">
-              <a href="/privacy-policy" className="hover:text-white transition-colors">Privacy</a>
-              <a href="/cookie-policy" className="hover:text-white transition-colors">Cookies</a>
-              <a href="/legal-notice" className="hover:text-white transition-colors">Legal</a>
+           
+           <div className="flex flex-wrap justify-center gap-10 text-sm font-bold text-white/60">
+              <a href="/privacy-policy" className="hover:text-emerald-400 transition-colors">Política de Privacidad</a>
+              <a href="/cookie-policy" className="hover:text-emerald-400 transition-colors">Política de Cookies</a>
+              <a href="/legal-notice" className="hover:text-emerald-400 transition-colors">Aviso Legal</a>
            </div>
-           <p className="text-[10px] font-black uppercase tracking-widest text-white/20">
-             © 2026 IASOLUTIONS. All systems operational.
+           
+           <p className="text-sm font-bold text-white/40">
+             © 2026 Inagrosolutions.es
            </p>
         </div>
       </footer>
