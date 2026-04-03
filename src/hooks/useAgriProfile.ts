@@ -78,10 +78,13 @@ export function useAgriProfile() {
       const allParcelas = explotaciones?.flatMap((e: any) => e.parcelas || []) || [];
       const totalHa = allParcelas.reduce((sum: number, p: any) => sum + (Number(p.hectareas) || 0), 0);
 
+      const rawTier = (userData?.tenants as any)?.subscription_tier || 'basico';
+      const safeTier = ['basico', 'intermedio', 'avanzado', 'premium'].includes(rawTier) ? rawTier : 'basico';
+
       setProfile({
         userId: user.id,
         tenant_id: userData?.tenant_id,
-        tier: (userData?.tenants as any)?.subscription_tier || 'starter',
+        tier: safeTier,
         totalHectareas: totalHa,
         modulosActivos: (userData?.tenants as any)?.active_modules || ['core'],
         onboardedAgri: userData?.onboarded_agri || false,
