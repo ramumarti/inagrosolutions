@@ -1,5 +1,5 @@
-import { useAuthContext } from './auth/tenant-context';
-import type { TenantData } from './auth/tenant-context';
+import { useAuthContext } from '@/lib/auth/tenant-context';
+import type { TenantData } from '@/lib/auth/tenant-context';
 
 export function useTenant(): {
   tenant: TenantData | null;

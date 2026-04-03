@@ -62,7 +62,7 @@ export default function CuadernoPage() {
     );
   }
 
-  const tierInfo = TIER_CONFIG[profile.tier];
+  const tierInfo = TIER_CONFIG[profile.tier as AgriTier];
 
   const tabs = [
     { key: 'inicio' as TabKey, label: 'Inicio', icon: Home, always: true },
@@ -244,7 +244,7 @@ export default function CuadernoPage() {
           isActive={false}
           tierMinimo={mod.tier_minimo as AgriTier}
           moduleName={mod.nombre_es}
-          userTier={profile.tier}
+          userTier={profile.tier as AgriTier}
         >
           {content}
         </ModuleGate>

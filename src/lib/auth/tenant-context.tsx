@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         setUser(authUser);
         if (userData?.tenants) {
-          setTenant(userData.tenants);
+          setTenant((userData.tenants as unknown) as TenantData);
         }
 
       } catch (error) {
