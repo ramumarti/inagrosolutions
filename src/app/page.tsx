@@ -120,35 +120,19 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="relative group hidden lg:block">
+            <div className="relative group">
               <div className="absolute inset-0 bg-emerald-500/20 blur-[120px] rounded-full group-hover:bg-green-600/20 transition-all duration-1000" />
-              <GlassCard className="p-4 border-white/20 bg-white/[0.03] shadow-2xl transform hover:scale-[1.02] transition-all duration-700">
-                <div className="h-[450px] w-full bg-[#0a100d] rounded-[24px] border border-white/10 overflow-hidden relative flex flex-col justify-between">
-                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent" />
-                   {/* Simulated App UI */}
-                   <div className="p-6 relative z-10">
-                      <div className="flex justify-between items-center mb-6">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                            <Tractor size={20} className="text-emerald-400" />
-                          </div>
-                          <div>
-                            <div className="w-32 h-4 bg-white/80 rounded" />
-                            <div className="w-20 h-3 bg-white/40 rounded mt-2" />
-                          </div>
-                        </div>
-                        <div className="px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-xs font-bold flex items-center gap-1">
-                          <WifiOff size={12} /> Sin Cobertura
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-3">
-                         <div className="h-16 bg-white/10 rounded-xl border border-white/5 flex items-center px-4" />
-                         <div className="h-16 bg-white/10 rounded-xl border border-white/5 flex items-center px-4" />
-                      </div>
-                   </div>
-                   <div className="p-6 relative z-10 w-full">
-                     <div className="h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white font-bold opacity-80" />
+              <GlassCard className="p-2 border-white/20 bg-white/[0.03] shadow-2xl transform hover:scale-[1.02] transition-all duration-700 overflow-hidden">
+                <div className="relative h-[480px] w-full rounded-[24px] overflow-hidden">
+                   <img 
+                     src="/usage_context.png" 
+                     alt="Agricultor en olivar tradicional usando InagroSolutions" 
+                     className="w-full h-full object-cover"
+                   />
+                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                   <div className="absolute bottom-6 left-6 right-6 p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl">
+                     <p className="text-sm font-bold text-white mb-1">Registro en Campo</p>
+                     <p className="text-xs text-white/60">Gestiona tus parcelas directamente desde el olivar, con o sin internet.</p>
                    </div>
                 </div>
               </GlassCard>
