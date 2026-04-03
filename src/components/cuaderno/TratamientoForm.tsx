@@ -95,7 +95,7 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in duration-500">
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center gap-3 pb-6 border-b border-white/5">
         <div className="w-16 h-16 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/10 shrink-0">
           <Bug className="w-8 h-8 text-blue-400" />
