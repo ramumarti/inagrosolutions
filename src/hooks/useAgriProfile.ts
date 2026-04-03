@@ -7,7 +7,8 @@ import { canAccessModule, isModuleActive } from '@/lib/modules';
 
 export interface AgriProfile {
   userId: string;
-  tier: AgriTier;
+  tenant_id?: string;
+  tier: string;
   totalHectareas: number;
   modulosActivos: string[];
   onboardedAgri: boolean;
@@ -41,7 +42,17 @@ export function useAgriProfile() {
       // User data
       const { data: userData } = await supabase
         .from('users')
-        .select('agri_tier, total_hectareas, modulos_activos, onboarded_agri')
+        .select(`
+          agri_tier, 
+          total_hectareas, 
+          modulos_activos, 
+          onboarded_agri,
+          tenant_id,
+          tenants (
+            subscription_tier,
+            active_modules
+          )
+        `)
         .eq('id', user.id)
         .single();
 
@@ -69,9 +80,10 @@ export function useAgriProfile() {
 
       setProfile({
         userId: user.id,
-        tier: userData?.agri_tier || 'basico',
-        totalHectareas: userData?.total_hectareas || totalHa,
-        modulosActivos: userData?.modulos_activos || ['siex', 'fitosanitarios', 'fertilizacion', 'labores', 'parcelas'],
+        tenant_id: userData?.tenant_id,
+        tier: (userData?.tenants as any)?.subscription_tier || 'starter',
+        totalHectareas: totalHa,
+        modulosActivos: (userData?.tenants as any)?.active_modules || ['core'],
         onboardedAgri: userData?.onboarded_agri || false,
         explotaciones: explotaciones || [],
         parcelas: allParcelas,
@@ -104,12 +116,12 @@ export function useAgriProfile() {
     if (!profile) return false;
     const mod = modulos.find(m => m.slug === slug);
     if (!mod) return false;
-    return isModuleActive(slug, profile.modulosActivos, profile.tier, mod.tier_minimo as AgriTier, mod.es_obligatorio);
+    return isModuleActive(slug, profile.modulosActivos, profile.tier as any, mod.tier_minimo as AgriTier, mod.es_obligatorio);
   }, [profile, modulos]);
 
   const canAccess = useCallback((tierMinimo: AgriTier) => {
     if (!profile) return false;
-    return canAccessModule(profile.tier, tierMinimo);
+    return canAccessModule(profile.tier as any, tierMinimo);
   }, [profile]);
 
   return { profile, modulos, resumen, loading, hasModule, canAccess, reload: load };

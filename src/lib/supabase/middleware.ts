@@ -53,5 +53,32 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // --- RBAC ROUTING ---
+  if (user && (pathname.startsWith('/superadmin') || pathname.startsWith('/tenant') || pathname.startsWith('/technician') || pathname.startsWith('/cuaderno'))) {
+    const { data: userData } = await supabase.from('users').select('platform_role').eq('id', user.id).single();
+    const role = userData?.platform_role || 'farmer';
+    
+    // Superadmin guard
+    if (pathname.startsWith('/superadmin') && role !== 'superadmin') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/cuaderno';
+      return NextResponse.redirect(url);
+    }
+    
+    // Tenant admin guard
+    if (pathname.startsWith('/tenant') && role !== 'tenant_admin' && role !== 'superadmin') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/cuaderno';
+      return NextResponse.redirect(url);
+    }
+    
+    // Technician guard
+    if (pathname.startsWith('/technician') && role !== 'technician' && role !== 'tenant_admin' && role !== 'superadmin') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/cuaderno';
+      return NextResponse.redirect(url);
+    }
+  }
+
   return supabaseResponse
 }
