@@ -8,6 +8,11 @@ import { TratamientoForm } from '@/components/cuaderno/TratamientoForm';
 import { LaborForm } from '@/components/cuaderno/LaborForm';
 import { FertilizacionForm } from '@/components/cuaderno/FertilizacionForm';
 import { CostesModule } from '@/components/cuaderno/CostesModule';
+import { ExportModule } from '@/components/cuaderno/ExportModule';
+import { CalendarioModule } from '@/components/cuaderno/CalendarioModule';
+import { TrazabilidadModule } from '@/components/cuaderno/TrazabilidadModule';
+import { DashboardsModule } from '@/components/cuaderno/DashboardsModule';
+import { SensoresModule } from '@/components/cuaderno/SensoresModule';
 import { ModuleGate } from '@/components/cuaderno/ModuleGate';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
@@ -143,16 +148,9 @@ export default function CuadernoPage() {
 
     // Modular content
     if (activeTab === 'calendario') {
-      return (
-        <GlassCard className="p-12 text-center space-y-6">
-          <Calendar className="w-16 h-16 text-white/10 mx-auto" />
-          <div>
-            <h4 className="font-black text-white mb-2">Calendario</h4>
-            <p className="text-xs text-white/30">Visor temporal de labores y tratamientos.</p>
-          </div>
-          <p className="text-[10px] text-white/20 font-bold uppercase tracking-widest">Módulo en desarrollo</p>
-        </GlassCard>
-      );
+      return profile.explotaciones[0] ? (
+        <CalendarioModule explotacionId={profile.explotaciones[0].id} />
+      ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
     }
 
     const mod = modulos.find(m => m.slug === activeTab);
@@ -171,6 +169,19 @@ export default function CuadernoPage() {
         case 'costes':
           return profile.explotaciones[0] ? (
             <CostesModule explotacionId={profile.explotaciones[0].id} parcelas={profile.parcelas} />
+          ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
+        case 'cosechas':
+        case 'trazabilidad':
+          return profile.explotaciones[0] ? (
+            <TrazabilidadModule explotacionId={profile.explotaciones[0].id} parcelas={profile.parcelas} />
+          ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
+        case 'dashboards':
+          return profile.explotaciones[0] ? (
+            <DashboardsModule explotacionId={profile.explotaciones[0].id} />
+          ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
+        case 'sensores':
+          return profile.explotaciones[0] ? (
+            <SensoresModule explotacionId={profile.explotaciones[0].id} parcelas={profile.parcelas} />
           ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
         case 'parcelas':
           return (
@@ -203,30 +214,9 @@ export default function CuadernoPage() {
             </div>
           );
         case 'exportacion':
-          return (
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 pb-6 border-b border-white/5">
-                <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center border border-indigo-500/10">
-                  <FileDown className="w-6 h-6 text-indigo-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-black text-white uppercase tracking-tight">Exportación SIEX/PAC</h3>
-                  <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Generación automática de informes oficiales</p>
-                </div>
-              </div>
-              <GlassCard className="p-8 border-white/5 text-center space-y-6">
-                <FileDown className="w-16 h-16 text-indigo-400/30 mx-auto" />
-                <div>
-                  <h4 className="font-black text-white mb-2">Exportar Datos</h4>
-                  <p className="text-xs text-white/30">Genera un informe completo con todos los registros del cuaderno de campo para presentar en ventanilla SIEX o PAC.</p>
-                </div>
-                <div className="flex gap-3 justify-center">
-                  <GlowButton variant="primary" className="px-8 py-3 text-[10px]">Exportar SIEX (XML)</GlowButton>
-                  <GlowButton variant="secondary" className="px-8 py-3 text-[10px]">Exportar PAC (CSV)</GlowButton>
-                </div>
-              </GlassCard>
-            </div>
-          );
+          return profile.explotaciones[0] ? (
+            <ExportModule explotacionId={profile.explotaciones[0].id} />
+          ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
         default:
           return (
             <GlassCard className="p-12 text-center space-y-6">
