@@ -195,63 +195,83 @@ export default function LandingPage() {
             <p className="text-lg text-white/70 max-w-2xl mx-auto font-medium">Invierte menos tiempo en burocracia y más tiempo en cultivar. Escoge la solución que se adapte al tamaño de tu explotación.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 items-stretch">
-             {/* Starter */}
-             <GlassCard className="p-10 border-white/10 flex flex-col rounded-3xl h-full">
-                <h3 className="text-2xl font-black text-white mb-2">Agricultor Básico</h3>
-                <p className="text-white/60 mb-6 font-medium text-sm">Perfecto para fincas pequeñas que necesitan el cuaderno digital obligatorio.</p>
-                <div className="flex items-baseline gap-1 mb-8">
-                  <span className="text-5xl font-black text-white">€15</span>
-                  <span className="text-white/50 font-bold text-base">/mes</span>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+             {/* Básico */}
+             <GlassCard className="p-8 border-white/10 flex flex-col rounded-3xl h-full">
+                <h3 className="text-xl font-black text-white mb-1">Básico</h3>
+                <p className="text-white/60 mb-6 font-bold text-xs uppercase tracking-widest">Hasta 5 HA</p>
+                <div className="flex items-baseline gap-1 mb-6">
+                  <span className="text-4xl font-black text-white">3,99 €</span>
+                  <span className="text-white/50 font-bold text-sm">/mes</span>
                 </div>
-                <ul className="space-y-4 mb-10 flex-1 text-white/80 font-medium text-base">
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Cuaderno Digital Legalizado</li>
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Exportación Oficial PDF/XML</li>
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Uso Móvil Offline (Agua/Sol sin internet)</li>
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Gestión hasta 5 parcelas</li>
+                <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Registro SIEX</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Fitosanitarios</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Fertilización</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Labores Agrícolas</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Gestión de Parcelas</li>
                 </ul>
                 <Link href="/login" className="w-full mt-auto">
-                  <GlowButton variant="secondary" className="w-full py-5 rounded-2xl text-base">Empezar Ahora</GlowButton>
+                  <GlowButton variant="secondary" className="w-full py-4 rounded-xl text-sm">Comenzar</GlowButton>
                 </Link>
              </GlassCard>
 
-             {/* Professional */}
-             <GlassCard className="p-10 border-emerald-500/40 bg-emerald-500/5 flex flex-col rounded-3xl scale-100 md:scale-105 shadow-[0_30px_80px_-15px_rgba(16,185,129,0.2)] relative z-10 h-full mt-4 md:mt-0">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-2 bg-emerald-500 text-white text-sm font-bold rounded-full shadow-lg">
-                  El Más Popular
+             {/* Intermedio */}
+             <GlassCard className="p-8 border-white/10 flex flex-col rounded-3xl h-full">
+                <h3 className="text-xl font-black text-white mb-1">Intermedio</h3>
+                <p className="text-white/60 mb-6 font-bold text-xs uppercase tracking-widest">Hasta 20 HA</p>
+                <div className="flex items-baseline gap-1 mb-6">
+                  <span className="text-4xl font-black text-white">9,99 €</span>
+                  <span className="text-white/50 font-bold text-sm">/mes</span>
                 </div>
-                <h3 className="text-2xl font-black text-emerald-400 mb-2">Profesional (Cooperativas)</h3>
-                <p className="text-white/60 mb-6 font-medium text-sm">Ideal para explotaciones rentables que buscan optimizar rendimientos.</p>
-                <div className="flex items-baseline gap-1 mb-8">
-                  <span className="text-5xl font-black text-white">€39</span>
-                  <span className="text-emerald-400/50 font-bold text-base">/mes</span>
-                </div>
-                <ul className="space-y-4 mb-10 flex-1 text-white font-medium text-base">
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-400 shrink-0" /> <b>Módulos Ilimitados: Trazabilidad, Costes y Analíticas</b></li>
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-400 shrink-0" /> Fincas y Parcelas ilimitadas</li>
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-400 shrink-0" /> Integración Inteligente de Clima Global</li>
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-400 shrink-0" /> Calendario agrícola pro y Reportes multi-trabajador</li>
+                <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> Todo lo de Básico</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> <b>Control de Costes</b></li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> <b>Gestión de Cosechas</b></li>
                 </ul>
                 <Link href="/login" className="w-full mt-auto">
-                  <GlowButton variant="primary" className="w-full py-5 rounded-2xl text-base bg-emerald-500">Suscribirse Pro</GlowButton>
+                  <GlowButton variant="secondary" className="w-full py-4 rounded-xl text-sm">Comenzar</GlowButton>
                 </Link>
              </GlassCard>
 
-             {/* Enterprise */}
-             <GlassCard className="p-10 border-white/10 flex flex-col rounded-3xl h-full mt-4 md:mt-0">
-                <h3 className="text-2xl font-black text-white mb-2">IoT & Sensores Integrados</h3>
-                <p className="text-white/60 mb-6 font-medium text-sm">Para explotaciones tecnificadas que miden la humedad y riego.</p>
-                <div className="flex items-baseline gap-1 mb-8">
-                  <span className="text-5xl font-black text-white">€89</span>
-                  <span className="text-white/50 font-bold text-base">/mes</span>
+             {/* Avanzado */}
+             <GlassCard className="p-8 border-emerald-500/40 bg-emerald-500/5 flex flex-col rounded-3xl relative z-10 h-full shadow-[0_20px_60px_-15px_rgba(16,185,129,0.2)]">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 text-white text-[10px] uppercase font-black tracking-widest rounded-full shadow-lg">
+                  Popular
                 </div>
-                <ul className="space-y-4 mb-10 flex-1 text-white/80 font-medium text-base">
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Todo incluido en Profesional</li>
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Conexión con Sensores IoT de Parcela</li>
-                   <li className="flex items-start gap-3"><CheckCircle2 size={24} className="text-emerald-500 shrink-0" /> Soporte Telefónico Preferente Local</li>
+                <h3 className="text-xl font-black text-emerald-400 mb-1">Avanzado</h3>
+                <p className="text-white/60 mb-6 font-bold text-xs uppercase tracking-widest">Hasta 100 HA</p>
+                <div className="flex items-baseline gap-1 mb-6">
+                  <span className="text-4xl font-black text-white">39,99 €</span>
+                  <span className="text-emerald-400/50 font-bold text-sm">/mes</span>
+                </div>
+                <ul className="space-y-4 mb-8 flex-1 text-white font-medium text-sm">
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> Todo lo de Intermedio</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>Trazabilidad Total</b></li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>Dashboards Pro</b></li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>Exportación PAC</b></li>
                 </ul>
                 <Link href="/login" className="w-full mt-auto">
-                  <GlowButton variant="secondary" className="w-full py-5 rounded-2xl text-base">Contactar Soporte</GlowButton>
+                  <GlowButton variant="primary" className="w-full py-4 rounded-xl text-sm bg-emerald-500">Suscribirse</GlowButton>
+                </Link>
+             </GlassCard>
+
+             {/* Premium */}
+             <GlassCard className="p-8 border-amber-500/30 bg-amber-500/5 flex flex-col rounded-3xl h-full">
+                <h3 className="text-xl font-black text-amber-400 mb-1">Premium</h3>
+                <p className="text-white/60 mb-6 font-bold text-xs uppercase tracking-widest">Más de 100 HA</p>
+                <div className="flex items-baseline gap-1 mb-6">
+                  <span className="text-4xl font-black text-white">89,99 €</span>
+                  <span className="text-amber-400/50 font-bold text-sm">/mes</span>
+                </div>
+                <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> Todo lo de Avanzado</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> <b>Sensores IoT</b></li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> <b>Alertas Inteligentes</b></li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> Conexión con Estaciones Climáticas</li>
+                </ul>
+                <Link href="/login" className="w-full mt-auto">
+                  <GlowButton variant="secondary" className="w-full py-4 rounded-xl text-sm">Suscribirse</GlowButton>
                 </Link>
              </GlassCard>
           </div>
