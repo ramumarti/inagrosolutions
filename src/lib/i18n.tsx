@@ -7,9 +7,9 @@ type Translations = Record<string, string>;
 
 const translations: Record<Language, Translations> = {
   en: {
-    "app.name": "IASOLUTIONS",
+    "app.name": "INAGROSOLUTIONS",
     "app.tagline": "Professional SaaS management for micro-applications",
-    "login.hero_title": "Intelligent Management Portal",
+    "login.hero_title": "Your Digital Management Field Notebook",
     "login.title": "Welcome Back",
     "login.email": "Email",
     "login.password": "Password",
@@ -71,9 +71,9 @@ const translations: Record<Language, Translations> = {
     "legal.lastUpdated": "Last updated",
   },
   es: {
-    "app.name": "IASOLUTIONS",
+    "app.name": "INAGROSOLUTIONS",
     "app.tagline": "Gestión profesional de micro-aplicaciones SaaS",
-    "login.hero_title": "Tu Portal de Gestión Inteligente",
+    "login.hero_title": "Tu Cuaderno de Campo de Gestión Digital",
     "login.title": "Bienvenido de nuevo",
     "login.email": "Correo electrónico",
     "login.password": "Contraseña",
