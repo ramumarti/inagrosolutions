@@ -16,10 +16,10 @@ import type { AgriTier } from '@/lib/modules';
 import {
   Home, Bug, Leaf, Droplets, Wallet, BarChart3, Link as LinkIcon,
   Radio, MapPin, FileDown, Shield, ArrowRight, Zap, ChevronRight,
-  Package, Lock, Settings, Bell
+  Package, Lock, Settings, Bell, Calendar
 } from 'lucide-react';
 
-type TabKey = 'inicio' | 'tratamientos' | 'labores' | 'fertilizacion' | 'parcelas' | 'costes' | 'cosechas' | 'trazabilidad' | 'dashboards' | 'sensores' | 'alertas' | 'exportacion';
+type TabKey = 'inicio' | 'tratamientos' | 'fitosanitarios' | 'calendario' | 'labores' | 'fertilizacion' | 'parcelas' | 'costes' | 'cosechas' | 'trazabilidad' | 'dashboards' | 'sensores' | 'alertas' | 'exportacion';
 
 const ICON_MAP: Record<string, any> = {
   ShieldCheck: Shield, Bug: Bug, Leaf: Leaf, Tractor: Leaf,
@@ -74,7 +74,11 @@ export default function CuadernoPage() {
       return (
         <div className="space-y-8">
           {resumen && (
-            <HoyEnLaParcela resumen={resumen} alertasPendientes={profile.alertasPendientes} />
+            <HoyEnLaParcela 
+              resumen={resumen} 
+              alertasPendientes={profile.alertasPendientes} 
+              onAction={(tab) => setActiveTab(tab as TabKey)}
+            />
           )}
           <AlertasCuaderno userId={profile.userId} />
 
@@ -138,6 +142,19 @@ export default function CuadernoPage() {
     }
 
     // Modular content
+    if (activeTab === 'calendario') {
+      return (
+        <GlassCard className="p-12 text-center space-y-6">
+          <Calendar className="w-16 h-16 text-white/10 mx-auto" />
+          <div>
+            <h4 className="font-black text-white mb-2">Calendario</h4>
+            <p className="text-xs text-white/30">Visor temporal de labores y tratamientos.</p>
+          </div>
+          <p className="text-[10px] text-white/20 font-bold uppercase tracking-widest">Módulo en desarrollo</p>
+        </GlassCard>
+      );
+    }
+
     const mod = modulos.find(m => m.slug === activeTab);
     if (!mod) return null;
 

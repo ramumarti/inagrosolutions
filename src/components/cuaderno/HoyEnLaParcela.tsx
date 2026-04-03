@@ -11,9 +11,10 @@ import {
 interface HoyEnLaParcelaProps {
   resumen: ResumenDiario;
   alertasPendientes: number;
+  onAction?: (action: string) => void;
 }
 
-export function HoyEnLaParcela({ resumen, alertasPendientes }: HoyEnLaParcelaProps) {
+export function HoyEnLaParcela({ resumen, alertasPendientes, onAction }: HoyEnLaParcelaProps) {
   const hora = new Date().getHours();
   const saludo = hora < 12 ? 'Buenos días' : hora < 20 ? 'Buenas tardes' : 'Buenas noches';
 
@@ -74,19 +75,20 @@ export function HoyEnLaParcela({ resumen, alertasPendientes }: HoyEnLaParcelaPro
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: 'Registrar Tratamiento', icon: Bug, href: '/cuaderno/tratamientos/nuevo', color: 'from-blue-500/20 to-blue-600/20 hover:from-blue-500/30 hover:to-blue-600/30 border-blue-500/20' },
-          { label: 'Nueva Labor', icon: Leaf, href: '/cuaderno/labores/nuevo', color: 'from-emerald-500/20 to-emerald-600/20 hover:from-emerald-500/30 hover:to-emerald-600/30 border-emerald-500/20' },
-          { label: 'Fertilización', icon: Droplets, href: '/cuaderno/fertilizacion/nuevo', color: 'from-violet-500/20 to-violet-600/20 hover:from-violet-500/30 hover:to-violet-600/30 border-violet-500/20' },
-          { label: 'Ver Calendario', icon: Calendar, href: '/cuaderno/calendario', color: 'from-amber-500/20 to-amber-600/20 hover:from-amber-500/30 hover:to-amber-600/30 border-amber-500/20' },
+          { label: 'Registrar Tratamiento', icon: Bug, tab: 'fitosanitarios', color: 'from-blue-500/20 to-blue-600/20 hover:from-blue-500/30 hover:to-blue-600/30 border-blue-500/20' },
+          { label: 'Nueva Labor', icon: Leaf, tab: 'labores', color: 'from-emerald-500/20 to-emerald-600/20 hover:from-emerald-500/30 hover:to-emerald-600/30 border-emerald-500/20' },
+          { label: 'Fertilización', icon: Droplets, tab: 'fertilizacion', color: 'from-violet-500/20 to-violet-600/20 hover:from-violet-500/30 hover:to-violet-600/30 border-violet-500/20' },
+          { label: 'Ver Calendario', icon: Calendar, tab: 'calendario', color: 'from-amber-500/20 to-amber-600/20 hover:from-amber-500/30 hover:to-amber-600/30 border-amber-500/20' },
         ].map((action, i) => (
-          <a
+          <button
+            type="button"
             key={i}
-            href={action.href}
-            className={`flex items-center gap-3 p-4 bg-gradient-to-br ${action.color} border rounded-xl transition-all active:scale-[0.98] group`}
+            onClick={() => onAction && onAction(action.tab)}
+            className={`flex items-center text-left gap-3 w-full p-4 bg-gradient-to-br ${action.color} border rounded-xl transition-all active:scale-[0.98] group`}
           >
             <action.icon size={18} className="text-white/60 group-hover:text-white transition-colors shrink-0" />
             <span className="text-[10px] font-black text-white/70 uppercase tracking-widest group-hover:text-white transition-colors">{action.label}</span>
-          </a>
+          </button>
         ))}
       </div>
     </div>
