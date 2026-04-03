@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
 import { HoyEnLaParcela } from '@/components/cuaderno/HoyEnLaParcela';
 import { AlertasCuaderno } from '@/components/cuaderno/AlertasCuaderno';
+import { PrescripcionesCuaderno } from '@/components/cuaderno/PrescripcionesCuaderno';
 import { TratamientoForm } from '@/components/cuaderno/TratamientoForm';
 import { LaborForm } from '@/components/cuaderno/LaborForm';
 import { FertilizacionForm } from '@/components/cuaderno/FertilizacionForm';
@@ -13,6 +14,7 @@ import { CalendarioModule } from '@/components/cuaderno/CalendarioModule';
 import { TrazabilidadModule } from '@/components/cuaderno/TrazabilidadModule';
 import { DashboardsModule } from '@/components/cuaderno/DashboardsModule';
 import { SensoresModule } from '@/components/cuaderno/SensoresModule';
+import { InventarioModule } from '@/components/cuaderno/InventarioModule';
 import { ModuleGate } from '@/components/cuaderno/ModuleGate';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
@@ -24,7 +26,7 @@ import {
   Package, Lock, Settings, Bell, Calendar
 } from 'lucide-react';
 
-type TabKey = 'inicio' | 'tratamientos' | 'fitosanitarios' | 'calendario' | 'labores' | 'fertilizacion' | 'parcelas' | 'costes' | 'cosechas' | 'trazabilidad' | 'dashboards' | 'sensores' | 'alertas' | 'exportacion';
+type TabKey = 'inicio' | 'tratamientos' | 'fitosanitarios' | 'calendario' | 'labores' | 'fertilizacion' | 'parcelas' | 'costes' | 'cosechas' | 'trazabilidad' | 'dashboards' | 'sensores' | 'alertas' | 'exportacion' | 'inventario';
 
 const ICON_MAP: Record<string, any> = {
   ShieldCheck: Shield, Bug: Bug, Leaf: Leaf, Tractor: Leaf,
@@ -85,6 +87,7 @@ export default function CuadernoPage() {
               onAction={(tab) => setActiveTab(tab as TabKey)}
             />
           )}
+          <PrescripcionesCuaderno userId={profile.userId} />
           <AlertasCuaderno userId={profile.userId} />
 
           {/* Module Overview Grid */}
@@ -166,6 +169,10 @@ export default function CuadernoPage() {
           return <LaborForm parcelas={profile.parcelas} onSuccess={() => setActiveTab('inicio')} />;
         case 'fertilizacion':
           return <FertilizacionForm parcelas={profile.parcelas} onSuccess={() => setActiveTab('inicio')} />;
+        case 'inventario':
+          return profile.explotaciones[0] ? (
+            <InventarioModule explotacionId={profile.explotaciones[0].id} />
+          ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
         case 'costes':
           return profile.explotaciones[0] ? (
             <CostesModule explotacionId={profile.explotaciones[0].id} parcelas={profile.parcelas} />

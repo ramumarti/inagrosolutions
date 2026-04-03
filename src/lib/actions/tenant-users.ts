@@ -84,3 +84,79 @@ export async function setTenantUserRole(userId: string, targetRole: PlatformRole
   if (error) throw error;
   return { success: true };
 }
+
+export async function getTenantInvitations() {
+  const supabase = await getSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
+  const tenantId = userData?.tenant_id;
+  if (!tenantId) throw new Error('No tenant associated');
+
+  const { data, error } = await supabase
+    .from('tenant_invitations')
+    .select('*')
+    .eq('tenant_id', tenantId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function inviteTenantUser(email: string, role: PlatformRole) {
+  const supabase = await getSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data: actingUser } = await supabase.from('users').select('tenant_id, platform_role').eq('id', user.id).single();
+  if (!actingUser || (actingUser.platform_role !== 'tenant_admin' && actingUser.platform_role !== 'superadmin')) {
+    throw new Error('Forbidden');
+  }
+
+  // Check if invitation already exists and is not accepted
+  const { data: existing } = await supabase
+    .from('tenant_invitations')
+    .select('id')
+    .eq('tenant_id', actingUser.tenant_id)
+    .eq('email', email.toLowerCase())
+    .is('accepted_at', null)
+    .single();
+
+  if (existing) {
+    throw new Error('User already has a pending invitation');
+  }
+
+  // Create invitation record in DB
+  const { error: inviteError } = await supabase
+    .from('tenant_invitations')
+    .insert({
+      tenant_id: actingUser.tenant_id,
+      email: email.toLowerCase(),
+      role: role,
+      invited_by: user.id
+    });
+
+  if (inviteError) throw inviteError;
+  return { success: true };
+}
+
+export async function removeTenantInvitation(id: string) {
+  const supabase = await getSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data: actingUser } = await supabase.from('users').select('tenant_id, platform_role').eq('id', user.id).single();
+  if (!actingUser || (actingUser.platform_role !== 'tenant_admin' && actingUser.platform_role !== 'superadmin')) {
+    throw new Error('Forbidden');
+  }
+
+  const { error } = await supabase
+    .from('tenant_invitations')
+    .delete()
+    .eq('id', id)
+    .eq('tenant_id', actingUser.tenant_id);
+
+  if (error) throw error;
+  return { success: true };
+}

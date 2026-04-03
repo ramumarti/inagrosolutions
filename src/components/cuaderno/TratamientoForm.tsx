@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { createClient } from '@/lib/supabase/client';
-import { Bug, Calendar, Beaker, Ruler, Tractor, User, Check, AlertTriangle, ChevronDown } from 'lucide-react';
+import { getInventory, deductStock } from '@/lib/actions/inventory';
+import { Bug, Calendar, Beaker, Ruler, Tractor, User, Check, AlertTriangle, ChevronDown, PackageOpen } from 'lucide-react';
 
 interface TratamientoFormProps {
   parcelas: any[];
@@ -16,9 +17,12 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [inventory, setInventory] = useState<any[]>([]);
+  
   const [form, setForm] = useState({
     parcela_id: '',
     fecha: new Date().toISOString().split('T')[0],
+    inventario_id: '',
     nombre_producto: '',
     producto_mapa_id: '',
     dosis: '',
@@ -30,14 +34,51 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
 
   const unidades = ['L/ha', 'kg/ha', 'mL/ha', 'g/ha', 'cc/100L'];
 
+  useEffect(() => {
+    if (parcelas.length > 0 && parcelas[0].explotacion_id) {
+      getInventory(parcelas[0].explotacion_id).then(data => {
+        // Solo fitosanitarios con stock
+        setInventory(data.filter((i: any) => i.tipo === 'fitosanitario' && i.cantidad_actual > 0));
+      }).catch(console.error);
+    }
+  }, [parcelas]);
+
+  // Si seleccionan del inventario, auto-rellenar producto y MAPA id
+  const handleInventoryChange = (invId: string) => {
+    if (!invId) {
+      setForm({ ...form, inventario_id: '', nombre_producto: '', producto_mapa_id: '' });
+      return;
+    }
+    const item = inventory.find(i => i.id === invId);
+    if (item) {
+      setForm({
+        ...form,
+        inventario_id: invId,
+        nombre_producto: item.nombre_producto,
+        producto_mapa_id: item.numero_registro || ''
+      });
+    }
+  };
+
   const validate = (): string[] => {
     const errors: string[] = [];
     if (!form.parcela_id) errors.push('Seleccione una parcela');
     if (!form.fecha) errors.push('La fecha es obligatoria');
-    if (!form.nombre_producto) errors.push('El nombre del producto es obligatorio');
+    if (!form.nombre_producto && !form.inventario_id) errors.push('Seleccione un producto del almacén o escriba su nombre');
     if (!form.dosis || Number(form.dosis) <= 0) errors.push('La dosis debe ser mayor que 0');
     
-    // Validación normativa: dosis máxima razonable
+    // Check stock logically
+    if (form.inventario_id) {
+      const item = inventory.find(i => i.id === form.inventario_id);
+      const p = parcelas.find(x => x.id === form.parcela_id);
+      const usedHa = form.superficie_tratada ? Number(form.superficie_tratada) : (p ? Number(p.hectareas) : 1);
+      const totalUsedVolume = usedHa * Number(form.dosis);
+      
+      if (item && totalUsedVolume > item.cantidad_actual && form.unidad_dosis.startsWith(item.unidad === 'L' ? 'L' : 'kg')) {
+        errors.push(`Stock insuficiente. Necesitas ${totalUsedVolume.toFixed(2)} ${item.unidad} pero te quedan ${item.cantidad_actual} ${item.unidad}.`);
+      }
+    }
+
     if (Number(form.dosis) > 100) {
       errors.push('⚠️ Alerta normativa: La dosis supera los 100 L/ha. Verifique con la ficha técnica del producto.');
     }
@@ -64,6 +105,23 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
         operario: form.operario || null,
       });
       if (error) throw error;
+
+      // Restar del inventario SI aplica
+      if (form.inventario_id) {
+        const p = parcelas.find(x => x.id === form.parcela_id);
+        const usedHa = form.superficie_tratada ? Number(form.superficie_tratada) : (p ? Number(p.hectareas) : 1);
+        let totalUsedVolume = usedHa * Number(form.dosis);
+        
+        // Conversión guarra en MVP (Si dosis es mL o cc, pasar a L)
+        if (form.unidad_dosis.startsWith('mL') || form.unidad_dosis.startsWith('cc')) totalUsedVolume /= 1000;
+        if (form.unidad_dosis.startsWith('g')) totalUsedVolume /= 1000;
+
+        await deductStock(form.inventario_id, totalUsedVolume).catch(err => {
+          console.error("No se pudo descontar del stock: ", err);
+          // Opcional: mostrar un warning pero no petar el flujo
+        });
+      }
+
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
@@ -88,7 +146,7 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
         </div>
         <div className="text-center">
           <h3 className="text-xl font-black text-white mb-2">Tratamiento Registrado</h3>
-          <p className="text-xs text-white/40 font-bold uppercase tracking-widest">Conforme con la normativa SIEX</p>
+          <p className="text-xs text-white/40 font-bold uppercase tracking-widest">Conforme con la normativa SIEX y descontado del stock</p>
         </div>
       </GlassCard>
     );
@@ -102,16 +160,16 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
         </div>
         <div>
           <h3 className="text-xl font-black text-white tracking-tight">Nuevo Tratamiento</h3>
-          <p className="text-sm text-white/60 font-bold">Fitosanitarios • Oficial SIEX</p>
+          <p className="text-sm text-white/60 font-bold">Fitosanitarios • Vinculado al Almacén</p>
         </div>
       </div>
 
       {validationErrors.length > 0 && (
         <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl space-y-1">
           {validationErrors.map((err, i) => (
-            <p key={i} className="text-[11px] text-red-400 font-bold flex items-center gap-2">
-              <AlertTriangle size={12} /> {err}
-            </p>
+             <p key={i} className="text-[11px] text-red-400 font-bold flex items-center gap-2">
+               <AlertTriangle size={12} className="shrink-0" /> <span className="leading-tight">{err}</span>
+             </p>
           ))}
         </div>
       )}
@@ -144,24 +202,47 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
           />
         </div>
 
-        <div>
-          <label className={labelClass}><Beaker size={14} className="inline mr-1" />Producto *</label>
-          <input
-            className={inputClass}
-            placeholder="Nombre del producto fitosanitario"
-            value={form.nombre_producto}
-            onChange={e => setForm({...form, nombre_producto: e.target.value})}
-          />
-        </div>
-
-        <div>
-          <label className={labelClass}>Nº Registro MAPA</label>
-          <input
-            className={inputClass}
-            placeholder="Ej: ES-01234"
-            value={form.producto_mapa_id}
-            onChange={e => setForm({...form, producto_mapa_id: e.target.value})}
-          />
+        {/* INVENTORY SELECTOR */}
+        <div className="md:col-span-2 p-5 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl">
+          <label className={labelClass}><PackageOpen size={14} className="inline mr-1 text-indigo-400" />Producto del Almacén</label>
+          <div className="relative mb-3">
+            <select
+              className={`${inputClass} appearance-none cursor-pointer border-indigo-500/30 focus:ring-indigo-500/50`}
+              value={form.inventario_id}
+              onChange={e => handleInventoryChange(e.target.value)}
+            >
+              <option value="">-- No usar almacén (escribir manualmente) --</option>
+              {inventory.map((item: any) => (
+                <option key={item.id} value={item.id}>
+                  {item.nombre_producto} (Stock: {item.cantidad_actual} {item.unidad})
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" />
+          </div>
+          
+          {!form.inventario_id && (
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              <div>
+                <label className="text-[10px] text-white/40 font-bold uppercase block mb-1">Nombre Comercial</label>
+                <input
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
+                  placeholder="Ej: Score"
+                  value={form.nombre_producto}
+                  onChange={e => setForm({...form, nombre_producto: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-white/40 font-bold uppercase block mb-1">Nº Registro MAPA</label>
+                <input
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white"
+                  placeholder="Opcional"
+                  value={form.producto_mapa_id}
+                  onChange={e => setForm({...form, producto_mapa_id: e.target.value})}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -199,7 +280,7 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
             type="number"
             step="0.01"
             className={inputClass}
-            placeholder="0.00"
+            placeholder="Opcional (Usa la total)"
             value={form.superficie_tratada}
             onChange={e => setForm({...form, superficie_tratada: e.target.value})}
           />

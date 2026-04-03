@@ -1,15 +1,30 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getTenantsList, toggleTenantStatus } from '@/lib/actions/superadmin';
+import { getTenantsList, toggleTenantStatus, createTenant } from '@/lib/actions/superadmin';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import Link from 'next/link';
+import { Building2, X, Plus, Loader2 } from 'lucide-react';
 
 export default function SuperadminTenantsPage() {
   const [tenants, setTenants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [formData, setFormData] = useState<{
+    name: string;
+    slug: string;
+    type: 'cooperativa' | 'agronomo' | 'empresa_servicios' | 'almazara';
+    subscription_tier: string;
+  }>({
+    name: '',
+    slug: '',
+    type: 'cooperativa',
+    subscription_tier: 'starter'
+  });
 
   const load = () => {
     getTenantsList().then(data => {
@@ -25,13 +40,39 @@ export default function SuperadminTenantsPage() {
     load();
   };
 
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg('');
+    setCreating(true);
+    try {
+      await createTenant(formData);
+      setIsModalOpen(false);
+      setFormData({ name: '', slug: '', type: 'cooperativa', subscription_tier: 'starter' });
+      load();
+    } catch (error: any) {
+      console.error(error);
+      setErrorMsg(error.message || 'Error al crear tenant');
+    } finally {
+      setCreating(false);
+    }
+  };
+
   if (loading) return <div className="text-white/50 text-sm font-bold animate-pulse">Cargando tenants...</div>;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500 relative">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-white">Gestión de Tenants</h2>
-        {/* We can add a "Crear Tenant" button later */}
+        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <Building2 className="w-5 h-5 text-emerald-400" />
+          Gestión de Tenants
+        </h2>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          Crear Tenant
+        </button>
       </div>
 
       <GlassCard className="border-white/5 overflow-x-auto">
@@ -55,7 +96,7 @@ export default function SuperadminTenantsPage() {
                 </td>
                 <td className="px-6 py-4 capitalize">{t.type.replace('_', ' ')}</td>
                 <td className="px-6 py-4 capitalize">
-                  <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold border ${t.subscription_tier === 'starter' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+                  <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold border ${t.subscription_tier === 'starter' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : t.subscription_tier === 'pro' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
                     {t.subscription_tier}
                   </span>
                 </td>
@@ -87,6 +128,99 @@ export default function SuperadminTenantsPage() {
           </tbody>
         </table>
       </GlassCard>
+
+      {/* Create Tenant Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <GlassCard className="w-full max-w-md p-6 border-white/10 flex flex-col relative animate-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/5 transition-colors text-white/50 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-emerald-400" />
+              Nuevo Tenant
+            </h3>
+
+            {errorMsg && (
+              <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold">
+                {errorMsg}
+              </div>
+            )}
+
+            <form onSubmit={handleCreate} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-white/50 mb-1 uppercase tracking-wider">Nombre de la Empresa / Cooperativa</label>
+                <input 
+                  type="text" 
+                  value={formData.name}
+                  onChange={(e) => {
+                    const name = e.target.value;
+                    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                    setFormData({...formData, name, slug});
+                  }}
+                  required
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 transition-colors"
+                  placeholder="Ej. Cooperativa San Isidro"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-white/50 mb-1 uppercase tracking-wider">Slug (Identificador Único)</label>
+                <input 
+                  type="text" 
+                  value={formData.slug}
+                  onChange={(e) => setFormData({...formData, slug: e.target.value})}
+                  required
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white/70 outline-none focus:border-emerald-500/50 transition-colors font-mono text-sm"
+                  placeholder="ej-coop-san-isidro"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-white/50 mb-1 uppercase tracking-wider">Tipo</label>
+                  <select 
+                    value={formData.type}
+                    onChange={(e) => setFormData({...formData, type: e.target.value as any})}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 transition-colors"
+                  >
+                    <option value="cooperativa">Cooperativa</option>
+                    <option value="agronomo">Agrónomo</option>
+                    <option value="empresa_servicios">Empresa de Servicios</option>
+                    <option value="almazara">Almazara</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-white/50 mb-1 uppercase tracking-wider">Plan</label>
+                  <select 
+                    value={formData.subscription_tier}
+                    onChange={(e) => setFormData({...formData, subscription_tier: e.target.value})}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 transition-colors"
+                  >
+                    <option value="starter">Starter</option>
+                    <option value="pro">Pro</option>
+                    <option value="enterprise">Enterprise</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <button 
+                  type="submit"
+                  disabled={creating}
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:hover:bg-emerald-500 text-white px-4 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                >
+                  {creating ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Crear Workspace'}
+                </button>
+              </div>
+            </form>
+          </GlassCard>
+        </div>
+      )}
     </div>
   );
 }

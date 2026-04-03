@@ -26,19 +26,24 @@ export async function getAssignedFarmers() {
   const tenantId = userData?.tenant_id;
   if (!tenantId) throw new Error('No tenant associated');
 
-  // For MVP, if they are a technician, maybe they see all farmers in their tenant, or we check the assignments table if we implemented it fully.
-  // For now, let's just fetch all users with role 'farmer' in this tenant.
+  // Fetch from assignments table properly
   const { data, error } = await supabase
-    .from('users')
+    .from('technician_assignments')
     .select(`
-      id, email,
-      explotaciones:explotaciones(count)
+      farmer:users!technician_assignments_farmer_id_fkey(
+        id, email, first_name, last_name, phone,
+        explotaciones:explotaciones(count)
+      )
     `)
     .eq('tenant_id', tenantId)
-    .eq('platform_role', 'farmer');
+    .eq('technician_id', user.id)
+    .eq('is_active', true);
 
   if (error) throw error;
-  return data;
+  
+  // Extraer un array plano de "farmers"
+  const farmersList = data.map((d: any) => d.farmer).filter(Boolean);
+  return farmersList;
 }
 
 export async function getTechnicianStats() {

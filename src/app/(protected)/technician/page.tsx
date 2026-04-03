@@ -48,12 +48,22 @@ export default function TechnicianPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
         <GlassCard className="p-6 border-white/5">
           <h3 className="text-lg font-bold text-white mb-4">Herramientas</h3>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             <Link href="/technician/farmers" className="p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-colors border border-white/5 flex items-center gap-3 group">
               <Users className="w-5 h-5 text-white/50 group-hover:text-emerald-400 transition-colors" />
               <div className="flex flex-col">
                 <span className="font-bold text-white/80 group-hover:text-white transition-colors">Mis Clientes (Agricultores)</span>
                 <span className="text-xs text-white/40">Ver explotaciones, cuadernos de campo y compliance</span>
+              </div>
+            </Link>
+
+            <Link href="/technician/recommendations" className="p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-colors border border-white/5 flex items-center gap-3 group">
+              <div className="p-2 bg-indigo-500/10 rounded-lg group-hover:bg-indigo-500/20 transition-colors">
+                <CheckCircle2 className="w-5 h-5 text-indigo-400" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-white/80 group-hover:text-white transition-colors">Emisión de Prescripciones</span>
+                <span className="text-xs text-white/40">Crear recetas fitosanitarias y tareas agronómicas</span>
               </div>
             </Link>
           </div>

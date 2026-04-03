@@ -6,11 +6,25 @@ import { GlowButton } from '@/components/ui/GlowButton';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
 import { TIER_CONFIG, TIER_ORDER } from '@/lib/modules';
 import type { AgriTier } from '@/lib/modules';
-import { Check, X, Crown, Zap, ArrowLeft } from 'lucide-react';
+import { Check, X, Crown, Zap, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { createCheckoutSession } from '@/lib/actions/stripe';
 
 export default function CuadernoPlanes() {
   const { profile, modulos, loading } = useAgriProfile();
+  const [checkingOut, setCheckingOut] = React.useState<AgriTier | null>(null);
+
+  const handleUpgrade = async (tier: AgriTier) => {
+    try {
+      setCheckingOut(tier);
+      const { url } = await createCheckoutSession(tier);
+      if (url) window.location.href = url;
+    } catch (e: any) {
+      console.error(e);
+      alert('Error iniciando el pago: ' + e.message);
+      setCheckingOut(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -106,9 +120,12 @@ export default function CuadernoPlanes() {
               <GlowButton
                 variant={isCurrent ? 'secondary' : 'primary'}
                 className="w-full py-4 rounded-xl text-[10px]"
-                disabled={isCurrent}
+                disabled={isCurrent || checkingOut !== null}
+                onClick={() => !isCurrent && handleUpgrade(tier)}
               >
-                {isCurrent ? 'Plan Actual' : `Seleccionar ${info.label_es}`}
+                {checkingOut === tier ? (
+                  <span className="flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Conectando...</span>
+                ) : isCurrent ? 'Plan Actual' : `Seleccionar ${info.label_es}`}
               </GlowButton>
             </GlassCard>
           );

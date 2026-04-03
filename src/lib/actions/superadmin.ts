@@ -89,3 +89,32 @@ export async function toggleTenantStatus(tenantId: string, isActive: boolean) {
   if (error) throw error;
   return { success: true };
 }
+
+export async function createTenant(data: {
+  name: string;
+  slug: string;
+  type: 'cooperativa' | 'agronomo' | 'empresa_servicios' | 'almazara';
+  subscription_tier: string;
+}) {
+  await verifySuperadmin();
+  const supabase = await getSupabase();
+  
+  const { data: tenant, error } = await supabase
+    .from('tenants')
+    .insert([{
+      name: data.name,
+      slug: data.slug.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      type: data.type,
+      subscription_tier: data.subscription_tier,
+      primary_color: '#10b981', // Default emerald
+      secondary_color: '#0f172a', // Default slate
+      active_modules: ['core', 'cuaderno'], // Default modules
+      is_active: true
+    }])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return tenant;
+}
+
