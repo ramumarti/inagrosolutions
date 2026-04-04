@@ -20,7 +20,8 @@ export function InventarioModule({ explotacionId }: { explotacionId: string }) {
     numero_registro: '',
     lote: '',
     cantidad: '',
-    unidad: 'L'
+    unidad: 'L',
+    precio_unitario: ''
   });
 
   const load = () => {
@@ -48,10 +49,11 @@ export function InventarioModule({ explotacionId }: { explotacionId: string }) {
         numero_registro: formData.numero_registro,
         lote: formData.lote,
         cantidad: Number(formData.cantidad),
-        unidad: formData.unidad
+        unidad: formData.unidad,
+        precio_unitario: Number(formData.precio_unitario) || 0
       });
       setModalOpen(false);
-      setFormData({ tipo: 'fitosanitario', nombre_producto: '', numero_registro: '', lote: '', cantidad: '', unidad: 'L' });
+      setFormData({ tipo: 'fitosanitario', nombre_producto: '', numero_registro: '', lote: '', cantidad: '', unidad: 'L', precio_unitario: '' });
       load();
     } catch (e: any) {
       console.error(e);
@@ -126,6 +128,11 @@ export function InventarioModule({ explotacionId }: { explotacionId: string }) {
                 <div className="flex justify-between items-end mb-1">
                   <span className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Stock Disponible</span>
                   <span className="text-lg font-black text-white">{item.cantidad_actual} <span className="text-sm font-bold text-white/40">{item.unidad}</span></span>
+                </div>
+                {/* Value Badge */}
+                <div className="flex justify-between items-end mb-1">
+                  <span className="text-[10px] text-white/40 uppercase font-bold tracking-widest">Valor Stock</span>
+                  <span className="text-sm font-black text-emerald-400">{(item.cantidad_actual * (item.precio_unitario || 0)).toFixed(2)} <span className="text-[10px]">€</span></span>
                 </div>
                 {/* Progress bar */}
                 <div className="w-full h-1.5 bg-black/40 rounded-full overflow-hidden">
@@ -236,6 +243,23 @@ export function InventarioModule({ explotacionId }: { explotacionId: string }) {
                     <option value="Kg">Kilogramos (Kg)</option>
                     <option value="uds">Unidades (uds)</option>
                   </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">Precio Unitario (€)</label>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    value={formData.precio_unitario}
+                    onChange={e => setFormData({ ...formData, precio_unitario: e.target.value })}
+                    placeholder="Ej: 14.50"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500/50"
+                  />
+                </div>
+                <div className="flex flex-col justify-end pb-3">
+                    <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest leading-none">Cotejado con factura anterior</p>
                 </div>
               </div>
 

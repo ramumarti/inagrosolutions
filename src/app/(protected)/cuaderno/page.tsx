@@ -16,6 +16,7 @@ import { DashboardsModule } from '@/components/cuaderno/DashboardsModule';
 import { SensoresModule } from '@/components/cuaderno/SensoresModule';
 import { ExcelParcelImporter } from '@/components/cuaderno/ExcelParcelImporter';
 import { ExportacionModule } from '@/components/cuaderno/ExportacionModule';
+import { RentabilidadModule } from '@/components/cuaderno/RentabilidadModule';
 import { InventarioModule } from '@/components/cuaderno/InventarioModule';
 import { ModuleGate } from '@/components/cuaderno/ModuleGate';
 import { FincasModule } from '@/components/cuaderno/FincasModule';
@@ -352,6 +353,14 @@ export default function CuadernoPage() {
               profile={profile}
               explotacionId={selectedExplotacionId}
               campanaId={selectedCampanaId}
+            />
+          );
+        case 'costes':
+          return (
+            <RentabilidadModule 
+              explotacionId={selectedExplotacionId || ''}
+              campanaId={selectedCampanaId}
+              parcelas={profile.parcelas.filter(p => !selectedExplotacionId || p.explotacion_id === selectedExplotacionId)}
             />
           );
         default:

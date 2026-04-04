@@ -29,28 +29,29 @@ export async function getInventory(explotacionId: string) {
   return data || [];
 }
 
-export async function addStock(payload: {
-  explotacion_id: string;
-  tipo: string;
-  nombre_producto: string;
-  numero_registro?: string;
-  lote?: string;
-  cantidad: number;
-  unidad: string;
+export async function addStock(data: { 
+  explotacion_id: string, 
+  tipo: string, 
+  nombre_producto: string, 
+  numero_registro?: string, 
+  lote?: string, 
+  cantidad: number, 
+  unidad: string,
+  precio_unitario?: number
 }) {
   const supabase = await getSupabase();
-  
   const { error } = await supabase
     .from('inventario_insumos')
     .insert({
-      explotacion_id: payload.explotacion_id,
-      tipo: payload.tipo,
-      nombre_producto: payload.nombre_producto,
-      numero_registro: payload.numero_registro,
-      lote: payload.lote,
-      cantidad_inicial: payload.cantidad,
-      cantidad_actual: payload.cantidad,
-      unidad: payload.unidad
+      explotacion_id: data.explotacion_id,
+      tipo: data.tipo,
+      nombre_producto: data.nombre_producto,
+      numero_registro: data.numero_registro,
+      lote: data.lote,
+      cantidad_inicial: data.cantidad,
+      cantidad_actual: data.cantidad,
+      unidad: data.unidad,
+      precio_unitario: data.precio_unitario || 0
     });
 
   if (error) throw error;
