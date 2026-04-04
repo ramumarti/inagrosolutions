@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
 import { HoyEnLaParcela } from '@/components/cuaderno/HoyEnLaParcela';
 import { AlertasCuaderno } from '@/components/cuaderno/AlertasCuaderno';
@@ -16,6 +16,8 @@ import { DashboardsModule } from '@/components/cuaderno/DashboardsModule';
 import { SensoresModule } from '@/components/cuaderno/SensoresModule';
 import { InventarioModule } from '@/components/cuaderno/InventarioModule';
 import { ModuleGate } from '@/components/cuaderno/ModuleGate';
+import { ParcelasModule } from '@/components/cuaderno/ParcelasModule';
+import { createExplotacion } from '@/lib/actions/agricultural';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { TIER_CONFIG } from '@/lib/modules';
@@ -23,7 +25,7 @@ import type { AgriTier } from '@/lib/modules';
 import {
   Home, Bug, Leaf, Droplets, Wallet, BarChart3, Link as LinkIcon,
   Radio, MapPin, FileDown, Shield, ArrowRight, Zap, ChevronRight,
-  Package, Lock, Settings, Bell, Calendar
+  Package, Lock, Settings, Bell, Calendar, Building2
 } from 'lucide-react';
 
 type TabKey = 'inicio' | 'tratamientos' | 'fitosanitarios' | 'calendario' | 'labores' | 'fertilizacion' | 'parcelas' | 'costes' | 'cosechas' | 'trazabilidad' | 'dashboards' | 'sensores' | 'alertas' | 'exportacion' | 'inventario';
@@ -36,8 +38,17 @@ const ICON_MAP: Record<string, any> = {
 };
 
 export default function CuadernoPage() {
-  const { profile, modulos: rawModulos, resumen, loading, hasModule, canAccess } = useAgriProfile();
+  const { profile, modulos: rawModulos, resumen, loading, hasModule, canAccess, reload } = useAgriProfile();
   const [activeTab, setActiveTab] = useState<TabKey>('inicio');
+  const [selectedExplotacionId, setSelectedExplotacionId] = useState<string | null>(null);
+  const [selectedCampanaId, setSelectedCampanaId] = useState<string | null>(null);
+
+  // Initialize selection
+  useEffect(() => {
+    if (profile?.explotaciones && profile.explotaciones.length > 0 && !selectedExplotacionId) {
+      setSelectedExplotacionId(profile.explotaciones[0].id);
+    }
+  }, [profile, selectedExplotacionId]);
 
   // Reorder modules: 'parcelas' first, 'exportacion' and 'siex' last
   const modulos = [...rawModulos].sort((a, b) => {
@@ -49,6 +60,22 @@ export default function CuadernoPage() {
     };
     return getWeight(a.slug) - getWeight(b.slug);
   });
+
+  const [isAddingExplotacion, setIsAddingExplotacion] = useState(false);
+  const [newExplotacionNombre, setNewExplotacionNombre] = useState('');
+
+  const handleCreateExplotacion = async () => {
+    if (!newExplotacionNombre) return;
+    try {
+      const res = await createExplotacion({ nombre: newExplotacionNombre, tenant_id: profile?.tenant_id });
+      setIsAddingExplotacion(false);
+      setNewExplotacionNombre('');
+      reload();
+      setSelectedExplotacionId(res.id);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (loading) {
     return (
@@ -204,31 +231,28 @@ export default function CuadernoPage() {
         case 'parcelas':
           return (
             <div className="space-y-6">
-              <div className="flex items-center gap-3 pb-6 border-b border-white/5">
-                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/10">
-                  <MapPin className="w-6 h-6 text-emerald-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-black text-white tracking-tight">Mis Parcelas</h3>
-                  <p className="text-sm text-white/60 font-bold">Identificación SIGPAC • Geolocalización</p>
+              <div className="flex items-center justify-between pb-6 border-b border-white/5">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/10">
+                    <MapPin className="w-6 h-6 text-emerald-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-white tracking-tight">Gestión de Parcelas</h3>
+                    <p className="text-sm text-white/60 font-bold">Importación SIGPAC • Mapas • Campañas</p>
+                  </div>
                 </div>
               </div>
-              {profile.parcelas.length === 0 ? (
-                <p className="text-center text-white/20 py-12 text-sm">No hay parcelas registradas</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {profile.parcelas.map((p: any) => (
-                    <GlassCard key={p.id} className="p-5 border-white/5 hover:bg-white/[0.03] transition-all">
-                      <div className="flex items-start justify-between mb-3">
-                        <h4 className="font-black text-white text-lg">{p.nombre}</h4>
-                        <span className="text-sm font-black text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/10">{p.hectareas} ha</span>
-                      </div>
-                      {p.cultivo && <p className="text-sm text-white/70 font-bold">{p.cultivo} {p.variedad ? `• ${p.variedad}` : ''}</p>}
-                      {p.referencia_sigpac && <p className="text-xs text-white/50 mt-2 font-mono bg-white/5 py-1 px-2 rounded w-fit">SIGPAC: {p.referencia_sigpac}</p>}
-                    </GlassCard>
-                  ))}
-                </div>
-              )}
+              
+              <ParcelasModule 
+                explotacionId={selectedExplotacionId || undefined} 
+                parcelas={profile.parcelas.filter(p => p.explotacion_id === selectedExplotacionId)}
+                tenantId={profile.tenant_id}
+                onAction={(action, data) => {
+                  if (action === 'new_farm') setIsAddingExplotacion(true);
+                  else if (action === 'inicio') setActiveTab('inicio');
+                  else setActiveTab(action as TabKey);
+                }}
+              />
             </div>
           );
         case 'exportacion':
@@ -299,6 +323,49 @@ export default function CuadernoPage() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
+        {/* Agricultural Context Header */}
+        <div className="sticky top-0 z-30 bg-[var(--color-base-100)]/60 backdrop-blur-xl border-b border-white/5 px-6 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 overflow-x-auto scrollbar-none">
+            {/* Explotacion Selector */}
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10 shrink-0">
+              <Building2 className="w-4 h-4 text-emerald-400" />
+              <select 
+                className="bg-transparent border-none outline-none text-xs font-black text-white/80 uppercase tracking-widest cursor-pointer"
+                value={selectedExplotacionId || ''}
+                onChange={e => {
+                  if (e.target.value === 'new') setIsAddingExplotacion(true);
+                  else setSelectedExplotacionId(e.target.value);
+                }}
+              >
+                {Array.isArray(profile?.explotaciones) && profile?.explotaciones?.map((e: any) => (
+                  <option key={e.id} value={e.id} className="bg-[#1a1a1a]">{e.nombre}</option>
+                ))}
+                <option value="new" className="bg-[#1a1a1a] text-emerald-400 font-bold">+ Nueva Entidad...</option>
+              </select>
+            </div>
+
+            {/* Campaña Selector */}
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10 shrink-0">
+              <Calendar className="w-4 h-4 text-blue-400" />
+              <select className="bg-transparent border-none outline-none text-xs font-black text-white/80 uppercase tracking-widest cursor-pointer">
+                <option className="bg-[#1a1a1a]">Campaña 2024</option>
+                <option className="bg-[#1a1a1a]">Campaña 2023</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="hidden sm:flex items-center gap-3">
+            <button className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+              <Settings size={16} className="text-white/40" />
+            </button>
+            <div className="h-6 w-px bg-white/5 mx-2" />
+            <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-xl">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none">Estado SIEX: Activo</span>
+            </div>
+          </div>
+        </div>
+
         {/* Mobile tabs */}
         <div className="lg:hidden sticky top-0 z-20 bg-[var(--color-base-100)]/90 backdrop-blur-xl border-b border-white/5 px-4 py-3">
           <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
@@ -325,6 +392,34 @@ export default function CuadernoPage() {
         <div className="p-6 md:p-10 max-w-5xl">
           {renderContent()}
         </div>
+
+        {/* Modal Nueva Explotacion */}
+        {isAddingExplotacion && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setIsAddingExplotacion(false)} />
+            <GlassCard className="max-w-md w-full relative p-8 border-white/10">
+              <h3 className="text-xl font-black text-white mb-2">Crear Nueva Explotación</h3>
+              <p className="text-sm text-white/40 mb-6 font-bold uppercase tracking-widest">Datos básicos de la entidad agrícola</p>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] uppercase font-black text-white/30 tracking-widest ml-1">Nombre Comercial</label>
+                  <input 
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 transition-all font-bold"
+                    placeholder="Ej: Finca Las Olivas"
+                    value={newExplotacionNombre}
+                    onChange={e => setNewExplotacionNombre(e.target.value)}
+                  />
+                </div>
+                
+                <div className="flex justify-end gap-3 pt-4">
+                  <button className="px-6 py-3 text-sm font-bold text-white/40" onClick={() => setIsAddingExplotacion(false)}>Cancelar</button>
+                  <GlowButton onClick={handleCreateExplotacion}>Registrar</GlowButton>
+                </div>
+              </div>
+            </GlassCard>
+          </div>
+        )}
       </main>
     </div>
   );
