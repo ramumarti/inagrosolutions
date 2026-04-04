@@ -9,10 +9,11 @@ import { Bug, Calendar, Beaker, Ruler, Tractor, User, Check, AlertTriangle, Chev
 
 interface TratamientoFormProps {
   parcelas: any[];
+  initialParcelaId?: string;
   onSuccess: () => void;
 }
 
-export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
+export function TratamientoForm({ parcelas, initialParcelaId, onSuccess }: TratamientoFormProps) {
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -42,6 +43,12 @@ export function TratamientoForm({ parcelas, onSuccess }: TratamientoFormProps) {
       }).catch(console.error);
     }
   }, [parcelas]);
+
+  useEffect(() => {
+    if (initialParcelaId) {
+      setForm(prev => ({ ...prev, parcela_id: initialParcelaId }));
+    }
+  }, [initialParcelaId]);
 
   // Si seleccionan del inventario, auto-rellenar producto y MAPA id
   const handleInventoryChange = (invId: string) => {

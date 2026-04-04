@@ -8,13 +8,20 @@ import { Droplets, Check, ChevronDown } from 'lucide-react';
 
 interface FertilizacionFormProps {
   parcelas: any[];
+  initialParcelaId?: string;
   onSuccess: () => void;
 }
 
-export function FertilizacionForm({ parcelas, onSuccess }: FertilizacionFormProps) {
+export function FertilizacionForm({ parcelas, initialParcelaId, onSuccess }: FertilizacionFormProps) {
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  React.useEffect(() => {
+    if (initialParcelaId) {
+      setForm(prev => ({ ...prev, parcela_id: initialParcelaId }));
+    }
+  }, [initialParcelaId]);
   const [form, setForm] = useState({
     parcela_id: '',
     fecha: new Date().toISOString().split('T')[0],

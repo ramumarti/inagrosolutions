@@ -8,6 +8,7 @@ import { Leaf, Check, ChevronDown } from 'lucide-react';
 
 interface LaborFormProps {
   parcelas: any[];
+  initialParcelaId?: string;
   onSuccess: () => void;
 }
 
@@ -17,10 +18,16 @@ const TIPOS_LABOR = [
   'Desbroce', 'Recolección', 'Otro'
 ];
 
-export function LaborForm({ parcelas, onSuccess }: LaborFormProps) {
+export function LaborForm({ parcelas, initialParcelaId, onSuccess }: LaborFormProps) {
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  React.useEffect(() => {
+    if (initialParcelaId) {
+      setForm(prev => ({ ...prev, parcela_id: initialParcelaId }));
+    }
+  }, [initialParcelaId]);
   const [form, setForm] = useState({
     parcela_id: '',
     fecha: new Date().toISOString().split('T')[0],

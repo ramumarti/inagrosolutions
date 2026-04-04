@@ -42,6 +42,7 @@ export default function CuadernoPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('inicio');
   const [selectedExplotacionId, setSelectedExplotacionId] = useState<string | null>(null);
   const [selectedCampanaId, setSelectedCampanaId] = useState<string | null>(null);
+  const [preSelectedPlotId, setPreSelectedPlotId] = useState<string | null>(null);
 
   // Initialize selection
   useEffect(() => {
@@ -202,11 +203,11 @@ export default function CuadernoPage() {
     const content = (() => {
       switch (activeTab) {
         case 'fitosanitarios':
-          return <TratamientoForm parcelas={profile.parcelas} onSuccess={() => setActiveTab('inicio')} />;
+          return <TratamientoForm parcelas={profile.parcelas} initialParcelaId={preSelectedPlotId || undefined} onSuccess={() => { setActiveTab('inicio'); setPreSelectedPlotId(null); }} />;
         case 'labores':
-          return <LaborForm parcelas={profile.parcelas} onSuccess={() => setActiveTab('inicio')} />;
+          return <LaborForm parcelas={profile.parcelas} initialParcelaId={preSelectedPlotId || undefined} onSuccess={() => { setActiveTab('inicio'); setPreSelectedPlotId(null); }} />;
         case 'fertilizacion':
-          return <FertilizacionForm parcelas={profile.parcelas} onSuccess={() => setActiveTab('inicio')} />;
+          return <FertilizacionForm parcelas={profile.parcelas} initialParcelaId={preSelectedPlotId || undefined} onSuccess={() => { setActiveTab('inicio'); setPreSelectedPlotId(null); }} />;
         case 'inventario':
           return profile.explotaciones[0] ? (
             <InventarioModule explotacionId={profile.explotaciones[0].id} />
@@ -247,9 +248,14 @@ export default function CuadernoPage() {
                 explotacionId={selectedExplotacionId || undefined} 
                 parcelas={profile.parcelas.filter(p => p.explotacion_id === selectedExplotacionId)}
                 tenantId={profile.tenant_id}
-                onAction={(action, data) => {
-                  if (action === 'new_farm') setIsAddingExplotacion(true);
+                onAction={(action, payload) => {
+                  if (payload?.parcelaId) setPreSelectedPlotId(payload.parcelaId);
+                  
+                  if (action === 'tratamientos') setActiveTab('fitosanitarios');
+                  else if (action === 'labores') setActiveTab('labores');
+                  else if (action === 'fertilizacion') setActiveTab('fertilizacion');
                   else if (action === 'inicio') setActiveTab('inicio');
+                  else if (action === 'new_farm') setIsAddingExplotacion(true);
                   else setActiveTab(action as TabKey);
                 }}
               />
