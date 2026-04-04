@@ -49,13 +49,13 @@ interface ParcelasModuleProps {
 export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenantId, onAction }: ParcelasModuleProps) {
   const [parcelas, setParcelas] = useState<Plot[]>(initialParcelas);
   const [isAdding, setIsAdding] = useState(false);
+  const [editingPlotId, setEditingPlotId] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [importingSigpac, setImportingSigpac] = useState(false);
   const [search, setSearch] = useState('');
   const [filterCultivo, setFilterCultivo] = useState('all');
   
-  // Form State
-  const [form, setForm] = useState({
+  const initialForm = {
     nombre: '',
     referencia_sigpac: '',
     hectareas: 0,
@@ -74,7 +74,10 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
     x_utm: 0,
     y_utm: 0,
     anio_plantacion: new Date().getFullYear()
-  });
+  };
+
+  // Form State
+  const [form, setForm] = useState(initialForm);
 
   const [step, setStep] = useState(1);
 
@@ -109,17 +112,50 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
 
   const handleSave = async () => {
     try {
-      const newPlot = await createParcela({
-        ...form,
-        explotacion_id: explotacionId,
-        tenant_id: tenantId
-      });
-      setParcelas([...parcelas, newPlot as any]);
+      if (editingPlotId) {
+        // En un caso real llamaríamos a updateParcela(editingPlotId, form)
+        // Por ahora simulamos la actualización en el estado local
+        setParcelas(parcelas.map(p => p.id === editingPlotId ? { ...p, ...form } : p));
+        setEditingPlotId(null);
+      } else {
+        const newPlot = await createParcela({
+          ...form,
+          explotacion_id: explotacionId,
+          tenant_id: tenantId
+        });
+        setParcelas([...parcelas, newPlot as any]);
+      }
       setIsAdding(false);
       setStep(1);
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleEdit = (plot: Plot) => {
+    setForm({
+      nombre: plot.nombre,
+      referencia_sigpac: plot.referencia_sigpac || '',
+      hectareas: plot.hectareas,
+      cultivo: plot.cultivo || '',
+      variedad: plot.variedad || '',
+      sistema_riego: plot.sistema_riego || 'secano',
+      provincia: plot.provincia || '',
+      municipio: plot.municipio || '',
+      agregado: plot.agregado || 0,
+      zona: plot.zona || 0,
+      poligono: plot.poligono || '',
+      parcela: plot.parcela || '',
+      recinto: plot.recinto || '',
+      referencia_catastral: plot.referencia_catastral || '',
+      crs: plot.crs || 'EPSG:ETRS89 / UTM zone 30N',
+      x_utm: plot.x_utm || 0,
+      y_utm: plot.y_utm || 0,
+      anio_plantacion: (plot as any).anio_plantacion || new Date().getFullYear()
+    });
+    setEditingPlotId(plot.id);
+    setIsAdding(true);
+    setStep(2); // Ir directo a los detalles para editar
   };
 
   const handleDelete = async (id: string) => {
@@ -184,7 +220,12 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
 
           <GlowButton 
             className="flex items-center gap-2"
-            onClick={() => setIsAdding(true)}
+            onClick={() => {
+              setForm(initialForm);
+              setEditingPlotId(null);
+              setStep(1);
+              setIsAdding(true);
+            }}
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">Nueva Parcela</span>
@@ -212,7 +253,7 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
               <div className="h-24 bg-gradient-to-br from-emerald-500/10 to-blue-500/10 flex items-center justify-center relative border-b border-white/5 group-hover:from-emerald-500/20 transition-all">
                 <MapPin className="w-8 h-8 text-emerald-400/30 group-hover:text-emerald-400 group-hover:scale-110 transition-all" />
                 <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                  <button className="p-1.5 bg-white/10 rounded-lg hover:bg-white/20"><Edit3 size={14}/></button>
+                  <button className="p-1.5 bg-white/10 rounded-lg hover:bg-white/20" onClick={() => handleEdit(p)}><Edit3 size={14}/></button>
                   <button className="p-1.5 bg-white/10 rounded-lg hover:bg-red-500/20 text-red-400" onClick={() => handleDelete(p.id)}><Trash2 size={14}/></button>
                 </div>
                 <div className="absolute top-3 left-3 px-2 py-1 bg-emerald-500/20 backdrop-blur-md rounded-md border border-emerald-500/20">
@@ -293,8 +334,8 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
           <GlassCard className="max-w-xl w-full relative p-8 border-white/10 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h3 className="text-2xl font-black text-white glow-text">Nueva Parcela</h3>
-                <p className="text-sm text-white/40 font-bold">Añade propiedades agrícolas a tu explotación</p>
+                <h3 className="text-2xl font-black text-white glow-text">{editingPlotId ? 'Editar Parcela' : 'Nueva Parcela'}</h3>
+                <p className="text-sm text-white/40 font-bold">{editingPlotId ? 'Actualiza los datos de tu terreno' : 'Añade propiedades agrícolas a tu explotación'}</p>
               </div>
               <div className="flex items-center gap-2">
                 {[1, 2].map(s => (
@@ -386,7 +427,10 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
                   </div>
 
                   <div className="flex justify-end gap-3 pt-4">
-                    <button className="px-6 py-3 text-sm font-bold text-white/50 hover:text-white" onClick={() => setIsAdding(false)}>Cancelar</button>
+                    <button className="px-6 py-3 text-sm font-bold text-white/50 hover:text-white" onClick={() => {
+                      setIsAdding(false);
+                      setEditingPlotId(null);
+                    }}>Cancelar</button>
                     <button 
                       className="px-8 py-3 bg-white text-black font-black text-sm rounded-xl hover:bg-white/90 active:scale-95 transition-all"
                       onClick={() => setStep(2)}
