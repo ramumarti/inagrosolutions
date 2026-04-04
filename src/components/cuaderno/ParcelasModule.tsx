@@ -8,8 +8,14 @@ import {
 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
-import { createParcela, deleteParcela, importFromSigpac } from '@/lib/actions/agricultural';
+import { createParcela, deleteParcela, importFromSigpac, getSigpacInfoByCoords } from '@/lib/actions/agricultural';
 import { cn } from '@/lib/utils';
+import dynamic from 'next/dynamic';
+
+const ParcelaMap = dynamic(() => import('./ParcelaMap').then(m => m.ParcelaMap), { 
+  ssr: false,
+  loading: () => <div className="w-full h-[400px] bg-white/5 animate-pulse rounded-2xl border border-white/10 flex items-center justify-center text-white/20 text-xs font-black uppercase">Cargando Mapas...</div>
+});
 
 // Types for local component
 interface Plot {
@@ -43,6 +49,7 @@ interface ParcelasModuleProps {
 export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenantId, onAction }: ParcelasModuleProps) {
   const [parcelas, setParcelas] = useState<Plot[]>(initialParcelas);
   const [isAdding, setIsAdding] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [importingSigpac, setImportingSigpac] = useState(false);
   const [search, setSearch] = useState('');
   const [filterCultivo, setFilterCultivo] = useState('all');
@@ -306,8 +313,8 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
                     </div>
                     <div className="flex gap-2">
                       <input 
-                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 transition-all"
-                        placeholder="Código SIGPAC (Ej: 28;065;0;0;12;45...)"
+                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-emerald-500/50 transition-all font-mono"
+                        placeholder="Código SIGPAC (Ej: 23;46;0;0;13;333...)"
                         value={form.referencia_sigpac}
                         onChange={e => setForm({...form, referencia_sigpac: e.target.value})}
                       />
@@ -319,6 +326,47 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
                         {importingSigpac ? 'Cargando...' : 'Importar'}
                       </button>
                     </div>
+
+                    <div className="pt-2">
+                      <button 
+                        onClick={() => setShowMap(!showMap)}
+                        className={cn(
+                          "w-full py-3 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2",
+                          showMap ? "bg-white/10 text-white" : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white"
+                        )}
+                      >
+                        <MapPin size={14} />
+                        {showMap ? 'Ocultar Identificador en Mapa' : 'Identificar en Mapa interactivo'}
+                      </button>
+                    </div>
+
+                    {showMap && (
+                      <div className="pt-2 animate-in fade-in slide-in-from-top-4 duration-500">
+                        <ParcelaMap 
+                          onPlotSelect={async (data) => {
+                            setImportingSigpac(true);
+                            try {
+                              const res = await getSigpacInfoByCoords(data.lat, data.lng);
+                              if (res.success) {
+                                setForm({
+                                  ...form,
+                                  ...res.data,
+                                  referencia_sigpac: `${res.data.provincia};${res.data.municipio};${res.data.agregado};${res.data.zona};${res.data.poligono};${res.data.parcela};${res.data.recinto}`
+                                });
+                                // Notification
+                              }
+                            } catch (e) {
+                              console.error(e);
+                            } finally {
+                              setImportingSigpac(false);
+                            }
+                          }}
+                        />
+                        <p className="text-[10px] font-black text-emerald-400/60 uppercase text-center mt-2 tracking-widest">
+                          Haz clic sobre una parcela para cargar sus datos automáticamente
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">

@@ -67,7 +67,6 @@ export async function createCampana(data: { explotacion_id: string, nombre: stri
 
 export async function importFromSigpac(referencia: string) {
   // Mock external API call to SIGPAC
-  // In a real scenario, we'd fetch from https://wms.mapa.gob.es/sigpac/wms...
   return {
     success: true,
     data: {
@@ -77,11 +76,31 @@ export async function importFromSigpac(referencia: string) {
       parcela: '45',
       recinto: '1',
       superficie: 2.5,
-      // GeoJSON coordinates example
-      geometria: {
-        type: 'Polygon',
-        coordinates: [[/* ... */]]
-      }
+      geometria: null
+    }
+  };
+}
+
+export async function getSigpacInfoByCoords(lat: number, lng: number) {
+  // En un caso real, haríamos fetch a:
+  // https://sigpac.mapa.gob.es/fichasigpac/net/servicios/Servicios.aspx?info=consultar_p_r&lat=${lat}&lng=${lng}
+  
+  // Simulamos el retraso y la respuesta
+  await new Promise(r => setTimeout(r, 800));
+  
+  return {
+    success: true,
+    data: {
+      provincia: '23',
+      municipio: '46',
+      agregado: 0,
+      zona: 0,
+      poligono: '13',
+      parcela: '333',
+      recinto: '1',
+      x_utm: 455097.60,
+      y_utm: 4209681.58,
+      referencia_catastral: '23046A013003330000JP'
     }
   };
 }
