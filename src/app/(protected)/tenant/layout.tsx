@@ -16,7 +16,7 @@ export default function TenantAdminLayout({ children }: { children: React.ReactN
         <GlassCard className="p-12 max-w-md text-center">
           <ShieldAlert className="w-16 h-16 text-red-500 mx-auto mb-4 opacity-80" />
           <h2 className="text-xl font-bold text-white mb-2">Acceso Denegado</h2>
-          <p className="text-sm text-white/50">No tienes permisos de administrador para este tenant.</p>
+          <p className="text-sm text-white/50">No tienes permisos de administrador para esta entidad.</p>
         </GlassCard>
       </div>
     );
@@ -27,7 +27,7 @@ export default function TenantAdminLayout({ children }: { children: React.ReactN
       <div className="px-6 md:px-10 py-6 border-b border-white/5 bg-black/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-white glow-text">Portal de Administración</h1>
-          <p className="text-sm text-white/50 font-medium">Tenant: <span className="text-white/80">{tenant?.name}</span></p>
+          <p className="text-sm text-white/50 font-medium">Entidad: <span className="text-white/80">{tenant?.name}</span></p>
         </div>
       </div>
       

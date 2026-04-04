@@ -17,7 +17,7 @@ export default function TenantAdminPage() {
     });
   }, []);
 
-  if (loading) return <div className="text-white/50 text-sm font-bold animate-pulse">Cargando métricas del tenant...</div>;
+  if (loading) return <div className="text-white/50 text-sm font-bold animate-pulse">Cargando métricas de la entidad...</div>;
 
   const kpis = [
     { label: 'Usuarios Activos', value: stats.totalUsers, icon: Users, color: 'text-indigo-400' },

@@ -74,7 +74,7 @@ export default function TenantUsersPage() {
   };
 
   const roles: { value: PlatformRole; label: string }[] = [
-    { value: 'tenant_admin', label: 'Admin. Tenant' },
+    { value: 'tenant_admin', label: 'Admin. Entidad' },
     { value: 'technician', label: 'Técnico' },
     { value: 'farmer', label: 'Agricultor' },
     { value: 'worker', label: 'Operario' },
@@ -204,7 +204,7 @@ export default function TenantUsersPage() {
                 Invitar Nuevo Miembro
               </h3>
               <p className="text-sm text-white/60 mt-1">
-                Se registrará la invitación para este usuario en tu Tenant.
+                Se registrará la invitación para este usuario en tu Entidad.
               </p>
             </div>
             
