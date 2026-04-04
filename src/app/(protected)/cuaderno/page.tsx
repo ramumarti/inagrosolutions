@@ -36,8 +36,18 @@ const ICON_MAP: Record<string, any> = {
 };
 
 export default function CuadernoPage() {
-  const { profile, modulos, resumen, loading, hasModule, canAccess } = useAgriProfile();
+  const { profile, modulos: rawModulos, resumen, loading, hasModule, canAccess } = useAgriProfile();
   const [activeTab, setActiveTab] = useState<TabKey>('inicio');
+
+  // Reorder modules to prioritize 'parcelas' as the first one after 'inicio'
+  const modulos = [...rawModulos].sort((a, b) => {
+    if (a.slug === 'parcelas') return -1;
+    if (b.slug === 'parcelas') return 1;
+    // Keep 'exportacion' (Registro SIEX) high as well
+    if (a.slug === 'exportacion') return -1;
+    if (b.slug === 'exportacion') return 1;
+    return 0;
+  });
 
   if (loading) {
     return (
