@@ -11,6 +11,7 @@ import { Building2, X, Plus, Loader2 } from 'lucide-react';
 export default function SuperadminTenantsPage() {
   const [tenants, setTenants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -28,17 +29,29 @@ export default function SuperadminTenantsPage() {
   });
 
   const load = () => {
-    getTenantsList().then(data => {
-      setTenants(data || []);
-      setLoading(false);
-    });
+    setLoadError('');
+    getTenantsList()
+      .then(data => {
+        setTenants(data || []);
+      })
+      .catch(err => {
+        console.error('Error cargando entidades:', err);
+        setLoadError('Error al cargar las entidades');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => { load(); }, []);
 
   const handleToggle = async (id: string, currentStatus: boolean) => {
-    await toggleTenantStatus(id, !currentStatus);
-    load();
+    try {
+      await toggleTenantStatus(id, !currentStatus);
+      load();
+    } catch (err) {
+      console.error('Error al cambiar estado:', err);
+    }
   };
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -52,29 +65,35 @@ export default function SuperadminTenantsPage() {
       load();
     } catch (error: any) {
       console.error(error);
-      setErrorMsg(error.message || 'Error al crear tenant');
+      setErrorMsg(error.message || 'Error al crear entidad');
     } finally {
       setCreating(false);
     }
   };
 
-  if (loading) return <div className="text-white/50 text-sm font-bold animate-pulse">Cargando tenants...</div>;
+  if (loading) return <div className="text-white/50 text-sm font-bold animate-pulse">Cargando entidades...</div>;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 relative">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
           <Building2 className="w-5 h-5 text-emerald-400" />
-          Gestión de Tenants
+          Gestión de Entidades
         </h2>
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Crear Tenant
+          Crear Entidad
         </button>
       </div>
+
+      {loadError && (
+        <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold">
+          {loadError}
+        </div>
+      )}
 
       <GlassCard className="border-white/5 overflow-x-auto">
         <table className="w-full text-left text-sm text-white/70">
@@ -95,7 +114,7 @@ export default function SuperadminTenantsPage() {
                   <p className="font-bold text-white">{t.name}</p>
                   <p className="text-xs text-white/40">{t.slug}</p>
                 </td>
-                <td className="px-6 py-4 capitalize">{t.type.replace('_', ' ')}</td>
+                <td className="px-6 py-4 capitalize">{(t.type || '').replace('_', ' ')}</td>
                 <td className="px-6 py-4 capitalize">
                   {(() => {
                     const tierKey = (t.subscription_tier || 'basico') as AgriTier;
@@ -115,7 +134,7 @@ export default function SuperadminTenantsPage() {
                 </td>
                 <td className="px-6 py-4">{t.users?.[0]?.count || 0}</td>
                 <td className="px-6 py-4 text-white/50">
-                  {format(new Date(t.created_at), 'dd MMM yyyy', { locale: es })}
+                  {t.created_at ? format(new Date(t.created_at), 'dd MMM yyyy', { locale: es }) : '—'}
                 </td>
                 <td className="px-6 py-4 text-center">
                   <button 
@@ -131,10 +150,10 @@ export default function SuperadminTenantsPage() {
                 </td>
               </tr>
             ))}
-            {tenants.length === 0 && (
+            {tenants.length === 0 && !loadError && (
               <tr>
                 <td colSpan={6} className="px-6 py-12 text-center text-white/30 text-sm">
-                  No se encontraron tenants
+                  No se encontraron entidades
                 </td>
               </tr>
             )}
@@ -142,7 +161,7 @@ export default function SuperadminTenantsPage() {
         </table>
       </GlassCard>
 
-      {/* Create Tenant Modal */}
+      {/* Create Entity Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <GlassCard className="w-full max-w-md p-6 border-white/10 flex flex-col relative animate-in zoom-in-95 duration-200">
@@ -155,7 +174,7 @@ export default function SuperadminTenantsPage() {
             
             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <Building2 className="w-5 h-5 text-emerald-400" />
-              Nuevo Tenant
+              Nueva Entidad
             </h3>
 
             {errorMsg && (
@@ -228,7 +247,7 @@ export default function SuperadminTenantsPage() {
                   disabled={creating}
                   className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:hover:bg-emerald-500 text-white px-4 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
                 >
-                  {creating ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Crear Workspace'}
+                  {creating ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Crear Entidad'}
                 </button>
               </div>
             </form>

@@ -38,7 +38,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         isActive: pathname === '/superadmin'
       },
       {
-        label: 'Tenants',
+        label: 'Entidades',
         href: '/superadmin/tenants',
         icon: Building2,
         isActive: pathname.startsWith('/superadmin/tenants')
@@ -46,7 +46,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
     ] : []),
     ...(hasRole(['tenant_admin']) && !isSuperadmin ? [
       {
-        label: 'Tenant Admin',
+        label: 'Admin Entidad',
         href: '/tenant',
         icon: Shield,
         isActive: pathname === '/tenant'

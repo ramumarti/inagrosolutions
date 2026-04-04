@@ -68,8 +68,7 @@ export async function getTenantsList() {
     .from('tenants')
     .select(`
       *,
-      users:users(count),
-      explotaciones:explotaciones(count)
+      users:users(count)
     `)
     .order('created_at', { ascending: false });
     

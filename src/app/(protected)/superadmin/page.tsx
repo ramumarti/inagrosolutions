@@ -20,7 +20,7 @@ export default function SuperadminPage() {
   if (loading) return <div className="text-white/50 text-sm font-bold animate-pulse">Cargando métricas...</div>;
 
   const kpis = [
-    { label: 'Tenants Activos', value: stats.totalTenants, icon: Building2, color: 'text-indigo-400' },
+    { label: 'Entidades Activas', value: stats.totalTenants, icon: Building2, color: 'text-indigo-400' },
     { label: 'Usuarios Totales', value: stats.totalUsers, icon: Users, color: 'text-emerald-400' },
     { label: 'Explotaciones Registradas', value: stats.totalFarms, icon: Map, color: 'text-amber-400' },
     { label: 'MRR Estimado', value: `€${stats.mrr}`, icon: TrendingUp, color: 'text-blue-400' },
@@ -53,7 +53,7 @@ export default function SuperadminPage() {
             <Link href="/superadmin/tenants" className="p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-colors border border-white/5 flex items-center justify-between group">
               <div className="flex items-center gap-3">
                 <Building2 className="w-5 h-5 text-white/50 group-hover:text-emerald-400 transition-colors" />
-                <span className="font-bold text-white/80 group-hover:text-white transition-colors">Gestión de Tenants</span>
+                <span className="font-bold text-white/80 group-hover:text-white transition-colors">Gestión de Entidades</span>
               </div>
               <TrendingUp className="w-4 h-4 text-white/20" />
             </Link>
