@@ -93,26 +93,20 @@ export function ParcelaMap({ initialCenter = [40.416775, -3.703790], onPlotSelec
           {/* We can add buttons here later */}
         </div>
 
-        {/* 1. Base Layer: PNOA Satélite (Oficial España - WMS) */}
-        <WMSTileLayer
-          url="https://www.ign.es/wms-pnoa/pnoa-ma"
-          layers="OI.OrthoimageCoverage"
-          format="image/jpeg"
-          version="1.3.0"
+        {/* 1. Base Layer: PNOA Satélite (IGN España - Alta Disponibilidad) */}
+        <TileLayer
+          url="https://wmts-pnoa.ign.es/wmts/pnoa-ma?layer=OI.OrthoimageCoverage&style=default&tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
           attribution='&copy; <a href="http://www.ign.es/ign/main/index.do">IGN</a>'
           maxZoom={20}
         />
 
-        {/* 2. Overlay: SIGPAC Mosaico (Oficial - WMS) */}
-        <WMSTileLayer
-          url="https://wms.mapa.gob.es/sigpac/wms"
-          layers="PARCELA,RECINTO"
-          format="image/png"
-          transparent={true}
-          version="1.3.0"
+        {/* 2. Overlay: SIGPAC Mosaico (MAPA España - Alta Disponibilidad) */}
+        <TileLayer
+          url="https://mapas.mapa.gob.es/wmts/sigpac/default/sigpac/GoogleMapsCompatible/{z}/{x}/{y}.png"
           attribution="SIGPAC - MAPA"
           opacity={0.7}
           maxZoom={20}
+          zIndex={10}
         />
 
         {!readOnly && <MapEventsHandler onPlotSelect={onPlotSelect} />}
