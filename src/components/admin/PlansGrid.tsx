@@ -35,16 +35,13 @@ export interface MicroApp {
 
 interface PlansGridProps {
   initialPlans: PlanData[];
-  allApps: MicroApp[];
-  initialPlanApps: Record<string, string[]>; // plan_id -> app_id[]
 }
 
-export function PlansGrid({ initialPlans, allApps, initialPlanApps }: PlansGridProps) {
+export function PlansGrid({ initialPlans }: PlansGridProps) {
   const { language } = useI18n();
   const { toast } = useToast();
   
   const [plans, setPlans] = useState<PlanData[]>(initialPlans);
-  const [planApps, setPlanApps] = useState(initialPlanApps);
 
   const [editingPlan, setEditingPlan] = useState<PlanData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -94,7 +91,6 @@ export function PlansGrid({ initialPlans, allApps, initialPlanApps }: PlansGridP
 
       if (isNew) {
         setPlans([...plans, { ...data.plan, users_count: 0 }]);
-        setPlanApps({ ...planApps, [data.plan.id]: [] });
       } else {
         setPlans(plans.map(p => p.id === data.plan.id ? { ...data.plan, users_count: p.users_count } : p));
       }
@@ -130,33 +126,6 @@ export function PlansGrid({ initialPlans, allApps, initialPlanApps }: PlansGridP
     }
   };
 
-  const toggleApp = async (planId: string, appId: string, currentlyActive: boolean) => {
-    // Only works for existing plans
-    if (!planId) return;
-
-    const action = currentlyActive ? 'remove' : 'add';
-    
-    // Optimistic UI update
-    const prevApps = planApps[planId] || [];
-    setPlanApps({
-      ...planApps,
-      [planId]: currentlyActive ? prevApps.filter(id => id !== appId) : [...prevApps, appId]
-    });
-
-    try {
-      const res = await fetch('/api/admin/toggle-plan-app', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action, planId, appId })
-      });
-      if (!res.ok) throw new Error('Toggle failed');
-    } catch (err: any) {
-      // Revert optimistic if failed
-      setPlanApps({ ...planApps, [planId]: prevApps });
-      toast(err.message, 'error');
-    }
-  };
-
   return (
     <div className="flex flex-col gap-8 w-full pb-20">
       <div className="flex justify-between items-center sm:flex-row flex-col gap-4">
@@ -176,7 +145,6 @@ export function PlansGrid({ initialPlans, allApps, initialPlanApps }: PlansGridP
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {plans.map(plan => {
-          const activeAppIds = planApps[plan.id] || [];
           return (
             <div key={plan.id} className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col gap-6 backdrop-blur-md shadow-xl">
               <div className="flex justify-between items-start">
@@ -205,33 +173,7 @@ export function PlansGrid({ initialPlans, allApps, initialPlanApps }: PlansGridP
                 </ul>
               </div>
 
-              <div className="space-y-2">
-                <h4 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-2">
-                  {language === 'en' ? 'Included Apps' : 'Apps Incluidas'}
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {allApps.map(app => {
-                    const isActive = activeAppIds.includes(app.id);
-                    const IconComp = ICON_MAP[app.icon] || Sparkles;
-                    return (
-                      <div 
-                        key={app.id} 
-                        className={cn(
-                          "px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-medium border transition-colors cursor-pointer",
-                          isActive 
-                            ? "bg-[var(--color-primary)]/20 text-[var(--color-primary)] border-[var(--color-primary)]/30" 
-                            : "bg-white/5 text-white/30 border-white/5 hover:text-white/50"
-                        )}
-                        onClick={() => toggleApp(plan.id, app.id, isActive)}
-                        title={language === 'en' ? 'Click to toggle' : 'Clic para alternar'}
-                      >
-                        <IconComp className="w-3 h-3" />
-                        <span className="max-w-[80px] truncate">{language === 'en' ? app.name_en : app.name_es}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+
 
               <div className="flex gap-2 mt-2 pt-4 border-t border-white/10">
                 <button 
