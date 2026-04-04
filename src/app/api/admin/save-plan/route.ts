@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { id, action, slug, name_en, name_es, description_en, description_es, price_monthly, items_en, items_es } = body;
+    const { id, action, slug, name_en, name_es, description_en, description_es, price_monthly, price_annual, items_en, items_es } = body;
 
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       const { data, error } = await supabaseAdmin
         .from('plans')
         .insert({
-          slug, name_en, name_es, description_en, description_es, price_monthly, items_en, items_es
+          slug, name_en, name_es, description_en, description_es, price_monthly, price_annual, items_en, items_es
         })
         .select()
         .single();
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       const { data, error } = await supabaseAdmin
         .from('plans')
         .update({
-          name_en, name_es, description_en, description_es, price_monthly, items_en, items_es
+          name_en, name_es, description_en, description_es, price_monthly, price_annual, items_en, items_es
         })
         .eq('id', id)
         .select()

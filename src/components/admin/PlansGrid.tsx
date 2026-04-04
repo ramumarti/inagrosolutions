@@ -20,6 +20,7 @@ export interface PlanData {
   description_en: string;
   description_es: string;
   price_monthly: number;
+  price_annual: number;
   items_en: string[];
   items_es: string[];
   users_count?: number;
@@ -59,6 +60,7 @@ export function PlansGrid({ initialPlans }: PlansGridProps) {
         description_en: '',
         description_es: '',
         price_monthly: 0,
+        price_annual: 0,
         items_en: [],
         items_es: [],
         users_count: 0
@@ -149,12 +151,23 @@ export function PlansGrid({ initialPlans }: PlansGridProps) {
             <div key={plan.id} className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col gap-6 backdrop-blur-md shadow-xl">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-2xl font-bold text-white">{language === 'en' ? plan.name_en : plan.name_es}</h3>
-                  <div className="text-[var(--color-primary)] font-semibold mt-1">
-                    {plan.price_monthly} €/mo
+                  <h3 className="text-2xl font-bold text-white mb-2">{language === 'en' ? plan.name_en : plan.name_es}</h3>
+                  <div className="flex flex-col gap-1">
+                    <div className="text-white font-black text-lg">
+                      {plan.price_monthly} €<span className="text-xs text-white/40 font-normal">/mes</span>
+                    </div>
+                    <div className="text-emerald-400 font-bold text-xs uppercase tracking-tight">
+                      Marca Blanca: {(plan.price_monthly * 0.5).toFixed(2)} €<span className="text-[10px] text-white/30 font-normal">/mes</span>
+                    </div>
+                    {plan.price_annual > 0 && (
+                      <div className="mt-2 pt-2 border-t border-white/5 text-[10px] text-white/60">
+                        Anual: <span className="text-white font-bold">{plan.price_annual} €</span> 
+                        <span className="ml-1 text-emerald-400 font-bold">(WL: {(plan.price_annual * 0.5).toFixed(2)} €)</span>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="px-3 py-1 rounded-full bg-white/10 border border-white/5 text-sm font-medium text-white/70">
+                <div className="px-3 py-1 rounded-full bg-white/10 border border-white/5 text-[10px] font-black uppercase text-white/70 tracking-widest h-fit">
                   {plan.users_count} {language === 'en' ? 'users' : 'usuarios'}
                 </div>
               </div>
@@ -225,9 +238,15 @@ export function PlansGrid({ initialPlans }: PlansGridProps) {
                 </div>
               </div>
               
-              <div className="space-y-1">
-                <label className="text-sm text-white/70">Price Monthly (€)</label>
-                <input required type="number" step="0.01" value={editingPlan.price_monthly} onChange={e => setEditingPlan({...editingPlan, price_monthly: parseFloat(e.target.value)})} className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white" />
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-sm text-white/70">Price Monthly (€)</label>
+                  <input required type="number" step="0.01" value={editingPlan.price_monthly} onChange={e => setEditingPlan({...editingPlan, price_monthly: parseFloat(e.target.value)})} className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm text-white/70">Price Annual (€)</label>
+                  <input required type="number" step="0.01" value={editingPlan.price_annual} onChange={e => setEditingPlan({...editingPlan, price_annual: parseFloat(e.target.value)})} className="w-full px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-white" />
+                </div>
               </div>
 
               {/* Items List EN */}

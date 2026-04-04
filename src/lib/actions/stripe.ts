@@ -27,7 +27,7 @@ export async function createCheckoutSession(tier: AgriTier, interval: 'month' | 
     throw new Error('Debes iniciar sesión para actualizar tu plan');
   }
 
-  // Get tenant to map subscription
+  // Get user's tenant ID
   const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
   const tenantId = userData?.tenant_id;
   
@@ -35,8 +35,21 @@ export async function createCheckoutSession(tier: AgriTier, interval: 'month' | 
     throw new Error('No tienes una organización/tenant asociado');
   }
 
+  // Get tenant info for discount
+  const { data: tenantData } = await supabase
+    .from('tenants')
+    .select('is_white_label')
+    .eq('id', tenantId)
+    .single();
+  
+  const isWhiteLabel = tenantData?.is_white_label || false;
   const tierInfo = TIER_CONFIG[tier];
-  const price = interval === 'month' ? tierInfo.price_monthly : tierInfo.price_annual;
+  let price = interval === 'month' ? tierInfo.price_monthly : tierInfo.price_annual;
+  
+  // Apply 50% discount for White Label entities
+  if (isWhiteLabel) {
+    price = price * 0.5;
+  }
   
   // Create Stripe Checkout Session
   const session = await stripe.checkout.sessions.create({
