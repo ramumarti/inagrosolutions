@@ -49,7 +49,7 @@ export default function CuadernoPlanes() {
             <Crown className="w-5 h-5 text-amber-400" />
             <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Planes del Cuaderno Digital</span>
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tight">Escoge tu Plan</h1>
+          <h1 className="text-4xl font-black text-white tracking-tight uppercase">Escoge el plan para tu explotación</h1>
           <p className="text-white/30 mt-2 text-sm">Todos los módulos obligatorios incluidos. Ahorra 2 meses con el pago anual.</p>
         </div>
 

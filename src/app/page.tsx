@@ -183,7 +183,7 @@ export default function LandingPage() {
       <section id="planes" className="py-32 px-6 relative">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">Planes Sencillos y Transparentes</h2>
+            <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-white mb-6 uppercase">Escoge el plan para tu explotación</h2>
             <p className="text-lg text-white/70 max-w-2xl mx-auto font-medium mb-10">Invierte menos tiempo en burocracia y más tiempo en cultivar.</p>
 
             {/* Toggle Billing */}
