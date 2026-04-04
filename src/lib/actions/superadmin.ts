@@ -133,3 +133,25 @@ export async function createTenant(data: {
   return { success: true, data: tenant };
 }
 
+export async function switchContext(tenantId: string | null) {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return { success: false, error: auth.error };
+
+  const cookieStore = await cookies();
+  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+    cookies: { getAll() { return cookieStore.getAll() }, setAll() {} }
+  });
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { success: false, error: 'No user found' };
+
+  const adminClient = getAdminClient();
+  const { error } = await adminClient
+    .from('users')
+    .update({ tenant_id: tenantId })
+    .eq('id', user.id);
+    
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+

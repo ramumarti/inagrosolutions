@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getTenantsList, toggleTenantStatus, createTenant } from '@/lib/actions/superadmin';
+import { getTenantsList, toggleTenantStatus, createTenant, switchContext } from '@/lib/actions/superadmin';
 import { TIER_CONFIG, type AgriTier } from '@/lib/modules';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { format } from 'date-fns';
@@ -27,6 +27,19 @@ export default function SuperadminTenantsPage() {
     type: 'cooperativa',
     subscription_tier: 'basico'
   });
+
+  const handleSwitch = async (tenantId: string) => {
+    try {
+      const res = await switchContext(tenantId);
+      if (res.success) {
+        window.location.href = '/tenant';
+      } else {
+        alert(res.error || 'Error al cambiar contexto');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const load = () => {
     setLoadError('');
@@ -113,6 +126,7 @@ export default function SuperadminTenantsPage() {
               <th className="px-6 py-4">Usuarios</th>
               <th className="px-6 py-4">Alta</th>
               <th className="px-6 py-4 text-center">Estado</th>
+              <th className="px-6 py-4 text-center">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5 text-white/80 font-medium">
@@ -156,11 +170,19 @@ export default function SuperadminTenantsPage() {
                     {t.is_active ? 'Activo' : 'Inactivo'}
                   </button>
                 </td>
+                <td className="px-6 py-4 text-center">
+                  <button 
+                    onClick={() => handleSwitch(t.id)}
+                    className="px-4 py-2 bg-[var(--color-primary)] hover:brightness-110 text-white text-[10px] font-bold uppercase rounded-xl transition-all shadow-lg shadow-[var(--color-primary)]/20 active:scale-95"
+                  >
+                    Gestionar
+                  </button>
+                </td>
               </tr>
             ))}
             {tenants.length === 0 && !loadError && (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-white/30 text-sm">
+                <td colSpan={7} className="px-6 py-12 text-center text-white/30 text-sm">
                   No se encontraron entidades
                 </td>
               </tr>

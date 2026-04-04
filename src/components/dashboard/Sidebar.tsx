@@ -21,13 +21,21 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, closeMobile }: SidebarProps) {
   const { language, t } = useI18n();
-  const { user, hasRole, isSuperadmin } = useAuthContext();
+  const { user, hasRole, isSuperadmin, tenant } = useAuthContext();
   const pathname = usePathname();
   const [cuadernoOpen, setCuadernoOpen] = useState(pathname.startsWith('/cuaderno'));
 
-  useEffect(() => {
-    if (pathname.startsWith('/cuaderno')) setCuadernoOpen(true);
-  }, [pathname]);
+  const handleExitImpersonation = async () => {
+    try {
+      const { switchContext } = await import('@/lib/actions/superadmin');
+      const res = await switchContext(null); // Clear context
+      if (res.success) {
+        window.location.href = '/superadmin/tenants';
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const navItems: Array<{ label: string; href: string; icon: any; isActive: boolean; isChild?: boolean; section?: string }> = [
     ...(isSuperadmin ? [
@@ -42,9 +50,27 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         href: '/superadmin/tenants',
         icon: Building2,
         isActive: pathname.startsWith('/superadmin/tenants')
+      },
+      {
+        label: 'Email',
+        href: '/admin/email',
+        icon: Mail,
+        isActive: pathname.startsWith('/admin/email')
+      },
+      {
+        label: 'Plataforma',
+        href: '/admin',
+        icon: LayoutGrid,
+        isActive: pathname === '/admin'
+      },
+      {
+        label: 'Planes Sistema',
+        href: '/admin/plans',
+        icon: CreditCard,
+        isActive: pathname.startsWith('/admin/plans')
       }
     ] : []),
-    ...(hasRole(['tenant_admin']) && !isSuperadmin ? [
+    ...(hasRole(['tenant_admin']) && (!isSuperadmin || tenant) ? [
       {
         label: 'Admin Entidad',
         href: '/tenant',
@@ -70,7 +96,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         isActive: pathname.startsWith('/tenant/settings')
       }
     ] : []),
-    ...(hasRole(['technician', 'tenant_admin']) && !isSuperadmin ? [
+    ...(hasRole(['technician', 'tenant_admin']) && (!isSuperadmin || tenant) ? [
       {
         label: 'Técnico',
         href: '/technician',
@@ -169,6 +195,23 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         </div>
 
         <div className="flex-1 py-6 px-3 flex flex-col gap-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10">
+          {/* Impersonation Indicator */}
+          {isSuperadmin && tenant && (
+            <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 animate-pulse-subtle">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="w-4 h-4 text-amber-500" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-500">Manejando Entidad</span>
+              </div>
+              <div className="text-xs font-bold text-white truncate mb-2">{tenant.name}</div>
+              <button 
+                onClick={handleExitImpersonation}
+                className="w-full py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-500 text-[10px] font-bold rounded-lg transition-all"
+              >
+                Salir de Gestión
+              </button>
+            </div>
+          )}
+
           {/* Main nav */}
           {navItems.map(renderNavLink)}
 
