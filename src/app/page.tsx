@@ -42,6 +42,14 @@ const GlowButton = ({ children, variant = 'primary', className = "" }: { childre
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
+
+  const prices = {
+    basico: { month: '4,99', year: '49,99', ha: '5' },
+    intermedio: { month: '19,99', year: '199,99', ha: '20' },
+    avanzado: { month: '49,99', year: '499,99', ha: '50' },
+    premium: { month: '89,99', year: '899,99', ha: '100' }
+  };
 
   return (
     <div className="min-h-screen bg-[#0a100d] text-white selection:bg-emerald-500/30 overflow-x-hidden font-sans">
@@ -176,17 +184,31 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">Planes Sencillos y Transparentes</h2>
-            <p className="text-lg text-white/70 max-w-2xl mx-auto font-medium">Invierte menos tiempo en burocracia y más tiempo en cultivar. Escoge la solución que se adapte al tamaño de tu explotación.</p>
+            <p className="text-lg text-white/70 max-w-2xl mx-auto font-medium mb-10">Invierte menos tiempo en burocracia y más tiempo en cultivar.</p>
+
+            {/* Toggle Billing */}
+            <div className="flex items-center justify-center gap-4 mb-12">
+               <span className={`text-sm font-bold transition-colors ${billingInterval === 'month' ? 'text-white' : 'text-white/40'}`}>Mensual</span>
+               <button 
+                 onClick={() => setBillingInterval(billingInterval === 'month' ? 'year' : 'month')}
+                 className="w-16 h-8 bg-white/10 rounded-full relative p-1 transition-colors hover:bg-white/20 border border-white/10"
+               >
+                 <div className={`w-6 h-6 bg-emerald-500 rounded-full transition-transform ${billingInterval === 'year' ? 'translate-x-8' : 'translate-x-0'}`} />
+               </button>
+               <span className={`text-sm font-bold transition-colors flex items-center gap-2 ${billingInterval === 'year' ? 'text-white' : 'text-white/40'}`}>
+                 Anual <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] rounded-full">Ahorra 2 Meses</span>
+               </span>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
              {/* Básico */}
-             <GlassCard className="p-8 border-white/10 flex flex-col rounded-3xl h-full">
+             <GlassCard className="p-8 border-white/10 flex flex-col rounded-3xl h-full shadow-2xl">
                 <h3 className="text-xl font-black text-white mb-1">Básico</h3>
-                <p className="text-white/60 mb-6 font-bold text-xs uppercase tracking-widest">Hasta 5 HA</p>
+                <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-emerald-400">Hasta {prices.basico.ha} HA</p>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">3,99 €</span>
-                  <span className="text-white/50 font-bold text-sm">/mes</span>
+                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.basico.month : prices.basico.year} €</span>
+                  <span className="text-white/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
                 </div>
                 <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Registro SIEX</li>
@@ -201,12 +223,12 @@ export default function LandingPage() {
              </GlassCard>
 
              {/* Intermedio */}
-             <GlassCard className="p-8 border-white/10 flex flex-col rounded-3xl h-full">
+             <GlassCard className="p-8 border-white/10 flex flex-col rounded-3xl h-full shadow-2xl">
                 <h3 className="text-xl font-black text-white mb-1">Intermedio</h3>
-                <p className="text-white/60 mb-6 font-bold text-xs uppercase tracking-widest">Hasta 20 HA</p>
+                <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-blue-400">Hasta {prices.intermedio.ha} HA</p>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">9,99 €</span>
-                  <span className="text-white/50 font-bold text-sm">/mes</span>
+                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.intermedio.month : prices.intermedio.year} €</span>
+                  <span className="text-white/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
                 </div>
                 <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> Todo lo de Básico</li>
@@ -219,15 +241,15 @@ export default function LandingPage() {
              </GlassCard>
 
              {/* Avanzado */}
-             <GlassCard className="p-8 border-emerald-500/40 bg-emerald-500/5 flex flex-col rounded-3xl relative z-10 h-full shadow-[0_20px_60px_-15px_rgba(16,185,129,0.2)]">
+             <GlassCard className="p-8 border-emerald-500/40 bg-emerald-500/5 flex flex-col rounded-3xl relative z-10 h-full shadow-[0_20px_60px_-15px_rgba(16,185,129,0.3)] border-2">
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 text-white text-[10px] uppercase font-black tracking-widest rounded-full shadow-lg">
-                  Popular
+                  Recomendado
                 </div>
                 <h3 className="text-xl font-black text-emerald-400 mb-1">Avanzado</h3>
-                <p className="text-white/60 mb-6 font-bold text-xs uppercase tracking-widest">Hasta 100 HA</p>
+                <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-emerald-400">Hasta {prices.avanzado.ha} HA</p>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">39,99 €</span>
-                  <span className="text-emerald-400/50 font-bold text-sm">/mes</span>
+                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.avanzado.month : prices.avanzado.year} €</span>
+                  <span className="text-emerald-400/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
                 </div>
                 <ul className="space-y-4 mb-8 flex-1 text-white font-medium text-sm">
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> Todo lo de Intermedio</li>
@@ -236,23 +258,23 @@ export default function LandingPage() {
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>Exportación PAC</b></li>
                 </ul>
                 <Link href="/login" className="w-full mt-auto">
-                  <GlowButton variant="primary" className="w-full py-4 rounded-xl text-sm bg-emerald-500">Suscribirse</GlowButton>
+                  <GlowButton variant="primary" className="w-full py-4 rounded-xl text-sm bg-emerald-500 hover:scale-105">Suscribirse</GlowButton>
                 </Link>
              </GlassCard>
 
              {/* Premium */}
-             <GlassCard className="p-8 border-amber-500/30 bg-amber-500/5 flex flex-col rounded-3xl h-full">
+             <GlassCard className="p-8 border-amber-500/30 bg-amber-500/5 flex flex-col rounded-3xl h-full shadow-2xl">
                 <h3 className="text-xl font-black text-amber-400 mb-1">Premium</h3>
-                <p className="text-white/60 mb-6 font-bold text-xs uppercase tracking-widest">Más de 100 HA</p>
+                <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-amber-400">Hasta {prices.premium.ha} HA</p>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">89,99 €</span>
-                  <span className="text-amber-400/50 font-bold text-sm">/mes</span>
+                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.premium.month : prices.premium.year} €</span>
+                  <span className="text-amber-400/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
                 </div>
                 <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> Todo lo de Avanzado</li>
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> <b>Sensores IoT</b></li>
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> <b>Alertas Inteligentes</b></li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> Conexión con Estaciones Climáticas</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> Estaciones Climáticas</li>
                 </ul>
                 <Link href="/login" className="w-full mt-auto">
                   <GlowButton variant="secondary" className="w-full py-4 rounded-xl text-sm">Suscribirse</GlowButton>

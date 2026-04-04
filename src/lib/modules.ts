@@ -22,6 +22,7 @@ export const TIER_CONFIG: Record<AgriTier, {
   label_en: string;
   max_ha: number;
   price_monthly: number;
+  price_annual: number;
   color: string;
   gradient: string;
 }> = {
@@ -29,7 +30,8 @@ export const TIER_CONFIG: Record<AgriTier, {
     label_es: 'Básico',
     label_en: 'Basic',
     max_ha: 5,
-    price_monthly: 3.99,
+    price_monthly: 4.99,
+    price_annual: 49.99,
     color: '#6366F1',
     gradient: 'from-indigo-500 to-indigo-700',
   },
@@ -37,23 +39,26 @@ export const TIER_CONFIG: Record<AgriTier, {
     label_es: 'Intermedio',
     label_en: 'Intermediate',
     max_ha: 20,
-    price_monthly: 9.99,
+    price_monthly: 19.99,
+    price_annual: 199.99,
     color: '#3B82F6',
     gradient: 'from-blue-500 to-blue-700',
   },
   avanzado: {
     label_es: 'Avanzado',
     label_en: 'Advanced',
-    max_ha: 100,
-    price_monthly: 39.99,
+    max_ha: 50,
+    price_monthly: 49.99,
+    price_annual: 499.99,
     color: '#8B5CF6',
     gradient: 'from-violet-500 to-violet-700',
   },
   premium: {
     label_es: 'Premium',
     label_en: 'Premium',
-    max_ha: Infinity,
+    max_ha: 100,
     price_monthly: 89.99,
+    price_annual: 899.99,
     color: '#F59E0B',
     gradient: 'from-amber-500 to-amber-700',
   },
@@ -68,7 +73,7 @@ export function canAccessModule(userTier: AgriTier, moduleTierMinimo: AgriTier):
 export function suggestTier(hectareas: number): AgriTier {
   if (hectareas <= 5) return 'basico';
   if (hectareas <= 20) return 'intermedio';
-  if (hectareas <= 100) return 'avanzado';
+  if (hectareas <= 50) return 'avanzado';
   return 'premium';
 }
 

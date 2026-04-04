@@ -19,7 +19,7 @@ async function getSupabase() {
   );
 }
 
-export async function createCheckoutSession(tier: AgriTier) {
+export async function createCheckoutSession(tier: AgriTier, interval: 'month' | 'year' = 'month') {
   const supabase = await getSupabase();
   const { data: { user } } = await supabase.auth.getUser();
   
@@ -36,6 +36,7 @@ export async function createCheckoutSession(tier: AgriTier) {
   }
 
   const tierInfo = TIER_CONFIG[tier];
+  const price = interval === 'month' ? tierInfo.price_monthly : tierInfo.price_annual;
   
   // Create Stripe Checkout Session
   const session = await stripe.checkout.sessions.create({
@@ -48,12 +49,12 @@ export async function createCheckoutSession(tier: AgriTier) {
         price_data: {
           currency: 'eur',
           product_data: {
-            name: `InagroSolutions - Plan ${tierInfo.label_es}`,
+            name: `InagroSolutions - Plan ${tierInfo.label_es} (${interval === 'month' ? 'Mensual' : 'Anual'})`,
             description: `Acceso para hasta ${tierInfo.max_ha === Infinity ? 'hectáreas ilimitadas' : tierInfo.max_ha + ' hectáreas'}`,
           },
-          unit_amount: Math.round(tierInfo.price_monthly * 100), // Stripe takes cents
+          unit_amount: Math.round(price * 100), // Stripe takes cents
           recurring: {
-            interval: 'month',
+            interval: interval,
           },
         },
         quantity: 1,
@@ -62,7 +63,8 @@ export async function createCheckoutSession(tier: AgriTier) {
     // metadata is very useful for webhooks
     metadata: {
       tenant_id: tenantId,
-      new_tier: tier
+      new_tier: tier,
+      billing_interval: interval
     },
     success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/cuaderno?upgrade=success`,
     cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/cuaderno/planes?upgrade=cancelled`,
