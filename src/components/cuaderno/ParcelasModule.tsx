@@ -353,7 +353,7 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
                                   ...res.data,
                                   referencia_sigpac: `${res.data.provincia};${res.data.municipio};${res.data.agregado};${res.data.zona};${res.data.poligono};${res.data.parcela};${res.data.recinto}`
                                 });
-                                // Notification
+                                setStep(2); // Auto-navigate to review
                               }
                             } catch (e) {
                               console.error(e);
@@ -362,9 +362,15 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
                             }
                           }}
                         />
-                        <p className="text-[10px] font-black text-emerald-400/60 uppercase text-center mt-2 tracking-widest">
-                          Haz clic sobre una parcela para cargar sus datos automáticamente
-                        </p>
+                        <div className="flex items-center justify-between mt-3 px-2">
+                          <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+                            Haz clic en el mapa para extraer los datos
+                          </p>
+                          <div className="flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 bg-red-400 rounded-full" />
+                            <span className="text-[9px] font-black text-white/30 uppercase">Parcelas SIGPAC</span>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
