@@ -4,11 +4,13 @@ import React, { useState, useMemo } from 'react';
 import { 
   MapPin, Plus, Search, Filter, MoreHorizontal, 
   Tractor, Bug, Droplets, History, Map as MapIcon,
-  ChevronRight, ArrowUpRight, Beaker, Wheat
+  ChevronRight, ArrowUpRight, Beaker, Wheat, FileSpreadsheet, Download
 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { cn } from '@/lib/utils';
+import { MassSigpacImporter } from './MassSigpacImporter';
+import { ParcelaHistorico } from './ParcelaHistorico';
 
 interface Parcela {
   id: string;
@@ -27,12 +29,15 @@ interface Parcela {
 interface ParcelasMasterProps {
   parcelas: any[];
   campanaId: string | null;
+  explotacionId: string;
   onAction: (action: string, parcelaId: string) => void;
 }
 
-export function ParcelasMaster({ parcelas, campanaId, onAction }: ParcelasMasterProps) {
+export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }: ParcelasMasterProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCultivo, setFilterCultivo] = useState('all');
+  const [showMassImporter, setShowMassImporter] = useState(false);
+  const [showHistoricoId, setShowHistoricoId] = useState<string | null>(null);
 
   const filteredParcelas = useMemo(() => {
     return parcelas.filter(p => {
@@ -75,6 +80,13 @@ export function ParcelasMaster({ parcelas, campanaId, onAction }: ParcelasMaster
               {cultivosUnicos.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
+          
+          <button 
+            onClick={() => setShowMassImporter(true)}
+            className="flex items-center gap-2 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black text-white/50 hover:text-white uppercase tracking-widest transition-all"
+          >
+            <Download size={16} /> Importar SIGPAC
+          </button>
           
           <GlowButton className="gap-2 shrink-0 h-[46px]" onClick={() => onAction('new', '')}>
             <Plus size={18} /> Nueva Parcela
@@ -146,6 +158,12 @@ export function ParcelasMaster({ parcelas, campanaId, onAction }: ParcelasMaster
                 <Beaker size={14} className="text-blue-500/70" /> Tratar
               </button>
               <button 
+                onClick={() => setShowHistoricoId(p.id)}
+                className="w-12 h-10 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center text-white/40 hover:text-white transition-all"
+              >
+                <History size={16} />
+              </button>
+              <button 
                 onClick={() => onAction('view', p.id)}
                 className="w-12 h-10 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center text-white/40 hover:text-white transition-all"
               >
@@ -155,6 +173,22 @@ export function ParcelasMaster({ parcelas, campanaId, onAction }: ParcelasMaster
           </GlassCard>
         ))}
       </div>
+
+      {/* Modals */}
+      {showMassImporter && (
+        <MassSigpacImporter 
+          explotacionId={explotacionId}
+          onClose={() => setShowMassImporter(false)}
+          onSuccess={() => { onAction('refresh', ''); setShowMassImporter(false); }}
+        />
+      )}
+
+      {showHistoricoId && (
+        <ParcelaHistorico 
+          parcelaId={showHistoricoId}
+          onClose={() => setShowHistoricoId(null)}
+        />
+      )}
 
       {/* Summary Footer */}
       <GlassCard className="p-6 mt-8 border-white/5 bg-gradient-to-r from-emerald-500/5 to-transparent flex flex-col md:flex-row items-center justify-between gap-6">
