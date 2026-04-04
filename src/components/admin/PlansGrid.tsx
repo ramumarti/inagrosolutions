@@ -132,8 +132,8 @@ export function PlansGrid({ initialPlans }: PlansGridProps) {
     <div className="flex flex-col gap-8 w-full pb-20">
       <div className="flex justify-between items-center sm:flex-row flex-col gap-4">
         <div>
-          <h1 className="text-3xl font-bold glow-text">
-            {language === 'en' ? 'Plans Management' : 'Gestión de Planes'}
+          <h1 className="text-3xl font-black text-white glow-text uppercase tracking-tighter">
+            {language === 'en' ? 'System Plans Management (SYNCED)' : 'Gestión de Planes Sistema (SINCRONIZADOS)'}
           </h1>
           <p className="text-white/60">
             {language === 'en' ? 'Create and edit subscription tiers' : 'Crea y edita los niveles de suscripción'}
