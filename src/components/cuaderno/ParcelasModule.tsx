@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { 
   Plus, MapPin, Search, Filter, Upload, FileJson, 
   Trash2, Edit3, Eye, MoreVertical, Layers, ArrowRight,
-  Database, RefreshCcw, Droplets, Leaf, Bug, Zap, Building2
+  Database, RefreshCcw, Droplets, Leaf, Bug, Zap, Building2,
+  CheckSquare, Square, Check
 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
@@ -54,6 +55,8 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
   const [importingSigpac, setImportingSigpac] = useState(false);
   const [search, setSearch] = useState('');
   const [filterCultivo, setFilterCultivo] = useState('all');
+  const [selectedPlots, setSelectedPlots] = useState<string[]>([]);
+  const [selectionMode, setSelectionMode] = useState(false);
   
   const initialForm = {
     nombre: '',
@@ -224,6 +227,23 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
             <span className="hidden lg:inline">Importar Excel</span>
           </button>
 
+          {/* Selection Toggle */}
+          <button 
+            onClick={() => {
+              setSelectionMode(!selectionMode);
+              if (selectionMode) setSelectedPlots([]);
+            }}
+            className={cn(
+              "px-4 py-2.5 rounded-xl border flex items-center gap-2 text-xs font-black uppercase tracking-widest transition-all",
+              selectionMode 
+                ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400" 
+                : "bg-white/5 border-white/10 text-white/40 hover:text-white"
+            )}
+          >
+            {selectionMode ? <CheckSquare size={14} /> : <Square size={14} />}
+            {selectionMode ? `Seleccionadas (${selectedPlots.length})` : 'Seleccionar'}
+          </button>
+
           <GlowButton 
             className="flex items-center gap-2"
             onClick={() => {
@@ -238,6 +258,47 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
           </GlowButton>
         </div>
       </div>
+
+      {/* Floating Mass Action Bar */}
+      {selectionMode && selectedPlots.length > 0 && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-[45%] z-[1000] animate-in slide-in-from-bottom-10 duration-500">
+          <div className="bg-black/80 backdrop-blur-2xl border border-white/20 p-2 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-4">
+            <div className="px-4 border-r border-white/10 py-1">
+              <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Acción Masiva</p>
+              <p className="text-[14px] font-black text-white">{selectedPlots.length} parcelas</p>
+            </div>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => onAction && onAction('tratamientos', { parcelaIds: selectedPlots })}
+                className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/5 group"
+                title="Tratamiento Masivo"
+              >
+                <Bug size={20} className="text-red-400" />
+              </button>
+              <button 
+                onClick={() => onAction && onAction('labores', { parcelaIds: selectedPlots })}
+                className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/5 group"
+                title="Labor Masiva"
+              >
+                <Leaf size={20} className="text-emerald-400" />
+              </button>
+              <button 
+                onClick={() => onAction && onAction('fertilizacion', { parcelaIds: selectedPlots })}
+                className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/5 group"
+                title="Fertilización Masiva"
+              >
+                <Droplets size={20} className="text-blue-400" />
+              </button>
+            </div>
+            <button 
+              onClick={() => { setSelectionMode(false); setSelectedPlots([]); }}
+              className="ml-4 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] font-black uppercase rounded-xl transition-all"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Plots Display Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -254,14 +315,39 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
           </div>
         ) : (
           filteredParcelas.map((p) => (
-            <GlassCard key={p.id} className="p-0 overflow-hidden border-white/5 hover:border-emerald-500/30 transition-all flex flex-col group">
+            <GlassCard 
+              key={p.id} 
+              className={cn(
+                "p-0 overflow-hidden border-white/5 hover:border-emerald-500/30 transition-all flex flex-col group relative",
+                selectedPlots.includes(p.id) && "ring-2 ring-emerald-500 border-emerald-500/50"
+              )}
+              onClick={() => {
+                if (selectionMode) {
+                  setSelectedPlots(prev => 
+                    prev.includes(p.id) ? prev.filter(id => id !== p.id) : [...prev, p.id]
+                  );
+                }
+              }}
+            >
               {/* Card Header (Mini Map or Placeholder) */}
               <div className="h-24 bg-gradient-to-br from-emerald-500/10 to-blue-500/10 flex items-center justify-center relative border-b border-white/5 group-hover:from-emerald-500/20 transition-all">
+                {selectionMode && (
+                  <div className={cn(
+                    "absolute top-3 right-3 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
+                    selectedPlots.includes(p.id) 
+                      ? "bg-emerald-500 border-emerald-500 text-black" 
+                      : "bg-white/10 border-white/20"
+                  )}>
+                    {selectedPlots.includes(p.id) && <Check size={14} strokeWidth={4} />}
+                  </div>
+                )}
+                {!selectionMode && (
+                  <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                    <button className="p-1.5 bg-white/10 rounded-lg hover:bg-white/20" onClick={(e) => { e.stopPropagation(); handleEdit(p); }}><Edit3 size={14}/></button>
+                    <button className="p-1.5 bg-white/10 rounded-lg hover:bg-red-500/20 text-red-400" onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }}><Trash2 size={14}/></button>
+                  </div>
+                )}
                 <MapPin className="w-8 h-8 text-emerald-400/30 group-hover:text-emerald-400 group-hover:scale-110 transition-all" />
-                <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                  <button className="p-1.5 bg-white/10 rounded-lg hover:bg-white/20" onClick={() => handleEdit(p)}><Edit3 size={14}/></button>
-                  <button className="p-1.5 bg-white/10 rounded-lg hover:bg-red-500/20 text-red-400" onClick={() => handleDelete(p.id)}><Trash2 size={14}/></button>
-                </div>
                 <div 
                   className={cn(
                     "absolute top-3 left-3 px-2 py-1 backdrop-blur-md rounded-md border transition-all cursor-pointer hover:scale-105 active:scale-95",
@@ -406,7 +492,7 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
                             setImportingSigpac(true);
                             try {
                               const res = await getSigpacInfoByCoords(data.lat, data.lng);
-                              if (res.success) {
+                              if (res.success && res.data) {
                                 setForm({
                                   ...form,
                                   ...res.data,
