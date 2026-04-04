@@ -39,14 +39,15 @@ export default function CuadernoPage() {
   const { profile, modulos: rawModulos, resumen, loading, hasModule, canAccess } = useAgriProfile();
   const [activeTab, setActiveTab] = useState<TabKey>('inicio');
 
-  // Reorder modules to prioritize 'parcelas' as the first one after 'inicio'
+  // Reorder modules: 'parcelas' first, 'exportacion' and 'siex' last
   const modulos = [...rawModulos].sort((a, b) => {
-    if (a.slug === 'parcelas') return -1;
-    if (b.slug === 'parcelas') return 1;
-    // Keep 'exportacion' (Registro SIEX) high as well
-    if (a.slug === 'exportacion') return -1;
-    if (b.slug === 'exportacion') return 1;
-    return 0;
+    const getWeight = (slug: string) => {
+      if (slug === 'parcelas') return -100;
+      if (slug.includes('export') || slug === 'exportacion') return 100;
+      if (slug.includes('siex')) return 99;
+      return 0;
+    };
+    return getWeight(a.slug) - getWeight(b.slug);
   });
 
   if (loading) {

@@ -122,13 +122,13 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
   const cuadernoItems: Array<{ label: string; href: string; icon: any; isActive: boolean }> = [
     { label: language === 'en' ? 'Overview' : 'Panel / Inicio', href: '/cuaderno', icon: BookOpen, isActive: pathname === '/cuaderno' },
     { label: language === 'en' ? 'Parcels' : 'Gestión de Parcelas', href: '/cuaderno', icon: MapPin, isActive: false },
-    { label: language === 'en' ? 'SIEX Registry' : 'Registro SIEX', href: '/cuaderno', icon: FileJson, isActive: false },
     { label: language === 'en' ? 'Treatments' : 'Fitosanitarios', href: '/cuaderno', icon: Bug, isActive: false },
     { label: language === 'en' ? 'Inventory' : 'Almacén de Insumos', href: '/cuaderno/recursos', icon: Package, isActive: pathname === '/cuaderno/recursos' },
     { label: language === 'en' ? 'Fertilization' : 'Fertilización', href: '/cuaderno', icon: Droplets, isActive: false },
     { label: language === 'en' ? 'Agricultural Tasks' : 'Labores Agrícolas', href: '/cuaderno', icon: Leaf, isActive: false },
-    { label: language === 'en' ? 'Export' : 'Exportación', href: '/cuaderno', icon: FileDown, isActive: false },
     { label: language === 'en' ? 'Plans' : 'Planes', href: '/cuaderno/planes', icon: Crown, isActive: pathname === '/cuaderno/planes' },
+    { label: language === 'en' ? 'SIEX Registry' : 'Registro SIEX', href: '/cuaderno', icon: FileJson, isActive: false },
+    { label: language === 'en' ? 'Export' : 'Exportación PAC', href: '/cuaderno', icon: FileDown, isActive: false },
   ];
 
   const bottomNav: typeof navItems = [];
