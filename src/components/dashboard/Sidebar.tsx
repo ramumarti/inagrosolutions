@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { 
   Hexagon, LayoutGrid, ChevronLeft, ChevronRight, Home, CreditCard, 
-  Shield, Mail, Leaf, Bug, Droplets, MapPin, Wallet, Crown,
-  BookOpen, FileDown, Bell, Users, Building2, Scale
+  Shield, Mail, Leaf, Bug, Droplets, MapPin, Wallet, Crown, 
+  BookOpen, FileDown, Bell, Users, Building2, Scale, Package, FileJson 
 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
@@ -120,12 +120,13 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
 
   // Cuaderno Digital section
   const cuadernoItems: Array<{ label: string; href: string; icon: any; isActive: boolean }> = [
-    { label: language === 'en' ? 'Overview' : 'Panel', href: '/cuaderno', icon: BookOpen, isActive: pathname === '/cuaderno' },
-    { label: language === 'en' ? 'Treatments' : 'Tratamientos', href: '/cuaderno', icon: Bug, isActive: false },
-    { label: language === 'en' ? 'Tasks' : 'Labores', href: '/cuaderno', icon: Leaf, isActive: false },
-    { label: language === 'en' ? 'Resources' : 'Recursos', href: '/cuaderno/recursos', icon: Users, isActive: pathname === '/cuaderno/recursos' },
+    { label: language === 'en' ? 'Overview' : 'Panel / Inicio', href: '/cuaderno', icon: BookOpen, isActive: pathname === '/cuaderno' },
+    { label: language === 'en' ? 'Parcels' : 'Gestión de Parcelas', href: '/cuaderno', icon: MapPin, isActive: false },
+    { label: language === 'en' ? 'SIEX Registry' : 'Registro SIEX', href: '/cuaderno', icon: FileJson, isActive: false },
+    { label: language === 'en' ? 'Treatments' : 'Fitosanitarios', href: '/cuaderno', icon: Bug, isActive: false },
+    { label: language === 'en' ? 'Inventory' : 'Almacén de Insumos', href: '/cuaderno/recursos', icon: Package, isActive: pathname === '/cuaderno/recursos' },
     { label: language === 'en' ? 'Fertilization' : 'Fertilización', href: '/cuaderno', icon: Droplets, isActive: false },
-    { label: language === 'en' ? 'Parcels' : 'Parcelas', href: '/cuaderno', icon: MapPin, isActive: false },
+    { label: language === 'en' ? 'Agricultural Tasks' : 'Labores Agrícolas', href: '/cuaderno', icon: Leaf, isActive: false },
     { label: language === 'en' ? 'Export' : 'Exportación', href: '/cuaderno', icon: FileDown, isActive: false },
     { label: language === 'en' ? 'Plans' : 'Planes', href: '/cuaderno/planes', icon: Crown, isActive: pathname === '/cuaderno/planes' },
   ];
