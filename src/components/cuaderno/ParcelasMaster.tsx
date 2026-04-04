@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { 
   MapPin, Plus, Search, Filter, MoreHorizontal, 
   Tractor, Bug, Droplets, History, Map as MapIcon,
-  ChevronRight, ArrowUpRight, Beaker, Wheat, FileSpreadsheet, Download
+  ChevronRight, ArrowUpRight, Beaker, Wheat, FileSpreadsheet, Download, Table
 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { MassSigpacImporter } from './MassSigpacImporter';
 import { ParcelaHistorico } from './ParcelaHistorico';
 import { ExcelParcelImporter } from './ExcelParcelImporter';
+import { AgriMapViewer } from './AgriMapViewer';
 
 interface Parcela {
   id: string;
@@ -40,6 +41,8 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
   const [showMassImporter, setShowMassImporter] = useState(false);
   const [showExcelImporter, setShowExcelImporter] = useState(false);
   const [showHistoricoId, setShowHistoricoId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'cards' | 'map'>('cards');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const filteredParcelas = useMemo(() => {
     return parcelas.filter(p => {
@@ -49,6 +52,10 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
       return matchSearch && matchCultivo;
     });
   }, [parcelas, searchTerm, filterCultivo]);
+
+  const totalHectareas = useMemo(() => {
+    return filteredParcelas.reduce((acc, p) => acc + (Number(p.hectareas) || 0), 0);
+  }, [filteredParcelas]);
 
   const cultivosUnicos = useMemo(() => {
     const s = new Set(parcelas.map(p => p.cultivo).filter(Boolean));
@@ -96,6 +103,21 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
           >
             <FileSpreadsheet size={16} /> Excel Bulk
           </button>
+
+          <div className="flex bg-white/5 p-1 rounded-2xl border border-white/10 ml-2">
+              <button 
+                onClick={() => setViewMode('cards')}
+                className={cn("p-2 rounded-xl transition-all", viewMode === 'cards' ? "bg-white/10 text-white" : "text-white/20")}
+              >
+                <Table size={18} />
+              </button>
+              <button 
+                onClick={() => setViewMode('map')}
+                className={cn("p-2 rounded-xl transition-all", viewMode === 'map' ? "bg-white/10 text-white" : "text-white/20")}
+              >
+                <MapIcon size={18} />
+              </button>
+          </div>
           
           <GlowButton className="gap-2 shrink-0 h-[46px]" onClick={() => onAction('new', '')}>
             <Plus size={18} /> Nueva Parcela
@@ -103,84 +125,85 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
         </div>
       </div>
 
-      {/* Parcel Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {filteredParcelas.length === 0 && (
-          <div className="col-span-full py-20 text-center">
-            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search size={24} className="text-white/20" />
-            </div>
-            <p className="text-sm font-bold text-white/40 uppercase tracking-widest">No se encontraron parcelas con este filtro</p>
+      {/* Main Plot Content: Cards or Map */}
+      <div className="min-h-[400px]">
+        {viewMode === 'map' ? (
+          <div className="animate-in fade-in duration-700">
+             <AgriMapViewer 
+                parcelas={filteredParcelas} 
+                onSelectParcela={(id) => onAction('view', id)}
+             />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-bottom-4 duration-500">
+            {filteredParcelas.map((p) => (
+              <GlassCard 
+                key={p.id} 
+                className={cn(
+                    "p-6 group hover:border-emerald-500/30 transition-all cursor-pointer relative overflow-hidden",
+                    p.id === selectedId && "ring-2 ring-emerald-500/50"
+                )}
+                onClick={() => onAction('view', p.id)}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/10 text-emerald-400">
+                    <MapPin size={24} />
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black text-white/40 uppercase tracking-widest">
+                      {Number(p.hectareas).toFixed(2)} ha
+                    </span>
+                  </div>
+                </div>
+
+                <h4 className="text-xl font-black text-white leading-tight mb-2 group-hover:text-emerald-400 transition-colors uppercase italic">{p.nombre}</h4>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-blue-500/5 rounded-xl flex items-center justify-center text-blue-400/70">
+                      <Wheat size={14} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-black text-white/20 uppercase tracking-widest leading-none mb-0.5">Cultivo / Variedad</span>
+                      <span className="text-xs font-bold text-white/80">{p.cultivo} <span className="text-[10px] opacity-40">{p.variedad}</span></span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-emerald-500/5 rounded-xl flex items-center justify-center text-emerald-400/70">
+                      <MapIcon size={14} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-black text-white/20 uppercase tracking-widest leading-none mb-0.5">SIGPAC Pol/Par/Rec</span>
+                      <span className="text-xs font-bold text-white/80">{p.poligono} / {p.parcela} / {p.recinto || 1}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-6 mt-6 border-t border-white/5">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); onAction('labor', p.id); }}
+                    className="flex-1 h-10 bg-white/3 hover:bg-white/10 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-white/40 hover:text-white transition-all uppercase tracking-widest"
+                  >
+                    <Tractor size={14} className="text-emerald-500/70" /> Labor
+                  </button>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); onAction('tratamiento', p.id); }}
+                    className="flex-1 h-10 bg-white/3 hover:bg-white/10 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-white/40 hover:text-white transition-all uppercase tracking-widest"
+                  >
+                    <Beaker size={14} className="text-blue-500/70" /> Tratar
+                  </button>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setShowHistoricoId(p.id); }}
+                    className="w-12 h-10 bg-white/3 hover:bg-white/10 rounded-xl flex items-center justify-center text-white/40 hover:text-white transition-all"
+                  >
+                    <History size={16} />
+                  </button>
+                </div>
+              </GlassCard>
+            ))}
           </div>
         )}
-
-        {filteredParcelas.map((p) => (
-          <GlassCard key={p.id} className="p-5 border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all group">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/10 text-emerald-400">
-                  <MapPin size={24} />
-                </div>
-                <div>
-                  <h4 className="text-lg font-black text-white group-hover:text-emerald-400 transition-colors">{p.nombre}</h4>
-                  <p className="text-[10px] font-black text-white/30 uppercase tracking-widest leading-none mt-1">
-                    {p.provincia} • Pol: {p.poligono} Par: {p.parcela}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Activa</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 mb-5 text-center">
-              <div className="bg-white/5 rounded-xl py-3 border border-white/5">
-                <p className="text-[9px] font-black text-white/20 uppercase tracking-tighter mb-1">Cultivo</p>
-                <div className="flex items-center justify-center gap-1.5">
-                  <Wheat size={12} className="text-amber-400" />
-                  <span className="text-xs font-black text-white">{p.cultivo || 'Sin asignar'}</span>
-                </div>
-              </div>
-              <div className="bg-white/5 rounded-xl py-3 border border-white/5">
-                <p className="text-[9px] font-black text-white/20 uppercase tracking-tighter mb-1">Superficie</p>
-                <p className="text-xs font-black text-white">{Number(p.hectareas).toFixed(2)} <span className="text-[10px] text-white/40">ha</span></p>
-              </div>
-              <div className="bg-white/5 rounded-xl py-3 border border-white/5">
-                <p className="text-[9px] font-black text-white/20 uppercase tracking-tighter mb-1">Campaña</p>
-                <p className="text-xs font-black text-emerald-400">2024/25</p>
-              </div>
-            </div>
-
-            {/* Quick Actions Bar */}
-            <div className="flex items-center gap-2 pt-2 border-t border-white/5">
-              <button 
-                onClick={() => onAction('labor', p.id)}
-                className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-white/60 hover:text-white uppercase tracking-widest transition-all"
-              >
-                <Tractor size={14} className="text-emerald-500/70" /> Labor
-              </button>
-              <button 
-                onClick={() => onAction('tratamiento', p.id)}
-                className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-white/60 hover:text-white uppercase tracking-widest transition-all"
-              >
-                <Beaker size={14} className="text-blue-500/70" /> Tratar
-              </button>
-              <button 
-                onClick={() => setShowHistoricoId(p.id)}
-                className="w-12 h-10 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center text-white/40 hover:text-white transition-all"
-              >
-                <History size={16} />
-              </button>
-              <button 
-                onClick={() => onAction('view', p.id)}
-                className="w-12 h-10 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center text-white/40 hover:text-white transition-all"
-              >
-                <ArrowUpRight size={16} />
-              </button>
-            </div>
-          </GlassCard>
-        ))}
       </div>
 
       {/* Modals */}
