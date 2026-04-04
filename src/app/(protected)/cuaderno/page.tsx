@@ -14,6 +14,8 @@ import { CalendarioModule } from '@/components/cuaderno/CalendarioModule';
 import { TrazabilidadModule } from '@/components/cuaderno/TrazabilidadModule';
 import { DashboardsModule } from '@/components/cuaderno/DashboardsModule';
 import { SensoresModule } from '@/components/cuaderno/SensoresModule';
+import { ExcelParcelImporter } from '@/components/cuaderno/ExcelParcelImporter';
+import { ExportacionModule } from '@/components/cuaderno/ExportacionModule';
 import { InventarioModule } from '@/components/cuaderno/InventarioModule';
 import { ModuleGate } from '@/components/cuaderno/ModuleGate';
 import { FincasModule } from '@/components/cuaderno/FincasModule';
@@ -289,6 +291,7 @@ export default function CuadernoPage() {
         <ParcelasMaster 
           parcelas={profile.parcelas.filter(p => !selectedExplotacionId || p.explotacion_id === selectedExplotacionId)}
           campanaId={selectedCampanaId}
+          explotacionId={selectedExplotacionId || ''}
           onAction={(action, id) => {
             if (action === 'new') setIsAddingExplotacion(true);
             else if (action === 'tratamiento') setActiveTab('fitosanitarios');
@@ -343,6 +346,14 @@ export default function CuadernoPage() {
           return profile.explotaciones[0] ? (
             <ExportModule explotacionId={profile.explotaciones[0].id} />
           ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
+        case 'exportacion':
+          return (
+            <ExportacionModule 
+              profile={profile}
+              explotacionId={selectedExplotacionId}
+              campanaId={selectedCampanaId}
+            />
+          );
         default:
           return (
             <GlassCard className="p-12 text-center space-y-6">

@@ -11,6 +11,7 @@ import { GlowButton } from '@/components/ui/GlowButton';
 import { cn } from '@/lib/utils';
 import { MassSigpacImporter } from './MassSigpacImporter';
 import { ParcelaHistorico } from './ParcelaHistorico';
+import { ExcelParcelImporter } from './ExcelParcelImporter';
 
 interface Parcela {
   id: string;
@@ -37,6 +38,7 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCultivo, setFilterCultivo] = useState('all');
   const [showMassImporter, setShowMassImporter] = useState(false);
+  const [showExcelImporter, setShowExcelImporter] = useState(false);
   const [showHistoricoId, setShowHistoricoId] = useState<string | null>(null);
 
   const filteredParcelas = useMemo(() => {
@@ -85,7 +87,14 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
             onClick={() => setShowMassImporter(true)}
             className="flex items-center gap-2 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black text-white/50 hover:text-white uppercase tracking-widest transition-all"
           >
-            <Download size={16} /> Importar SIGPAC
+            <Download size={16} /> SIGPAC
+          </button>
+
+          <button 
+            onClick={() => setShowExcelImporter(true)}
+            className="flex items-center gap-2 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black text-white/50 hover:text-white uppercase tracking-widest transition-all"
+          >
+            <FileSpreadsheet size={16} /> Excel Bulk
           </button>
           
           <GlowButton className="gap-2 shrink-0 h-[46px]" onClick={() => onAction('new', '')}>
@@ -180,6 +189,14 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
           explotacionId={explotacionId}
           onClose={() => setShowMassImporter(false)}
           onSuccess={() => { onAction('refresh', ''); setShowMassImporter(false); }}
+        />
+      )}
+
+      {showExcelImporter && (
+        <ExcelParcelImporter 
+          explotacionId={explotacionId}
+          onClose={() => setShowExcelImporter(false)}
+          onSuccess={() => { onAction('refresh', ''); setShowExcelImporter(false); }}
         />
       )}
 
