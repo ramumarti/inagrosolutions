@@ -82,33 +82,50 @@ export async function importFromSigpac(referencia: string) {
 }
 
 export async function getSigpacInfoByCoords(lat: number, lng: number) {
-  /**
-   * ENTORNO REAL:
-   * 1. Obtener datos de SIGPAC:
-   * https://sigpac.mapa.gob.es/fichasigpac/net/servicios/Servicios.aspx?info=consultar_p_r&lat=${lat}&lng=${lng}&crs=4326
-   * 2. Obtener datos de Catastro (WFS/REST):
-   * https://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC?Provincia=JAEN&Municipio=JAEN&RC=...
-   */
+  try {
+    /**
+     * IMPLEMENTACIÓN REAL WFS SIGPAC:
+     * Consultamos la intersección del punto (lat, lng) con la capa de recintos de SIGPAC.
+     */
+    const wfsUrl = `https://wfs.mapa.gob.es/wfs?service=WFS&request=GetFeature&version=2.0.0&typeName=SIGPAC:recintos&outputFormat=application/json&srsName=EPSG:4326&CQL_FILTER=INTERSECTS(geometry,POINT(${lng} ${lat}))`;
 
-  // Simulamos el procesamiento inteligente de la respuesta de los servicios oficiales
-  await new Promise(r => setTimeout(r, 1200));
-  
-  return {
-    success: true,
-    data: {
-      provincia: '23',
-      municipio: '46',
-      agregado: 0,
-      zona: 0,
-      poligono: '13',
-      parcela: '333',
-      recinto: '1',
-      x_utm: 455097.60,
-      y_utm: 4209681.58,
-      referencia_catastral: '23046A013003330000JP',
-      hectareas: 3.45,  // Extraído del recinto SIGPAC
-      cultivo: 'Olivar', // Extraído de la capa de uso de SIGPAC
-      variedad: 'Picual'
+    const response = await fetch(wfsUrl);
+    if (!response.ok) throw new Error('Error consultando SIGPAC');
+    
+    const data = await response.json();
+    
+    if (!data.features || data.features.length === 0) {
+      return { success: false, error: 'No se encontró ninguna parcela en esa ubicación' };
     }
-  };
+
+    const feature = data.features[0];
+    const p = feature.properties;
+
+    // Calculamos Referencia Catastral (Mock aproximado ya que el WFS de Catastro es distinto)
+    const refCatastral = `${String(p.provincia).padStart(2, '0')}${String(p.municipio).padStart(3, '0')}A${String(p.poligono).padStart(3, '0')}${String(p.parcela).padStart(5, '0')}0000JP`;
+
+    return {
+      success: true,
+      data: {
+        provincia: String(p.provincia),
+        municipio: String(p.municipio),
+        agregado: p.agregado || 0,
+        zona: p.zona || 0,
+        poligono: String(p.poligono),
+        parcela: String(p.parcela),
+        recinto: String(p.recinto),
+        referencia_catastral: refCatastral,
+        hectareas: p.superficie / 10000, // De m2 a Ha
+        cultivo: p.uso_sigpac || 'No definido',
+        variedad: '',
+        geometria: feature.geometry,
+        // Coordenadas UTM aproximadas si se necesitan (el WFS devuelve 4326 por defecto)
+        x_utm: 0, 
+        y_utm: 0
+      }
+    };
+  } catch (error) {
+    console.error('SIGPAC WFS Error:', error);
+    return { success: false, error: 'Fallo en la conexión con el servidor SIGPAC' };
+  }
 }
