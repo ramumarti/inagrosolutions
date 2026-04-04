@@ -16,7 +16,7 @@ import { DashboardsModule } from '@/components/cuaderno/DashboardsModule';
 import { SensoresModule } from '@/components/cuaderno/SensoresModule';
 import { InventarioModule } from '@/components/cuaderno/InventarioModule';
 import { ModuleGate } from '@/components/cuaderno/ModuleGate';
-import { ParcelasModule } from '@/components/cuaderno/ParcelasModule';
+import { FincasModule } from '@/components/cuaderno/FincasModule';
 import { createExplotacion } from '@/lib/actions/agricultural';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
@@ -25,10 +25,10 @@ import type { AgriTier } from '@/lib/modules';
 import {
   Home, Bug, Leaf, Droplets, Wallet, BarChart3, Link as LinkIcon,
   Radio, MapPin, FileDown, Shield, ArrowRight, Zap, ChevronRight,
-  Package, Lock, Settings, Bell, Calendar, Building2
+  Package, Lock, Settings, Bell, Calendar, Building2, Plus, Globe
 } from 'lucide-react';
 
-type TabKey = 'inicio' | 'tratamientos' | 'fitosanitarios' | 'calendario' | 'labores' | 'fertilizacion' | 'parcelas' | 'costes' | 'cosechas' | 'trazabilidad' | 'dashboards' | 'sensores' | 'alertas' | 'exportacion' | 'inventario';
+type TabKey = 'inicio' | 'fincas' | 'tratamientos' | 'fitosanitarios' | 'calendario' | 'labores' | 'fertilizacion' | 'costes' | 'cosechas' | 'trazabilidad' | 'dashboards' | 'sensores' | 'alertas' | 'exportacion' | 'inventario';
 
 const ICON_MAP: Record<string, any> = {
   ShieldCheck: Shield, Bug: Bug, Leaf: Leaf, Tractor: Leaf,
@@ -54,7 +54,7 @@ export default function CuadernoPage() {
   // Reorder modules: 'parcelas' first, 'exportacion' and 'siex' last
   const modulos = [...rawModulos].sort((a, b) => {
     const getWeight = (slug: string) => {
-      if (slug === 'parcelas') return -100;
+      if (slug === 'fincas') return -100;
       if (slug.includes('export') || slug === 'exportacion') return 100;
       if (slug.includes('siex')) return 99;
       return 0;
@@ -116,6 +116,33 @@ export default function CuadernoPage() {
   ];
 
   const renderContent = () => {
+    if (profile.explotaciones.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="w-24 h-24 bg-emerald-500/10 rounded-3xl border border-emerald-500/10 flex items-center justify-center mb-8 shadow-2xl relative group">
+            <Building2 size={40} className="text-emerald-500 group-hover:scale-110 transition-transform" />
+            <div className="absolute -top-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center animate-bounce">
+              <Plus size={14} className="text-[#0a0a0a] font-bold" />
+            </div>
+          </div>
+          <h2 className="text-4xl font-black text-white mb-4 tracking-tight">Bienvenido al Cuaderno Digital</h2>
+          <p className="text-white/40 max-w-sm mb-12 font-bold uppercase tracking-widest text-xs leading-relaxed">
+            Para comenzar a gestionar tu actividad agrícola, primero debemos registrar tu explotación o finca.
+          </p>
+          <GlowButton 
+            className="px-12 py-6 text-lg font-black bg-emerald-600 border-none shadow-emerald-500/20"
+            onClick={() => setIsAddingExplotacion(true)}
+          >
+            Registrar Primera Finca
+          </GlowButton>
+          <div className="mt-16 flex gap-12 opacity-20">
+            <div className="flex items-center gap-2 font-black text-[10px] tracking-widest uppercase"><Shield size={14} /> SIEX Ready</div>
+            <div className="flex items-center gap-2 font-black text-[10px] tracking-widest uppercase"><Globe size={14} /> SIGPAC Sync</div>
+          </div>
+        </div>
+      );
+    }
+
     if (activeTab === 'inicio') {
       return (
         <div className="space-y-8">
@@ -188,6 +215,20 @@ export default function CuadernoPage() {
       );
     }
 
+    if (activeTab === 'fincas') {
+      return (
+        <FincasModule 
+          explotaciones={profile.explotaciones}
+          tenantId={profile.tenant_id}
+          onRefresh={() => reload()}
+          onSelect={(id) => {
+            setSelectedExplotacionId(id);
+            setActiveTab('inicio');
+          }}
+        />
+      );
+    }
+
     // Modular content
     if (activeTab === 'calendario') {
       return profile.explotaciones[0] ? (
@@ -229,38 +270,6 @@ export default function CuadernoPage() {
           return profile.explotaciones[0] ? (
             <SensoresModule explotacionId={profile.explotaciones[0].id} parcelas={profile.parcelas} />
           ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
-        case 'parcelas':
-          return (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between pb-6 border-b border-white/5">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/10">
-                    <MapPin className="w-6 h-6 text-emerald-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black text-white tracking-tight">Gestión de Parcelas</h3>
-                    <p className="text-sm text-white/60 font-bold">Importación SIGPAC • Mapas • Campañas</p>
-                  </div>
-                </div>
-              </div>
-              
-              <ParcelasModule 
-                explotacionId={selectedExplotacionId || undefined} 
-                parcelas={profile.parcelas.filter(p => p.explotacion_id === selectedExplotacionId)}
-                tenantId={profile.tenant_id}
-                onAction={(action, payload) => {
-                  if (payload?.parcelaId) setPreSelectedPlotId(payload.parcelaId);
-                  
-                  if (action === 'tratamientos') setActiveTab('fitosanitarios');
-                  else if (action === 'labores') setActiveTab('labores');
-                  else if (action === 'fertilizacion') setActiveTab('fertilizacion');
-                  else if (action === 'inicio') setActiveTab('inicio');
-                  else if (action === 'new_farm') setIsAddingExplotacion(true);
-                  else setActiveTab(action as TabKey);
-                }}
-              />
-            </div>
-          );
         case 'exportacion':
           return profile.explotaciones[0] ? (
             <ExportModule explotacionId={profile.explotaciones[0].id} />

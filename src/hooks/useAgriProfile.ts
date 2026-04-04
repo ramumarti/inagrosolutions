@@ -93,7 +93,7 @@ export function useAgriProfile() {
         alertasPendientes: alertasData?.length || 0,
       });
 
-      setModulos((modulosData as ModuloSistema[]) || []);
+      setModulos((modulosData as ModuloSistema[] || []).filter(m => m.slug !== 'parcelas'));
 
       if (explotaciones && explotaciones.length > 0) {
         setResumen({

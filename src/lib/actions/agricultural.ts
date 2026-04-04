@@ -22,6 +22,31 @@ export async function createExplotacion(data: { nombre: string, num_registro_sie
   return res;
 }
 
+export async function updateExplotacion(id: string, data: { nombre: string }) {
+  const supabase = await createClient();
+  const { data: res, error } = await supabase
+    .from('explotaciones')
+    .update({ nombre: data.nombre })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  revalidatePath('/cuaderno');
+  return res;
+}
+
+export async function deleteExplotacion(id: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('explotaciones')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+  revalidatePath('/cuaderno');
+}
+
 export async function createParcela(data: any) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
