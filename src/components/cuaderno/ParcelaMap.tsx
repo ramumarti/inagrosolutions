@@ -93,21 +93,25 @@ export function ParcelaMap({ initialCenter = [40.416775, -3.703790], onPlotSelec
           {/* We can add buttons here later */}
         </div>
 
-        {/* 1. Base Layer: PNOA Satélite (Oficial España) */}
-        <TileLayer
-          url="https://tms-pnoa-ma.ign.es/1.0.0/pnoa-ma/{z}/{x}/{y}.jpeg"
+        {/* 1. Base Layer: PNOA Satélite (Oficial España - WMS) */}
+        <WMSTileLayer
+          url="https://www.ign.es/wms-pnoa/pnoa-ma"
+          layers="OI.OrthoimageCoverage"
+          format="image/jpeg"
+          version="1.3.0"
           attribution='&copy; <a href="http://www.ign.es/ign/main/index.do">IGN</a>'
-          maxNativeZoom={19}
           maxZoom={20}
         />
 
-        {/* 2. Overlay: SIGPAC Mosaico (Parcelas y Recintos con numeración) */}
-        {/* Usamos el servicio de teselas del SIGPAC que es el más nítido */}
-        <TileLayer
-          url="https://sigpac.mapa.gob.es/fichasigpac/wmts/sigpac/default/sigpac/{z}/{y}/{x}.png"
+        {/* 2. Overlay: SIGPAC Mosaico (Oficial - WMS) */}
+        <WMSTileLayer
+          url="https://wms.mapa.gob.es/sigpac/wms"
+          layers="PARCELA,RECINTO"
+          format="image/png"
+          transparent={true}
+          version="1.3.0"
           attribution="SIGPAC - MAPA"
-          opacity={0.8}
-          maxNativeZoom={18}
+          opacity={0.7}
           maxZoom={20}
         />
 
