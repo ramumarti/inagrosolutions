@@ -79,37 +79,45 @@ function MapEventsHandler({ onPlotSelect }: { onPlotSelect?: (data: any) => void
 
 export function ParcelaMap({ initialCenter = [40.416775, -3.703790], onPlotSelect, readOnly, geometria }: ParcelaMapProps) {
   return (
-    <div className="w-full h-[400px] rounded-2xl overflow-hidden border border-white/10 relative z-10 box-border">
+    <div className="w-full h-[500px] rounded-2xl overflow-hidden border border-white/10 relative z-10 box-border shadow-2xl">
       <MapContainer 
         center={initialCenter} 
         zoom={16} 
+        maxZoom={20}
+        minZoom={6}
         style={{ height: '100%', width: '100%' }}
         scrollWheelZoom={true}
       >
-        {/* Base Layers */}
+        {/* Layer Switcher */}
+        <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
+          {/* We can add buttons here later */}
+        </div>
+
+        {/* 1. Base Layer: PNOA Satélite (Oficial España) */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://tms-pnoa-ma.ign.es/1.0.0/pnoa-ma/{z}/{x}/{y}.jpeg"
+          attribution='&copy; <a href="http://www.ign.es/ign/main/index.do">IGN</a>'
+          maxNativeZoom={19}
+          maxZoom={20}
         />
 
-        {/* SIGPAC WMS Layer */}
-        <WMSTileLayer
-          url="https://wms.mapa.gob.es/sigpac/wms"
-          layers="PARCELA,RECINTO,ORTOFOTOS"
-          format="image/png"
-          transparent={true}
-          version="1.3.0"
+        {/* 2. Overlay: SIGPAC Mosaico (Parcelas y Recintos con numeración) */}
+        {/* Usamos el servicio de teselas del SIGPAC que es el más nítido */}
+        <TileLayer
+          url="https://sigpac.mapa.gob.es/fichasigpac/wmts/sigpac/default/sigpac/{z}/{y}/{x}.png"
           attribution="SIGPAC - MAPA"
-          opacity={0.7}
+          opacity={0.8}
+          maxNativeZoom={18}
+          maxZoom={20}
         />
 
         {!readOnly && <MapEventsHandler onPlotSelect={onPlotSelect} />}
         
-        {/* Helper component for auto-zoom or centering */}
       </MapContainer>
       
-      <div className="absolute bottom-4 left-4 z-[1000] bg-black/60 backdrop-blur-md border border-white/10 p-2 rounded-lg text-[10px] font-black text-white/80 uppercase tracking-widest pointer-events-none">
-        Capa SIGPAC: Parcelas y Recintos (Activa)
+      <div className="absolute bottom-4 left-4 z-[1000] bg-black/60 backdrop-blur-md border border-white/10 px-4 py-2 rounded-xl text-[10px] font-black text-emerald-400 uppercase tracking-widest pointer-events-none flex items-center gap-2">
+        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+        Visor SIGPAC Oficial (Mosaico Activo)
       </div>
     </div>
   );
