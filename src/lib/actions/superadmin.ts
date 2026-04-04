@@ -93,7 +93,7 @@ export async function toggleTenantStatus(tenantId: string, isActive: boolean) {
 export async function createTenant(data: {
   name: string;
   slug: string;
-  type: 'cooperativa' | 'agronomo' | 'empresa_servicios' | 'almazara';
+  type: 'cooperativa' | 'profesional' | 'empresa_servicios' | 'almazara';
   subscription_tier: string;
 }) {
   await verifySuperadmin();

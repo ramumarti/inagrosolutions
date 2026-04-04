@@ -10,7 +10,7 @@ export interface TenantData {
   id: string;
   name: string;
   slug: string;
-  type: 'cooperativa' | 'agronomo' | 'empresa_servicios' | 'almazara';
+  type: 'cooperativa' | 'profesional' | 'empresa_servicios' | 'almazara';
   logo_url?: string;
   primary_color: string;
   secondary_color: string;

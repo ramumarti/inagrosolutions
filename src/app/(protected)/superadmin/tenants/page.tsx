@@ -18,7 +18,7 @@ export default function SuperadminTenantsPage() {
   const [formData, setFormData] = useState<{
     name: string;
     slug: string;
-    type: 'cooperativa' | 'agronomo' | 'empresa_servicios' | 'almazara';
+    type: 'cooperativa' | 'profesional' | 'empresa_servicios' | 'almazara';
     subscription_tier: string;
   }>({
     name: '',
@@ -202,7 +202,7 @@ export default function SuperadminTenantsPage() {
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 transition-colors"
                   >
                     <option value="cooperativa">Cooperativa</option>
-                    <option value="agronomo">Agrónomo</option>
+                    <option value="profesional">Profesional</option>
                     <option value="empresa_servicios">Empresa de Servicios</option>
                     <option value="almazara">Almazara</option>
                   </select>
