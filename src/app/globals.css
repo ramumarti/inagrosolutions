@@ -42,4 +42,21 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   min-height: 100vh;
+  color-scheme: dark; /* Tells the browser to use native dark controls (date, select, etc.) */
+}
+
+/* Fix dropdown contrast globally */
+select, option {
+  background-color: var(--color-base-200) !important;
+  color: white !important;
+}
+
+/* Ensure date inputs and others follow the theme */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+select:focus, input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -1px;
 }
