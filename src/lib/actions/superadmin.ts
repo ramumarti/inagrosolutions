@@ -155,3 +155,18 @@ export async function switchContext(tenantId: string | null) {
   return { success: true };
 }
 
+export async function deleteTenant(tenantId: string) {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return { success: false, error: auth.error };
+
+  const supabase = getAdminClient();
+  
+  const { error } = await supabase
+    .from('tenants')
+    .delete()
+    .eq('id', tenantId);
+    
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+

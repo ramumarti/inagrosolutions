@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getTenantsList, toggleTenantStatus, createTenant, switchContext } from '@/lib/actions/superadmin';
+import { getTenantsList, toggleTenantStatus, createTenant, switchContext, deleteTenant } from '@/lib/actions/superadmin';
 import { TIER_CONFIG, type AgriTier } from '@/lib/modules';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Building2, X, Plus, Loader2 } from 'lucide-react';
+import { Building2, X, Plus, Loader2, Trash2 } from 'lucide-react';
 
 export default function SuperadminTenantsPage() {
   const [tenants, setTenants] = useState<any[]>([]);
@@ -65,6 +65,20 @@ export default function SuperadminTenantsPage() {
         load();
       } else {
         console.error('Error al cambiar estado:', res.error);
+      }
+    } catch (err) {
+      console.error('Error inesperado:', err);
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`¿Estás seguro de que quieres dar de baja (eliminar) la entidad "${name}"? Esta acción es irreversible.`)) return;
+    try {
+      const res = await deleteTenant(id);
+      if (res.success) {
+        load();
+      } else {
+        alert(res.error || 'Error al eliminar entidad');
       }
     } catch (err) {
       console.error('Error inesperado:', err);
@@ -171,12 +185,21 @@ export default function SuperadminTenantsPage() {
                   </button>
                 </td>
                 <td className="px-6 py-4 text-center">
-                  <button 
-                    onClick={() => handleSwitch(t.id)}
-                    className="px-4 py-2 bg-[var(--color-primary)] hover:brightness-110 text-white text-[10px] font-bold uppercase rounded-xl transition-all shadow-lg shadow-[var(--color-primary)]/20 active:scale-95"
-                  >
-                    Gestionar
-                  </button>
+                  <div className="flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => handleSwitch(t.id)}
+                      className="px-4 py-2 bg-[var(--color-primary)] hover:brightness-110 text-white text-[10px] font-bold uppercase rounded-xl transition-all shadow-lg shadow-[var(--color-primary)]/20 active:scale-95"
+                    >
+                      Gestionar
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(t.id, t.name)}
+                      className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl transition-all active:scale-95"
+                      title="Dar de baja entidad"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
