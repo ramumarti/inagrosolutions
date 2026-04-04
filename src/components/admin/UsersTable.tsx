@@ -3,9 +3,10 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
-import { Search, ChevronLeft, ChevronRight, UserPlus, Eye, Shield, User } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, UserPlus, Eye, Shield, User, Trash2, Loader2 } from 'lucide-react';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { AddUserModal } from './AddUserModal';
+import { useToast } from '@/components/ui/Toast';
 
 function timeAgo(dateStr: string, language: 'en' | 'es') {
   const diff = Math.max(0, Date.now() - new Date(dateStr).getTime());
@@ -39,11 +40,36 @@ export interface UserRow {
 
 export function UsersTable({ initialUsers, activePlans }: { initialUsers: UserRow[], activePlans: PlanInfo[] }) {
   const { language } = useI18n();
+  const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [users, setUsers] = useState<UserRow[]>(initialUsers);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const pageSize = 10;
+
+  const handleDeleteUser = async (user: UserRow) => {
+    if (!confirm(language === 'en' ? `Are you sure you want to delete user ${user.email}? This action is irreversible.` : `¿Estás seguro de que quieres eliminar al usuario ${user.email}? Esta acción es irreversible.`)) return;
+
+    setDeletingId(user.id);
+    try {
+      const res = await fetch('/api/admin/delete-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id })
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error);
+      }
+      setUsers(users.filter(u => u.id !== user.id));
+      toast(language === 'en' ? 'User deleted successfully' : 'Usuario eliminado con éxito', 'success');
+    } catch (err: any) {
+      toast(err.message, 'error');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const filteredUsers = useMemo(() => {
     const q = search.toLowerCase();
@@ -155,11 +181,21 @@ export function UsersTable({ initialUsers, activePlans }: { initialUsers: UserRo
                         {timeAgo(user.created_at, language)}
                       </td>
                       <td className="py-4 px-4 text-right">
-                        <Link href={`/admin/users/${user.id}`}>
-                          <button className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors">
-                            <Eye className="w-4 h-4" />
+                        <div className="flex items-center justify-end gap-1">
+                          <Link href={`/admin/users/${user.id}`}>
+                            <button className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors" title={language === 'en' ? 'View Details' : 'Ver Detalles'}>
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          </Link>
+                          <button 
+                            onClick={() => handleDeleteUser(user)}
+                            disabled={deletingId === user.id}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-500/50 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-30" 
+                            title={language === 'en' ? 'Delete User' : 'Eliminar Usuario'}
+                          >
+                            {deletingId === user.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                           </button>
-                        </Link>
+                        </div>
                       </td>
                     </tr>
                   );
