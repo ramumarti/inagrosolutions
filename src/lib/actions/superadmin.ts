@@ -2,16 +2,17 @@
 
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { createClient } from '@supabase/supabase-js';
 
-async function getSupabase() {
-  const cookieStore = await cookies();
-  return createServerClient(
+// Admin client that bypasses RLS
+function getAdminClient() {
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!, // Use service key for superadmin actions to bypass RLS if necessary
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll() {} // Server actions don't set cookies usually
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
       }
     }
   );
@@ -25,44 +26,48 @@ async function verifySuperadmin() {
   });
   
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
+  if (!user) return { isAuthorized: false, error: 'No autenticado' };
   
   const { data: userData } = await supabase.from('users').select('platform_role').eq('id', user.id).single();
-  if (userData?.platform_role !== 'superadmin') throw new Error('Forbidden');
+  if (userData?.platform_role !== 'superadmin') return { isAuthorized: false, error: 'No tienes permisos de superadmin' };
   
-  return true;
+  return { isAuthorized: true };
 }
 
 export async function getPlatformStats() {
-  await verifySuperadmin();
-  const supabase = await getSupabase();
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) throw new Error(auth.error);
+
+  const supabase = getAdminClient();
   
-  const [
-    { count: totalTenants },
-    { count: totalUsers },
-    { count: totalFarms },
-    { data: activeModules }
-  ] = await Promise.all([
-    supabase.from('tenants').select('*', { count: 'exact', head: true }),
-    supabase.from('users').select('*', { count: 'exact', head: true }),
-    supabase.from('explotaciones').select('*', { count: 'exact', head: true }),
-    supabase.from('tenants').select('active_modules')
-  ]);
+  try {
+    const [
+      { count: totalTenants },
+      { count: totalUsers },
+      { count: totalFarms }
+    ] = await Promise.all([
+      supabase.from('tenants').select('*', { count: 'exact', head: true }),
+      supabase.from('users').select('*', { count: 'exact', head: true }),
+      supabase.from('explotaciones').select('*', { count: 'exact', head: true })
+    ]);
 
-  // Just an example metric
-  const mrr = (totalTenants || 0) * 89; 
-
-  return {
-    totalTenants: totalTenants || 0,
-    totalUsers: totalUsers || 0,
-    totalFarms: totalFarms || 0,
-    mrr,
-  };
+    return {
+      totalTenants: totalTenants || 0,
+      totalUsers: totalUsers || 0,
+      totalFarms: totalFarms || 0,
+      mrr: (totalTenants || 0) * 89,
+    };
+  } catch (err: any) {
+    console.error('Error fetching stats:', err);
+    return { totalTenants: 0, totalUsers: 0, totalFarms: 0, mrr: 0 };
+  }
 }
 
 export async function getTenantsList() {
-  await verifySuperadmin();
-  const supabase = await getSupabase();
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return [];
+
+  const supabase = getAdminClient();
   
   const { data, error } = await supabase
     .from('tenants')
@@ -72,20 +77,25 @@ export async function getTenantsList() {
     `)
     .order('created_at', { ascending: false });
     
-  if (error) throw error;
+  if (error) {
+    console.error('Error listing tenants:', error);
+    return [];
+  }
   return data;
 }
 
 export async function toggleTenantStatus(tenantId: string, isActive: boolean) {
-  await verifySuperadmin();
-  const supabase = await getSupabase();
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return { success: false, error: auth.error };
+
+  const supabase = getAdminClient();
   
   const { error } = await supabase
     .from('tenants')
     .update({ is_active: isActive })
     .eq('id', tenantId);
     
-  if (error) throw error;
+  if (error) return { success: false, error: error.message };
   return { success: true };
 }
 
@@ -95,8 +105,10 @@ export async function createTenant(data: {
   type: 'cooperativa' | 'profesional' | 'empresa_servicios' | 'almazara';
   subscription_tier: string;
 }) {
-  await verifySuperadmin();
-  const supabase = await getSupabase();
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return { success: false, error: auth.error };
+
+  const supabase = getAdminClient();
   
   const { data: tenant, error } = await supabase
     .from('tenants')
@@ -105,15 +117,19 @@ export async function createTenant(data: {
       slug: data.slug.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       type: data.type,
       subscription_tier: data.subscription_tier,
-      primary_color: '#10b981', // Default emerald
-      secondary_color: '#0f172a', // Default slate
-      active_modules: ['core', 'cuaderno'], // Default modules
+      primary_color: '#10b981',
+      secondary_color: '#0f172a',
+      active_modules: ['core', 'cuaderno'],
       is_active: true
     }])
     .select()
     .single();
 
-  if (error) throw error;
-  return tenant;
+  if (error) {
+    console.error('Error creating tenant:', error);
+    return { success: false, error: error.message };
+  }
+  
+  return { success: true, data: tenant };
 }
 

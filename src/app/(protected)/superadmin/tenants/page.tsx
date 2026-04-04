@@ -47,10 +47,14 @@ export default function SuperadminTenantsPage() {
 
   const handleToggle = async (id: string, currentStatus: boolean) => {
     try {
-      await toggleTenantStatus(id, !currentStatus);
-      load();
+      const res = await toggleTenantStatus(id, !currentStatus);
+      if (res.success) {
+        load();
+      } else {
+        console.error('Error al cambiar estado:', res.error);
+      }
     } catch (err) {
-      console.error('Error al cambiar estado:', err);
+      console.error('Error inesperado:', err);
     }
   };
 
@@ -59,13 +63,17 @@ export default function SuperadminTenantsPage() {
     setErrorMsg('');
     setCreating(true);
     try {
-      await createTenant(formData);
-      setIsModalOpen(false);
-      setFormData({ name: '', slug: '', type: 'cooperativa', subscription_tier: 'basico' });
-      load();
+      const res = await createTenant(formData);
+      if (res.success) {
+        setIsModalOpen(false);
+        setFormData({ name: '', slug: '', type: 'cooperativa', subscription_tier: 'basico' });
+        load();
+      } else {
+        setErrorMsg(res.error || 'Error al crear entidad');
+      }
     } catch (error: any) {
       console.error(error);
-      setErrorMsg(error.message || 'Error al crear entidad');
+      setErrorMsg('Error de conexión al servidor');
     } finally {
       setCreating(false);
     }
