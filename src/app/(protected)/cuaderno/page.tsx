@@ -17,7 +17,9 @@ import { SensoresModule } from '@/components/cuaderno/SensoresModule';
 import { InventarioModule } from '@/components/cuaderno/InventarioModule';
 import { ModuleGate } from '@/components/cuaderno/ModuleGate';
 import { FincasModule } from '@/components/cuaderno/FincasModule';
-import { createExplotacion } from '@/lib/actions/agricultural';
+import { CampanaSelector } from '@/components/cuaderno/CampanaSelector';
+import { ParcelasMaster } from '@/components/cuaderno/ParcelasMaster';
+import { createExplotacion, createCampana, deleteExplotacion, updateExplotacion } from '@/lib/actions/agricultural';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { TIER_CONFIG } from '@/lib/modules';
@@ -25,16 +27,17 @@ import type { AgriTier } from '@/lib/modules';
 import {
   Home, Bug, Leaf, Droplets, Wallet, BarChart3, Link as LinkIcon,
   Radio, MapPin, FileDown, Shield, ArrowRight, Zap, ChevronRight,
-  Package, Lock, Settings, Bell, Calendar, Building2, Plus, Globe
+  Package, Lock, Settings, Bell, Calendar, Building2, Plus, Globe,
+  Tractor, Wheat, Sprout
 } from 'lucide-react';
 
-type TabKey = 'inicio' | 'fincas' | 'tratamientos' | 'fitosanitarios' | 'calendario' | 'labores' | 'fertilizacion' | 'costes' | 'cosechas' | 'trazabilidad' | 'dashboards' | 'sensores' | 'alertas' | 'exportacion' | 'inventario';
+type TabKey = 'inicio' | 'fincas' | 'parcelas' | 'tratamientos' | 'fitosanitarios' | 'calendario' | 'labores' | 'fertilizacion' | 'costes' | 'cosechas' | 'trazabilidad' | 'dashboards' | 'sensores' | 'alertas' | 'exportacion' | 'inventario';
 
 const ICON_MAP: Record<string, any> = {
-  ShieldCheck: Shield, Bug: Bug, Leaf: Leaf, Tractor: Leaf,
-  Map: MapPin, Wallet: Wallet, Wheat: Leaf, Link: LinkIcon,
+  ShieldCheck: Shield, Bug: Bug, Leaf: Leaf, Tractor: Tractor,
+  Map: MapPin, Wallet: Wallet, Wheat: Wheat, Link: LinkIcon,
   BarChart3: BarChart3, Radio: Radio, Bell: Bell, FileDown: FileDown,
-  Package: Package,
+  Package: Package, Sprout: Sprout
 };
 
 export default function CuadernoPage() {
@@ -43,6 +46,10 @@ export default function CuadernoPage() {
   const [selectedExplotacionId, setSelectedExplotacionId] = useState<string | null>(null);
   const [selectedCampanaId, setSelectedCampanaId] = useState<string | null>(null);
   const [preSelectedPlotId, setPreSelectedPlotId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editNombre, setEditNombre] = useState('');
+  const [editTitular, setEditTitular] = useState('');
+  const [editNif, setEditNif] = useState('');
 
   // Initialize selection
   useEffect(() => {
@@ -55,6 +62,7 @@ export default function CuadernoPage() {
   const modulos = [...rawModulos].sort((a, b) => {
     const getWeight = (slug: string) => {
       if (slug === 'fincas') return -100;
+      if (slug === 'parcelas') return -90;
       if (slug.includes('export') || slug === 'exportacion') return 100;
       if (slug.includes('siex')) return 99;
       return 0;
@@ -73,6 +81,21 @@ export default function CuadernoPage() {
       setNewExplotacionNombre('');
       reload();
       setSelectedExplotacionId(res.id);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (!editingId || !editNombre) return;
+    try {
+      await updateExplotacion(editingId, { 
+        nombre: editNombre,
+        titular: editTitular,
+        nif_cif: editNif
+      });
+      setEditingId(null);
+      reload();
     } catch (err) {
       console.error(err);
     }
@@ -139,6 +162,38 @@ export default function CuadernoPage() {
             <div className="flex items-center gap-2 font-black text-[10px] tracking-widest uppercase"><Shield size={14} /> SIEX Ready</div>
             <div className="flex items-center gap-2 font-black text-[10px] tracking-widest uppercase"><Globe size={14} /> SIGPAC Sync</div>
           </div>
+        </div>
+      );
+    }
+
+    if (profile.explotaciones.length > 0 && profile.campanas.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="w-24 h-24 bg-blue-500/10 rounded-3xl border border-blue-500/10 flex items-center justify-center mb-8 shadow-2xl relative group">
+            <Calendar size={40} className="text-blue-400 group-hover:scale-110 transition-transform" />
+            <div className="absolute -top-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+              <Plus size={14} className="text-white font-bold" />
+            </div>
+          </div>
+          <h2 className="text-4xl font-black text-white mb-4 tracking-tight">Nueva Campaña Agrícola</h2>
+          <p className="text-white/40 max-w-sm mb-12 font-bold uppercase tracking-widest text-xs leading-relaxed">
+            Tienes fincas registradas, pero aún no has definido una campaña de trabajo. 
+            Crea la campaña 2024 para registrar tus actividades.
+          </p>
+          <GlowButton 
+            className="px-12 py-6 text-lg font-black bg-blue-600 border-none shadow-blue-500/20"
+            onClick={async () => {
+              await createCampana({ 
+                nombre: `Campaña ${new Date().getFullYear()}`, 
+                anio_inicio: new Date().getFullYear(),
+                anio_fin: new Date().getFullYear() + 1,
+                explotacion_id: profile.explotaciones[0].id
+              });
+              reload();
+            }}
+          >
+            Activar Campaña 2024/25
+          </GlowButton>
         </div>
       );
     }
@@ -224,6 +279,20 @@ export default function CuadernoPage() {
           onSelect={(id) => {
             setSelectedExplotacionId(id);
             setActiveTab('inicio');
+          }}
+        />
+      );
+    }
+
+    if (activeTab === 'parcelas') {
+      return (
+        <ParcelasMaster 
+          parcelas={profile.parcelas.filter(p => !selectedExplotacionId || p.explotacion_id === selectedExplotacionId)}
+          campanaId={selectedCampanaId}
+          onAction={(action, id) => {
+            if (action === 'new') setIsAddingExplotacion(true);
+            else if (action === 'tratamiento') setActiveTab('fitosanitarios');
+            else if (action === 'labor') setActiveTab('labores');
           }}
         />
       );
@@ -360,13 +429,12 @@ export default function CuadernoPage() {
             </div>
 
             {/* Campaña Selector */}
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10 shrink-0">
-              <Calendar className="w-4 h-4 text-blue-400" />
-              <select className="bg-transparent border-none outline-none text-xs font-black text-white/80 uppercase tracking-widest cursor-pointer">
-                <option className="bg-[#1a1a1a]">Campaña 2024</option>
-                <option className="bg-[#1a1a1a]">Campaña 2023</option>
-              </select>
-            </div>
+            <CampanaSelector 
+              campanas={profile.campanas}
+              selectedId={selectedCampanaId}
+              onSelect={setSelectedCampanaId}
+              className="shrink-0"
+            />
           </div>
 
           <div className="hidden sm:flex items-center gap-3">

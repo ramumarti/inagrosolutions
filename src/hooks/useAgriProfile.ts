@@ -14,6 +14,7 @@ export interface AgriProfile {
   onboardedAgri: boolean;
   explotaciones: any[];
   parcelas: any[];
+  campanas: any[];
   alertasPendientes: number;
 }
 
@@ -62,13 +63,19 @@ export function useAgriProfile() {
         .select('*')
         .order('orden');
 
-      // Explotaciones
+      // Explotaciones (Con nuevos campos PAC)
       const { data: explotaciones } = await supabase
         .from('explotaciones')
         .select('*, parcelas(*)')
         .eq('user_id', user.id);
 
-      // Resumen (simplified, not using a view directly from client)
+      // Campañas
+      const { data: campanasData } = await supabase
+        .from('campanas')
+        .select('*')
+        .order('anio_inicio', { ascending: false });
+
+      // Resumen (alertas)
       const { data: alertasData } = await supabase
         .from('alertas_cuaderno')
         .select('id')
@@ -90,6 +97,7 @@ export function useAgriProfile() {
         onboardedAgri: userData?.onboarded_agri || false,
         explotaciones: explotaciones || [],
         parcelas: allParcelas,
+        campanas: campanasData || [],
         alertasPendientes: alertasData?.length || 0,
       });
 

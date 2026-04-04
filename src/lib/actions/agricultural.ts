@@ -22,11 +22,15 @@ export async function createExplotacion(data: { nombre: string, num_registro_sie
   return res;
 }
 
-export async function updateExplotacion(id: string, data: { nombre: string }) {
+export async function updateExplotacion(id: string, data: { nombre: string, titular?: string, nif_cif?: string }) {
   const supabase = await createClient();
   const { data: res, error } = await supabase
     .from('explotaciones')
-    .update({ nombre: data.nombre })
+    .update({ 
+      nombre: data.nombre,
+      titular: data.titular,
+      nif_cif: data.nif_cif
+    })
     .eq('id', id)
     .select()
     .single();
