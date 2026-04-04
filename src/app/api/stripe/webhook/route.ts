@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
           // Lógica de Tier: 
           // En producción, comparamos el Price ID con nuestra lista de precios oficiales.
           // Por ahora, asumimos que cualquier suscripción activa otorga tier 'premium'.
-          const tier = status === 'active' ? 'premium' : 'basic';
+          const tier = status === 'active' ? 'premium' : 'basico';
 
           // 1. Actualización rápida del perfil de usuario
           await supabaseAdmin

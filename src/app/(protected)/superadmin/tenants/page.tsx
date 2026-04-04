@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { getTenantsList, toggleTenantStatus, createTenant } from '@/lib/actions/superadmin';
+import { TIER_CONFIG, type AgriTier } from '@/lib/modules';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -23,7 +24,7 @@ export default function SuperadminTenantsPage() {
     name: '',
     slug: '',
     type: 'cooperativa',
-    subscription_tier: 'starter'
+    subscription_tier: 'basico'
   });
 
   const load = () => {
@@ -47,7 +48,7 @@ export default function SuperadminTenantsPage() {
     try {
       await createTenant(formData);
       setIsModalOpen(false);
-      setFormData({ name: '', slug: '', type: 'cooperativa', subscription_tier: 'starter' });
+      setFormData({ name: '', slug: '', type: 'cooperativa', subscription_tier: 'basico' });
       load();
     } catch (error: any) {
       console.error(error);
@@ -96,9 +97,21 @@ export default function SuperadminTenantsPage() {
                 </td>
                 <td className="px-6 py-4 capitalize">{t.type.replace('_', ' ')}</td>
                 <td className="px-6 py-4 capitalize">
-                  <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold border ${t.subscription_tier === 'starter' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : t.subscription_tier === 'pro' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
-                    {t.subscription_tier}
-                  </span>
+                  {(() => {
+                    const tierKey = (t.subscription_tier || 'basico') as AgriTier;
+                    const cfg = TIER_CONFIG[tierKey];
+                    const colorMap: Record<string, string> = {
+                      basico: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+                      intermedio: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+                      avanzado: 'bg-violet-500/10 text-violet-400 border-violet-500/20',
+                      premium: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                    };
+                    return (
+                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold border ${colorMap[tierKey] || colorMap.basico}`}>
+                        {cfg?.label_es || 'Básico'}
+                      </span>
+                    );
+                  })()}
                 </td>
                 <td className="px-6 py-4">{t.users?.[0]?.count || 0}</td>
                 <td className="px-6 py-4 text-white/50">
@@ -201,9 +214,10 @@ export default function SuperadminTenantsPage() {
                     onChange={(e) => setFormData({...formData, subscription_tier: e.target.value})}
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 transition-colors"
                   >
-                    <option value="starter">Starter</option>
-                    <option value="pro">Pro</option>
-                    <option value="enterprise">Enterprise</option>
+                    <option value="basico">Básico</option>
+                    <option value="intermedio">Intermedio</option>
+                    <option value="avanzado">Avanzado</option>
+                    <option value="premium">Premium</option>
                   </select>
                 </div>
               </div>

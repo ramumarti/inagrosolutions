@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { AgriTier, TIER_ORDER, TIER_CONFIG, canAccessModule } from '@/lib/modules';
 
-export type SubscriptionTier = 'starter' | 'professional' | 'enterprise';
+// Re-exportamos AgriTier como SubscriptionTier para compatibilidad
+export type SubscriptionTier = AgriTier;
 
 export interface ModuleAccess {
   basic_analytics: boolean;
@@ -14,8 +16,8 @@ export interface ModuleAccess {
   priority_support: boolean;
 }
 
-const TIER_ACCESS: Record<SubscriptionTier, ModuleAccess> = {
-  starter: {
+const TIER_ACCESS: Record<AgriTier, ModuleAccess> = {
+  basico: {
     basic_analytics: true,
     team_management: false,
     api_access: false,
@@ -23,15 +25,23 @@ const TIER_ACCESS: Record<SubscriptionTier, ModuleAccess> = {
     advanced_security: false,
     priority_support: false
   },
-  professional: {
+  intermedio: {
+    basic_analytics: true,
+    team_management: true,
+    api_access: false,
+    custom_branding: false,
+    advanced_security: false,
+    priority_support: false
+  },
+  avanzado: {
     basic_analytics: true,
     team_management: true,
     api_access: true,
     custom_branding: false,
-    advanced_security: false,
+    advanced_security: true,
     priority_support: true
   },
-  enterprise: {
+  premium: {
     basic_analytics: true,
     team_management: true,
     api_access: true,
@@ -42,7 +52,7 @@ const TIER_ACCESS: Record<SubscriptionTier, ModuleAccess> = {
 };
 
 export function useSubscription() {
-  const [tier, setTier] = useState<SubscriptionTier>('starter');
+  const [tier, setTier] = useState<AgriTier>('basico');
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
@@ -61,10 +71,10 @@ export function useSubscription() {
         .single();
 
       if (data?.subscription_tier) {
-        const t = data.subscription_tier.toLowerCase().includes('enterprise') ? 'enterprise' :
-                  data.subscription_tier.toLowerCase().includes('professional') ? 'professional' : 'starter';
-        
-        setTier(t as SubscriptionTier);
+        const raw = data.subscription_tier.toLowerCase();
+        // Intentar mapear directamente, o buscar coincidencia parcial
+        const validTier = TIER_ORDER.find(t => raw === t || raw.includes(t));
+        setTier(validTier || 'basico');
       }
       setLoading(false);
     }
@@ -73,8 +83,9 @@ export function useSubscription() {
 
   return {
     tier,
+    tierLabel: TIER_CONFIG[tier]?.label_es || 'Básico',
     access: TIER_ACCESS[tier],
     loading,
-    isAdmin: false, // Podría expandirse
+    isAdmin: false,
   };
 }
