@@ -25,6 +25,12 @@ interface Plot {
   poligono?: string;
   parcela?: string;
   recinto?: string;
+  agregado?: number;
+  zona?: number;
+  referencia_catastral?: string;
+  crs?: string;
+  x_utm?: number;
+  y_utm?: number;
 }
 
 interface ParcelasModuleProps {
@@ -51,9 +57,15 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
     sistema_riego: 'secano',
     provincia: '',
     municipio: '',
+    agregado: 0,
+    zona: 0,
     poligono: '',
     parcela: '',
     recinto: '',
+    referencia_catastral: '',
+    crs: 'EPSG:ETRS89 / UTM zone 30N',
+    x_utm: 0,
+    y_utm: 0,
     anio_plantacion: new Date().getFullYear()
   });
 
@@ -213,14 +225,26 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-[11px] font-bold text-white/50">
-                  <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/5">
+                  <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/5" title="Polígono / Parcela">
                     <Layers size={12} className="text-emerald-400" />
-                    <span className="truncate">{p.referencia_sigpac || 'Sin SIGPAC'}</span>
+                    <span className="truncate">P{p.poligono} / P{p.parcela}</span>
                   </div>
-                  <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/5">
+                  <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/5" title="Localización">
                     <MapPin size={12} className="text-blue-400" />
-                    <span className="truncate">{p.provincia || 'N/A'}</span>
+                    <span className="truncate">{p.provincia || 'S/P'} - {p.municipio || 'S/M'}</span>
                   </div>
+                  {p.referencia_catastral && (
+                    <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/5 col-span-2" title="Referencia Catastral">
+                      <Search size={12} className="text-blue-400" />
+                      <span className="truncate">{p.referencia_catastral}</span>
+                    </div>
+                  )}
+                  {p.agregado !== 0 && (
+                    <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/5">
+                      <span className="text-emerald-400">AG:</span>
+                      <span className="truncate">{p.agregado}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Quick Action Buttons */}
@@ -338,7 +362,7 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-4 gap-2">
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase font-black text-white/30 tracking-widest ml-1">Polígono</label>
                       <input className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-3 text-xs text-white" value={form.poligono} onChange={e => setForm({...form, poligono: e.target.value})} />
@@ -348,9 +372,41 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
                       <input className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-3 text-xs text-white" value={form.parcela} onChange={e => setForm({...form, parcela: e.target.value})} />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] uppercase font-black text-white/30 tracking-widest ml-1">Recinto</label>
-                      <input className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-3 text-xs text-white" value={form.recinto} onChange={e => setForm({...form, recinto: e.target.value})} />
+                      <label className="text-[10px] uppercase font-black text-white/30 tracking-widest ml-1">Agregado</label>
+                      <input className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-3 text-xs text-white" value={form.agregado} onChange={e => setForm({...form, agregado: Number(e.target.value)})} />
                     </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase font-black text-white/30 tracking-widest ml-1">Zona</label>
+                      <input className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-3 text-xs text-white" value={form.zona} onChange={e => setForm({...form, zona: Number(e.target.value)})} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-black text-white/30 tracking-widest ml-1">Referencia Catastral</label>
+                    <input 
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none uppercase font-mono"
+                      placeholder="23046A013003330000JP"
+                      value={form.referencia_catastral}
+                      onChange={e => setForm({...form, referencia_catastral: e.target.value})}
+                    />
+                  </div>
+
+                  <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl space-y-4">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-blue-400" />
+                      <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Coordenadas del Punto (UTM)</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[9px] uppercase font-black text-white/20">Coordenada X</label>
+                        <input className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white outline-none" value={form.x_utm} placeholder="455097.60" onChange={e => setForm({...form, x_utm: Number(e.target.value)})} />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] uppercase font-black text-white/20">Coordenada Y</label>
+                        <input className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white outline-none" value={form.y_utm} placeholder="4209681.58" onChange={e => setForm({...form, y_utm: Number(e.target.value)})} />
+                      </div>
+                    </div>
+                    <p className="text-[9px] text-white/20 font-bold">Sistema de Referencia (CRS): {form.crs}</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
