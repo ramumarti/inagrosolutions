@@ -158,6 +158,12 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
     setStep(2); // Ir directo a los detalles para editar
   };
 
+  const handleToggleIrrigation = async (id: string, current: string) => {
+    const next = current === 'regadío' ? 'secano' : 'regadío';
+    // En un caso real llamaríamos a updateParcela(id, { sistema_riego: next })
+    setParcelas(parcelas.map(p => p.id === id ? { ...p, sistema_riego: next } : p));
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm('¿Seguro que quieres eliminar esta parcela?')) return;
     try {
@@ -256,8 +262,20 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
                   <button className="p-1.5 bg-white/10 rounded-lg hover:bg-white/20" onClick={() => handleEdit(p)}><Edit3 size={14}/></button>
                   <button className="p-1.5 bg-white/10 rounded-lg hover:bg-red-500/20 text-red-400" onClick={() => handleDelete(p.id)}><Trash2 size={14}/></button>
                 </div>
-                <div className="absolute top-3 left-3 px-2 py-1 bg-emerald-500/20 backdrop-blur-md rounded-md border border-emerald-500/20">
-                  <span className="text-[10px] font-black tracking-widest text-emerald-400 uppercase">{p.sistema_riego || 'Secano'}</span>
+                <div 
+                  className={cn(
+                    "absolute top-3 left-3 px-2 py-1 backdrop-blur-md rounded-md border transition-all cursor-pointer hover:scale-105 active:scale-95",
+                    p.sistema_riego?.toLowerCase() === 'regadío' 
+                      ? "bg-blue-500/20 border-blue-500/30 text-blue-400" 
+                      : "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleIrrigation(p.id, p.sistema_riego || 'secano');
+                  }}
+                  title="Haz clic para cambiar el sistema de riego"
+                >
+                  <span className="text-[10px] font-black tracking-widest uppercase">{p.sistema_riego || 'Secano'}</span>
                 </div>
               </div>
 
@@ -442,6 +460,26 @@ export function ParcelasModule({ explotacionId, parcelas: initialParcelas, tenan
               ) : (
                 <div className="space-y-4 max-h-[60vh] overflow-y-auto px-1 pr-3 scrollbar-thin scrollbar-thumb-white/10">
                   <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2 col-span-2">
+                      <label className="text-[10px] uppercase font-black text-white/30 tracking-widest ml-1">Sistema de Riego</label>
+                      <div className="flex gap-2">
+                        {['secano', 'regadío'].map(type => (
+                          <button
+                            key={type}
+                            onClick={() => setForm({...form, sistema_riego: type})}
+                            className={cn(
+                              "flex-1 py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all",
+                              form.sistema_riego === type 
+                                ? type === 'regadío' ? "bg-blue-500 border-blue-400 text-black" : "bg-emerald-500 border-emerald-400 text-black"
+                                : "bg-white/5 border-white/10 text-white/30 hover:bg-white/10"
+                            )}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase font-black text-white/30 tracking-widest ml-1">Provincia</label>
                       <input 
