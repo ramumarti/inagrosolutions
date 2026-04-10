@@ -225,7 +225,7 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </section>on>
+      </section>
 
       {/* Features Matrix */}
       <section id="ventajas" className="py-24 px-6 bg-white/[0.02] border-y border-white/5">

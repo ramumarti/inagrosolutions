@@ -47,8 +47,9 @@ export default function OnboardingPage() {
         .eq('id', user.id)
         .single();
 
-      if (userData?.platform_role === 'tenant_admin') {
-        return router.push('/dashboard');
+      if (userData?.platform_role === 'tenant_admin' || userData?.platform_role === 'superadmin') {
+        window.location.href = '/dashboard'; // Hard redirect to break out of any client-side routing issues
+        return;
       }
 
       setUserId(user.id);

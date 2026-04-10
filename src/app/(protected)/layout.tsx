@@ -44,23 +44,33 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     };
   }, [supabase]);
 
-  // Check if user needs onboarding (no explotaciones created yet)
+  // Check if user needs onboarding (for farmers only)
   useEffect(() => {
-    if (!user || pathname === '/onboarding' || profile?.platform_role === 'tenant_admin') return;
-    
-    async function checkOnboarding() {
-      const { data, error } = await supabase
-        .from('explotaciones')
-        .select('id')
-        .eq('user_id', user!.id)
-        .limit(1);
-      
-      if (!error && (!data || data.length === 0)) {
-        router.push('/onboarding');
-      }
+    if (!user || loading) return;
+
+    // Hard redirect out of onboarding for admins
+    const isAdmin = profile?.platform_role === 'tenant_admin' || profile?.platform_role === 'superadmin';
+    if (isAdmin && pathname === '/onboarding') {
+      window.location.href = '/dashboard';
+      return;
     }
-    checkOnboarding();
-  }, [user, pathname, supabase, router, profile]);
+
+    // Redirect farmers TO onboarding if they have no farms
+    if (!isAdmin && pathname !== '/onboarding') {
+      const checkOnboarding = async () => {
+        const { data } = await supabase
+          .from('explotaciones')
+          .select('id')
+          .eq('user_id', user.id)
+          .limit(1);
+        
+        if (!data || data.length === 0) {
+          router.push('/onboarding');
+        }
+      };
+      checkOnboarding();
+    }
+  }, [user, pathname, supabase, router, profile, loading]);
 
   if (loading) {
     return <div className="h-screen w-full bg-[#0a0a0a] flex items-center justify-center animate-pulse text-white/20">Cargando Marca Blanca...</div>;
