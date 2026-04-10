@@ -11,9 +11,47 @@ export async function GET(request: Request) {
     
     if (!error && authData?.user) {
       const userEmail = authData.user.email
+      const metadata = authData.user.user_metadata
+
+      // -- Flujo para Cuentas de Empresa (Marca Blanca) --
+      if (metadata?.is_business && metadata?.company_name) {
+        // Verificar si el usuario ya tiene un tenant asignado en la tabla publica
+        const { data: publicUser } = await supabase
+          .from('users')
+          .select('tenant_id')
+          .eq('id', authData.user.id)
+          .single();
+
+        if (publicUser && !publicUser.tenant_id) {
+          // Crear el Tenant (Entidad) automáticamente
+          const slug = metadata.company_name
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+
+          const { data: newTenant, error: tenantError } = await supabase
+            .from('tenants')
+            .insert({
+              name: metadata.company_name,
+              slug: `${slug}-${Math.random().toString(36).substring(2, 7)}`, // Slug único
+              type: 'cooperativa',
+              subscription_tier: 'basico'
+            })
+            .select()
+            .single();
+
+          if (!tenantError && newTenant) {
+            // Asignar el nuevo tenant y el rol de admin al usuario
+            await supabase.from('users').update({
+              tenant_id: newTenant.id,
+              platform_role: 'tenant_admin'
+            }).eq('id', authData.user.id);
+          }
+        }
+      }
 
       // -- Punto 3: Flujo de Aceptación de Invitaciones --
-      // Verificamos si este usuario tiene una invitación pendiente en su correo
       if (userEmail) {
         const { data: invite } = await supabase
           .from('tenant_invitations')
@@ -38,7 +76,7 @@ export async function GET(request: Request) {
         }
       }
 
-      // Redirigir al portal principal (middleware se encargará de llevarlo a su respectivo panel según su rol)
+      // Redirigir al portal principal
       return NextResponse.redirect(`${origin}/`)
     }
   }

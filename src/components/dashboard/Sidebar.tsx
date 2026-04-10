@@ -72,28 +72,28 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
     ] : []),
     ...(hasRole(['tenant_admin']) && (!isSuperadmin || tenant) ? [
       {
-        label: 'Admin Entidad',
-        href: '/tenant',
-        icon: Shield,
-        isActive: pathname === '/tenant'
+        label: language === 'en' ? 'Company Overview' : 'Resumen Empresa',
+        href: '/dashboard',
+        icon: LayoutGrid,
+        isActive: pathname === '/dashboard'
       },
       {
-        label: 'Usuarios',
-        href: '/tenant/users',
+        label: language === 'en' ? 'Member Management' : 'Gestión de Socios',
+        href: '/admin/members',
         icon: Users,
-        isActive: pathname.startsWith('/tenant/users')
+        isActive: pathname === '/admin/members'
       },
       {
-        label: 'Entradas Almazara',
-        href: '/tenant/harvests',
-        icon: Scale,
-        isActive: pathname.startsWith('/tenant/harvests')
-      },
-      {
-        label: 'Configuración',
-        href: '/tenant/settings',
+        label: language === 'en' ? 'White Label Brand' : 'Mi Marca Blanca',
+        href: '/admin/branding',
         icon: Hexagon,
-        isActive: pathname.startsWith('/tenant/settings')
+        isActive: pathname === '/admin/branding'
+      },
+      {
+        label: language === 'en' ? 'Revenue Sharing' : 'Facturación y Comisiones',
+        href: '/tenant/billing',
+        icon: Wallet,
+        isActive: pathname.startsWith('/tenant/billing')
       }
     ] : []),
     ...(hasRole(['technician', 'tenant_admin']) && (!isSuperadmin || tenant) ? [
@@ -213,49 +213,51 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
             </div>
           )}
 
-          {/* Main nav */}
+          {/* Primary Business Navigation (Hiding others for clarity if admin) */}
           {navItems.map(renderNavLink)}
 
-          {/* Cuaderno Digital Section */}
-          <div className="mt-2">
-            <button
-              onClick={() => setCuadernoOpen(!cuadernoOpen)}
-              className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all",
-                pathname.startsWith('/cuaderno')
-                  ? "bg-emerald-500/10 text-white border border-emerald-500/20"
-                  : "text-white/70 hover:text-white hover:bg-white/10 border border-transparent"
+          {/* Only show Cuaderno Digital if NOT a tenant admin or if specifically needed */}
+          {!hasRole(['tenant_admin']) && (
+            <div className="mt-2">
+              <button
+                onClick={() => setCuadernoOpen(!cuadernoOpen)}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all",
+                  pathname.startsWith('/cuaderno')
+                    ? "bg-emerald-500/10 text-white border border-emerald-500/20"
+                    : "text-white/70 hover:text-white hover:bg-white/10 border border-transparent"
+                )}
+              >
+                <BookOpen className={cn("w-5 h-5 shrink-0", pathname.startsWith('/cuaderno') ? 'text-emerald-400' : 'text-white/50')} />
+                {(!isCollapsed || isMobileOpen) && (
+                  <>
+                    <span className="font-medium text-sm flex-1 text-left">Cuaderno Digital</span>
+                    <ChevronRight className={cn("w-4 h-4 transition-transform text-white/30", cuadernoOpen && "rotate-90")} />
+                  </>
+                )}
+              </button>
+              
+              {cuadernoOpen && (!isCollapsed || isMobileOpen) && (
+                <div className="ml-4 mt-1 space-y-0.5 pl-4 border-l border-white/5 animate-in slide-in-from-top-2 duration-200">
+                  {cuadernoItems.map(item => (
+                    <Link
+                      key={item.label}
+                      href={item.href}
+                      className={cn(
+                        "flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-bold transition-all",
+                        item.isActive
+                          ? "text-emerald-400 bg-emerald-500/10"
+                          : "text-white/30 hover:text-white/60 hover:bg-white/5"
+                      )}
+                    >
+                      <item.icon size={14} />
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
               )}
-            >
-              <BookOpen className={cn("w-5 h-5 shrink-0", pathname.startsWith('/cuaderno') ? 'text-emerald-400' : 'text-white/50')} />
-              {(!isCollapsed || isMobileOpen) && (
-                <>
-                  <span className="font-medium text-sm flex-1 text-left">Cuaderno Digital</span>
-                  <ChevronRight className={cn("w-4 h-4 transition-transform text-white/30", cuadernoOpen && "rotate-90")} />
-                </>
-              )}
-            </button>
-            
-            {cuadernoOpen && (!isCollapsed || isMobileOpen) && (
-              <div className="ml-4 mt-1 space-y-0.5 pl-4 border-l border-white/5 animate-in slide-in-from-top-2 duration-200">
-                {cuadernoItems.map(item => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-bold transition-all",
-                      item.isActive
-                        ? "text-emerald-400 bg-emerald-500/10"
-                        : "text-white/30 hover:text-white/60 hover:bg-white/5"
-                    )}
-                  >
-                    <item.icon size={14} />
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Separator */}
           <div className="my-4 border-t border-white/5" />

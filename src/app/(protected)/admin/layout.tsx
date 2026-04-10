@@ -9,11 +9,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const { data } = await supabase
     .from('users')
-    .select('role')
+    .select('platform_role')
     .eq('id', user.id)
     .single();
 
-  if (data?.role !== 'admin') {
+  const isAuthorized = data?.platform_role === 'superadmin' || data?.platform_role === 'tenant_admin';
+
+  if (!isAuthorized) {
     redirect('/');
   }
 

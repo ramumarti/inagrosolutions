@@ -66,88 +66,166 @@ export default function LandingPage() {
              <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg transform rotate-3">
                <Leaf size={26} className="text-white" />
              </div>
-             <span className="text-2xl font-black tracking-tighter text-white">INAGROSOLUTIONS</span>
+             <div className="flex flex-col -gap-1">
+               <span className="text-2xl font-black tracking-tighter text-white">INAGROSOLUTIONS</span>
+               <span className="text-[10px] font-bold text-emerald-500 tracking-[0.2em] uppercase pl-1">Tecnología Agrícola</span>
+             </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-8">
-            {['Ventajas', 'Funcionamiento', 'Planes'].map((item) => (
+          <div className="hidden lg:flex items-center gap-8">
+            {['Ventajas', 'Cooperativas', 'Planes'].map((item) => (
               <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-bold text-white/70 hover:text-white transition-colors">
                 {item}
               </a>
             ))}
+            <div className="h-4 w-px bg-white/10" />
             <Link href="/login">
-              <GlowButton variant="secondary" className="px-6 py-3 rounded-xl text-sm">
-                Acceso Agricultor
-              </GlowButton>
+              <span className="text-sm font-bold text-white/70 hover:text-white cursor-pointer px-2">Acceso</span>
             </Link>
-            <Link href="#planes">
+            <Link href="/signup">
               <GlowButton variant="primary" className="px-8 py-3 rounded-xl text-sm">
-                Probar Gratis
+                Empezar Gratis
               </GlowButton>
             </Link>
           </div>
 
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-white/80 p-2">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden text-white/80 p-2">
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-48 pb-32 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="relative z-10 space-y-8 text-center lg:text-left">
+      <section className="relative pt-48 pb-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-5 gap-16 items-center">
+            <div className="lg:col-span-3 relative z-10 space-y-8 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                <ShieldCheck size={18} className="text-emerald-400" />
-                <span className="text-sm font-bold text-emerald-400">100% Adaptado a Normativa SIEX y PAC</span>
+                <Sparkles size={18} className="text-emerald-400" />
+                <span className="text-sm font-bold text-emerald-400">Plataforma Marca Blanca para Cooperativas y Empresas</span>
               </div>
               
               <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tight text-white">
                 El Cuaderno Digital <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-500">
-                  Creado por y para Agricultores.
+                  Profesional y Multi-Entidad.
                 </span>
               </h1>
 
-              <p className="text-lg md:text-xl text-white/80 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                Olvídate del papeleo. Registra tus tratamientos y labores directamente desde el tractor en tu móvil, <strong>incluso sin cobertura de internet</strong>. Genera informes oficiales (XML / Excel) con un solo clic.
+              <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
+                Potencia tu negocio agrícola con nuestra tecnología. Ofrece a tus socios un <strong>Cuaderno Digital con TU marca</strong>, gestiona miles de fincas desde un solo panel y genera nuevos ingresos.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                 <Link href="#planes">
-                   <GlowButton variant="primary" className="px-10 py-5 rounded-2xl text-lg w-full sm:w-auto">
-                     Ver Planes <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform" />
-                   </GlowButton>
-                 </Link>
-                 <Link href="/login">
-                    <GlowButton variant="secondary" className="px-10 py-5 rounded-2xl text-lg w-full sm:w-auto">
-                      Iniciar Sesión
+                 <Link href="/signup">
+                    <GlowButton variant="primary" className="px-10 py-5 rounded-2xl text-lg w-full sm:w-auto">
+                      Registrar mi Cooperativa <ArrowRight className="ml-3" />
                     </GlowButton>
                  </Link>
+                 <a href="#cooperativas">
+                    <GlowButton variant="secondary" className="px-10 py-5 rounded-2xl text-lg w-full sm:w-auto">
+                      Saber más
+                    </GlowButton>
+                 </a>
               </div>
             </div>
 
-            <div className="relative group">
+            <div className="lg:col-span-2 relative group hidden lg:block">
               <div className="absolute inset-0 bg-emerald-500/20 blur-[120px] rounded-full group-hover:bg-green-600/20 transition-all duration-1000" />
-              <GlassCard className="p-2 border-white/20 bg-white/[0.03] shadow-2xl transform hover:scale-[1.02] transition-all duration-700 overflow-hidden">
-                <div className="relative h-[480px] w-full rounded-[24px] overflow-hidden">
-                   <img 
-                     src="/usage_context.png" 
-                     alt="Agricultor en olivar tradicional usando InagroSolutions" 
-                     className="w-full h-full object-cover"
-                   />
-                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                   <div className="absolute bottom-6 left-6 right-6 p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl">
-                     <p className="text-sm font-bold text-white mb-1">Registro en Campo</p>
-                     <p className="text-xs text-white/60">Gestiona tus parcelas directamente desde el olivar, con o sin internet.</p>
-                   </div>
+              <GlassCard className="p-4 border-white/20 bg-white/[0.03] shadow-2xl skew-y-1 transform hover:skew-y-0 transition-all duration-700">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-8 h-8 rounded bg-emerald-500" />
+                    <div className="flex gap-2">
+                       <div className="w-3 h-3 rounded-full bg-red-400" />
+                       <div className="w-3 h-3 rounded-full bg-amber-400" />
+                       <div className="w-3 h-3 rounded-full bg-green-400" />
+                    </div>
+                  </div>
+                  <div className="h-4 w-full bg-white/20 rounded" />
+                  <div className="h-4 w-3/4 bg-white/10 rounded" />
+                  <div className="grid grid-cols-2 gap-4 pt-4">
+                    <div className="h-20 bg-emerald-500/20 rounded-xl border border-emerald-500/30" />
+                    <div className="h-20 bg-white/5 rounded-xl border border-white/10" />
+                  </div>
+                  <div className="mt-4 p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                    <span className="text-xs font-bold text-white opacity-50">MARCA BLANCA ACTIVA</span>
+                    <ShieldCheck size={16} className="text-emerald-400" />
+                  </div>
                 </div>
               </GlassCard>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Business Solution Section */}
+      <section id="cooperativas" className="py-24 px-6 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="order-2 lg:order-1">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4 pt-8">
+                  <GlassCard className="p-6 border-emerald-500/20 bg-emerald-500/5">
+                    <Target className="text-emerald-400 mb-4" size={32} />
+                    <h4 className="font-bold text-lg mb-2">Marca Blanca</h4>
+                    <p className="text-sm text-white/60">Toda la plataforma bajo tu propio logo y colores corporativos.</p>
+                  </GlassCard>
+                  <GlassCard className="p-6">
+                    <BarChart4 className="text-blue-400 mb-4" size={32} />
+                    <h4 className="font-bold text-lg mb-2">Gestión Masiva</h4>
+                    <p className="text-sm text-white/60">Controla miles de fincas y agricultores desde un panel centralizado.</p>
+                  </GlassCard>
+                </div>
+                <div className="space-y-4">
+                  <GlassCard className="p-6">
+                    <CreditCard className="text-amber-400 mb-4" size={32} />
+                    <h4 className="font-bold text-lg mb-2">Monetización</h4>
+                    <p className="text-sm text-white/60">Tú decides cuánto cobras a tus socios. Nosotros te damos el precio base.</p>
+                  </GlassCard>
+                  <GlassCard className="p-6 border-emerald-500/20 bg-emerald-500/5">
+                    <Smartphone className="text-emerald-400 mb-4" size={32} />
+                    <h4 className="font-bold text-lg mb-2">PWA Multi-app</h4>
+                    <p className="text-sm text-white/60">Tus agricultores instalan TU app en su móvil, adaptada a sus necesidades.</p>
+                  </GlassCard>
+                </div>
+              </div>
+            </div>
+            
+            <div className="order-1 lg:order-2 space-y-6">
+              <h2 className="text-sm font-black uppercase text-emerald-500 tracking-[0.3em]">Soluciones para Entidades</h2>
+              <h3 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+                Escala tu negocio agrícola al siguiente nivel.
+              </h3>
+              <p className="text-lg text-white/70 leading-relaxed">
+                INAGROSOLUTIONS no es solo un cuaderno digital; es una infraestructura tecnológica para cooperativas, almazaras y empresas de servicios. 
+              </p>
+              <ul className="space-y-4">
+                {[
+                  "Aislamiento total de datos por entidad (Tenants).",
+                  "Configuración de módulos específica para cada socio.",
+                  "Panel para técnicos con supervisión de tratamientos.",
+                  "Exportación masiva de datos para auditorías SIEX."
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 font-bold text-white/90">
+                    <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    </div>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="pt-6">
+                 <Link href="/signup">
+                    <GlowButton variant="primary" className="px-10 py-4 rounded-xl text-md">
+                      Crear Cuenta de Cooperativa
+                    </GlowButton>
+                 </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>on>
 
       {/* Features Matrix */}
       <section id="ventajas" className="py-24 px-6 bg-white/[0.02] border-y border-white/5">

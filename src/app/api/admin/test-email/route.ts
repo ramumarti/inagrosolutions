@@ -28,10 +28,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { host, port, username, password, from_email, from_name, test_recipient } = body;
 
-    const supabaseAdmin = createSupabaseClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SECRET_KEY!
-    );
+    const { supabaseAdmin } = await import('@/lib/supabase/admin');
 
     const { data: existing } = await supabaseAdmin.from('smtp_settings').select('id, password').single();
 

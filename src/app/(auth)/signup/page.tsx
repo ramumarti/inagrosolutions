@@ -16,6 +16,8 @@ export default function SignupPage() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isBusiness, setIsBusiness] = useState(false);
+  const [companyName, setCompanyName] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   
@@ -32,6 +34,11 @@ export default function SignupPage() {
       return;
     }
 
+    if (isBusiness && !companyName) {
+      toast(language === 'en' ? 'Company name is required' : 'El nombre de la empresa es obligatorio', 'error');
+      return;
+    }
+
     setLoading(true);
     
     const origin = window.location.origin;
@@ -40,10 +47,13 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${origin}/?verified=true`,
+        emailRedirectTo: `${origin}/auth/callback`,
         data: {
           first_name: firstName,
           last_name: lastName,
+          is_business: isBusiness,
+          company_name: isBusiness ? companyName : null,
+          platform_role: isBusiness ? 'tenant_admin' : 'farmer'
         }
       }
     });
@@ -90,6 +100,35 @@ export default function SignupPage() {
             required
           />
         </div>
+        <div className="flex bg-white/5 p-1 rounded-xl mb-2">
+          <button
+            type="button"
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${!isBusiness ? 'bg-[var(--color-primary)] text-white shadow-lg' : 'text-white/50 hover:text-white'}`}
+            onClick={() => setIsBusiness(false)}
+          >
+            {language === 'en' ? 'Individual' : 'Particular'}
+          </button>
+          <button
+            type="button"
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${isBusiness ? 'bg-[var(--color-primary)] text-white shadow-lg' : 'text-white/50 hover:text-white'}`}
+            onClick={() => setIsBusiness(true)}
+          >
+            {language === 'en' ? 'Enterprise' : 'Empresa / Coop.'}
+          </button>
+        </div>
+
+        {isBusiness && (
+          <Input 
+            type="text" 
+            placeholder={language === 'en' ? 'Company / Cooperative Name' : 'Nombre de la Empresa / Cooperativa'} 
+            icon={<Hexagon className="w-5 h-5" />}
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            required
+            className="animate-in fade-in slide-in-from-top-2 duration-300"
+          />
+        )}
+
         <Input 
           type="email" 
           placeholder={t('login.email')} 

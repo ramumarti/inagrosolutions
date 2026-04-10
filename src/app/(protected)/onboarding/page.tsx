@@ -39,6 +39,18 @@ export default function OnboardingPage() {
     async function loadUser() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return router.push('/login');
+      
+      // Check role to escape onboarding if admin
+      const { data: userData } = await supabase
+        .from('users')
+        .select('platform_role')
+        .eq('id', user.id)
+        .single();
+
+      if (userData?.platform_role === 'tenant_admin') {
+        return router.push('/dashboard');
+      }
+
       setUserId(user.id);
       setPerfil(prev => ({
         ...prev,

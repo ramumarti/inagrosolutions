@@ -8,9 +8,7 @@ import { canAccessModule, isModuleActive } from '@/lib/modules';
 export interface AgriProfile {
   userId: string;
   tenant_id?: string;
-  tier: string;
-  totalHectareas: number;
-  modulosActivos: string[];
+  platform_role: string;
   onboardedAgri: boolean;
   explotaciones: any[];
   parcelas: any[];
@@ -26,6 +24,14 @@ export interface ResumenDiario {
   tratamientos_hoy: number;
   labores_hoy: number;
   alertas_pendientes: number;
+  tenant?: {
+    id: string;
+    name: string;
+    logo_url: string;
+    primary_color: string;
+    secondary_color: string;
+    custom_domain: string;
+  };
 }
 
 export function useAgriProfile() {
@@ -48,10 +54,17 @@ export function useAgriProfile() {
           total_hectareas, 
           modulos_activos, 
           onboarded_agri,
+          platform_role,
           tenant_id,
           tenants (
+            id,
+            name,
             subscription_tier,
-            active_modules
+            active_modules,
+            logo_url,
+            primary_color,
+            secondary_color,
+            custom_domain
           )
         `)
         .eq('id', user.id)
@@ -85,20 +98,27 @@ export function useAgriProfile() {
       const allParcelas = explotaciones?.flatMap((e: any) => e.parcelas || []) || [];
       const totalHa = allParcelas.reduce((sum: number, p: any) => sum + (Number(p.hectareas) || 0), 0);
 
-      const rawTier = (userData?.tenants as any)?.subscription_tier || 'basico';
+      const tenantData = userData?.tenants as any;
+      const rawTier = tenantData?.subscription_tier || 'basico';
       const safeTier = ['basico', 'intermedio', 'avanzado', 'premium'].includes(rawTier) ? rawTier : 'basico';
 
       setProfile({
         userId: user.id,
         tenant_id: userData?.tenant_id,
-        tier: safeTier,
-        totalHectareas: totalHa,
-        modulosActivos: (userData?.tenants as any)?.active_modules || ['core'],
+        platform_role: userData?.platform_role || 'farmer',
         onboardedAgri: userData?.onboarded_agri || false,
         explotaciones: explotaciones || [],
         parcelas: allParcelas,
         campanas: campanasData || [],
         alertasPendientes: alertasData?.length || 0,
+        tenant: tenantData ? {
+          id: tenantData.id,
+          name: tenantData.name,
+          logo_url: tenantData.logo_url,
+          primary_color: tenantData.primary_color,
+          secondary_color: tenantData.secondary_color,
+          custom_domain: tenantData.custom_domain
+        } : undefined
       });
 
       setModulos(modulosData as ModuloSistema[] || []);
@@ -135,5 +155,14 @@ export function useAgriProfile() {
     return canAccessModule(profile.tier as any, tierMinimo);
   }, [profile]);
 
-  return { profile, modulos, resumen, loading, hasModule, canAccess, reload: load };
+  return { 
+    profile, 
+    tenant: profile?.tenant,
+    modulos, 
+    resumen, 
+    loading, 
+    hasModule, 
+    canAccess, 
+    refreshProfile: load 
+  };
 }

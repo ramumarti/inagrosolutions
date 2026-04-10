@@ -11,12 +11,14 @@ import { User } from '@supabase/supabase-js';
 import { cn } from '@/lib/utils';
 import { AuthProvider } from '@/lib/auth/tenant-context';
 import { MobilePWAWidget } from '@/components/cuaderno/MobilePWAWidget';
+import { useAgriProfile } from '@/hooks/useAgriProfile';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const { t, language } = useI18n();
+  const { profile, tenant, loading } = useAgriProfile();
   const supabase = createClient();
   const pathname = usePathname();
   const router = useRouter();
@@ -44,7 +46,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   // Check if user needs onboarding (no explotaciones created yet)
   useEffect(() => {
-    if (!user || pathname === '/onboarding') return;
+    if (!user || pathname === '/onboarding' || profile?.platform_role === 'tenant_admin') return;
     
     async function checkOnboarding() {
       const { data, error } = await supabase
@@ -58,14 +60,45 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       }
     }
     checkOnboarding();
-  }, [user, pathname, supabase, router]);
+  }, [user, pathname, supabase, router, profile]);
+
+  if (loading) {
+    return <div className="h-screen w-full bg-[#0a0a0a] flex items-center justify-center animate-pulse text-white/20">Cargando Marca Blanca...</div>;
+  }
 
   return (
     <AuthProvider>
       <div className="flex h-screen w-full bg-[var(--color-base-100)] text-[color:var(--color-base-content)] overflow-hidden font-sans">
+        {/* Dynamic Branding Injection */}
+        {tenant && (
+          <style dangerouslySetInnerHTML={{ __html: `
+            :root {
+              ${tenant.primary_color ? `--color-primary: ${tenant.primary_color};` : ''}
+              ${tenant.secondary_color ? `--color-accent-blue: ${tenant.secondary_color};` : ''}
+              ${tenant.primary_color ? `--color-primary-focus: ${tenant.primary_color}dd;` : ''}
+            }
+            .glow-text {
+              text-shadow: 0 0 20px ${tenant.primary_color}44;
+            }
+          `}} />
+        )}
+
         {/* Background Orbs */}
-        <div className="fixed top-[20%] left-[20%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full bg-[var(--color-primary)]/10 blur-[120px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '10s' }} />
-        <div className="fixed bottom-[20%] right-[20%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full bg-[var(--color-accent-blue)]/10 blur-[120px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '14s', animationDelay: '3s' }} />
+        <div 
+          className="fixed top-[20%] left-[20%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full blur-[120px] animate-pulse pointer-events-none z-0" 
+          style={{ 
+            animationDuration: '10s',
+            backgroundColor: (tenant?.primary_color || '#10B981') + '1a'
+          }} 
+        />
+        <div 
+          className="fixed bottom-[20%] right-[20%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full blur-[120px] animate-pulse pointer-events-none z-0" 
+          style={{ 
+            animationDuration: '14s', 
+            animationDelay: '3s',
+            backgroundColor: (tenant?.secondary_color || '#3b82f6') + '1a'
+          }} 
+        />
         
         <MobilePWAWidget />
 

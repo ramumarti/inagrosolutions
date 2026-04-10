@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-geoman-free/dist/leaflet-geoman.css';
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import { 
   MapPin, Layers, Maximize2, MousePointer2, 
   Map as MapIcon, X, Info, LayersIcon, Search
