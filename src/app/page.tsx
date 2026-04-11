@@ -244,7 +244,7 @@ export default function LandingPage() {
           <div className="flex flex-col items-center mb-16 text-center">
             <h2 className="text-sm font-black uppercase text-emerald-500 tracking-widest mb-4">Por qué elegirnos</h2>
             <p className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">Diseñado para la realidad del campo</p>
-            <p className="text-lg text-white/70 max-w-2xl font-medium">Sabemos que el agricultor no tiene tiempo que perder frente al ordenador. Nuestra tecnología se adapta a tus necesidades diarias.</p>
+            <p className="text-lg text-white/70 max-w-2xl font-medium">Sabemos que el agricultor no tiene tiempo que perder frente al ordenador. Nuestra tecnología se adapta a sus necesidades diarias.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
