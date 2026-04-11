@@ -310,6 +310,17 @@ export default function LandingPage() {
             <p className="text-white/60 text-lg">Lo mejor de todo es que les ofreces un servicio con tu propia marca.</p>
           </div>
 
+          <div className="flex justify-center mb-12">
+             <div className="bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-transparent border border-emerald-500/30 px-8 py-4 rounded-3xl backdrop-blur-xl flex items-center gap-4 animate-pulse-slow">
+                <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+                   <Sparkles className="text-white" size={20} />
+                </div>
+                <p className="text-sm md:text-md font-bold text-white/90 leading-relaxed">
+                   Precios sin competencia en el mercado, y lo mejor de todo es que tu empresa o cooperativa recibe el <span className="text-emerald-400 text-lg font-black">50%</span> tan solo por colocar su marca e invitar a sus agricultores y olivareros.
+                </p>
+             </div>
+          </div>
+
             {/* Toggle Billing */}
             <div className="flex items-center justify-center gap-4 mb-12">
                <span className={`text-sm font-bold transition-colors ${billingInterval === 'month' ? 'text-white' : 'text-white/40'}`}>Mensual</span>
