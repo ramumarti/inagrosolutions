@@ -51,10 +51,14 @@ export async function createRecommendation(payload: {
 
   const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
   
+  const { error } = await supabase
+    .from('recommendations')
+    .insert({
+      ...payload,
+      technician_id: user.id,
+      tenant_id: userData?.tenant_id,
       estado: 'pendiente'
-    })
-    .select()
-    .single();
+    });
 
   if (error) throw error;
 
