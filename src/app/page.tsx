@@ -121,7 +121,7 @@ export default function LandingPage() {
               <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tight text-white mb-6">
                 {heroConfig?.title || (
                   <>
-                    El Cuaderno Digital <br />
+                    Cuaderno de campo digital <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-500">
                       Profesional y Multi-Entidad.
                     </span>
