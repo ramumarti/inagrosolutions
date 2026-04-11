@@ -192,7 +192,7 @@ export default function LandingPage() {
                   <GlassCard className="p-6">
                     <CreditCard className="text-amber-400 mb-4" size={32} />
                     <h4 className="font-bold text-lg mb-2">Monetización</h4>
-                    <p className="text-sm text-white/60">Tú decides cuánto cobras a tus socios. El 50% de la facturación es para tu cooperativa.</p>
+                    <p className="text-sm text-white/60">El 50% de la facturación es para tu cooperativa.</p>
                   </GlassCard>
                   <GlassCard className="p-6 border-emerald-500/20 bg-emerald-500/5">
                     <Smartphone className="text-emerald-400 mb-4" size={32} />
