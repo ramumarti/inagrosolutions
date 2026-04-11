@@ -49,6 +49,20 @@ export async function GET(request: Request) {
             }).eq('id', authData.user.id);
           }
         }
+      } else if (metadata?.tenant_slug) {
+        // -- Flujo para Auto-vinculación de Agricultores (/c/[slug]) --
+        const { data: targetTenant } = await supabase
+          .from('tenants')
+          .select('id')
+          .eq('slug', metadata.tenant_slug)
+          .single();
+          
+        if (targetTenant) {
+          await supabase.from('users').update({
+            tenant_id: targetTenant.id,
+            platform_role: 'farmer'
+          }).eq('id', authData.user.id);
+        }
       }
 
       // -- Punto 3: Flujo de Aceptación de Invitaciones --

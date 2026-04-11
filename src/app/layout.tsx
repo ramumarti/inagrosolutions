@@ -5,13 +5,13 @@ import { ToastProvider } from '@/components/ui/Toast'
 import { CookieBanner } from '@/components/ui/CookieBanner'
 
 export const metadata: Metadata = {
-  title: 'IASOLUTIONS',
-  description: 'Tu portal de micro aplicaciones',
-  manifest: '/manifest.webmanifest',
+  title: 'InagroSolutions',
+  description: 'Gestión Agrícola Inteligente y Cuaderno de Campo SIEX',
+  manifest: '/manifest.json',
 }
 
 export const viewport: Viewport = {
-  themeColor: '#000000',
+  themeColor: '#10b981',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,

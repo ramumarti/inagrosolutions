@@ -207,7 +207,6 @@ export default async function AdminUserDetailPage(props: { params: Promise<{ id:
                   This user currently has no access to any apps.
                 </div>
               )}
-              <p className="text-xs text-white/40 mt-2">Note: Override management coming in Day 9.</p>
             </div>
 
             <div className="rounded-2xl bg-white/5 border border-white/10 p-6 flex flex-col gap-4 backdrop-blur-md shadow-xl w-full">

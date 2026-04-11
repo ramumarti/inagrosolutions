@@ -33,28 +33,73 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
     };
   }, [profile, explotacionId]);
 
-  const handleExportSiex = () => {
+  const handleExportSiex = async () => {
+    if (!explotacionId || !campanaId) return;
     setIsExporting(true);
-    // Simulación de generación de CSV SIEX
-    setTimeout(() => {
-      const data = profile.parcelas.filter((p: any) => p.explotacion_id === explotacionId).map((p: any) => ({
-        "ID_EXPLOTACION": selectedExplotacion?.nif_cif || '---',
-        "PROVINCIA": p.provincia,
-        "MUNICIPIO": p.municipio,
-        "POLIGONO": p.poligono,
-        "PARCELA": p.parcela,
+    
+    try {
+      const { generateSiexData } = await import('@/lib/actions/export-siex');
+      const data = await generateSiexData(explotacionId, campanaId);
+
+      // Paso 4.2 - Validación pre-exportación
+      if (!data.validation.isValid) {
+        alert('❌ NO SE PUEDE EXPORTAR EL SIEX. Hay errores críticos:\n\n' + data.validation.errors.join('\n'));
+        setIsExporting(false);
+        return;
+      }
+      
+      if (data.validation.warnings.length > 0) {
+        const proceed = confirm('⚠️ Hay advertencias de validación:\n\n' + data.validation.warnings.join('\n') + '\n\n¿Quieres exportar de todos modos?');
+        if (!proceed) {
+          setIsExporting(false);
+          return;
+        }
+      }
+      
+      const fileName = `SIEX_Export_${data.explotacion?.nombre || 'Finca'}_${new Date().getFullYear()}`;
+
+      // Tratamientos Fitosanitarios
+      const tratamientosData = data.tratamientos.map((t: any) => ({
+        "ID_EXPLOTACION": data.explotacion?.nif_cif || '---',
+        "FECHA_TRATAMIENTO": new Date(t.fecha).toLocaleDateString('es-ES'),
+        "NUM_REGISTRO_MAPA": t.producto ? t.producto.match(/\\d{5}/)?.[0] || 'N/A' : 'N/A',
+        "NOMBRE_PRODUCTO": t.producto,
+        "METODO_APLICACION": t.metodo_aplicacion || 'Pulverización',
+        "DOSIS_CANTIDAD": t.dosis_cantidad || 0,
+        "DOSIS_UNIDAD": t.dosis_unidad || 'L/ha',
+        "MAQUINARIA": t.maquinaria_id || 'Manual',
+        "OPERARIO": t.operario_id || 'Propio titular',
+        "PLAZO_SEGURIDAD": t.plazo_seguridad_dias || 0
+      }));
+
+      // Parcelas
+      const parcelasData = data.parcelas.map((p: any) => ({
+        "ID_EXPLOTACION": data.explotacion?.nif_cif || '---',
+        "PROVINCIA": p.provincia || '00',
+        "MUNICIPIO": p.municipio || '000',
+        "POLIGONO": p.poligono || '0',
+        "PARCELA": p.parcela || '0',
         "RECINTO": p.recinto || 1,
-        "SUPERFICIE_HA": p.hectareas,
-        "CULTIVO_PRINCIPAL": p.cultivo,
+        "SUPERFICIE_HA": p.hectareas || 0,
+        "CULTIVO_PRINCIPAL": p.cultivo || 'No especificado',
         "SISTEMA_EXPLOTACION": p.sistema_riego === 'Regadío' ? 'R' : 'S'
       }));
 
-      const ws = XLSX.utils.json_to_sheet(data);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "SIEX_Export");
-      XLSX.writeFile(wb, `SIEX_Export_${selectedExplotacion?.nombre || 'Finca'}_${new Date().getFullYear()}.csv`, { bookType: 'csv' });
+      const wsParcelas = XLSX.utils.json_to_sheet(parcelasData.length > 0 ? parcelasData : [{ "Mensaje": "Sin datos de parcelas" }]);
+      const wsTratamientos = XLSX.utils.json_to_sheet(tratamientosData.length > 0 ? tratamientosData : [{ "Mensaje": "Sin tratamientos reportados" }]);
+
+      XLSX.utils.book_append_sheet(wb, wsParcelas, "PARCELAS");
+      XLSX.utils.book_append_sheet(wb, wsTratamientos, "TRATAMIENTOS");
+
+      XLSX.writeFile(wb, `${fileName}.xlsx`, { bookType: 'xlsx' });
+      
+    } catch (e: any) {
+      console.error(e);
+      alert('Error en la exportación SIEX: ' + e.message);
+    } finally {
       setIsExporting(false);
-    }, 1500);
+    }
   };
 
   const handlePrintNotebook = () => {

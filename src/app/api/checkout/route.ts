@@ -11,20 +11,41 @@ export async function POST(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    // Check if user already has a Stripe customer ID
+    const { data: profile } = await supabase
+      .from("users")
+      .select("stripe_customer_id")
+      .eq("id", user.id)
+      .single();
+
+    let customerId = profile?.stripe_customer_id;
+
+    // Create a Stripe customer if one doesn't exist
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: { userId: user.id },
+      });
+      customerId = customer.id;
+
+      await supabase.from("users").update({
+        stripe_customer_id: customerId,
+      }).eq("id", user.id);
+    }
+
     const { priceId, successUrl, cancelUrl } = await req.json();
 
     if (!priceId) {
       return new NextResponse("Price ID is required", { status: 400 });
     }
 
-    // Creating Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
-      customer_email: user.email,
+      customer: customerId,
       payment_method_types: ["card"],
       line_items: [
         {
-          price: priceId, // Must exist in Stripe Dashboard or be a test ID
+          price: priceId,
           quantity: 1,
         },
       ],
@@ -38,7 +59,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url });
 
   } catch (error: any) {
-    console.error("[STRIPE_ERROR]", error);
+    console.error("[STRIPE_CHECKOUT_ERROR]", error);
     return new NextResponse(error.message || "Internal Server Error", { status: 500 });
   }
 }

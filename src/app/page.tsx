@@ -43,9 +43,21 @@ const GlowButton = ({ children, variant = 'primary', className = "" }: { childre
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
+  const [config, setConfig] = useState<any>(null);
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    import('@/lib/actions/site-config').then(m => {
+      m.getSiteConfig().then(setConfig);
+      m.getSiteTestimonials().then(setTestimonials);
+    });
+  }, []);
+
+  const heroConfig = config?.hero || {};
+  const pricingConfig = config?.pricing || {};
 
   const prices = {
-    basico: { month: '4,99', year: '49,99', ha: '5' },
+    basico: { month: pricingConfig.basic?.price || '9,99', year: (pricingConfig.basic?.price * 10) || '99,99', ha: '5' },
     intermedio: { month: '19,99', year: '199,99', ha: '20' },
     avanzado: { month: '49,99', year: '499,99', ha: '50' },
     premium: { month: '89,99', year: '899,99', ha: '100' }
@@ -105,15 +117,19 @@ export default function LandingPage() {
                 <span className="text-sm font-bold text-emerald-400">Plataforma Marca Blanca para Cooperativas y Empresas</span>
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tight text-white">
-                El Cuaderno Digital <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-500">
-                  Profesional y Multi-Entidad.
-                </span>
+              <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tight text-white mb-6">
+                {heroConfig?.title || (
+                  <>
+                    El Cuaderno Digital <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-500">
+                      Profesional y Multi-Entidad.
+                    </span>
+                  </>
+                )}
               </h1>
 
               <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                Potencia tu negocio agrícola con nuestra tecnología. Ofrece a tus socios un <strong>Cuaderno Digital con TU marca</strong>, gestiona miles de fincas desde un solo panel y genera nuevos ingresos.
+                {heroConfig?.subtitle || 'Potencia tu negocio agrícola con nuestra tecnología. Ofrece a tus socios un Cuaderno Digital con TU marca, gestiona miles de fincas desde un solo panel y genera nuevos ingresos.'}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -246,7 +262,7 @@ export default function LandingPage() {
               { icon: <BarChart4 />, title: "Control de Costes y Trazabilidad", desc: "Averigua si tu finca es rentable. Sigue todos los gastos por labor y mantén la trazabilidad de tus lotes de cosecha." }
             ].map((feat, i) => (
               <GlassCard key={i} className="p-8 border-white/10 hover:bg-white/[0.06] transition-all group rounded-2xl">
-                <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 border border-emerald-500/20 group-hover:scale-110 transition-transform">
+        <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 border border-emerald-500/20 group-hover:scale-110 transition-transform">
                    {React.cloneElement(feat.icon as React.ReactElement<{ size?: number }>, { size: 32 })}
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">{feat.title}</h3>
@@ -257,12 +273,47 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      {testimonials && testimonials.length > 0 && (
+        <section className="py-24 px-6 bg-[#0a100d] relative overflow-hidden">
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center mb-16 space-y-4">
+              <h2 className="text-sm font-black uppercase text-emerald-500 tracking-widest">Confianza del Sector</h2>
+              <p className="text-4xl font-black text-white">Lo que dicen nuestros agricultores</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {testimonials.map((t: any) => (
+                <GlassCard key={t.id} className="p-8 border-white/5 bg-white/[0.02] flex flex-col justify-between hover:border-emerald-500/20 transition-all">
+                  <div className="space-y-4">
+                    <div className="flex gap-1 text-emerald-400">
+                      {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
+                    </div>
+                    <p className="text-white/80 leading-relaxed italic text-lg">"{t.content}"</p>
+                  </div>
+                  <div className="mt-8 flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center font-black text-white/40">
+                      {t.author_name?.[0]}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-bold text-white">{t.author_name}</span>
+                      <span className="text-xs text-emerald-500 uppercase font-black tracking-widest">{t.author_role}</span>
+                    </div>
+                  </div>
+                </GlassCard>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Pricing Section */}
-      <section id="planes" className="py-32 px-6 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-white mb-6 uppercase">Escoge el plan para tu explotación</h2>
-            <p className="text-lg text-white/70 max-w-2xl mx-auto font-medium mb-10">Invierte menos tiempo en burocracia y más tiempo en cultivar.</p>
+      <section id="pricing" className="py-24 px-6 relative border-t border-white/5 bg-[#050806]">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-16 space-y-4">
+            <h2 className="text-4xl lg:text-5xl font-black text-white glow-text">{pricingConfig?.title || 'Planes adaptados a tu volumen'}</h2>
+            <p className="text-white/60 text-lg">De pequeños asesores a grandes cooperativas marca blanca.</p>
+          </div>
 
             {/* Toggle Billing */}
             <div className="flex items-center justify-center gap-4 mb-12">

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAssignedFarmers } from '@/lib/actions/technician';
 import { GlassCard } from '@/components/ui/GlassCard';
+import Link from 'next/link';
 
 export default function TechnicianFarmersPage() {
   const [farmers, setFarmers] = useState<any[]>([]);
@@ -40,9 +41,11 @@ export default function TechnicianFarmersPage() {
                 </td>
                 <td className="px-6 py-4">{f.explotaciones?.[0]?.count || 0} explotaciones</td>
                 <td className="px-6 py-4 text-center">
-                  <button className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all border bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 mr-2">
-                    Ver Cuaderno
-                  </button>
+                  <Link href={`/technician/farmer/${f.id}/cuaderno`}>
+                    <button className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all border bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 mr-2">
+                      Ver Cuaderno
+                    </button>
+                  </Link>
                   <button className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all border bg-indigo-500/10 text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20">
                     Nueva Tarea
                   </button>

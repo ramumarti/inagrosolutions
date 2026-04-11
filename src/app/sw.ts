@@ -19,3 +19,24 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
+
+// Paso 7.4: Notificaciones Push
+self.addEventListener("push", (event) => {
+  const data = event.data?.json();
+  if (data) {
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "/icons/icon-192x192.png",
+      data: {
+        url: data.url || "/"
+      }
+    });
+  }
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.openWindow(event.notification.data.url)
+  );
+});

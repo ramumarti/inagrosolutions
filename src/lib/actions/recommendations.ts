@@ -51,22 +51,24 @@ export async function createRecommendation(payload: {
 
   const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
   
-  const { error } = await supabase
-    .from('recommendations')
-    .insert({
-      tenant_id: userData?.tenant_id,
-      technician_id: user.id,
-      farmer_id: payload.farmer_id,
-      parcela_id: payload.parcela_id || null,
-      tipo: payload.tipo,
-      titulo: payload.titulo,
-      descripcion: payload.descripcion,
-      prioridad: payload.prioridad,
-      fecha_limite: payload.fecha_limite || null,
       estado: 'pendiente'
-    });
+    })
+    .select()
+    .single();
 
   if (error) throw error;
+
+  // Paso 5.3: Crear alerta automática para el agricultor
+  await supabase.from('alertas_cuaderno').insert({
+    tenant_id: userData?.tenant_id,
+    user_id: payload.farmer_id,
+    tipo: 'tecnica',
+    titulo: 'Nueva recomendación técnica',
+    mensaje: `Tu técnico ha emitido una recomendación: ${payload.titulo}`,
+    link: '/cuaderno',
+    leida: false
+  });
+
   return { success: true };
 }
 

@@ -42,6 +42,8 @@ export default function SignupPage() {
     setLoading(true);
     
     const origin = window.location.origin;
+    const params = new URLSearchParams(window.location.search);
+    const tenantSlug = params.get('tenant');
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -53,7 +55,8 @@ export default function SignupPage() {
           last_name: lastName,
           is_business: isBusiness,
           company_name: isBusiness ? companyName : null,
-          platform_role: isBusiness ? 'tenant_admin' : 'farmer'
+          platform_role: isBusiness ? 'tenant_admin' : 'farmer',
+          tenant_slug: tenantSlug
         }
       }
     });

@@ -52,17 +52,36 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         isActive: pathname.startsWith('/superadmin/tenants')
       },
       {
+        label: 'Usuarios',
+        href: '/superadmin/users',
+        icon: Users,
+        isActive: pathname.startsWith('/superadmin/users')
+      },
+      {
+        label: 'Planes',
+        href: '/superadmin/plans',
+        icon: CreditCard,
+        isActive: pathname.startsWith('/superadmin/plans')
+      },
+      {
+        label: 'CMS Landing',
+        href: '/superadmin/landing',
+        icon: LayoutGrid,
+        isActive: pathname.startsWith('/superadmin/landing')
+      },
+      {
+        label: 'Logs Auditoría',
+        href: '/superadmin/audit',
+        icon: History,
+        isActive: pathname.startsWith('/superadmin/audit')
+      },
+      {
         label: 'Email',
         href: '/admin/email',
         icon: Mail,
         isActive: pathname.startsWith('/admin/email')
       },
-      {
-        label: 'Plataforma',
-        href: '/admin',
-        icon: LayoutGrid,
-        isActive: pathname === '/admin'
-      },
+
       {
         label: 'Planes Sistema',
         href: '/admin/plans',
@@ -91,9 +110,9 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
       },
       {
         label: language === 'en' ? 'Revenue Sharing' : 'Facturación y Comisiones',
-        href: '/tenant/billing',
+        href: '/admin/billing',
         icon: Wallet,
-        isActive: pathname.startsWith('/tenant/billing')
+        isActive: pathname.startsWith('/admin/billing')
       }
     ] : []),
     ...(hasRole(['technician', 'tenant_admin']) && (!isSuperadmin || tenant) ? [
@@ -178,14 +197,27 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         )}
       >
         <div className="flex items-center h-16 px-4 border-b border-white/10 shrink-0 relative">
-          <Link href="/cuaderno" className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center shadow-[0_0_15px_rgba(124,58,237,0.5)] shrink-0">
-            <Hexagon className="w-6 h-6 text-white" />
+          <Link href="/cuaderno" className="flex items-center group overflow-hidden w-full">
+            <div className={cn(
+              "w-10 h-10 rounded-xl bg-gradient-to-tr from-[var(--color-primary)] to-black/40 flex items-center justify-center shrink-0 shadow-lg transition-transform group-hover:scale-105",
+              !tenant?.logo_url && "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)]"
+            )}>
+              {tenant?.logo_url ? (
+                <img 
+                  src={tenant.logo_url} 
+                  alt={tenant.name} 
+                  className="w-full h-full object-contain p-2"
+                />
+              ) : (
+                <Hexagon className="w-6 h-6 text-white" />
+              )}
+            </div>
+            {(!isCollapsed || isMobileOpen) && (
+              <span className="ml-3 font-bold text-sm glow-text whitespace-nowrap overflow-hidden transition-all duration-300">
+                {tenant?.name || t('app.name')}
+              </span>
+            )}
           </Link>
-          {(!isCollapsed || isMobileOpen) && (
-            <Link href="/cuaderno" className="ml-3 font-bold text-lg glow-text whitespace-nowrap overflow-hidden">
-              {t('app.name')}
-            </Link>
-          )}
           
           <button
             onClick={toggleCollapse}
@@ -224,11 +256,11 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
                 className={cn(
                   "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all",
                   pathname.startsWith('/cuaderno')
-                    ? "bg-emerald-500/10 text-white border border-emerald-500/20"
+                    ? "bg-[var(--color-primary)]/10 text-white border border-[var(--color-primary)]/20"
                     : "text-white/70 hover:text-white hover:bg-white/10 border border-transparent"
                 )}
               >
-                <BookOpen className={cn("w-5 h-5 shrink-0", pathname.startsWith('/cuaderno') ? 'text-emerald-400' : 'text-white/50')} />
+                <BookOpen className={cn("w-5 h-5 shrink-0", pathname.startsWith('/cuaderno') ? 'text-[var(--color-primary)]' : 'text-white/50')} />
                 {(!isCollapsed || isMobileOpen) && (
                   <>
                     <span className="font-medium text-sm flex-1 text-left">Cuaderno Digital</span>
@@ -246,7 +278,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
                       className={cn(
                         "flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-bold transition-all",
                         item.isActive
-                          ? "text-emerald-400 bg-emerald-500/10"
+                          ? "text-[var(--color-primary)] bg-[var(--color-primary)]/10"
                           : "text-white/30 hover:text-white/60 hover:bg-white/5"
                       )}
                     >

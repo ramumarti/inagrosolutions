@@ -8,7 +8,16 @@ import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/Toast';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
 import { createClient } from '@/lib/supabase/client';
-import { Palette, Upload, Eye, Save, Globe, Eraser } from 'lucide-react';
+import { Palette, Upload, Eye, Save, Globe, Eraser, Blocks } from 'lucide-react';
+import { updateTenantModules } from '@/lib/actions/tenant-settings';
+
+const AVAILABLE_MODULES = [
+  { id: 'core', label: 'Cuaderno Básico', description: 'Gestión de fincas y parcelas.' },
+  { id: 'fitosanitarios', label: 'Tratamientos Fitosanitarios', description: 'Registro de aplicaciones y dosis.' },
+  { id: 'fertilizacion', label: 'Fertilización', description: 'Control de abonos y nutrición del suelo.' },
+  { id: 'labores', label: 'Labores y Trabajos', description: 'Gestión de horas de maquinaria y operarios.' },
+  { id: 'cosechas', label: 'Cosechas y Producción', description: 'Albaranes y rendimientos de recolección.' },
+];
 
 export default function BrandingPage() {
   const { tenant, loading: profileLoading, refreshProfile } = useAgriProfile();
@@ -21,7 +30,14 @@ export default function BrandingPage() {
   const [secondaryColor, setSecondaryColor] = useState('#065F46');
   const [logoUrl, setLogoUrl] = useState('');
   const [customDomain, setCustomDomain] = useState('');
+  const [activeModules, setActiveModules] = useState<string[]>(['core']);
   const [loading, setLoading] = useState(false);
+  const [heroTitle, setHeroTitle] = useState('');
+  const [heroSubtitle, setHeroSubtitle] = useState('');
+  const [publicDescription, setPublicDescription] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [showPublicPage, setShowPublicPage] = useState(true);
 
   // Safety timeout to prevent infinite loading screen
   useEffect(() => {
@@ -40,6 +56,13 @@ export default function BrandingPage() {
       setSecondaryColor(tenant.secondary_color || '#065F46');
       setLogoUrl(tenant.logo_url || '');
       setCustomDomain(tenant.custom_domain || '');
+      setActiveModules(tenant.active_modules || ['core']);
+      setHeroTitle(tenant.hero_title || '');
+      setHeroSubtitle(tenant.hero_subtitle || '');
+      setPublicDescription(tenant.public_description || '');
+      setContactEmail(tenant.contact_email || '');
+      setContactPhone(tenant.contact_phone || '');
+      setShowPublicPage(tenant.show_public_page ?? true);
     }
   }, [tenant]);
 
@@ -58,6 +81,12 @@ export default function BrandingPage() {
         secondary_color: secondaryColor,
         logo_url: logoUrl,
         custom_domain: customDomain,
+        hero_title: heroTitle,
+        hero_subtitle: heroSubtitle,
+        public_description: publicDescription,
+        contact_email: contactEmail,
+        contact_phone: contactPhone,
+        show_public_page: showPublicPage,
         updated_at: new Date().toISOString()
       })
       .eq('id', tenant.id);
@@ -72,6 +101,23 @@ export default function BrandingPage() {
       // Apply CSS variables instantly to the root
       document.documentElement.style.setProperty('--color-primary', primaryColor);
       if (secondaryColor) document.documentElement.style.setProperty('--color-accent-blue', secondaryColor);
+    }
+  };
+
+  const handleToggleModule = async (moduleId: string) => {
+    const newModules = activeModules.includes(moduleId)
+      ? activeModules.filter(id => id !== moduleId)
+      : [...activeModules, moduleId];
+    
+    if (moduleId === 'core' && !newModules.includes('core')) return;
+
+    setActiveModules(newModules);
+    try {
+      await updateTenantModules(newModules);
+      toast(language === 'en' ? 'Modules updated' : 'Módulos actualizados', 'success');
+    } catch(e) {
+      console.error(e);
+      toast(language === 'en' ? 'Error updating modules' : 'Error al actualizar módulos', 'error');
     }
   };
 
@@ -243,6 +289,86 @@ export default function BrandingPage() {
               </div>
             </div>
 
+            <hr className="border-white/10 my-6" />
+
+            <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
+              <Eye className="w-5 h-5 text-[var(--color-primary)]" />
+              {language === 'en' ? 'Public Landing Page' : 'Página Pública'}
+            </h2>
+
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <input 
+                  type="checkbox" 
+                  id="show_public"
+                  checked={showPublicPage}
+                  onChange={(e) => setShowPublicPage(e.target.checked)}
+                  className="w-4 h-4 rounded border-white/20 bg-black/40 text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 focus:ring-0 cursor-pointer transition-colors"
+                />
+                <label htmlFor="show_public" className="font-medium text-sm text-white/80 cursor-pointer">
+                  {language === 'en' ? 'Enable public landing page (/c/slug)' : 'Habilitar página pública corporativa (/c/slug)'}
+                </label>
+              </div>
+
+              {showPublicPage && (
+                <div className="grid grid-cols-1 gap-6 p-6 rounded-xl bg-white/5 border border-white/10 animate-in fade-in duration-300">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">
+                      {language === 'en' ? 'Hero Title' : 'Título Principal (Hero)'}
+                    </label>
+                    <Input 
+                      value={heroTitle} 
+                      onChange={(e) => setHeroTitle(e.target.value)} 
+                      placeholder={language === 'en' ? 'Welcome to our cooperative' : 'Bienvenido a nuestra cooperativa'}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">
+                      {language === 'en' ? 'Hero Subtitle' : 'Subtítulo Principal'}
+                    </label>
+                    <Input 
+                      value={heroSubtitle} 
+                      onChange={(e) => setHeroSubtitle(e.target.value)} 
+                      placeholder={language === 'en' ? 'Digitize your field notebook...' : 'Digitaliza tu cuaderno de campo...'}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">
+                      {language === 'en' ? 'About Us' : 'Sobre Nosotros'}
+                    </label>
+                    <textarea 
+                      value={publicDescription} 
+                      onChange={(e) => setPublicDescription(e.target.value)} 
+                      placeholder={language === 'en' ? 'We are a cooperative with over 20 years of experience...' : 'Somos una cooperativa con más de 20 años de experiencia...'}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/50 min-h-[100px] resize-y text-white placeholder-white/30"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-white/70">
+                        {language === 'en' ? 'Contact Email' : 'Email de Contacto'}
+                      </label>
+                      <Input 
+                        value={contactEmail} 
+                        onChange={(e) => setContactEmail(e.target.value)} 
+                        placeholder="info@cooperativa.es"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-white/70">
+                        {language === 'en' ? 'Contact Phone' : 'Teléfono de Contacto'}
+                      </label>
+                      <Input 
+                        value={contactPhone} 
+                        onChange={(e) => setContactPhone(e.target.value)} 
+                        placeholder="900 123 456"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="pt-6 flex justify-between">
               <button 
                 onClick={resetColors}
@@ -261,6 +387,45 @@ export default function BrandingPage() {
                 {t('common.save')}
               </GlowButton>
             </div>
+          </GlassCard>
+
+          <GlassCard className="p-6 flex flex-col gap-6">
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <Blocks className="w-5 h-5 text-[var(--color-primary)]" />
+              {language === 'en' ? 'Active Modules' : 'Módulos Activos'}
+            </h2>
+            
+            <div className="space-y-4">
+              {AVAILABLE_MODULES.map(mod => {
+                const isActive = activeModules.includes(mod.id);
+                const isCore = mod.id === 'core';
+                return (
+                  <div key={mod.id} className="flex items-start gap-4 p-3 rounded-lg bg-white/[0.02] border border-white/5 transition-colors hover:border-white/10">
+                    <div className="pt-1">
+                      <input 
+                        type="checkbox" 
+                        id={`mod-${mod.id}`}
+                        checked={isActive}
+                        disabled={isCore}
+                        onChange={() => handleToggleModule(mod.id)}
+                        className="w-4 h-4 rounded border-white/20 bg-black/40 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label htmlFor={`mod-${mod.id}`} className={`font-bold block cursor-pointer ${isActive ? 'text-white' : 'text-white/50'}`}>
+                        {mod.label}
+                      </label>
+                      <p className={`text-xs mt-0.5 ${isActive ? 'text-white/60' : 'text-white/30'}`}>{mod.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-white/30 mt-2">
+              {language === 'en' 
+                ? 'Disabling modules will hide those features immediately for your associated farmers.' 
+                : 'Los módulos que desactives ocultarán inmediatamente esas funciones para tus agricultores.'}
+            </p>
           </GlassCard>
         </div>
 

@@ -8,6 +8,7 @@ import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/Toast';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
 import { createClient } from '@/lib/supabase/client';
+import { setTenantUserRole } from '@/lib/actions/tenant-users';
 import { 
   Users, 
   UserPlus, 
@@ -83,6 +84,16 @@ export default function MembersPage() {
   useEffect(() => {
     fetchMembers();
   }, [tenant]);
+
+  const handleRoleChange = async (userId: string, targetRole: string) => {
+    try {
+      await setTenantUserRole(userId, targetRole as any);
+      toast(language === 'en' ? 'Role updated' : 'Rol actualizado', 'success');
+      fetchMembers();
+    } catch(e) {
+      toast('Error updating role', 'error');
+    }
+  };
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -193,6 +204,7 @@ export default function MembersPage() {
                 <thead className="bg-white/[0.02] text-[10px] font-bold uppercase tracking-widest text-white/40">
                   <tr>
                     <th className="px-6 py-4">{language === 'en' ? 'Member' : 'Socio'}</th>
+                    <th className="px-6 py-4">{language === 'en' ? 'Role' : 'Rol'}</th>
                     <th className="px-6 py-4">{language === 'en' ? 'Status' : 'Estado'}</th>
                     <th className="px-6 py-4">{language === 'en' ? 'Joined' : 'Alta'}</th>
                     <th className="px-6 py-4">{language === 'en' ? 'Volume' : 'Volumen'}</th>
@@ -212,6 +224,22 @@ export default function MembersPage() {
                             <p className="text-xs text-white/40">{member.email}</p>
                           </div>
                         </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {member.platform_role !== 'superadmin' ? (
+                          <select
+                            value={member.platform_role || 'farmer'}
+                            onChange={(e) => handleRoleChange(member.id, e.target.value)}
+                            className="bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-sm text-white outline-none focus:border-[var(--color-primary)] hover:border-[var(--color-primary)]/50 transition-colors cursor-pointer"
+                          >
+                            <option value="tenant_admin">Admin. Entidad</option>
+                            <option value="technician">Técnico</option>
+                            <option value="farmer">Agricultor</option>
+                            <option value="worker">Operario</option>
+                          </select>
+                        ) : (
+                          <span className="text-indigo-400 font-bold text-[10px] uppercase flex items-center justify-center w-full">Superadmin</span>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-extrabold uppercase">
@@ -246,6 +274,9 @@ export default function MembersPage() {
                             <p className="text-[10px] uppercase font-bold tracking-tighter">Pendiente de registro</p>
                           </div>
                         </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-white/40 text-[10px] uppercase font-bold px-2">{invite.role?.replace('_', ' ') || 'Farmer'}</span>
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-extrabold uppercase animate-pulse">

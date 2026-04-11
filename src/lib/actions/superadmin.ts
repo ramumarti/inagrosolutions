@@ -170,3 +170,68 @@ export async function deleteTenant(tenantId: string) {
   return { success: true };
 }
 
+export async function getGlobalPlans() {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return [];
+
+  const supabase = getAdminClient();
+  const { data } = await supabase.from('plans').select('*').order('sort_order');
+  return data || [];
+}
+
+export async function updatePlan(id: string, updates: any) {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return { success: false, error: auth.error };
+
+  const supabase = getAdminClient();
+  const { error } = await supabase.from('plans').update(updates).eq('id', id);
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+
+export async function getGlobalUsers() {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return [];
+
+  const supabase = getAdminClient();
+  const { data } = await supabase
+    .from('users')
+    .select(`
+      *,
+      tenant:tenants(name)
+    `)
+    .order('created_at', { ascending: false })
+    .limit(100);
+  return data || [];
+}
+
+export async function rotatePlatformRole(userId: string, newRole: string) {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return { success: false, error: auth.error };
+
+  const supabase = getAdminClient();
+  const { error } = await supabase.from('users').update({ platform_role: newRole }).eq('id', userId);
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+
+export async function getGlobalAuditLogs() {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return [];
+
+  const supabase = getAdminClient();
+  const { data } = await supabase
+    .from('audit_log')
+    .select(`
+      *,
+      user:users(first_name, last_name, email),
+      tenant:tenants(name)
+    `)
+    .order('created_at', { ascending: false })
+    .limit(200);
+    
+  return data || [];
+}
+
+
+

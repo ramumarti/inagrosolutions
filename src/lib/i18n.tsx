@@ -69,6 +69,11 @@ const translations: Record<Language, Translations> = {
     "cookies.settings": "Settings",
     "legal.title": "Legal Information",
     "legal.lastUpdated": "Last updated",
+    "common.save": "Save Changes",
+    "common.reset": "Reset to Default",
+    "common.cancel": "Cancel",
+    "common.back": "Back",
+    "common.loading": "Loading...",
   },
   es: {
     "app.name": "INAGROSOLUTIONS",
@@ -133,6 +138,11 @@ const translations: Record<Language, Translations> = {
     "cookies.settings": "Configuración",
     "legal.title": "Información Legal",
     "legal.lastUpdated": "Última actualización",
+    "common.save": "Guardar Cambios",
+    "common.reset": "Restablecer Valores",
+    "common.cancel": "Cancelar",
+    "common.back": "Volver",
+    "common.loading": "Cargando...",
   }
 };
 

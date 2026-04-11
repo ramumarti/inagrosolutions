@@ -148,7 +148,7 @@ export default function TenantDashboard() {
         {/* Sidebar Mini panels */}
         <div className="space-y-6">
           <GlassCard className="p-6 border-emerald-500/20 bg-emerald-500/5">
-             <h3 className="text-sm font-black uppercase tracking-widest text-white/40 mb-4">Tu Suspensión</h3>
+             <h3 className="text-sm font-black uppercase tracking-widest text-white/40 mb-4">Tu Suscripción</h3>
              <div className="flex items-end gap-2 mb-1">
                 <span className="text-4xl font-black text-white">49,90€</span>
                 <span className="text-xs text-white/40 mb-1">/mes</span>
