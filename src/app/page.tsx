@@ -148,28 +148,19 @@ export default function LandingPage() {
 
             <div className="lg:col-span-2 relative group hidden lg:block">
               <div className="absolute inset-0 bg-emerald-500/20 blur-[120px] rounded-full group-hover:bg-green-600/20 transition-all duration-1000" />
-              <GlassCard className="p-4 border-white/20 bg-white/[0.03] shadow-2xl skew-y-1 transform hover:skew-y-0 transition-all duration-700">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-8 h-8 rounded bg-emerald-500" />
-                    <div className="flex gap-2">
-                       <div className="w-3 h-3 rounded-full bg-red-400" />
-                       <div className="w-3 h-3 rounded-full bg-amber-400" />
-                       <div className="w-3 h-3 rounded-full bg-green-400" />
-                    </div>
-                  </div>
-                  <div className="h-4 w-full bg-white/20 rounded" />
-                  <div className="h-4 w-3/4 bg-white/10 rounded" />
-                  <div className="grid grid-cols-2 gap-4 pt-4">
-                    <div className="h-20 bg-emerald-500/20 rounded-xl border border-emerald-500/30" />
-                    <div className="h-20 bg-white/5 rounded-xl border border-white/10" />
-                  </div>
-                  <div className="mt-4 p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
-                    <span className="text-xs font-bold text-white opacity-50">MARCA BLANCA ACTIVA</span>
-                    <ShieldCheck size={16} className="text-emerald-400" />
+              <div className="relative z-10 p-2 rounded-[40px] border border-white/10 bg-white/5 backdrop-blur-3xl overflow-hidden shadow-2xl skew-y-1 transform hover:skew-y-0 transition-all duration-700">
+                <img 
+                  src="/cooperative_hero.png" 
+                  alt="Cooperativa Digital InagroSolutions"
+                  className="w-full h-auto rounded-[32px] object-cover"
+                />
+                <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-between">
+                  <span className="text-xs font-black text-white/80 uppercase tracking-widest">Infraestructura Marca Blanca Activa</span>
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <ShieldCheck size={18} className="text-emerald-400" />
                   </div>
                 </div>
-              </GlassCard>
+              </div>
             </div>
           </div>
         </div>
