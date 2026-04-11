@@ -123,7 +123,7 @@ export default function LandingPage() {
                   <>
                     Cuaderno de campo digital <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-500">
-                      Profesional y Multi-Entidad.
+                      Profesional.
                     </span>
                   </>
                 )}
