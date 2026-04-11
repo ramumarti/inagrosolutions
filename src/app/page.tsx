@@ -323,7 +323,6 @@ export default function LandingPage() {
                  Anual <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] rounded-full">Ahorra 2 Meses</span>
                </span>
             </div>
-          </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
              {/* Básico */}
