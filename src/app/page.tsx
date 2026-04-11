@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   ArrowRight, 
   ShieldCheck, 
@@ -149,9 +150,12 @@ export default function LandingPage() {
             <div className="lg:col-span-2 relative group hidden lg:block">
               <div className="absolute inset-0 bg-emerald-500/20 blur-[120px] rounded-full group-hover:bg-green-600/20 transition-all duration-1000" />
               <div className="relative z-10 p-2 rounded-[40px] border border-white/10 bg-white/5 backdrop-blur-3xl overflow-hidden shadow-2xl skew-y-1 transform hover:skew-y-0 transition-all duration-700">
-                <img 
+                <Image 
                   src="/olive_coop_hero.png" 
                   alt="Cooperativa Oleícola Digital InagroSolutions"
+                  width={800}
+                  height={600}
+                  priority
                   className="w-full h-auto rounded-[32px] object-cover"
                 />
                 <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-between">
