@@ -306,8 +306,8 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-black text-white glow-text">{pricingConfig?.title || 'Planes adaptados a tu volumen'}</h2>
-            <p className="text-white/60 text-lg">De pequeños asesores a grandes cooperativas marca blanca.</p>
+            <h2 className="text-4xl lg:text-5xl font-black text-white glow-text">{pricingConfig?.title || 'Planes Adaptados al Tamaño de la Explotación de sus Agricultores y Olivareros'}</h2>
+            <p className="text-white/60 text-lg">Lo mejor de todo es que les ofrece un servicio con su propia marca.</p>
           </div>
 
             {/* Toggle Billing */}
