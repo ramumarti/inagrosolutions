@@ -62,7 +62,7 @@ export default function HomePage() {
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image 
-            src="/images/hero_partner.png" 
+            src="/images/hero_olivos.png" 
             alt="AgTech Background" 
             fill 
             className="object-cover opacity-30 scale-105"
