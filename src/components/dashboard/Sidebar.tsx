@@ -91,6 +91,12 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
     ] : []),
     ...(hasRole(['tenant_admin']) && (!isSuperadmin || tenant) ? [
       {
+        label: language === 'en' ? 'White Label Brand' : 'Mi Marca Blanca',
+        href: '/admin/branding',
+        icon: Hexagon,
+        isActive: pathname === '/admin/branding'
+      },
+      {
         label: language === 'en' ? 'Company Overview' : 'Resumen Empresa',
         href: '/dashboard',
         icon: LayoutGrid,
@@ -101,12 +107,6 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         href: '/admin/members',
         icon: Users,
         isActive: pathname === '/admin/members'
-      },
-      {
-        label: language === 'en' ? 'White Label Brand' : 'Mi Marca Blanca',
-        href: '/admin/branding',
-        icon: Hexagon,
-        isActive: pathname === '/admin/branding'
       },
       {
         label: language === 'en' ? 'Revenue Sharing' : 'Facturación y Comisiones',
