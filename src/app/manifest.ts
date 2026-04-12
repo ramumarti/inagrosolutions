@@ -1,10 +1,10 @@
-﻿import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'INAGROSOLUTIONS Enterprise',
     short_name: 'INAGROSOLUTIONS',
-    description: 'GestiÃ³n avanzada de micro-aplicaciones y herramientas SaaS.',
+    description: 'Gestión avanzada de micro-aplicaciones y herramientas SaaS.',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',

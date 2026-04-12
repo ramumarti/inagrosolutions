@@ -1,4 +1,4 @@
-﻿import Stripe from 'stripe';
+import Stripe from 'stripe';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   // Use a placeholder if not set, this will fail elegantly or warn

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import Image from 'next/image';
@@ -82,7 +82,7 @@ export default function HomePage() {
           </h1>
           
           <p className="text-xl lg:text-2xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed font-bold">
-            TÃº pones la marca, nosotros ponemos la tecnologÃ­a. <br className="hidden lg:block" /> 
+            Tú pones la marca, nosotros ponemos la tecnología. <br className="hidden lg:block" /> 
             Genera ingresos recurrentes ayudando a tus asociados a cumplir la ley.
           </p>
 
@@ -97,9 +97,9 @@ export default function HomePage() {
 
           <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto py-12 bg-white/5 rounded-3xl border border-white/10">
             {[
-              { label: 'InversiÃ³n Inicial', value: '0,00â‚¬' },
-              { label: 'Tu ComisiÃ³n', value: '50% TOTAL' },
-              { label: 'Riesgo TÃ©cnico', value: 'CERO' },
+              { label: 'Inversión Inicial', value: '0,00€' },
+              { label: 'Tu Comisión', value: '50% TOTAL' },
+              { label: 'Riesgo Técnico', value: 'CERO' },
               { label: 'Marca Blanca', value: '100% REAL' }
             ].map((stat, i) => (
               <div key={i} className="text-center">
@@ -116,8 +116,8 @@ export default function HomePage() {
         <div className="flex justify-center flex-wrap gap-12 opacity-30 text-xs font-black tracking-tighter uppercase grayscale">
           <span>COOPERATIVAS</span>
           <span>ASOCIACIONES</span>
-          <span>INGENIERÃAS</span>
-          <span>ASESORÃAS</span>
+          <span>INGENIERÍAS</span>
+          <span>ASESORÍAS</span>
         </div>
       </section>
 
@@ -125,7 +125,7 @@ export default function HomePage() {
       <section id="modelo" className="py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-6xl font-black mb-6 tracking-tight">Tu negocio, <span className="text-[var(--color-primary)]">en automÃ¡tico</span></h2>
+            <h2 className="text-4xl lg:text-6xl font-black mb-6 tracking-tight">Tu negocio, <span className="text-[var(--color-primary)]">en automático</span></h2>
             <p className="text-white/80 text-xl max-w-2xl mx-auto font-medium">
               Te entregamos una plataforma lista para facturar en menos de 5 minutos.
             </p>
@@ -141,7 +141,7 @@ export default function HomePage() {
                 },
                 {
                   title: '2. Subes tu logo',
-                  desc: 'AutomÃ¡ticamente toda la plataforma adopta tu identidad visual.',
+                  desc: 'Automáticamente toda la plataforma adopta tu identidad visual.',
                   icon: <Globe className="w-6 h-6 text-black" />
                 },
                 {
@@ -151,7 +151,7 @@ export default function HomePage() {
                 },
                 {
                   title: '4. Cobras el 50%',
-                  desc: 'Enviamos tu comisiÃ³n a tu cuenta cada mes. AsÃ­ de simple.',
+                  desc: 'Enviamos tu comisión a tu cuenta cada mes. Así de simple.',
                   icon: <DollarSign className="w-6 h-6 text-black" />
                 }
               ].map((step, i) => (
@@ -201,21 +201,21 @@ export default function HomePage() {
                 {[
                   {
                     title: 'Panel centralizado',
-                    desc: 'Visualiza el estado de cumplimiento de todas tus explotaciones desde un Ãºnico monitor.',
+                    desc: 'Visualiza el estado de cumplimiento de todas tus explotaciones desde un único monitor.',
                     icon: <Monitor className="w-5 h-5" />
                   },
                   {
-                    title: 'FidelizaciÃ³n real',
+                    title: 'Fidelización real',
                     desc: 'Ofrece una herramienta profesional que aporta valor diario al agricultor bajo tu marca.',
                     icon: <ShieldCheck className="w-5 h-5" />
                   },
                   {
-                    title: 'DiferenciaciÃ³n',
-                    desc: 'PosiciÃ³nate como una entidad digitalizada a la vanguardia del sector agrario.',
+                    title: 'Diferenciación',
+                    desc: 'Posiciónate como una entidad digitalizada a la vanguardia del sector agrario.',
                     icon: <Zap className="w-5 h-5" />
                   },
                   {
-                    title: 'Soporte TÃ©cnico',
+                    title: 'Soporte Técnico',
                     desc: 'Accede a los cuadernos de tus asociados para asesorarles en tiempo real.',
                     icon: <Users className="w-5 h-5" />
                   }
@@ -236,12 +236,12 @@ export default function HomePage() {
                 <div className="text-6xl font-bold text-[var(--color-primary)] mb-4">50%</div>
                 <h3 className="text-2xl font-bold mb-4">Ingresos Compartidos</h3>
                 <p className="text-white/50 mb-8 leading-relaxed">
-                  No es un descuento. Es una comisiÃ³n directa por cada gestiÃ³n realizada. Sin cuotas de mantenimiento, sin gastos de entrada.
+                  No es un descuento. Es una comisión directa por cada gestión realizada. Sin cuotas de mantenimiento, sin gastos de entrada.
                 </p>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 text-sm text-white/70">
                     <ShieldCheck className="w-4 h-4 text-[var(--color-primary)]" />
-                    Pagos mensuales automÃ¡ticos
+                    Pagos mensuales automáticos
                   </div>
                   <div className="flex items-center gap-3 text-sm text-white/70">
                     <ShieldCheck className="w-4 h-4 text-[var(--color-primary)]" />
@@ -262,16 +262,16 @@ export default function HomePage() {
               <div className="inline-block px-3 py-1 rounded bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-xs font-bold uppercase tracking-wider mb-6">
                 Cumplimiento SIEX
               </div>
-              <h2 className="text-4xl font-bold mb-6">AnticÃ­pate al RD 1054/2022</h2>
+              <h2 className="text-4xl font-bold mb-6">Anticípate al RD 1054/2022</h2>
               <p className="text-white/60 text-lg mb-8 leading-relaxed">
-                El Cuaderno de ExplotaciÃ³n Digital serÃ¡ obligatorio para todos los agricultores entre 2027 y 2028. No esperes a que sea tarde: conviÃ©rtelo hoy en una ventaja competitiva para tu entidad.
+                El Cuaderno de Explotación Digital será obligatorio para todos los agricultores entre 2027 y 2028. No esperes a que sea tarde: conviértelo hoy en una ventaja competitiva para tu entidad.
               </p>
               <div className="space-y-6">
                 {[
-                  'Preparado para la integraciÃ³n con SIEX',
-                  'GestiÃ³n automÃ¡tica de PAC y fertilizaciÃ³n',
-                  'ReducciÃ³n de riesgos en inspecciones',
-                  'ValidaciÃ³n tÃ©cnica de tratamientos fitosanitarios'
+                  'Preparado para la integración con SIEX',
+                  'Gestión automática de PAC y fertilización',
+                  'Reducción de riesgos en inspecciones',
+                  'Validación técnica de tratamientos fitosanitarios'
                 ].map((text, i) => (
                   <div key={i} className="flex items-center gap-3 font-medium">
                     <div className="w-5 h-5 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center">
@@ -289,7 +289,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Tranquilidad para tus agricultores</h3>
               <p className="text-white/40 mb-8">
-                Al usar una plataforma supervisada por su cooperativa o asesorÃ­a, el agricultor reduce drÃ¡sticamente el "papeleo" y se asegura de estar siempre dentro de la ley.
+                Al usar una plataforma supervisada por su cooperativa o asesoría, el agricultor reduce drásticamente el "papeleo" y se asegura de estar siempre dentro de la ley.
               </p>
               <div className="p-6 bg-white/5 rounded-xl border border-white/10">
                 <div className="text-sm font-bold uppercase tracking-widest text-white/30 mb-4 text-center">Hoja de ruta obligatoriedad</div>
@@ -320,23 +320,23 @@ export default function HomePage() {
           <GlassCard className="p-12 border-[var(--color-primary)]/20 shadow-[0_0_50px_rgba(0,255,102,0.1)]">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl font-bold mb-6">El potencial de tu entidad en nÃºmeros</h2>
+                <h2 className="text-3xl font-bold mb-6">El potencial de tu entidad en números</h2>
                 <div className="space-y-6">
                   <div className="flex justify-between text-lg border-b border-white/10 pb-4">
-                    <span className="text-white/60">NÃºmero de asociados</span>
+                    <span className="text-white/60">Número de asociados</span>
                     <span className="font-bold">200 agricultores</span>
                   </div>
                   <div className="flex justify-between text-lg border-b border-white/10 pb-4">
-                    <span className="text-white/60">Ingreso estimado/aÃ±o p.p.</span>
-                    <span className="font-bold">120 â‚¬</span>
+                    <span className="text-white/60">Ingreso estimado/año p.p.</span>
+                    <span className="font-bold">120 €</span>
                   </div>
                   <div className="flex justify-between text-2xl pt-2 text-[var(--color-primary)]">
-                    <span className="font-bold">Tu beneficio recurrente/aÃ±o</span>
-                    <span className="font-extrabold text-white">12.000 â‚¬</span>
+                    <span className="font-bold">Tu beneficio recurrente/año</span>
+                    <span className="font-extrabold text-white">12.000 €</span>
                   </div>
                 </div>
                 <p className="mt-8 text-sm text-white/40 leading-relaxed italic">
-                  * Basado en un modelo de facturaciÃ³n del 50% de ingresos compartidos. Los asociados obtienen una herramienta premium y tÃº obtienes una nueva lÃ­nea de negocio sin costes operativos.
+                  * Basado en un modelo de facturación del 50% de ingresos compartidos. Los asociados obtienen una herramienta premium y tú obtienes una nueva línea de negocio sin costes operativos.
                 </p>
               </div>
               <div className="relative group">
@@ -347,7 +347,7 @@ export default function HomePage() {
                   </div>
                   <h3 className="text-2xl font-bold mb-4">Escalabilidad Garantizada</h3>
                   <p className="text-white/50">
-                    A medida que tus asociados crecen o que la normativa se vuelve mÃ¡s estricta, tu plataforma se revaloriza automÃ¡ticamente.
+                    A medida que tus asociados crecen o que la normativa se vuelve más estricta, tu plataforma se revaloriza automáticamente.
                   </p>
                   <GlowButton className="mt-8" onClick={() => setIsCalcOpen(true)}>
                     Calcular mi beneficio
@@ -361,7 +361,7 @@ export default function HomePage() {
 
       {/* CTA Intermedio */}
       <section className="py-20 text-center">
-        <h2 className="text-3xl font-bold mb-8">Â¿Listo para lanzar tu propia plataforma?</h2>
+        <h2 className="text-3xl font-bold mb-8">¿Listo para lanzar tu propia plataforma?</h2>
         <Link href="/signup">
           <GlowButton className="text-xl px-12 py-8 h-auto shadow-[0_0_40px_rgba(0,255,102,0.2)]">
             Empezar ahora (Gratis)
@@ -369,7 +369,7 @@ export default function HomePage() {
         </Link>
         <p className="mt-4 text-white/40 flex items-center justify-center gap-2">
           <Clock className="w-4 h-4" />
-          ConfiguraciÃ³n en menos de 5 minutos
+          Configuración en menos de 5 minutos
         </p>
       </section>
 
@@ -379,11 +379,11 @@ export default function HomePage() {
           <h2 className="text-3xl lg:text-5xl font-bold mb-12 text-center tracking-tight">Preguntas frecuentes</h2>
           <div className="space-y-6">
             {[
-              { q: 'Â¿Tiene algÃºn coste de mantenimiento para la entidad?', a: 'Ninguno. El registro, la personalizaciÃ³n white label y el acceso al panel centralizado son totalmente gratuitos para cooperativas, ingenierÃ­as y asesores.' },
-              { q: 'Â¿CÃ³mo recibo mis ingresos?', a: 'De cada pago que realiza un agricultor en tu plataforma, el sistema separa automÃ¡ticamente el 50% para ti. Liquidamos tus beneficios de forma mensual directamente en tu cuenta.' },
-              { q: 'Â¿Es realmente White Label?', a: 'SÃ­. Puedes usar tu propio dominio (ej: cuaderno.tudominio.com), subir el logo de tu entidad y elegir los colores corporativos. Inagrosolutions desaparece de la vista del agricultor.' },
-              { q: 'Â¿Necesito conocimientos tÃ©cnicos?', a: 'No. Nosotros nos encargamos de todo el despliegue tÃ©cnico, actualizaciones legales y servidores. TÃº solo te preocupas de tu negocio.' },
-              { q: 'Â¿Cumple con el SIEX?', a: 'Totalmente. La plataforma estÃ¡ diseÃ±ada bajo los requerimientos del RD 1054/2022 y se actualiza en tiempo real con cada cambio normativo del Ministerio.' }
+              { q: '¿Tiene algún coste de mantenimiento para la entidad?', a: 'Ninguno. El registro, la personalización white label y el acceso al panel centralizado son totalmente gratuitos para cooperativas, ingenierías y asesores.' },
+              { q: '¿Cómo recibo mis ingresos?', a: 'De cada pago que realiza un agricultor en tu plataforma, el sistema separa automáticamente el 50% para ti. Liquidamos tus beneficios de forma mensual directamente en tu cuenta.' },
+              { q: '¿Es realmente White Label?', a: 'Sí. Puedes usar tu propio dominio (ej: cuaderno.tudominio.com), subir el logo de tu entidad y elegir los colores corporativos. Inagrosolutions desaparece de la vista del agricultor.' },
+              { q: '¿Necesito conocimientos técnicos?', a: 'No. Nosotros nos encargamos de todo el despliegue técnico, actualizaciones legales y servidores. Tú solo te preocupas de tu negocio.' },
+              { q: '¿Cumple con el SIEX?', a: 'Totalmente. La plataforma está diseñada bajo los requerimientos del RD 1054/2022 y se actualiza en tiempo real con cada cambio normativo del Ministerio.' }
             ].map((item, i) => (
               <div key={i} className="p-6 rounded-2xl bg-white/2 border border-white/5 hover:border-white/10 transition-colors">
                 <h4 className="text-lg font-bold mb-3 flex items-start gap-3">
@@ -405,7 +405,7 @@ export default function HomePage() {
             Convierte la normativa en una <br /> <span className="text-[var(--color-primary)]">nueva fuente de ingresos</span>
           </h2>
           <p className="text-xl text-white/50 mb-12 max-w-2xl mx-auto">
-            Ãšnete a la red de partners de Inagrosolutions y lidera la digitalizaciÃ³n del campo en tu zona.
+            Únete a la red de partners de Inagrosolutions y lidera la digitalización del campo en tu zona.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link href="/signup" className="w-full sm:w-auto">
@@ -415,7 +415,7 @@ export default function HomePage() {
             </Link>
             <Link href="/signup" className="w-full sm:w-auto">
               <GlowButton variant="secondary" className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
-                Solicitar demo tÃ©cnica
+                Solicitar demo técnica
               </GlowButton>
             </Link>
           </div>
@@ -430,10 +430,10 @@ export default function HomePage() {
             <div className="text-sm text-white/30 flex gap-8">
               <Link href="/legal-notice" className="hover:text-white transition-colors">Aviso Legal</Link>
               <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacidad</Link>
-              <Link href="/partner-policy" className="hover:text-white transition-colors underline decoration-[var(--color-primary)]/30">PolÃ­tica de Partners</Link>
+              <Link href="/partner-policy" className="hover:text-white transition-colors underline decoration-[var(--color-primary)]/30">Política de Partners</Link>
             </div>
             <div className="text-sm text-white/20">
-              Â© 2026 Inagrosolutions. Todos los derechos reservados.
+              © 2026 Inagrosolutions. Todos los derechos reservados.
             </div>
           </div>
         </div>

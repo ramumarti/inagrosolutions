@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -142,8 +142,8 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             <footer className="w-full text-center py-8 mt-auto border-t border-white/5 flex flex-col gap-2">
               <p className="text-xs text-gray-500">
                 {language === 'en'
-                  ? 'Â© 2026 INAGROSOLUTIONS. All rights reserved.'
-                  : 'Â© 2026 INAGROSOLUTIONS. Todos los derechos reservados.'}
+                  ? '© 2026 INAGROSOLUTIONS. All rights reserved.'
+                  : '© 2026 INAGROSOLUTIONS. Todos los derechos reservados.'}
               </p>
               <div className="flex items-center justify-center gap-4 text-[10px] text-gray-600">
                 <Link href="/privacy-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.privacyPolicy')}</Link>

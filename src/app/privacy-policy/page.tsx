@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from 'react';
 import Link from 'next/link';
@@ -35,11 +35,11 @@ export default function PrivacyPolicyPage() {
               <>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Responsable del Tratamiento</h2>
-                  <p>INAGROSOLUTIONS, con domicilio en EspaÃ±a, es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protecciÃ³n de sus datos, puede contactarnos en legal@inagrosolutions.es.</p>
+                  <p>INAGROSOLUTIONS, con domicilio en España, es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protección de sus datos, puede contactarnos en legal@inagrosolutions.es.</p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">2. Datos que Recopilamos</h2>
-                  <p>Recopilamos los datos estrictamente necesarios para la prestaciÃ³n de nuestros servicios: nombre, apellidos, correo electrÃ³nico y datos tÃ©cnicos de uso para mejorar la plataforma.</p>
+                  <p>Recopilamos los datos estrictamente necesarios para la prestación de nuestros servicios: nombre, apellidos, correo electrónico y datos técnicos de uso para mejorar la plataforma.</p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">3. Finalidad del Tratamiento</h2>

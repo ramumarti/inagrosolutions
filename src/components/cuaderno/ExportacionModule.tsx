@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useMemo } from 'react';
 import { 
@@ -24,7 +24,7 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
   // Stats for the report preview
   const stats = useMemo(() => {
     const pCount = profile.parcelas.filter((p: any) => p.explotacion_id === explotacionId).length;
-    // En un entorno real consultarÃ­amos las actividades filtradas por finca/campaÃ±a
+    // En un entorno real consultaríamos las actividades filtradas por finca/campaña
     return {
       parcelas: pCount,
       hectareas: profile.parcelas.filter((p: any) => p.explotacion_id === explotacionId).reduce((acc: number, p: any) => acc + (p.hectareas || 0), 0),
@@ -41,15 +41,15 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
       const { generateSiexData } = await import('@/lib/actions/export-siex');
       const data = await generateSiexData(explotacionId, campanaId);
 
-      // Paso 4.2 - ValidaciÃ³n pre-exportaciÃ³n
+      // Paso 4.2 - Validación pre-exportación
       if (!data.validation.isValid) {
-        alert('âŒ NO SE PUEDE EXPORTAR EL SIEX. Hay errores crÃ­ticos:\n\n' + data.validation.errors.join('\n'));
+        alert('❌ NO SE PUEDE EXPORTAR EL SIEX. Hay errores críticos:\n\n' + data.validation.errors.join('\n'));
         setIsExporting(false);
         return;
       }
       
       if (data.validation.warnings.length > 0) {
-        const proceed = confirm('âš ï¸ Hay advertencias de validaciÃ³n:\n\n' + data.validation.warnings.join('\n') + '\n\nÂ¿Quieres exportar de todos modos?');
+        const proceed = confirm('⚠️ Hay advertencias de validación:\n\n' + data.validation.warnings.join('\n') + '\n\n¿Quieres exportar de todos modos?');
         if (!proceed) {
           setIsExporting(false);
           return;
@@ -64,7 +64,7 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
         "FECHA_TRATAMIENTO": new Date(t.fecha).toLocaleDateString('es-ES'),
         "NUM_REGISTRO_MAPA": t.producto ? t.producto.match(/\\d{5}/)?.[0] || 'N/A' : 'N/A',
         "NOMBRE_PRODUCTO": t.producto,
-        "METODO_APLICACION": t.metodo_aplicacion || 'PulverizaciÃ³n',
+        "METODO_APLICACION": t.metodo_aplicacion || 'Pulverización',
         "DOSIS_CANTIDAD": t.dosis_cantidad || 0,
         "DOSIS_UNIDAD": t.dosis_unidad || 'L/ha',
         "MAQUINARIA": t.maquinaria_id || 'Manual',
@@ -82,7 +82,7 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
         "RECINTO": p.recinto || 1,
         "SUPERFICIE_HA": p.hectareas || 0,
         "CULTIVO_PRINCIPAL": p.cultivo || 'No especificado',
-        "SISTEMA_EXPLOTACION": p.sistema_riego === 'RegadÃ­o' ? 'R' : 'S'
+        "SISTEMA_EXPLOTACION": p.sistema_riego === 'Regadío' ? 'R' : 'S'
       }));
 
       const wb = XLSX.utils.book_new();
@@ -96,14 +96,14 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
       
     } catch (e: any) {
       console.error(e);
-      alert('Error en la exportaciÃ³n SIEX: ' + e.message);
+      alert('Error en la exportación SIEX: ' + e.message);
     } finally {
       setIsExporting(false);
     }
   };
 
   const handlePrintNotebook = () => {
-    // ImplementaciÃ³n real de impresiÃ³n del Cuaderno de Campo
+    // Implementación real de impresión del Cuaderno de Campo
     window.print();
   };
 
@@ -111,8 +111,8 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-3xl font-black text-white tracking-tight">ExportaciÃ³n SIEX y PAC</h2>
-          <p className="text-white/50 font-black uppercase tracking-widest text-[10px] mt-1">GeneraciÃ³n de documentaciÃ³n oficial normativa</p>
+          <h2 className="text-3xl font-black text-white tracking-tight">Exportación SIEX y PAC</h2>
+          <p className="text-white/50 font-black uppercase tracking-widest text-[10px] mt-1">Generación de documentación oficial normativa</p>
         </div>
         <div className="flex gap-3">
           <button 
@@ -160,12 +160,12 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
           <GlassCard className="p-6 border-amber-500/10 bg-amber-500/5 space-y-4">
             <div className="flex items-center gap-2 text-amber-500">
                 <AlertTriangle size={18} />
-                <h4 className="text-[10px] font-black uppercase tracking-widest">ValidaciÃ³n Normativa</h4>
+                <h4 className="text-[10px] font-black uppercase tracking-widest">Validación Normativa</h4>
             </div>
             <p className="text-[11px] text-amber-500/70 font-medium leading-relaxed">
-                Hemos detectado <span className="font-bold">2 avisos</span> en los tratamientos de esta campaÃ±a que podrÃ­an ser requeridos por SIEX. Revisa la dosificaciÃ³n en la parcela "El Olivo".
+                Hemos detectado <span className="font-bold">2 avisos</span> en los tratamientos de esta campaña que podrían ser requeridos por SIEX. Revisa la dosificación en la parcela "El Olivo".
             </p>
-            <button className="text-[9px] font-black text-white/40 uppercase tracking-widest hover:text-white transition-colors">Ver Detalles de ValidaciÃ³n...</button>
+            <button className="text-[9px] font-black text-white/40 uppercase tracking-widest hover:text-white transition-colors">Ver Detalles de Validación...</button>
           </GlassCard>
         </div>
 
@@ -177,7 +177,7 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
             </div>
             
             <div className="relative z-10 space-y-8">
-                <h4 className="text-lg font-black text-white">ConfiguraciÃ³n del Archivo Oficial</h4>
+                <h4 className="text-lg font-black text-white">Configuración del Archivo Oficial</h4>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-5 bg-white/5 border border-white/10 rounded-2xl hover:border-emerald-500/30 transition-all cursor-pointer">
@@ -203,15 +203,15 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
                             <Shovel className="text-amber-400" size={24} />
                             <div className="w-5 h-5 border-2 border-white/10 rounded-full" />
                         </div>
-                        <h5 className="text-sm font-black text-white mb-1">Registro de FertilizaciÃ³n (RET)</h5>
-                        <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">NutriciÃ³n Sostenible de Suelos</p>
+                        <h5 className="text-sm font-black text-white mb-1">Registro de Fertilización (RET)</h5>
+                        <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Nutrición Sostenible de Suelos</p>
                     </div>
 
                     <div className="p-5 bg-white/5 border border-white/10 rounded-2xl opacity-40 grayscale cursor-not-allowed">
                         <div className="flex justify-between mb-4">
                             <Printer className="text-white/40" size={24} />
                         </div>
-                        <h5 className="text-sm font-black text-white mb-1">Memoria de ExplotaciÃ³n</h5>
+                        <h5 className="text-sm font-black text-white mb-1">Memoria de Explotación</h5>
                         <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Solo disponible en Plan Premium</p>
                     </div>
                 </div>
@@ -220,7 +220,7 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
                     <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">Firma Digital INAGROSOLUTIONS</p>
                     <div className="flex items-center gap-2 p-3 bg-emerald-500/5 border border-emerald-500/10 rounded-xl">
                         <CheckCircle2 size={14} className="text-emerald-500" />
-                        <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Huella criptogrÃ¡fica SIEX vÃ¡lida para presentaciÃ³n telemÃ¡tica</span>
+                        <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Huella criptográfica SIEX válida para presentación telemática</span>
                     </div>
                 </div>
             </div>

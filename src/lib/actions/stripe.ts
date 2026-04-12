@@ -1,4 +1,4 @@
-﻿'use server';
+'use server';
 
 import { stripe } from '@/lib/stripe';
 import { createServerClient } from '@supabase/ssr';
@@ -24,7 +24,7 @@ export async function createCheckoutSession(tier: AgriTier, interval: 'month' | 
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
-    throw new Error('Debes iniciar sesiÃ³n para actualizar tu plan');
+    throw new Error('Debes iniciar sesión para actualizar tu plan');
   }
 
   // Get user's tenant ID
@@ -32,7 +32,7 @@ export async function createCheckoutSession(tier: AgriTier, interval: 'month' | 
   const tenantId = userData?.tenant_id;
   
   if (!tenantId) {
-    throw new Error('No tienes una organizaciÃ³n/tenant asociado');
+    throw new Error('No tienes una organización/tenant asociado');
   }
 
   // Get tenant info for discount
@@ -63,7 +63,7 @@ export async function createCheckoutSession(tier: AgriTier, interval: 'month' | 
           currency: 'eur',
           product_data: {
             name: `Inagrosolutions - Plan ${tierInfo.label_es} (${interval === 'month' ? 'Mensual' : 'Anual'})`,
-            description: `Acceso para hasta ${tierInfo.max_ha === Infinity ? 'hectÃ¡reas ilimitadas' : tierInfo.max_ha + ' hectÃ¡reas'}`,
+            description: `Acceso para hasta ${tierInfo.max_ha === Infinity ? 'hectáreas ilimitadas' : tierInfo.max_ha + ' hectáreas'}`,
           },
           unit_amount: Math.round(price * 100), // Stripe takes cents
           recurring: {

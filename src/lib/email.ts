@@ -1,4 +1,4 @@
-﻿import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 import { createClient } from '@supabase/supabase-js';
 
 function getAdminClient() {
@@ -75,7 +75,7 @@ export function buildEmailTemplate(options: {
         <tr>
             <td align="center" style="padding-bottom: 24px;">
                 <div style="display: inline-block; background: linear-gradient(135deg, #EF4444, #DC2626, #F472B6); border-radius: 12px; padding: 8px 20px;">
-                    <span style="color: #ffffff; font-weight: 800; font-size: 16px; letter-spacing: 0.05em;">âœ¦ INAGROSOLUTIONS</span>
+                    <span style="color: #ffffff; font-weight: 800; font-size: 16px; letter-spacing: 0.05em;">✦ INAGROSOLUTIONS</span>
                 </div>
             </td>
         </tr>
@@ -148,23 +148,23 @@ export async function sendWelcomeEmail(options: {
     ];
 
     if (options.password) {
-      bodyLines.push(`Tus credenciales de acceso son:<br/>Email: <strong>${options.to}</strong><br/>ContraseÃ±a: <strong>${options.password}</strong>`);
+      bodyLines.push(`Tus credenciales de acceso son:<br/>Email: <strong>${options.to}</strong><br/>Contraseña: <strong>${options.password}</strong>`);
     }
 
     bodyLines.push('Ya puedes acceder a todas las herramientas de IA incluidas en tu plan.');
 
     const html = buildEmailTemplate({
-      title: 'Â¡Bienvenido a INAGROSOLUTIONS!',
+      title: '¡Bienvenido a INAGROSOLUTIONS!',
       greeting: `Hola ${options.firstName},`,
       bodyLines,
       ctaText: 'Acceder al Portal',
       ctaUrl: options.loginUrl,
-      footerText: 'Este email fue enviado automÃ¡ticamente. Si tienes preguntas, contacta al administrador.'
+      footerText: 'Este email fue enviado automáticamente. Si tienes preguntas, contacta al administrador.'
     });
 
     return await sendEmail({
       to: options.to,
-      subject: 'Â¡Bienvenido a INAGROSOLUTIONS! Tu acceso estÃ¡ listo',
+      subject: '¡Bienvenido a INAGROSOLUTIONS! Tu acceso está listo',
       html
     });
   } catch (error: unknown) {

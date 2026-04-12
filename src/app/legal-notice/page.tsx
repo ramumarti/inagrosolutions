@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from 'react';
 import Link from 'next/link';
@@ -34,8 +34,8 @@ export default function LegalNoticePage() {
             {language === 'es' ? (
               <>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">InformaciÃ³n Identificativa</h2>
-                  <p>De conformidad con el deber de informaciÃ³n recogido en el artÃ­culo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la InformaciÃ³n y del Comercio ElectrÃ³nico:</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">Información Identificativa</h2>
+                  <p>De conformidad con el deber de información recogido en el artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y del Comercio Electrónico:</p>
                   <ul className="list-disc pl-5 flex flex-col gap-1 mt-2">
                     <li><strong>Titular:</strong> INAGROSOLUTIONS</li>
                     <li><strong>Email:</strong> contacto@inagrosolutions.es</li>
@@ -44,7 +44,7 @@ export default function LegalNoticePage() {
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">Propiedad Intelectual</h2>
-                  <p>Todos los derechos de Propiedad Intelectual de los contenidos de la pÃ¡gina web y su diseÃ±o grÃ¡fico son titularidad exclusiva de INAGROSOLUTIONS.</p>
+                  <p>Todos los derechos de Propiedad Intelectual de los contenidos de la página web y su diseño gráfico son titularidad exclusiva de INAGROSOLUTIONS.</p>
                 </section>
               </>
             ) : (
