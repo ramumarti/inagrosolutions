@@ -2,7 +2,7 @@ import { PlatformRole } from './tenant-context';
 
 export const ROUTES_BY_ROLE: Record<PlatformRole, string> = {
   superadmin: '/superadmin',
-  tenant_admin: '/tenant',
+  tenant_admin: '/dashboard',
   technician: '/technician',
   farmer: '/cuaderno',
   worker: '/cuaderno', // Workers might have a limited view of the notebook
@@ -46,7 +46,7 @@ export function canAccessRoute(pathname: string, role?: PlatformRole | null): bo
   
   if (pathname.startsWith('/superadmin')) return false;
   
-  if (pathname.startsWith('/tenant')) {
+  if (pathname.startsWith('/admin') || pathname === '/dashboard') {
     return role === 'tenant_admin';
   }
   

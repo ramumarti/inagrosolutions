@@ -32,7 +32,7 @@ export default function SuperadminTenantsPage() {
     try {
       const res = await switchContext(tenantId);
       if (res.success) {
-        window.location.href = '/tenant';
+        window.location.href = '/dashboard';
       } else {
         alert(res.error || 'Error al cambiar contexto');
       }

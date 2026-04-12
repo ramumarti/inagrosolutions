@@ -154,7 +154,7 @@ export default function TenantDashboard() {
                 <span className="text-xs text-white/40 mb-1">/mes</span>
              </div>
              <p className="text-[10px] text-emerald-400 font-bold mb-6">Plan Cooperativa • 50% Dto Marca Blanca aplicado</p>
-             <Link href="/tenant/billing">
+             <Link href="/admin/billing">
                 <GlowButton className="w-full py-3 text-[10px] font-black uppercase tracking-widest">
                   Gestionar Facturas
                 </GlowButton>
