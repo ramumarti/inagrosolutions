@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Hexagon } from 'lucide-react';
+import { Mail, Lock, Building2 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { Input } from '@/components/ui/Input';
@@ -62,12 +62,15 @@ function LoginContent() {
   return (
     <GlassCard className="flex flex-col items-center w-full max-w-md mx-auto p-8 sm:p-10">
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center mb-6 shadow-lg shadow-[var(--color-primary)]/30">
-        <Hexagon className="w-8 h-8 text-white" />
+        <Building2 className="w-8 h-8 text-white" />
       </div>
       
-      <h1 className="text-3xl font-bold mb-8 glow-text text-center">
-        {t('login.hero_title')}
+      <h1 className="text-2xl font-black mb-2 glow-text text-center uppercase tracking-tighter">
+        Acceso a la Plataforma
       </h1>
+      <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-xs font-bold uppercase tracking-widest">
+        Gestión de Entidades y Cuadernos
+      </p>
 
       <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
         <Input 
@@ -87,18 +90,21 @@ function LoginContent() {
           required
         />
         
-        <GlowButton type="submit" isLoading={loading} className="w-full mt-2">
+        <GlowButton type="submit" isLoading={loading} className="w-full mt-4 text-lg py-6 font-black uppercase tracking-widest">
           {t('login.submit')}
         </GlowButton>
       </form>
 
-      <div className="mt-6 flex flex-col items-center gap-3 text-sm">
-        <Link href="/forgot-password" className="text-[color:var(--color-accent-blue)] hover:text-white transition-colors">
+      <div className="mt-8 flex flex-col items-center gap-3 text-xs">
+        <Link href="/forgot-password" className="text-white/50 hover:text-white transition-colors uppercase font-bold tracking-tight">
           {t('login.forgot')}
         </Link>
-        <Link href="/signup" className="text-[color:var(--color-base-content)] opacity-70 hover:opacity-100 transition-colors">
-          {t('login.signup')}
-        </Link>
+        <div className="flex flex-col items-center gap-1 mt-2">
+          <span className="text-white/30 uppercase font-black">¿Aún no eres partner?</span>
+          <Link href="/signup" className="text-[var(--color-primary)] font-bold hover:underline uppercase">
+            REGISTRAR ENTIDAD GRATIS
+          </Link>
+        </div>
       </div>
     </GlassCard>
   );
