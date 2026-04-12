@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -81,7 +81,7 @@ export default function LandingPage() {
              </div>
              <div className="flex flex-col -gap-1">
                <span className="text-2xl font-black tracking-tighter text-white">INAGROSOLUTIONS</span>
-               <span className="text-[10px] font-bold text-emerald-500 tracking-[0.2em] uppercase pl-1">Tecnología Agrícola</span>
+               <span className="text-[10px] font-bold text-emerald-500 tracking-[0.2em] uppercase pl-1">TecnologÃ­a AgrÃ­cola</span>
              </div>
           </div>
 
@@ -130,7 +130,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                {heroConfig?.subtitle || 'Potencia tu negocio agrícola con nuestra tecnología. Ofrece a tus socios un Cuaderno Digital con TU marca, gestiona miles de fincas desde un solo panel y genera nuevos ingresos.'}
+                {heroConfig?.subtitle || 'Potencia tu negocio agrÃ­cola con nuestra tecnologÃ­a. Ofrece a tus socios un Cuaderno Digital con TU marca, gestiona miles de fincas desde un solo panel y genera nuevos ingresos.'}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -141,7 +141,7 @@ export default function LandingPage() {
                  </Link>
                  <a href="#cooperativas">
                     <GlowButton variant="secondary" className="px-10 py-5 rounded-2xl text-lg w-full sm:w-auto">
-                      Saber más
+                      Saber mÃ¡s
                     </GlowButton>
                  </a>
               </div>
@@ -152,7 +152,7 @@ export default function LandingPage() {
               <div className="relative z-10 p-2 rounded-[40px] border border-white/10 bg-white/5 backdrop-blur-3xl overflow-hidden shadow-2xl skew-y-1 transform hover:skew-y-0 transition-all duration-700">
                 <Image 
                   src="/olive_coop_hero.png" 
-                  alt="Cooperativa Oleícola Digital InagroSolutions"
+                  alt="Cooperativa OleÃ­cola Digital Inagrosolutions"
                   width={800}
                   height={600}
                   priority
@@ -184,20 +184,20 @@ export default function LandingPage() {
                   </GlassCard>
                   <GlassCard className="p-6">
                     <BarChart4 className="text-blue-400 mb-4" size={32} />
-                    <h4 className="font-bold text-lg mb-2">Gestión Masiva</h4>
+                    <h4 className="font-bold text-lg mb-2">GestiÃ³n Masiva</h4>
                     <p className="text-sm text-white/60">Controla miles de fincas y agricultores desde un panel centralizado.</p>
                   </GlassCard>
                 </div>
                 <div className="space-y-4">
                   <GlassCard className="p-6">
                     <CreditCard className="text-amber-400 mb-4" size={32} />
-                    <h4 className="font-bold text-lg mb-2">Monetización</h4>
-                    <p className="text-sm text-white/60">El 50% de la facturación es para tu cooperativa.</p>
+                    <h4 className="font-bold text-lg mb-2">MonetizaciÃ³n</h4>
+                    <p className="text-sm text-white/60">El 50% de la facturaciÃ³n es para tu cooperativa.</p>
                   </GlassCard>
                   <GlassCard className="p-6 border-emerald-500/20 bg-emerald-500/5">
                     <Smartphone className="text-emerald-400 mb-4" size={32} />
                     <h4 className="font-bold text-lg mb-2">PWA Multi-app</h4>
-                    <p className="text-sm text-white/60">Tus agricultores instalan TU app en su móvil, adaptada a sus necesidades.</p>
+                    <p className="text-sm text-white/60">Tus agricultores instalan TU app en su mÃ³vil, adaptada a sus necesidades.</p>
                   </GlassCard>
                 </div>
               </div>
@@ -206,17 +206,17 @@ export default function LandingPage() {
             <div className="order-1 lg:order-2 space-y-6">
               <h2 className="text-sm font-black uppercase text-emerald-500 tracking-[0.3em]">Soluciones para Entidades</h2>
               <h3 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
-                Escala tu negocio agrícola al siguiente nivel.
+                Escala tu negocio agrÃ­cola al siguiente nivel.
               </h3>
               <p className="text-lg text-white/70 leading-relaxed">
-                INAGROSOLUTIONS no es solo un cuaderno digital; es una infraestructura tecnológica para cooperativas, almazaras y empresas de servicios. 
+                INAGROSOLUTIONS no es solo un cuaderno digital; es una infraestructura tecnolÃ³gica para cooperativas, almazaras y empresas de servicios. 
               </p>
               <ul className="space-y-4">
                 {[
                   "Aislamiento total de datos por entidad (Tenants).",
-                  "Configuración de módulos específica para cada socio.",
-                  "Panel para técnicos con supervisión de tratamientos.",
-                  "Exportación masiva de datos para auditorías SIEX."
+                  "ConfiguraciÃ³n de mÃ³dulos especÃ­fica para cada socio.",
+                  "Panel para tÃ©cnicos con supervisiÃ³n de tratamientos.",
+                  "ExportaciÃ³n masiva de datos para auditorÃ­as SIEX."
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 font-bold text-white/90">
                     <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
@@ -242,19 +242,19 @@ export default function LandingPage() {
       <section id="ventajas" className="py-24 px-6 bg-white/[0.02] border-y border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center mb-16 text-center">
-            <h2 className="text-sm font-black uppercase text-emerald-500 tracking-widest mb-4">Por qué elegirnos</h2>
-            <p className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">Diseñado para la realidad del campo</p>
-            <p className="text-lg text-white/70 max-w-2xl font-medium">Sabemos que el agricultor no tiene tiempo que perder frente al ordenador. Nuestra tecnología se adapta a sus necesidades diarias.</p>
+            <h2 className="text-sm font-black uppercase text-emerald-500 tracking-widest mb-4">Por quÃ© elegirnos</h2>
+            <p className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">DiseÃ±ado para la realidad del campo</p>
+            <p className="text-lg text-white/70 max-w-2xl font-medium">Sabemos que el agricultor no tiene tiempo que perder frente al ordenador. Nuestra tecnologÃ­a se adapta a sus necesidades diarias.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { icon: <WifiOff />, title: "Uso sin Cobertura (Offline)", desc: "Apúntalo todo desde el tractor en la PWA de tu móvil aunque no tengas señal. Se subirá automáticamente al recuperar el internet." },
-              { icon: <FileDown />, title: "Reportes Oficiales Automáticos", desc: "Cumple la ley sin esfuerzo. Exporta tu cuaderno oficial al formato XML requerido para la PAC y el SIEX en 1 segundo." },
-              { icon: <Tractor />, title: "Fácil de Usar, Textos Grandes", desc: "Interfaz intuitiva, contrastes altos y botones muy grandes. Pensado para usarse rápido y sin conocimientos avanzados." },
-              { icon: <Droplets />, title: "Control de Fitosanitarios y Abonos", desc: "Calcula Dosis y mantén el registro estricto legal de tus tratamientos. Incluye validadores para evitar multas." },
-              { icon: <MapPin />, title: "Sincronización de Parcelas", desc: "Registra y agrupa las fincas, organiza qué siembras y lleva el Histórico por polígono de forma sencilla." },
-              { icon: <BarChart4 />, title: "Control de Costes y Trazabilidad", desc: "Averigua si tu finca es rentable. Sigue todos los gastos por labor y mantén la trazabilidad de tus lotes de cosecha." }
+              { icon: <WifiOff />, title: "Uso sin Cobertura (Offline)", desc: "ApÃºntalo todo desde el tractor en la PWA de tu mÃ³vil aunque no tengas seÃ±al. Se subirÃ¡ automÃ¡ticamente al recuperar el internet." },
+              { icon: <FileDown />, title: "Reportes Oficiales AutomÃ¡ticos", desc: "Cumple la ley sin esfuerzo. Exporta tu cuaderno oficial al formato XML requerido para la PAC y el SIEX en 1 segundo." },
+              { icon: <Tractor />, title: "FÃ¡cil de Usar, Textos Grandes", desc: "Interfaz intuitiva, contrastes altos y botones muy grandes. Pensado para usarse rÃ¡pido y sin conocimientos avanzados." },
+              { icon: <Droplets />, title: "Control de Fitosanitarios y Abonos", desc: "Calcula Dosis y mantÃ©n el registro estricto legal de tus tratamientos. Incluye validadores para evitar multas." },
+              { icon: <MapPin />, title: "SincronizaciÃ³n de Parcelas", desc: "Registra y agrupa las fincas, organiza quÃ© siembras y lleva el HistÃ³rico por polÃ­gono de forma sencilla." },
+              { icon: <BarChart4 />, title: "Control de Costes y Trazabilidad", desc: "Averigua si tu finca es rentable. Sigue todos los gastos por labor y mantÃ©n la trazabilidad de tus lotes de cosecha." }
             ].map((feat, i) => (
               <GlassCard key={i} className="p-8 border-white/10 hover:bg-white/[0.06] transition-all group rounded-2xl">
         <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 border border-emerald-500/20 group-hover:scale-110 transition-transform">
@@ -306,7 +306,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-black text-white glow-text">{pricingConfig?.title || 'Planes Adaptados al Tamaño de la Explotación de tus Agricultores y Olivareros'}</h2>
+            <h2 className="text-4xl lg:text-5xl font-black text-white glow-text">{pricingConfig?.title || 'Planes Adaptados al TamaÃ±o de la ExplotaciÃ³n de tus Agricultores y Olivareros'}</h2>
             <p className="text-white/60 text-lg">Lo mejor de todo es que les ofreces un servicio con tu propia marca.</p>
           </div>
 
@@ -336,20 +336,20 @@ export default function LandingPage() {
             </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-             {/* Básico */}
+             {/* BÃ¡sico */}
              <GlassCard className="p-8 border-white/10 flex flex-col rounded-3xl h-full shadow-2xl">
-                <h3 className="text-xl font-black text-white mb-1">Básico</h3>
+                <h3 className="text-xl font-black text-white mb-1">BÃ¡sico</h3>
                 <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-emerald-400">Hasta {prices.basico.ha} HA</p>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.basico.month : prices.basico.year} €</span>
-                  <span className="text-white/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
+                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.basico.month : prices.basico.year} â‚¬</span>
+                  <span className="text-white/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'aÃ±o'}</span>
                 </div>
                 <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Registro SIEX</li>
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Fitosanitarios</li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Fertilización</li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Labores Agrícolas</li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Gestión de Parcelas</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> FertilizaciÃ³n</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Labores AgrÃ­colas</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> GestiÃ³n de Parcelas</li>
                 </ul>
                 <Link href="/login" className="w-full mt-auto">
                   <GlowButton variant="secondary" className="w-full py-4 rounded-xl text-sm">Comenzar</GlowButton>
@@ -361,13 +361,13 @@ export default function LandingPage() {
                 <h3 className="text-xl font-black text-white mb-1">Intermedio</h3>
                 <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-blue-400">Hasta {prices.intermedio.ha} HA</p>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.intermedio.month : prices.intermedio.year} €</span>
-                  <span className="text-white/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
+                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.intermedio.month : prices.intermedio.year} â‚¬</span>
+                  <span className="text-white/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'aÃ±o'}</span>
                 </div>
                 <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> Todo lo de Básico</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> Todo lo de BÃ¡sico</li>
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> <b>Control de Costes</b></li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> <b>Gestión de Cosechas</b></li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> <b>GestiÃ³n de Cosechas</b></li>
                 </ul>
                 <Link href="/login" className="w-full mt-auto">
                   <GlowButton variant="secondary" className="w-full py-4 rounded-xl text-sm">Comenzar</GlowButton>
@@ -382,14 +382,14 @@ export default function LandingPage() {
                 <h3 className="text-xl font-black text-emerald-400 mb-1">Avanzado</h3>
                 <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-emerald-400">Hasta {prices.avanzado.ha} HA</p>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.avanzado.month : prices.avanzado.year} €</span>
-                  <span className="text-emerald-400/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
+                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.avanzado.month : prices.avanzado.year} â‚¬</span>
+                  <span className="text-emerald-400/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'aÃ±o'}</span>
                 </div>
                 <ul className="space-y-4 mb-8 flex-1 text-white font-medium text-sm">
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> Todo lo de Intermedio</li>
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>Trazabilidad Total</b></li>
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>Dashboards Pro</b></li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>Exportación PAC</b></li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>ExportaciÃ³n PAC</b></li>
                 </ul>
                 <Link href="/login" className="w-full mt-auto">
                   <GlowButton variant="primary" className="w-full py-4 rounded-xl text-sm bg-emerald-500 hover:scale-105">Suscribirse</GlowButton>
@@ -401,14 +401,14 @@ export default function LandingPage() {
                 <h3 className="text-xl font-black text-amber-400 mb-1">Premium</h3>
                 <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-amber-400">Hasta {prices.premium.ha} HA</p>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.premium.month : prices.premium.year} €</span>
-                  <span className="text-amber-400/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
+                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.premium.month : prices.premium.year} â‚¬</span>
+                  <span className="text-amber-400/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'aÃ±o'}</span>
                 </div>
                 <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> Todo lo de Avanzado</li>
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> <b>Sensores IoT</b></li>
                    <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> <b>Alertas Inteligentes</b></li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> Estaciones Climáticas</li>
+                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> Estaciones ClimÃ¡ticas</li>
                 </ul>
                 <Link href="/login" className="w-full mt-auto">
                   <GlowButton variant="secondary" className="w-full py-4 rounded-xl text-sm">Suscribirse</GlowButton>
@@ -429,13 +429,13 @@ export default function LandingPage() {
            </div>
            
            <div className="flex flex-wrap justify-center gap-10 text-sm font-bold text-white/60">
-              <a href="/privacy-policy" className="hover:text-emerald-400 transition-colors">Política de Privacidad</a>
-              <a href="/cookie-policy" className="hover:text-emerald-400 transition-colors">Política de Cookies</a>
+              <a href="/privacy-policy" className="hover:text-emerald-400 transition-colors">PolÃ­tica de Privacidad</a>
+              <a href="/cookie-policy" className="hover:text-emerald-400 transition-colors">PolÃ­tica de Cookies</a>
               <a href="/legal-notice" className="hover:text-emerald-400 transition-colors">Aviso Legal</a>
            </div>
            
            <p className="text-sm font-bold text-white/40">
-             © 2026 Inagrosolutions.es
+             Â© 2026 Inagrosolutions.es
            </p>
         </div>
       </footer>

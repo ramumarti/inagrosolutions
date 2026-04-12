@@ -25,7 +25,7 @@ export default function PartnerPolicyPage() {
               1. Definición del Modelo
             </div>
             <GlassCard className="p-8 space-y-4 text-white/70 leading-relaxed font-medium">
-              <p><strong className="text-white">Inagro Solutions:</strong> Infraestructura tecnológica SaaS para la gestión digital de explotaciones agrícolas y cumplimiento SIEX.</p>
+              <p><strong className="text-white">Inagrosolutions:</strong> Infraestructura tecnológica SaaS para la gestión digital de explotaciones agrícolas y cumplimiento SIEX.</p>
               <p><strong className="text-white">Partner:</strong> Cooperativas, Asociaciones, Ingenierías y Asesorías que operan bajo Marca Blanca.</p>
               <p><strong className="text-white">Naturaleza de la Relación:</strong> Relación mercantil de colaboración tecnológica. No existe vínculo laboral, sociedad ni franquicia.</p>
             </GlassCard>
@@ -89,7 +89,7 @@ export default function PartnerPolicyPage() {
               4. Protección de Datos (RGPD)
             </div>
             <GlassCard className="p-8 space-y-4 text-white/70 leading-relaxed font-medium">
-              <p>Inagro Solutions actúa como <strong className="text-white">Encargado del Tratamiento</strong>, procesando los datos por cuenta del Partner (Responsable) y del Agricultor.</p>
+              <p>Inagrosolutions actúa como <strong className="text-white">Encargado del Tratamiento</strong>, procesando los datos por cuenta del Partner (Responsable) y del Agricultor.</p>
               <p>Garantizamos medidas de seguridad de alto nivel, backups diarios y cifrado de extremo a extremo para asegurar la integridad de los cuadernos digitales.</p>
             </GlassCard>
           </section>
@@ -127,14 +127,14 @@ export default function PartnerPolicyPage() {
             </div>
             <div className="p-8 rounded-3xl bg-yellow-500/5 border border-yellow-500/10 backdrop-blur-xl mb-12">
               <p className="text-yellow-500/80 leading-relaxed font-bold italic">
-                Inagro Solutions es una herramienta técnica de apoyo. No sustituye el asesoramiento legal especializado ni garantiza la ausencia de sanciones administrativas si el usuario introduce información errónea o incompleta. El cumplimiento final del RD 1054/2022 es responsabilidad del usuario obligado.
+                Inagrosolutions es una herramienta técnica de apoyo. No sustituye el asesoramiento legal especializado ni garantiza la ausencia de sanciones administrativas si el usuario introduce información errónea o incompleta. El cumplimiento final del RD 1054/2022 es responsabilidad del usuario obligado.
               </p>
             </div>
           </section>
         </div>
 
         <div className="mt-20 pt-12 border-t border-white/5 text-center">
-          <p className="text-white/20 text-xs font-black uppercase tracking-widest">© 2026 Inagro Solutions - Tecnología Agrícola Profesional</p>
+          <p className="text-white/20 text-xs font-black uppercase tracking-widest">© 2026 Inagrosolutions - Tecnología Agrícola Profesional</p>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { createClient } from '@/lib/supabase/server';
 
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
     const supabase = await createClient();
     
-    // 1. Obtener la configuración SMTP (la que configuramos de Gmail)
+    // 1. Obtener la configuraciÃ³n SMTP (la que configuramos de Gmail)
     const { data: smtp } = await supabase
       .from('smtp_settings')
       .select('*')
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
     if (!smtp || !smtp.is_verified) {
       console.error('SMTP no configurado o verificado');
-      return NextResponse.json({ error: 'Configuración de correo no lista' }, { status: 500 });
+      return NextResponse.json({ error: 'ConfiguraciÃ³n de correo no lista' }, { status: 500 });
     }
 
     // 2. Configurar el transportista
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/signup?email=${encodeURIComponent(email)}&invite=true`;
 
-    // 3. Diseño del Email White Label
+    // 3. DiseÃ±o del Email White Label
     const htmlContent = `
       <!DOCTYPE html>
       <html>
@@ -54,12 +54,12 @@ export async function POST(req: Request) {
       <body>
         <div className="card">
           ${logoUrl ? `<img src="${logoUrl}" class="logo" alt="${tenantName}">` : `<h2>${tenantName}</h2>`}
-          <h1>Tu Cuaderno Digital está listo</h1>
-          <p>La cooperativa <strong>${tenantName}</strong> te invita a unirte a su plataforma de gestión agrícola digital.</p>
-          <p>A partir de ahora, podrás registrar tus tratamientos, abonos y labores de forma rápida y cumplir con la normativa SIEX/PAC.</p>
+          <h1>Tu Cuaderno Digital estÃ¡ listo</h1>
+          <p>La cooperativa <strong>${tenantName}</strong> te invita a unirte a su plataforma de gestiÃ³n agrÃ­cola digital.</p>
+          <p>A partir de ahora, podrÃ¡s registrar tus tratamientos, abonos y labores de forma rÃ¡pida y cumplir con la normativa SIEX/PAC.</p>
           <a href="${inviteLink}" class="btn">Confirmar y Registrarme</a>
           <div class="footer">
-            Este mensaje ha sido enviado por ${tenantName} a través de la tecnología de InagroSolutions.
+            Este mensaje ha sido enviado por ${tenantName} a travÃ©s de la tecnologÃ­a de Inagrosolutions.
           </div>
         </div>
       </body>
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
     await transporter.sendMail({
       from: `"${tenantName}" <${smtp.from_email}>`,
       to: email,
-      subject: `Invitación de ${tenantName}`,
+      subject: `InvitaciÃ³n de ${tenantName}`,
       html: htmlContent,
     });
 

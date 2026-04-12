@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from 'react';
 import Link from 'next/link';
@@ -33,23 +33,23 @@ export default function CookiePolicyPage() {
           <div className="prose prose-invert max-w-none flex flex-col gap-6 text-white/70">
             {language === 'es' ? (
               <>
-                <p>En IASOLUTIONS utilizamos cookies para mejorar tu experiencia de navegación.</p>
+                <p>En INAGROSOLUTIONS utilizamos cookies para mejorar tu experiencia de navegaciÃ³n.</p>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">¿Qué son las cookies?</h2>
-                  <p>Las cookies son pequeños archivos de texto que se almacenan en su navegador cuando visita casi cualquier página web. Su utilidad es que la web sea capaz de recordar su visita cuando vuelva a navegar por esa página.</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">Â¿QuÃ© son las cookies?</h2>
+                  <p>Las cookies son pequeÃ±os archivos de texto que se almacenan en su navegador cuando visita casi cualquier pÃ¡gina web. Su utilidad es que la web sea capaz de recordar su visita cuando vuelva a navegar por esa pÃ¡gina.</p>
                 </section>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">Cookies Técnicas (Obligatorias)</h2>
-                  <p>Son aquellas que permiten al usuario la navegación a través de una página web y la utilización de las diferentes opciones o servicios que en ella existan (ej: autenticación con Supabase).</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">Cookies TÃ©cnicas (Obligatorias)</h2>
+                  <p>Son aquellas que permiten al usuario la navegaciÃ³n a travÃ©s de una pÃ¡gina web y la utilizaciÃ³n de las diferentes opciones o servicios que en ella existan (ej: autenticaciÃ³n con Supabase).</p>
                 </section>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">¿Cómo puedo gestionar las cookies?</h2>
-                  <p>Usted puede restringir, bloquear o borrar las cookies de cualquier sitio web, utilizando su navegador. En cada navegador la operativa es diferente, la función de 'Ayuda' le mostrará cómo hacerlo.</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">Â¿CÃ³mo puedo gestionar las cookies?</h2>
+                  <p>Usted puede restringir, bloquear o borrar las cookies de cualquier sitio web, utilizando su navegador. En cada navegador la operativa es diferente, la funciÃ³n de 'Ayuda' le mostrarÃ¡ cÃ³mo hacerlo.</p>
                 </section>
               </>
             ) : (
               <>
-                <p>At IASOLUTIONS, we use cookies to improve your browsing experience.</p>
+                <p>At INAGROSOLUTIONS, we use cookies to improve your browsing experience.</p>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">What are cookies?</h2>
                   <p>Cookies are small text files stored in your browser when you visit almost any website. Their usefulness is that the website is able to remember your visit when you browse that page again.</p>

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -28,9 +28,9 @@ export default async function TenantPublicPage({ params }: { params: { slug: str
   const secondaryColor = tenant.secondary_color || '#065F46';
   const logoUrl = tenant.logo_url || '/icon.png';
   const services = tenant.services || [
-    { title: 'Asesoramiento Técnico', description: 'Visitas a finca y cuadernos de campo.' },
+    { title: 'Asesoramiento TÃ©cnico', description: 'Visitas a finca y cuadernos de campo.' },
     { title: 'Compra Conjunta', description: 'Mejores precios en insumos.' },
-    { title: 'Gestión de Subvenciones', description: 'Tramitación PAC y ayudas.' }
+    { title: 'GestiÃ³n de Subvenciones', description: 'TramitaciÃ³n PAC y ayudas.' }
   ];
 
   return (
@@ -45,7 +45,7 @@ export default async function TenantPublicPage({ params }: { params: { slug: str
           </div>
           <div className="flex gap-4">
              <Link href="/login" className="px-5 py-2.5 text-sm font-bold text-white/70 hover:text-white transition-colors">
-               Iniciar Sesión
+               Iniciar SesiÃ³n
              </Link>
              <Link 
                href={`/signup?tenant=${tenant.slug}`} 
@@ -68,7 +68,7 @@ export default async function TenantPublicPage({ params }: { params: { slug: str
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-white/60 font-light max-w-2xl mx-auto leading-relaxed">
-              {tenant.hero_subtitle || 'Digitaliza tu cuaderno de campo, gestiona tus parcelas y forma parte de nuestra comunidad agrícola de forma rápida y sencilla.'}
+              {tenant.hero_subtitle || 'Digitaliza tu cuaderno de campo, gestiona tus parcelas y forma parte de nuestra comunidad agrÃ­cola de forma rÃ¡pida y sencilla.'}
             </p>
             <div className="pt-8 flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
@@ -93,7 +93,7 @@ export default async function TenantPublicPage({ params }: { params: { slug: str
                    {tenant.public_description ? (
                      <p>{tenant.public_description}</p>
                    ) : (
-                     <p>Somos una cooperativa dedicada al respaldo, asesoramiento y comercialización conjunta de nuestros agricultores socios, priorizando la tecnología, la trazabilidad y la rentabilidad en todos nuestros procesos. Únete para centralizar tus labores agrícolas, simplificar tu cumplimiento normativo mediante tu Cuaderno Digital y acceder a una amplia gama de ventajas exclusivas.</p>
+                     <p>Somos una cooperativa dedicada al respaldo, asesoramiento y comercializaciÃ³n conjunta de nuestros agricultores socios, priorizando la tecnologÃ­a, la trazabilidad y la rentabilidad en todos nuestros procesos. Ãšnete para centralizar tus labores agrÃ­colas, simplificar tu cumplimiento normativo mediante tu Cuaderno Digital y acceder a una amplia gama de ventajas exclusivas.</p>
                    )}
                 </div>
              </div>
@@ -113,17 +113,17 @@ export default async function TenantPublicPage({ params }: { params: { slug: str
         <section className="py-20 px-6 border-t border-white/5 relative overflow-hidden">
           <div className="absolute inset-0 opacity-10" style={{ background: `radial-gradient(circle at center, ${secondaryColor}60, transparent 70%)` }} />
           <div className="max-w-3xl mx-auto text-center space-y-12 relative z-10">
-            <h2 className="text-3xl font-black">Contacto y Atención al Socio</h2>
+            <h2 className="text-3xl font-black">Contacto y AtenciÃ³n al Socio</h2>
             
             <div className="grid sm:grid-cols-3 gap-6">
               <div className="p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
                 <MapPin className="w-8 h-8 mx-auto mb-4 text-white/40" />
-                <h4 className="font-bold mb-1">Dirección</h4>
+                <h4 className="font-bold mb-1">DirecciÃ³n</h4>
                 <p className="text-sm text-white/50">{tenant.address || 'Sede principal'}</p>
               </div>
               <div className="p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
                 <Phone className="w-8 h-8 mx-auto mb-4 text-white/40" />
-                <h4 className="font-bold mb-1">Teléfono</h4>
+                <h4 className="font-bold mb-1">TelÃ©fono</h4>
                 <p className="text-sm text-white/50">{tenant.contact_phone || '--'}</p>
               </div>
               <div className="p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
@@ -137,7 +137,7 @@ export default async function TenantPublicPage({ params }: { params: { slug: str
       </main>
 
       <footer className="py-8 border-t border-white/5 text-center text-sm text-white/30 hidden sm:block">
-        © {new Date().getFullYear()} {tenant.name}. Todos los derechos reservados. Portal impulsado por InagroSolutions.
+        Â© {new Date().getFullYear()} {tenant.name}. Todos los derechos reservados. Portal impulsado por Inagrosolutions.
       </footer>
     </div>
   );

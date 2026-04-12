@@ -1,12 +1,12 @@
-import type { Metadata, Viewport } from 'next'
+﻿import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { I18nProvider } from '@/lib/i18n'
 import { ToastProvider } from '@/components/ui/Toast'
 import { CookieBanner } from '@/components/ui/CookieBanner'
 
 export const metadata: Metadata = {
-  title: 'InagroSolutions',
-  description: 'Gestión Agrícola Inteligente y Cuaderno de Campo SIEX',
+  title: 'Inagrosolutions',
+  description: 'GestiÃ³n AgrÃ­cola Inteligente y Cuaderno de Campo SIEX',
   manifest: '/manifest.json',
 }
 

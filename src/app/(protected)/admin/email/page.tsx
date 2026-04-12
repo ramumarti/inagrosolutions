@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -111,7 +111,7 @@ export default function EmailConfigPage() {
         toast(
           language === 'en' 
             ? 'Email sent successfully and settings saved. Check your inbox.' 
-            : 'Email enviado exitosamente y configuración guardada. Revisa tu bandeja de entrada.',
+            : 'Email enviado exitosamente y configuraciÃ³n guardada. Revisa tu bandeja de entrada.',
           'success'
         );
         setIsVerified(true);
@@ -170,7 +170,7 @@ export default function EmailConfigPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-white mb-2">
-          {language === 'en' ? 'Email Configuration' : 'Configuración de Email'}
+          {language === 'en' ? 'Email Configuration' : 'ConfiguraciÃ³n de Email'}
         </h1>
         <p className="text-slate-400">
           {language === 'en' 
@@ -184,8 +184,8 @@ export default function EmailConfigPage() {
           <ShieldCheck className="w-5 h-5 text-indigo-400" />
           <span className="text-indigo-200 text-sm font-medium">
             {language === 'en' 
-              ? `✅ SMTP Configured and Verified — Last checked: ${new Date(verifiedAt!).toLocaleDateString()}` 
-              : `✅ SMTP Configurado y Verificado — Última verificación: ${new Date(verifiedAt!).toLocaleDateString()}`}
+              ? `âœ… SMTP Configured and Verified â€” Last checked: ${new Date(verifiedAt!).toLocaleDateString()}` 
+              : `âœ… SMTP Configurado y Verificado â€” Ãšltima verificaciÃ³n: ${new Date(verifiedAt!).toLocaleDateString()}`}
           </span>
         </div>
       ) : (
@@ -193,8 +193,8 @@ export default function EmailConfigPage() {
           <AlertTriangle className="w-5 h-5 text-amber-400" />
           <span className="text-amber-200 text-sm font-medium">
             {language === 'en' 
-              ? '⚠️ SMTP Not Configured — Welcome emails are disabled' 
-              : '⚠️ SMTP No Configurado — Los emails de bienvenida están desactivados'}
+              ? 'âš ï¸ SMTP Not Configured â€” Welcome emails are disabled' 
+              : 'âš ï¸ SMTP No Configurado â€” Los emails de bienvenida estÃ¡n desactivados'}
           </span>
         </div>
       )}
@@ -203,7 +203,7 @@ export default function EmailConfigPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             <Settings2 className="w-5 h-5 text-primary" />
-            {language === 'en' ? 'SMTP Settings' : 'Configuración SMTP'}
+            {language === 'en' ? 'SMTP Settings' : 'ConfiguraciÃ³n SMTP'}
           </h2>
           <div className="flex flex-wrap items-center gap-2">
             <button 
@@ -273,7 +273,7 @@ export default function EmailConfigPage() {
             <Input
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value); setIsVerified(false); }}
-              placeholder={isVerified ? "••••••••" : "Tu clave SMTP..."}
+              placeholder={isVerified ? "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" : "Tu clave SMTP..."}
               type="password"
               icon={<Key className="w-4 h-4 text-slate-400" />}
             />
@@ -297,7 +297,7 @@ export default function EmailConfigPage() {
             <Input
               value={fromName}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setFromName(e.target.value); setIsVerified(false); }}
-              placeholder="IASOLUTIONS"
+              placeholder="INAGROSOLUTIONS"
               icon={<User className="w-4 h-4 text-slate-400" />}
             />
           </div>
@@ -305,7 +305,7 @@ export default function EmailConfigPage() {
 
         <div className="mt-8 pt-6 border-t border-slate-700/50">
           <h3 className="text-sm font-medium text-slate-300 mb-4">
-            {language === 'en' ? 'Test & Save Configuration' : 'Probar y Guardar Configuración'}
+            {language === 'en' ? 'Test & Save Configuration' : 'Probar y Guardar ConfiguraciÃ³n'}
           </h3>
           <div className="flex flex-col md:flex-row items-end gap-4">
             <div className="flex-1 w-full space-y-1.5">
@@ -329,7 +329,7 @@ export default function EmailConfigPage() {
               >
                 {isTesting 
                   ? (language === 'en' ? 'Testing...' : 'Probando...') 
-                  : (language === 'en' ? '🧪 Send Test Email' : '🧪 Enviar Email de Prueba')}
+                  : (language === 'en' ? 'ðŸ§ª Send Test Email' : 'ðŸ§ª Enviar Email de Prueba')}
               </GlowButton>
             </div>
           </div>

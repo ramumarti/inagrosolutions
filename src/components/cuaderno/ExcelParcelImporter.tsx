@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useRef } from 'react';
 import { 
@@ -26,11 +26,11 @@ export function ExcelParcelImporter({ explotacionId, onClose, onSuccess }: Excel
     const ws = XLSX.utils.json_to_sheet([
       {
         "Nombre Parcela": "Finca Las Olivas",
-        "Provincia": "Jaén",
-        "Municipio": "Úbeda",
-        "Polígono": "12",
+        "Provincia": "JaÃ©n",
+        "Municipio": "Ãšbeda",
+        "PolÃ­gono": "12",
         "Parcela": "34",
-        "Hectáreas": "2.5",
+        "HectÃ¡reas": "2.5",
         "Cultivo": "Olivo",
         "Variedad": "Picual",
         "Riego": "Localizado"
@@ -38,7 +38,7 @@ export function ExcelParcelImporter({ explotacionId, onClose, onSuccess }: Excel
     ]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Plantilla Parcelas");
-    XLSX.writeFile(wb, "iasolutions_plantilla_parcelas.xlsx");
+    XLSX.writeFile(wb, "inagrosolutions_plantilla_parcelas.xlsx");
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,9 +75,9 @@ export function ExcelParcelImporter({ explotacionId, onClose, onSuccess }: Excel
                 nombre: row["Nombre Parcela"],
                 provincia: row["Provincia"],
                 municipio: row["Municipio"],
-                poligono: row["Polígono"],
+                poligono: row["PolÃ­gono"],
                 parcela: row["Parcela"],
-                hectareas: Number(row["Hectáreas"]),
+                hectareas: Number(row["HectÃ¡reas"]),
                 cultivo: row["Cultivo"],
                 variedad: row["Variedad"]
             });
@@ -107,7 +107,7 @@ export function ExcelParcelImporter({ explotacionId, onClose, onSuccess }: Excel
             </div>
             <div>
                 <h3 className="text-xl font-black text-white">Importador Masivo Excel</h3>
-                <p className="text-xs font-black text-white/30 uppercase tracking-widest">Migra tus parcelas desde una hoja de cálculo</p>
+                <p className="text-xs font-black text-white/30 uppercase tracking-widest">Migra tus parcelas desde una hoja de cÃ¡lculo</p>
             </div>
         </div>
 
@@ -185,7 +185,7 @@ export function ExcelParcelImporter({ explotacionId, onClose, onSuccess }: Excel
         <div className="mt-8 p-4 bg-blue-500/5 rounded-xl border border-blue-500/10 flex gap-3 shrink-0">
             <Info className="text-blue-500 shrink-0" size={18} />
             <p className="text-[10px] text-blue-500/70 font-medium leading-relaxed">
-                Asegúrate de que los encabezados de las columnas coincidan exactamente con la plantilla IASOLUTIONS para una importación correcta.
+                AsegÃºrate de que los encabezados de las columnas coincidan exactamente con la plantilla INAGROSOLUTIONS para una importaciÃ³n correcta.
             </p>
         </div>
       </GlassCard>

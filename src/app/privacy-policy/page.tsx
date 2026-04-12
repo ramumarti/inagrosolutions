@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from 'react';
 import Link from 'next/link';
@@ -35,11 +35,11 @@ export default function PrivacyPolicyPage() {
               <>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Responsable del Tratamiento</h2>
-                  <p>IASOLUTIONS, con domicilio en España, es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protección de sus datos, puede contactarnos en legal@iasolutions.ai.</p>
+                  <p>INAGROSOLUTIONS, con domicilio en EspaÃ±a, es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protecciÃ³n de sus datos, puede contactarnos en legal@inagrosolutions.es.</p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">2. Datos que Recopilamos</h2>
-                  <p>Recopilamos los datos estrictamente necesarios para la prestación de nuestros servicios: nombre, apellidos, correo electrónico y datos técnicos de uso para mejorar la plataforma.</p>
+                  <p>Recopilamos los datos estrictamente necesarios para la prestaciÃ³n de nuestros servicios: nombre, apellidos, correo electrÃ³nico y datos tÃ©cnicos de uso para mejorar la plataforma.</p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">3. Finalidad del Tratamiento</h2>
@@ -53,14 +53,14 @@ export default function PrivacyPolicyPage() {
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">4. Tus Derechos</h2>
-                  <p>Tienes derecho a acceder, rectificar, suprimir, oponerse o solicitar la portabilidad de tus datos enviando un correo a soporte@iasolutions.ai.</p>
+                  <p>Tienes derecho a acceder, rectificar, suprimir, oponerse o solicitar la portabilidad de tus datos enviando un correo a soporte@inagrosolutions.es.</p>
                 </section>
               </>
             ) : (
               <>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Data Controller</h2>
-                  <p>IASOLUTIONS, based in Spain, is the controller of your personal data. For any questions regarding your data protection, you can contact us at legal@iasolutions.ai.</p>
+                  <p>INAGROSOLUTIONS, based in Spain, is the controller of your personal data. For any questions regarding your data protection, you can contact us at legal@inagrosolutions.es.</p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">2. Data We Collect</h2>
@@ -78,7 +78,7 @@ export default function PrivacyPolicyPage() {
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">4. Your Rights</h2>
-                  <p>You have the right to access, rectify, delete, object to, or request the portability of your data by sending an email to support@iasolutions.ai.</p>
+                  <p>You have the right to access, rectify, delete, object to, or request the portability of your data by sending an email to support@inagrosolutions.es.</p>
                 </section>
               </>
             )}

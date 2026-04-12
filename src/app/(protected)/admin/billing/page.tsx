@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
@@ -28,7 +28,7 @@ export default function TenantBillingPage() {
     active: { label: 'Activo', color: 'emerald' },
     past_due: { label: 'Pago Pendiente', color: 'amber' },
     cancelled: { label: 'Cancelado', color: 'red' },
-    inactive: { label: 'Sin Suscripción', color: 'zinc' },
+    inactive: { label: 'Sin SuscripciÃ³n', color: 'zinc' },
   };
 
   const status = statusMap[subscriptionStatus] || statusMap.inactive;
@@ -59,10 +59,10 @@ export default function TenantBillingPage() {
       <header className="space-y-2">
         <h1 className="text-4xl font-black glow-text flex items-center gap-3">
           <Wallet className="w-10 h-10 text-[var(--color-primary)]" />
-          {language === 'en' ? 'Billing & Commisions' : 'Facturación y Comisiones'}
+          {language === 'en' ? 'Billing & Commisions' : 'FacturaciÃ³n y Comisiones'}
         </h1>
         <p className="text-white/60 font-medium italic">
-          Gestión económica de la Marca Blanca
+          GestiÃ³n econÃ³mica de la Marca Blanca
         </p>
       </header>
 
@@ -94,11 +94,11 @@ export default function TenantBillingPage() {
                 </div>
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Suscripción</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/30">SuscripciÃ³n</p>
                 <p className="text-sm font-bold text-white mt-2">
                   {profile?.stripe_subscription_id 
                     ? `${profile.stripe_subscription_id.slice(0, 12)}...` 
-                    : 'Sin suscripción activa'}
+                    : 'Sin suscripciÃ³n activa'}
                 </p>
               </div>
            </div>
@@ -113,7 +113,7 @@ export default function TenantBillingPage() {
                   )}
                 </GlowButton>
               ) : (
-                <p className="text-sm text-white/40 italic">Realiza tu primera suscripción para acceder al portal de pagos.</p>
+                <p className="text-sm text-white/40 italic">Realiza tu primera suscripciÃ³n para acceder al portal de pagos.</p>
               )}
            </div>
         </GlassCard>
@@ -127,7 +127,7 @@ export default function TenantBillingPage() {
               <div>
                 <div className="flex justify-between text-xs mb-2">
                    <span className="text-white/60">Socios con plan activo</span>
-                   <span className="text-white font-bold">{tenant ? '—' : '0'}</span>
+                   <span className="text-white font-bold">{tenant ? 'â€”' : '0'}</span>
                 </div>
                 <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                    <div className="h-full bg-[var(--color-primary)] w-[0%]" />
@@ -135,13 +135,13 @@ export default function TenantBillingPage() {
               </div>
               <div className="pt-4 space-y-2">
                  <div className="flex justify-between text-[10px] uppercase font-black tracking-widest text-white/30">
-                    <span>Comisión Cooperativa (20%)</span>
+                    <span>ComisiÃ³n Cooperativa (20%)</span>
                     <span className="text-emerald-400">Pendiente</span>
                  </div>
               </div>
            </div>
            <p className="text-[10px] text-white/40 italic mt-6 border-t border-white/5 pt-4 leading-relaxed">
-             Este balance se calculará automáticamente cuando los socios tengan suscripciones activas.
+             Este balance se calcularÃ¡ automÃ¡ticamente cuando los socios tengan suscripciones activas.
            </p>
         </GlassCard>
       </div>
@@ -150,7 +150,7 @@ export default function TenantBillingPage() {
       <div className="flex items-center gap-3 p-4 bg-blue-500/5 rounded-2xl border border-blue-500/20">
          <ShieldCheck className="text-blue-400 shrink-0" size={20} />
          <p className="text-[10px] text-blue-400/80 font-medium">
-           Tus datos de pago están protegidos mediante el estándar PCI Service Provider Level 1. InagroSolutions nunca almacena tu tarjeta completa en sus servidores. Toda la gestión se realiza directamente en Stripe.
+           Tus datos de pago estÃ¡n protegidos mediante el estÃ¡ndar PCI Service Provider Level 1. Inagrosolutions nunca almacena tu tarjeta completa en sus servidores. Toda la gestiÃ³n se realiza directamente en Stripe.
          </p>
       </div>
     </div>
