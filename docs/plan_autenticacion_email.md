@@ -114,7 +114,15 @@ El archivo `src/middleware.ts` interceptará todas las peticiones para verificar
 ---
 
 ## Siguientes Pasos (Checklist de Ejecución)
-- [ ] 1. Verificar `emailRedirectTo` y `URL Configuration` en el dashboard de Supabase (para `localhost` y `inagrosolutions.com`).
-- [ ] 2. Chequear que `src/app/auth/callback/route.ts` procesa el código e inserta las cookies correctas.
-- [ ] 3. Asegurar las validaciones visuales (loading states, toast messages).
+- [x] 1. Verificar `emailRedirectTo` y `URL Configuration` en el dashboard de Supabase (para `localhost` y `inagrosolutions.com`).
+- [x] 2. Chequear que `src/app/auth/callback/route.ts` procesa el código e inserta las cookies correctas.
+- [x] 3. Asegurar las validaciones visuales (loading states, toast messages).
 - [ ] 4. Testear el flujo completo registrando un usuario y haciendo clic en el mail.
+
+## Correcciones Aplicadas (12-Abril-2026)
+- [x] **FIX RLS:** Añadida política INSERT en `tenants` para que usuarios autenticados sin tenant puedan crear uno.
+- [x] **FIX RLS:** Añadida política UPDATE en `users` para que usuarios puedan actualizar su propio perfil.
+- [x] **FIX Trigger:** `handle_new_user()` actualizado a `SECURITY DEFINER` para crear el tenant automáticamente en la BD durante el signup de empresa, evitando problemas de RLS en el callback.
+- [x] **FIX Callback:** Simplificado `auth/callback/route.ts` — la creación de tenant se delega al trigger de BD. El callback solo gestiona: intercambio de código, aceptación de invitaciones, y auto-vinculación de agricultores.
+- [x] **FIX Data:** Vinculados manualmente los 2 usuarios huérfanos (`ramumarti+test1` y `ramumarti+1r`) que se registraron antes del fix.
+

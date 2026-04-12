@@ -24,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es">
-      <body className="antialiased font-sans flex flex-col min-h-screen">
+    <html lang="es" suppressHydrationWarning>
+      <body className="antialiased font-sans flex flex-col min-h-screen" suppressHydrationWarning>
         <I18nProvider>
           <ToastProvider>
             {children}

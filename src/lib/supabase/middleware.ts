@@ -47,7 +47,13 @@ export async function updateSession(request: NextRequest) {
     const role = userData?.platform_role || 'farmer';
 
     const url = request.nextUrl.clone()
-    url.pathname = (role === 'tenant_admin' || role === 'superadmin') ? '/admin/branding' : '/cuaderno';
+    if (role === 'superadmin') {
+      url.pathname = '/superadmin';
+    } else if (role === 'tenant_admin') {
+      url.pathname = '/admin/branding';
+    } else {
+      url.pathname = '/cuaderno';
+    }
     return NextResponse.redirect(url)
   }
 

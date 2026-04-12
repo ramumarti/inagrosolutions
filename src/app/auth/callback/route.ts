@@ -13,44 +13,14 @@ export async function GET(request: Request) {
       const userEmail = authData.user.email
       const metadata = authData.user.user_metadata
 
-      // -- Flujo para Cuentas de Empresa (Marca Blanca) --
-      if (metadata?.is_business && metadata?.company_name) {
-        // Verificar si el usuario ya tiene un tenant asignado en la tabla publica
-        const { data: publicUser } = await supabase
-          .from('users')
-          .select('tenant_id')
-          .eq('id', authData.user.id)
-          .single();
+      // ---------------------------------------------------------------
+      // NOTA: La creación de tenant para cuentas de empresa (is_business)
+      // se gestiona automáticamente por el trigger de BD `handle_new_user()`
+      // con SECURITY DEFINER, lo que evita problemas con RLS.
+      // ---------------------------------------------------------------
 
-        if (publicUser && !publicUser.tenant_id) {
-          // Crear el Tenant (Entidad) automáticamente
-          const slug = metadata.company_name
-            .toLowerCase()
-            .replace(/[^a-z0-9]/g, '-')
-            .replace(/-+/g, '-')
-            .replace(/^-|-$/g, '');
-
-          const { data: newTenant, error: tenantError } = await supabase
-            .from('tenants')
-            .insert({
-              name: metadata.company_name,
-              slug: `${slug}-${Math.random().toString(36).substring(2, 7)}`, // Slug único
-              type: 'cooperativa',
-              subscription_tier: 'basico'
-            })
-            .select()
-            .single();
-
-          if (!tenantError && newTenant) {
-            // Asignar el nuevo tenant y el rol de admin al usuario
-            await supabase.from('users').update({
-              tenant_id: newTenant.id,
-              platform_role: 'tenant_admin'
-            }).eq('id', authData.user.id);
-          }
-        }
-      } else if (metadata?.tenant_slug) {
-        // -- Flujo para Auto-vinculación de Agricultores (/c/[slug]) --
+      // -- Flujo para Auto-vinculación de Agricultores (/c/[slug]) --
+      if (metadata?.tenant_slug && !metadata?.is_business) {
         const { data: targetTenant } = await supabase
           .from('tenants')
           .select('id')
@@ -65,7 +35,7 @@ export async function GET(request: Request) {
         }
       }
 
-      // -- Punto 3: Flujo de Aceptación de Invitaciones --
+      // -- Flujo de Aceptación de Invitaciones --
       if (userEmail) {
         const { data: invite } = await supabase
           .from('tenant_invitations')
@@ -90,7 +60,8 @@ export async function GET(request: Request) {
         }
       }
 
-      // Redirigir al portal principal (el Middleware se encargará de llevarle a su dashboard correspondiente según su rol)
+      // Redirigir al portal principal (el Middleware se encargará de llevarle 
+      // a su dashboard correspondiente según su rol)
       return NextResponse.redirect(`${origin}/`)
     }
   }
