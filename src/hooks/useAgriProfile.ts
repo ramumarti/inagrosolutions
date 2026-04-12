@@ -14,6 +14,10 @@ export interface AgriProfile {
   parcelas: any[];
   campanas: any[];
   alertasPendientes: number;
+  tier: string;
+  totalHectareas: number;
+  modulosActivos: string[];
+  tenant?: TenantData;
 }
 
 export interface ResumenDiario {
@@ -99,7 +103,7 @@ export function useAgriProfile() {
       const totalHa = allParcelas.reduce((sum: number, p: any) => sum + (Number(p.hectareas) || 0), 0);
 
       const tenantData = userData?.tenants as any;
-      const rawTier = tenantData?.subscription_tier || 'basico';
+      const rawTier = tenantData?.subscription_tier || userData?.agri_tier || 'basico';
       const safeTier = ['basico', 'intermedio', 'avanzado', 'premium'].includes(rawTier) ? rawTier : 'basico';
 
       setProfile({
@@ -111,13 +115,19 @@ export function useAgriProfile() {
         parcelas: allParcelas,
         campanas: campanasData || [],
         alertasPendientes: alertasData?.length || 0,
+        tier: safeTier,
+        totalHectareas: totalHa,
+        modulosActivos: tenantData?.active_modules || userData?.modulos_activos || [],
         tenant: tenantData ? {
           id: tenantData.id,
           name: tenantData.name,
           logo_url: tenantData.logo_url,
           primary_color: tenantData.primary_color,
           secondary_color: tenantData.secondary_color,
-          custom_domain: tenantData.custom_domain
+          custom_domain: tenantData.custom_domain,
+          type: tenantData.type || 'cooperativa',
+          subscription_tier: tenantData.subscription_tier,
+          active_modules: tenantData.active_modules
         } : undefined
       });
 
@@ -163,6 +173,7 @@ export function useAgriProfile() {
     loading, 
     hasModule, 
     canAccess, 
-    refreshProfile: load 
+    reload: load,
+    refreshProfile: load
   };
 }
