@@ -90,8 +90,8 @@ export async function GET(request: Request) {
         }
       }
 
-      // Redirigir al portal principal (Dashboard) directamente
-      return NextResponse.redirect(`${origin}/cuaderno`)
+      // Redirigir al portal principal (el Middleware se encargará de llevarle a su dashboard correspondiente según su rol)
+      return NextResponse.redirect(`${origin}/`)
     }
   }
 

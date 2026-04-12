@@ -43,8 +43,11 @@ export async function updateSession(request: NextRequest) {
   const isPublicRoute = publicPaths.includes(pathname) || pathname.startsWith('/api') || pathname.startsWith('/auth')
 
   if (user && (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password' || pathname === '/')) {
+    const { data: userData } = await supabase.from('users').select('platform_role').eq('id', user.id).single();
+    const role = userData?.platform_role || 'farmer';
+
     const url = request.nextUrl.clone()
-    url.pathname = '/cuaderno'
+    url.pathname = (role === 'tenant_admin' || role === 'superadmin') ? '/admin/branding' : '/cuaderno';
     return NextResponse.redirect(url)
   }
 
