@@ -64,6 +64,14 @@ export default function SuperadminPage() {
               </div>
               <TrendingUp className="w-4 h-4 text-white/20" />
             </Link>
+            
+            <Link href="/signup" target="_blank" className="p-4 rounded-xl bg-[var(--color-primary)]/10 hover:bg-[var(--color-primary)]/20 transition-colors border border-[var(--color-primary)]/30 flex items-center justify-between group mt-2">
+              <div className="flex items-center gap-3">
+                <Building2 className="w-5 h-5 text-[var(--color-primary)] group-hover:scale-110 transition-transform" />
+                <span className="font-bold text-white group-hover:text-white transition-colors">Nuevo Registro Público (B2B)</span>
+              </div>
+              <TrendingUp className="w-4 h-4 text-[var(--color-primary)]/50" />
+            </Link>
           </div>
         </GlassCard>
       </div>
