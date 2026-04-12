@@ -1,20 +1,20 @@
 import React from 'react';
 import Image from 'next/image';
 import { 
-  CheckCircle2, 
-  TrendingUp, 
   ShieldCheck, 
-  LayoutDashboard, 
+  TrendingUp, 
+  Shield, 
+  Layout, 
   Users, 
   ArrowRight, 
   Zap, 
   Globe, 
-  LineChart,
+  BarChart4,
   ChevronRight,
-  HandCoins,
-  BadgePercent,
-  MonitorText,
-  Clock
+  DollarSign,
+  Monitor,
+  Clock,
+  Target
 } from 'lucide-react';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { GlassCard } from '@/components/ui/GlassCard';
@@ -63,7 +63,7 @@ export default function HomePage() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-sm font-medium mb-8 animate-fade-in">
-            <BadgePercent className="w-4 h-4" />
+            <DollarSign className="w-4 h-4" />
             <span>Programa Partner 2026: 50% de ingresos recurrentes</span>
           </div>
           
@@ -140,7 +140,7 @@ export default function HomePage() {
                 {
                   title: '4. Cobras el 50%',
                   desc: 'Enviamos tu comisión a tu cuenta cada mes. Así de simple.',
-                  icon: <HandCoins className="w-6 h-6 text-black" />
+                  icon: <DollarSign className="w-6 h-6 text-black" />
                 }
               ].map((step, i) => (
                 <div key={i} className="flex gap-5 p-8 rounded-3xl bg-white/2 hover:bg-white/5 border border-white/5 transition-all group relative overflow-hidden">
@@ -190,7 +190,7 @@ export default function HomePage() {
                   {
                     title: 'Panel centralizado',
                     desc: 'Visualiza el estado de cumplimiento de todas tus explotaciones desde un único monitor.',
-                    icon: <MonitorText className="w-5 h-5" />
+                    icon: <Monitor className="w-5 h-5" />
                   },
                   {
                     title: 'Fidelización real',
@@ -228,11 +228,11 @@ export default function HomePage() {
                 </p>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 text-sm text-white/70">
-                    <CheckCircle2 className="w-4 h-4 text-[var(--color-primary)]" />
+                    <ShieldCheck className="w-4 h-4 text-[var(--color-primary)]" />
                     Pagos mensuales automáticos
                   </div>
                   <div className="flex items-center gap-3 text-sm text-white/70">
-                    <CheckCircle2 className="w-4 h-4 text-[var(--color-primary)]" />
+                    <ShieldCheck className="w-4 h-4 text-[var(--color-primary)]" />
                     Transparencia total en el panel
                   </div>
                 </div>
@@ -273,7 +273,7 @@ export default function HomePage() {
             
             <GlassCard className="relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                <ShieldCheck className="w-32 h-32 text-[var(--color-primary)]" />
+                <Shield className="w-32 h-32 text-[var(--color-primary)]" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Tranquilidad para tus agricultores</h3>
               <p className="text-white/40 mb-8">
@@ -331,7 +331,7 @@ export default function HomePage() {
                 <div className="aspect-square bg-[var(--color-primary)]/5 rounded-full absolute -inset-10 animate-pulse blur-3xl lg:block hidden"></div>
                 <div className="text-center relative">
                   <div className="w-24 h-24 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,255,102,0.4)]">
-                    <LineChart className="text-black w-12 h-12" />
+                    <BarChart4 className="text-black w-12 h-12" />
                   </div>
                   <h3 className="text-2xl font-bold mb-4">Escalabilidad Garantizada</h3>
                   <p className="text-white/50">
