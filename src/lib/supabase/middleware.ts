@@ -42,7 +42,7 @@ export async function updateSession(request: NextRequest) {
   ]
   const isPublicRoute = publicPaths.includes(pathname) || pathname.startsWith('/api') || pathname.startsWith('/auth')
 
-  if (user && (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password' || pathname === '/')) {
+  if (user && (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password' || pathname === '/enrutar')) {
     const { data: userData } = await supabase.from('users').select('platform_role').eq('id', user.id).single();
     const role = userData?.platform_role || 'farmer';
 
@@ -57,6 +57,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // Dejar que '/' sea accesible públicamente incluso si el usuario está logueado
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'

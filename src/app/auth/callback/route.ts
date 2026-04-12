@@ -62,7 +62,7 @@ export async function GET(request: Request) {
 
       // Redirigir al portal principal (el Middleware se encargará de llevarle 
       // a su dashboard correspondiente según su rol)
-      return NextResponse.redirect(`${origin}/`)
+      return NextResponse.redirect(`${origin}/enrutar`)
     }
   }
 
