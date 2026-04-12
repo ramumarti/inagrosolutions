@@ -33,34 +33,44 @@ export default function CookiePolicyPage() {
           <div className="prose prose-invert max-w-none flex flex-col gap-6 text-white/70">
             {language === 'es' ? (
               <>
-                <p>En INAGROSOLUTIONS utilizamos cookies para mejorar tu experiencia de navegación.</p>
+                <p>En InagroSolutions (operando bajo inagrosolutions.com), utilizamos cookies instrumentales y de sesión para garantizar la seguridad y funcionalidad de nuestra plataforma SaaS Multi-Entidad.</p>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">¿Qué son las cookies?</h2>
-                  <p>Las cookies son pequeños archivos de texto que se almacenan en su navegador cuando visita casi cualquier página web. Su utilidad es que la web sea capaz de recordar su visita cuando vuelva a navegar por esa página.</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">1. Naturaleza de nuestras cookies</h2>
+                  <p>Al ser una plataforma B2B (Business-to-Business) orientada a la gestión agronómica en la nube, InagroSolutions <strong>no emplea cookies publicitarias ni rastreadores de terceros</strong> con fines comerciales. Todas nuestras cookies están orientadas a la operativa y seguridad del sistema.</p>
                 </section>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">Cookies Técnicas (Obligatorias)</h2>
-                  <p>Son aquellas que permiten al usuario la navegación a través de una página web y la utilización de las diferentes opciones o servicios que en ella existan (ej: autenticación con Supabase).</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">2. Cookies Estrictamente Necesarias</h2>
+                  <p>Son aquellas indispensables para que la plataforma SaaS funcione y mantenga el aislamiento de datos entre entidades:</p>
+                  <ul className="list-disc pl-5 flex flex-col gap-2 mt-2">
+                    <li><strong>Autenticación y Sesión:</strong> Empleamos cookies seguras gestionadas por Supabase para mantener tu acceso, validar tu rol (Agricultor, Técnico, Administrador) y enrutar tu navegador al panel correcto (Cuaderno Digital, Panel White Label, etc.).</li>
+                    <li><strong>Aislamiento Multi-Tenant (RLS):</strong> Cookies técnicas imprescindibles para la aplicación de políticas de seguridad a nivel de base de datos (Row Level Security), asegurando que interactúas en el entorno cerrado de tu Cooperativa o Ingeniería asignada.</li>
+                    <li><strong>Preferencias del sistema:</strong> Para recordar selecciones locales como idioma (i18n), el estado de los menús (abierto/cerrado) o la visualización del dashboard.</li>
+                  </ul>
                 </section>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">¿Cómo puedo gestionar las cookies?</h2>
-                  <p>Usted puede restringir, bloquear o borrar las cookies de cualquier sitio web, utilizando su navegador. En cada navegador la operativa es diferente, la función de 'Ayuda' le mostrará cómo hacerlo.</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">3. Gestión y Desactivación</h2>
+                  <p>Dado que nuestras cookies son de naturaleza puramente técnica y de seguridad, la desactivación de las mismas desde su navegador impedirá el acceso a su área privada y al uso del Cuaderno Digital. Puede gestionarlas desde los ajustes de su navegador web habitual.</p>
                 </section>
               </>
             ) : (
               <>
-                <p>At INAGROSOLUTIONS, we use cookies to improve your browsing experience.</p>
+                <p>At InagroSolutions (operating at inagrosolutions.com), we use instrumental and session cookies to ensure the security and functionality of our Multi-Tenant SaaS platform.</p>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">What are cookies?</h2>
-                  <p>Cookies are small text files stored in your browser when you visit almost any website. Their usefulness is that the website is able to remember your visit when you browse that page again.</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">1. Nature of our cookies</h2>
+                  <p>Being a B2B (Business-to-Business) platform focused on cloud agronomic management, InagroSolutions <strong>does not use advertising cookies or third-party trackers</strong> for commercial purposes. All our cookies are oriented towards system operations and security.</p>
                 </section>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">Technical Cookies (Mandatory)</h2>
-                  <p>These are those that allow the user to navigate through a website and use the different options or services that exist in it (e.g., Supabase authentication).</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">2. Strictly Necessary Cookies</h2>
+                  <p>These are indispensable for the SaaS platform to function and to maintain data isolation between entities:</p>
+                  <ul className="list-disc pl-5 flex flex-col gap-2 mt-2">
+                    <li><strong>Authentication & Session:</strong> We employ secure cookies managed by Supabase to maintain your access, validate your role (Farmer, Technician, Administrator), and route your browser to the correct dashboard (Digital Notebook, White Label Panel, etc.).</li>
+                    <li><strong>Multi-Tenant Isolation (RLS):</strong> Technical cookies vital for applying database-level security policies (Row Level Security), ensuring you interact securely within your assigned Cooperative or Engineering environment.</li>
+                    <li><strong>System Preferences:</strong> Used to remember local selections like language (i18n), menu states (open/closed), or dashboard display settings.</li>
+                  </ul>
                 </section>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">How can I manage cookies?</h2>
-                  <p>You can restrict, block or delete cookies from any website using your browser. Each browser operates differently; the 'Help' function will show you how to do it.</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">3. Management and Deactivation</h2>
+                  <p>Since our cookies are purely technical and security-based, disabling them in your browser will prevent access to your private area and the use of the Digital Field Notebook. You can manage them through your standard web browser settings.</p>
                 </section>
               </>
             )}
