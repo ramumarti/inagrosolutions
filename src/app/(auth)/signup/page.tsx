@@ -164,7 +164,7 @@ export default function SignupPage() {
               required
             />
             <label htmlFor="legislation" className="text-[10px] text-white/50 cursor-pointer hover:text-white/70 transition-colors uppercase font-bold tracking-tight">
-              Acepto la normativa <span className="text-white">RD 1054/2022</span> y legislaciones específicas de la administración para el <span className="text-[var(--color-primary)]">Cuaderno de Campo Digital (SIEX)</span>.
+              Acepto la normativa <span className="text-white">RD 1054/2022</span> y <Link href="/partner-policy" className="text-[var(--color-primary)] hover:underline">legislaciones específicas</Link> de la administración para el <span className="text-[var(--color-primary)]">Cuaderno de Campo Digital (SIEX)</span>.
             </label>
           </div>
         </div>
