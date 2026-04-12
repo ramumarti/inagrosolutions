@@ -35,50 +35,68 @@ export default function PrivacyPolicyPage() {
               <>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Responsable del Tratamiento</h2>
-                  <p>INAGROSOLUTIONS, con domicilio en España, es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protección de sus datos, puede contactarnos en legal@inagrosolutions.es.</p>
+                  <p>InagroSolutions (operando bajo inagrosolutions.com), con domicilio en España, es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protección de sus datos o privacidad en nuestra plataforma SaaS, puede contactarnos en legal@inagrosolutions.com.</p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">2. Datos que Recopilamos</h2>
-                  <p>Recopilamos los datos estrictamente necesarios para la prestación de nuestros servicios: nombre, apellidos, correo electrónico y datos técnicos de uso para mejorar la plataforma.</p>
-                </section>
-                <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">3. Finalidad del Tratamiento</h2>
-                  <p>Tus datos se utilizan para:</p>
-                  <ul className="list-disc pl-5 flex flex-col gap-2">
-                    <li>Gestionar tu cuenta de usuario.</li>
-                    <li>Permitir el uso de nuestras Micro Aplicaciones de IA.</li>
-                    <li>Notificar cambios importantes en el servicio.</li>
-                    <li>Cumplir con obligaciones legales y fiscales.</li>
+                  <p>Al utilizar nuestra plataforma SaaS agrícola Multi-Entidad, recopilamos diferentes niveles de información:</p>
+                  <ul className="list-disc pl-5 flex flex-col gap-2 mt-2">
+                    <li><strong>Datos de cuenta y perfil:</strong> Nombre, apellidos, correo electrónico y rol del usuario dentro de la plataforma (ej. Administrador, Técnico, Agricultor).</li>
+                    <li><strong>Datos agronómicos:</strong> Información de fincas, parcelas, maquinaria, tratamientos fitosanitarios y registros de actividad agrícola digital para el cumplimiento del SIEX, introducida por el usuario o su entidad gestora.</li>
+                    <li><strong>Datos técnicos y de uso:</strong> Información técnica sobre su dispositivo e interacción con la plataforma para garantizar la seguridad y mejorar nuestros servicios cloud.</li>
                   </ul>
                 </section>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">4. Tus Derechos</h2>
-                  <p>Tienes derecho a acceder, rectificar, suprimir, oponerse o solicitar la portabilidad de tus datos enviando un correo a soporte@inagrosolutions.es.</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">3. Finalidad del Tratamiento</h2>
+                  <p>Tus datos se utilizan con los siguientes propósitos operativos:</p>
+                  <ul className="list-disc pl-5 flex flex-col gap-2 mt-2">
+                    <li>Proveer acceso a la plataforma SaaS para la gestión del Cuaderno Digital Agrícola.</li>
+                    <li>Facilitar la infraestructura Cloud Multi-Tenant para que las Entidades (Cooperativas, Ingenierías) puedan gestionar de forma segura los datos de sus asociados bajo sus propias marcas ("White Label").</li>
+                    <li>Permitir la generación y exportación segura de datos agronómicos adaptados a normativas públicas (ej. SIEX, PAC).</li>
+                    <li>Garantizar los procesos de facturación de suscripciones, reparto de ingresos para Partners y control de accesos de alta disponibilidad.</li>
+                  </ul>
+                </section>
+                <section>
+                  <h2 className="text-xl font-semibold text-white mb-3">4. Alojamiento y Seguridad</h2>
+                  <p>Todos los datos se alojan en servidores de alta seguridad dentro de la Unión Europea (UE), con encriptación avanzada y cumplimiento estricto del RGPD. Mantenemos políticas de aislamiento de datos (RLS) para asegurar que ninguna entidad acceda a información exclusiva de otra.</p>
+                </section>
+                <section>
+                  <h2 className="text-xl font-semibold text-white mb-3">5. Tus Derechos</h2>
+                  <p>Tienes en todo momento derecho a acceder, rectificar, solicitar la portabilidad o supresión de tus datos. Al tratarse de una plataforma SaaS Multi-Entidad, los agricultores vinculados a un Partner podrán canalizar sus solicitudes directamente a su Entidad o contactar con soporte@inagrosolutions.com.</p>
                 </section>
               </>
             ) : (
               <>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Data Controller</h2>
-                  <p>INAGROSOLUTIONS, based in Spain, is the controller of your personal data. For any questions regarding your data protection, you can contact us at legal@inagrosolutions.es.</p>
+                  <p>InagroSolutions (operating at inagrosolutions.com), based in Spain, is the controller of your personal data. For any questions regarding your data protection or privacy on our SaaS platform, you can contact us at legal@inagrosolutions.com.</p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">2. Data We Collect</h2>
-                  <p>We collect only the strictly necessary data for providing our services: first name, last name, email address, and technical usage data to improve the platform.</p>
-                </section>
-                <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">3. Purpose of Processing</h2>
-                  <p>Your data is used to:</p>
-                  <ul className="list-disc pl-5 flex flex-col gap-2">
-                    <li>Manage your user account.</li>
-                    <li>Enable the use of our AI Micro Applications.</li>
-                    <li>Notify important service changes.</li>
-                    <li>Comply with legal and tax obligations.</li>
+                  <p>When using our Multi-Tenant agricultural SaaS platform, we collect different layers of information:</p>
+                  <ul className="list-disc pl-5 flex flex-col gap-2 mt-2">
+                    <li><strong>Account and profile data:</strong> First name, last name, email address, and user role within the platform (e.g., Administrator, Technician, Farmer).</li>
+                    <li><strong>Agronomic data:</strong> Information regarding farms, plots, machinery, phytosanitary treatments, and digital field records for SIEX compliance, entered by the user or their managing entity.</li>
+                    <li><strong>Technical and usage data:</strong> Technical information about your device and interaction with the platform to ensure security and improve our cloud services.</li>
                   </ul>
                 </section>
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-3">4. Your Rights</h2>
-                  <p>You have the right to access, rectify, delete, object to, or request the portability of your data by sending an email to support@inagrosolutions.es.</p>
+                  <h2 className="text-xl font-semibold text-white mb-3">3. Purpose of Processing</h2>
+                  <p>Your data is processed for the following operational purposes:</p>
+                  <ul className="list-disc pl-5 flex flex-col gap-2 mt-2">
+                    <li>Providing access to the SaaS platform for Digital Field Notebook management.</li>
+                    <li>Facilitating the Multi-Tenant Cloud infrastructure so Entities (Cooperatives, Engineering firms) can securely manage their associates' data under their own brands (White Label).</li>
+                    <li>Enabling the secure generation and export of agronomic data adapted to public regulations (e.g., SIEX, CAP).</li>
+                    <li>Managing subscription billing processes, revenue sharing for Partners, and ensuring highly available access control.</li>
+                  </ul>
+                </section>
+                <section>
+                  <h2 className="text-xl font-semibold text-white mb-3">4. Hosting and Security</h2>
+                  <p>All data is hosted on high-security servers located within the European Union (EU), featuring advanced encryption and strict GDPR compliance. We maintain strict row-level security (RLS) data isolation policies to guarantee that no entity can access the exclusive data of another.</p>
+                </section>
+                <section>
+                  <h2 className="text-xl font-semibold text-white mb-3">5. Your Rights</h2>
+                  <p>You have the right to access, rectify, request portability, or delete your data at any time. Due to our Multi-Tenant SaaS structure, farmers linked to a Partner may route their requests directly to their managing Entity or contact support@inagrosolutions.com.</p>
                 </section>
               </>
             )}
