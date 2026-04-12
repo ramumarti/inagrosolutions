@@ -90,8 +90,8 @@ export async function GET(request: Request) {
         }
       }
 
-      // Redirigir al portal principal
-      return NextResponse.redirect(`${origin}/`)
+      // Redirigir al portal principal (Dashboard) directamente
+      return NextResponse.redirect(`${origin}/cuaderno`)
     }
   }
 
