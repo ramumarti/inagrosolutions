@@ -1,3 +1,6 @@
+'use client';
+
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
@@ -18,8 +21,11 @@ import {
 } from 'lucide-react';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { ProfitCalculator } from '@/components/ProfitCalculator';
 
 export default function HomePage() {
+  const [isCalcOpen, setIsCalcOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-[var(--color-base-100)] text-[var(--color-base-content)] scroll-smooth">
       {/* Navigation */}
@@ -343,11 +349,9 @@ export default function HomePage() {
                   <p className="text-white/50">
                     A medida que tus asociados crecen o que la normativa se vuelve más estricta, tu plataforma se revaloriza automáticamente.
                   </p>
-                  <Link href="/signup">
-                    <GlowButton className="mt-8">
-                      Calcular mi beneficio
-                    </GlowButton>
-                  </Link>
+                  <GlowButton className="mt-8" onClick={() => setIsCalcOpen(true)}>
+                    Calcular mi beneficio
+                  </GlowButton>
                 </div>
               </div>
             </div>
@@ -443,6 +447,7 @@ export default function HomePage() {
           </GlowButton>
         </Link>
       </div>
+      <ProfitCalculator isOpen={isCalcOpen} onClose={() => setIsCalcOpen(false)} />
     </div>
   );
 }
