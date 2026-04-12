@@ -248,8 +248,8 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
           {/* Primary Business Navigation (Hiding others for clarity if admin) */}
           {navItems.map(renderNavLink)}
 
-          {/* Only show Cuaderno Digital if NOT a tenant admin or if specifically needed */}
-          {!hasRole(['tenant_admin']) && (
+          {/* Only show Cuaderno Digital if NOT a tenant admin OR if is Superadmin */}
+          {(!hasRole(['tenant_admin']) || isSuperadmin) && (
             <div className="mt-2">
               <button
                 onClick={() => setCuadernoOpen(!cuadernoOpen)}
