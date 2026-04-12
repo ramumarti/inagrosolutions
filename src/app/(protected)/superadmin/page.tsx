@@ -9,15 +9,22 @@ import Link from 'next/link';
 export default function SuperadminPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     getPlatformStats().then(data => {
       setStats(data);
       setLoading(false);
+    }).catch(err => {
+      console.error(err);
+      setErrorMsg(err.message || 'Error al cargar los datos');
+      setLoading(false);
     });
   }, []);
 
   if (loading) return <div className="text-white/50 text-sm font-bold animate-pulse">Cargando métricas...</div>;
+  if (errorMsg) return <div className="text-red-400 text-sm font-bold bg-red-500/10 p-4 rounded-xl">Error: {errorMsg}</div>;
+
 
   const kpis = [
     { label: 'Entidades Activas', value: stats.totalTenants, icon: Building2, color: 'text-indigo-400' },
