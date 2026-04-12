@@ -1,463 +1,432 @@
-'use client';
-
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React from 'react';
 import Image from 'next/image';
 import { 
-  ArrowRight, 
+  CheckCircle2, 
+  TrendingUp, 
   ShieldCheck, 
-  Leaf, 
-  WifiOff, 
-  Smartphone, 
-  FileDown, 
-  Lock,
-  Menu,
-  X,
-  CreditCard,
-  Target,
-  BarChart4,
-  MapPin,
-  Sparkles,
-  Tractor,
-  Droplets
+  LayoutDashboard, 
+  Users, 
+  ArrowRight, 
+  Zap, 
+  Globe, 
+  LineChart,
+  ChevronRight,
+  HandCoins,
+  BadgePercent,
+  MonitorText,
+  Clock
 } from 'lucide-react';
+import { GlowButton } from '@/components/ui/GlowButton';
+import { GlassCard } from '@/components/ui/GlassCard';
 
-// Reusable Components
-const GlassCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
-  <div className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] ${className}`}>
-    {children}
-  </div>
-);
-
-const GlowButton = ({ children, variant = 'primary', className = "" }: { children: React.ReactNode, variant?: 'primary' | 'secondary', className?: string }) => (
-  <button className={`
-    font-bold transition-all active:scale-95 flex items-center justify-center
-    ${variant === 'primary' 
-      ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]' 
-      : 'bg-white/5 text-white/90 hover:bg-white/10 border border-white/20'}
-    ${className}
-  `}>
-    {children}
-  </button>
-);
-
-export default function LandingPage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [billingInterval, setBillingInterval] = useState<'month' | 'year'>('month');
-  const [config, setConfig] = useState<any>(null);
-  const [testimonials, setTestimonials] = useState<any[]>([]);
-
-  React.useEffect(() => {
-    import('@/lib/actions/site-config').then(m => {
-      m.getSiteConfig().then(setConfig);
-      m.getSiteTestimonials().then(setTestimonials);
-    });
-  }, []);
-
-  const heroConfig = config?.hero || {};
-  const pricingConfig = config?.pricing || {};
-
-  const prices = {
-    basico: { month: pricingConfig.basic?.price || '9,99', year: (pricingConfig.basic?.price * 10) || '99,99', ha: '5' },
-    intermedio: { month: '19,99', year: '199,99', ha: '20' },
-    avanzado: { month: '49,99', year: '499,99', ha: '50' },
-    premium: { month: '89,99', year: '899,99', ha: '100' }
-  };
-
+export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#0a100d] text-white selection:bg-emerald-500/30 overflow-x-hidden font-sans">
-      {/* Dynamic Background Elements */}
-      <div className="fixed inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-green-600/10 blur-[150px] rounded-full pointer-events-none" />
-      </div>
-
+    <div className="min-h-screen bg-[var(--color-base-100)] text-[var(--color-base-content)] scroll-smooth">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 bg-[#0a100d]/80 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-             <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg transform rotate-3">
-               <Leaf size={26} className="text-white" />
-             </div>
-             <div className="flex flex-col -gap-1">
-               <span className="text-2xl font-black tracking-tighter text-white">INAGROSOLUTIONS</span>
-               <span className="text-[10px] font-bold text-emerald-500 tracking-[0.2em] uppercase pl-1">Tecnología Agrícola</span>
-             </div>
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[var(--color-base-100)]/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-[var(--color-primary)] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(0,255,102,0.3)]">
+              <TrendingUp className="text-black w-6 h-6" />
+            </div>
+            <span className="text-2xl font-bold tracking-tight">Inagro<span className="text-[var(--color-primary)]">Solutions</span></span>
           </div>
-
-          <div className="hidden lg:flex items-center gap-8">
-            {['Ventajas', 'Cooperativas', 'Planes'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="text-sm font-bold text-white/70 hover:text-white transition-colors">
-                {item}
-              </a>
-            ))}
-            <div className="h-4 w-px bg-white/10" />
-            <Link href="/login">
-              <span className="text-sm font-bold text-white/70 hover:text-white cursor-pointer px-2">Acceso</span>
-            </Link>
-            <Link href="/signup">
-              <GlowButton variant="primary" className="px-8 py-3 rounded-xl text-sm">
-                Empezar Gratis
-              </GlowButton>
-            </Link>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
+            <a href="#modelo" className="hover:text-[var(--color-primary)] transition-colors">Modelo de Negocio</a>
+            <a href="#beneficios" className="hover:text-[var(--color-primary)] transition-colors">Beneficios</a>
+            <a href="#normativa" className="hover:text-[var(--color-primary)] transition-colors">Normativa</a>
+            <a href="#faqs" className="hover:text-[var(--color-primary)] transition-colors">FAQs</a>
           </div>
-
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden text-white/80 p-2">
-            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          <div className="flex items-center gap-4">
+            <GlowButton variant="secondary" className="hidden sm:flex">
+              Acceso Partner
+            </GlowButton>
+            <GlowButton variant="primary">
+              Crear mi plataforma gratis
+            </GlowButton>
+          </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-48 pb-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-5 gap-16 items-center">
-            <div className="lg:col-span-3 relative z-10 space-y-8 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                <Sparkles size={18} className="text-emerald-400" />
-                <span className="text-sm font-bold text-emerald-400">Plataforma Marca Blanca para Cooperativas y Empresas</span>
-              </div>
-              
-              <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tight text-white mb-6">
-                {heroConfig?.title || (
-                  <>
-                    Cuaderno de campo digital <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-500">
-                      Profesional.
-                    </span>
-                  </>
-                )}
-              </h1>
-
-              <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                {heroConfig?.subtitle || 'Potencia tu negocio agrícola con nuestra tecnología. Ofrece a tus socios un Cuaderno Digital con TU marca, gestiona miles de fincas desde un solo panel y genera nuevos ingresos.'}
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                 <Link href="/signup">
-                    <GlowButton variant="primary" className="px-10 py-5 rounded-2xl text-lg w-full sm:w-auto">
-                      Registrar mi Cooperativa <ArrowRight className="ml-3" />
-                    </GlowButton>
-                 </Link>
-                 <a href="#cooperativas">
-                    <GlowButton variant="secondary" className="px-10 py-5 rounded-2xl text-lg w-full sm:w-auto">
-                      Saber más
-                    </GlowButton>
-                 </a>
-              </div>
-            </div>
-
-            <div className="lg:col-span-2 relative group hidden lg:block">
-              <div className="absolute inset-0 bg-emerald-500/20 blur-[120px] rounded-full group-hover:bg-green-600/20 transition-all duration-1000" />
-              <div className="relative z-10 p-2 rounded-[40px] border border-white/10 bg-white/5 backdrop-blur-3xl overflow-hidden shadow-2xl skew-y-1 transform hover:skew-y-0 transition-all duration-700">
-                <Image 
-                  src="/olive_coop_hero.png" 
-                  alt="Cooperativa Oleícola Digital InagroSolutions"
-                  width={800}
-                  height={600}
-                  priority
-                  className="w-full h-auto rounded-[32px] object-cover"
-                />
-                <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-between">
-                  <span className="text-xs font-black text-white/80 uppercase tracking-widest">Infraestructura Marca Blanca Activa</span>
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <ShieldCheck size={18} className="text-emerald-400" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="/images/hero_partner.png" 
+            alt="AgTech Background" 
+            fill 
+            className="object-cover opacity-30 scale-105"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-base-100)] via-[var(--color-base-100)]/60 to-[var(--color-base-100)]"></div>
         </div>
-      </section>
 
-      {/* Business Solution Section */}
-      <section id="cooperativas" className="py-24 px-6 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="order-2 lg:order-1">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-4 pt-8">
-                  <GlassCard className="p-6 border-emerald-500/20 bg-emerald-500/5">
-                    <Target className="text-emerald-400 mb-4" size={32} />
-                    <h4 className="font-bold text-lg mb-2">Marca Blanca</h4>
-                    <p className="text-sm text-white/60">Toda la plataforma bajo tu propio logo y colores corporativos.</p>
-                  </GlassCard>
-                  <GlassCard className="p-6">
-                    <BarChart4 className="text-blue-400 mb-4" size={32} />
-                    <h4 className="font-bold text-lg mb-2">Gestión Masiva</h4>
-                    <p className="text-sm text-white/60">Controla miles de fincas y agricultores desde un panel centralizado.</p>
-                  </GlassCard>
-                </div>
-                <div className="space-y-4">
-                  <GlassCard className="p-6">
-                    <CreditCard className="text-amber-400 mb-4" size={32} />
-                    <h4 className="font-bold text-lg mb-2">Monetización</h4>
-                    <p className="text-sm text-white/60">El 50% de la facturación es para tu cooperativa.</p>
-                  </GlassCard>
-                  <GlassCard className="p-6 border-emerald-500/20 bg-emerald-500/5">
-                    <Smartphone className="text-emerald-400 mb-4" size={32} />
-                    <h4 className="font-bold text-lg mb-2">PWA Multi-app</h4>
-                    <p className="text-sm text-white/60">Tus agricultores instalan TU app en su móvil, adaptada a sus necesidades.</p>
-                  </GlassCard>
-                </div>
-              </div>
-            </div>
-            
-            <div className="order-1 lg:order-2 space-y-6">
-              <h2 className="text-sm font-black uppercase text-emerald-500 tracking-[0.3em]">Soluciones para Entidades</h2>
-              <h3 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
-                Escala tu negocio agrícola al siguiente nivel.
-              </h3>
-              <p className="text-lg text-white/70 leading-relaxed">
-                INAGROSOLUTIONS no es solo un cuaderno digital; es una infraestructura tecnológica para cooperativas, almazaras y empresas de servicios. 
-              </p>
-              <ul className="space-y-4">
-                {[
-                  "Aislamiento total de datos por entidad (Tenants).",
-                  "Configuración de módulos específica para cada socio.",
-                  "Panel para técnicos con supervisión de tratamientos.",
-                  "Exportación masiva de datos para auditorías SIEX."
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 font-bold text-white/90">
-                    <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                    </div>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <div className="pt-6">
-                 <Link href="/signup">
-                    <GlowButton variant="primary" className="px-10 py-4 rounded-xl text-md">
-                      Crear Cuenta de Cooperativa
-                    </GlowButton>
-                 </Link>
-              </div>
-            </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-sm font-medium mb-8 animate-fade-in">
+            <BadgePercent className="w-4 h-4" />
+            <span>Programa Partner 2026: 50% de ingresos recurrentes</span>
           </div>
-        </div>
-      </section>
+          
+          <h1 className="text-5xl lg:text-8xl font-black tracking-tighter mb-8 leading-[1]">
+            Gana el <span className="glow-text">50% de cada agricultor</span> sin invertir un solo euro
+          </h1>
+          
+          <p className="text-xl lg:text-2xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed font-bold">
+            Tú pones la marca, nosotros ponemos la tecnología. <br className="hidden lg:block" /> 
+            Genera ingresos recurrentes ayudando a tus asociados a cumplir la ley.
+          </p>
 
-      {/* Features Matrix */}
-      <section id="ventajas" className="py-24 px-6 bg-white/[0.02] border-y border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center mb-16 text-center">
-            <h2 className="text-sm font-black uppercase text-emerald-500 tracking-widest mb-4">Por qué elegirnos</h2>
-            <p className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">Diseñado para la realidad del campo</p>
-            <p className="text-lg text-white/70 max-w-2xl font-medium">Sabemos que el agricultor no tiene tiempo que perder frente al ordenador. Nuestra tecnología se adapta a sus necesidades diarias.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <GlowButton className="text-xl px-12 py-8 h-auto shadow-[0_0_50px_rgba(0,255,102,0.3)] hover:scale-105 active:scale-95 transition-transform">
+              RECUPERAR MI MARCA Y EMPEZAR GRATIS
+              <ArrowRight className="ml-2 w-6 h-6" />
+            </GlowButton>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto py-12 bg-white/5 rounded-3xl border border-white/10">
             {[
-              { icon: <WifiOff />, title: "Uso sin Cobertura (Offline)", desc: "Apúntalo todo desde el tractor en la PWA de tu móvil aunque no tengas señal. Se subirá automáticamente al recuperar el internet." },
-              { icon: <FileDown />, title: "Reportes Oficiales Automáticos", desc: "Cumple la ley sin esfuerzo. Exporta tu cuaderno oficial al formato XML requerido para la PAC y el SIEX en 1 segundo." },
-              { icon: <Tractor />, title: "Fácil de Usar, Textos Grandes", desc: "Interfaz intuitiva, contrastes altos y botones muy grandes. Pensado para usarse rápido y sin conocimientos avanzados." },
-              { icon: <Droplets />, title: "Control de Fitosanitarios y Abonos", desc: "Calcula Dosis y mantén el registro estricto legal de tus tratamientos. Incluye validadores para evitar multas." },
-              { icon: <MapPin />, title: "Sincronización de Parcelas", desc: "Registra y agrupa las fincas, organiza qué siembras y lleva el Histórico por polígono de forma sencilla." },
-              { icon: <BarChart4 />, title: "Control de Costes y Trazabilidad", desc: "Averigua si tu finca es rentable. Sigue todos los gastos por labor y mantén la trazabilidad de tus lotes de cosecha." }
-            ].map((feat, i) => (
-              <GlassCard key={i} className="p-8 border-white/10 hover:bg-white/[0.06] transition-all group rounded-2xl">
-        <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 border border-emerald-500/20 group-hover:scale-110 transition-transform">
-                   {React.cloneElement(feat.icon as React.ReactElement<{ size?: number }>, { size: 32 })}
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">{feat.title}</h3>
-                <p className="text-white/70 leading-relaxed font-medium text-base">{feat.desc}</p>
-              </GlassCard>
+              { label: 'Inversión Inicial', value: '0,00€' },
+              { label: 'Tu Comisión', value: '50% TOTAL' },
+              { label: 'Riesgo Técnico', value: 'CERO' },
+              { label: 'Marca Blanca', value: '100% REAL' }
+            ].map((stat, i) => (
+              <div key={i} className="text-center">
+                <div className="text-3xl font-black text-[var(--color-primary)] mb-1">{stat.value}</div>
+                <div className="text-xs text-white/40 uppercase tracking-widest font-bold">{stat.label}</div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      {testimonials && testimonials.length > 0 && (
-        <section className="py-24 px-6 bg-[#0a100d] relative overflow-hidden">
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="text-center mb-16 space-y-4">
-              <h2 className="text-sm font-black uppercase text-emerald-500 tracking-widest">Confianza del Sector</h2>
-              <p className="text-4xl font-black text-white">Lo que dicen nuestros agricultores</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {testimonials.map((t: any) => (
-                <GlassCard key={t.id} className="p-8 border-white/5 bg-white/[0.02] flex flex-col justify-between hover:border-emerald-500/20 transition-all">
-                  <div className="space-y-4">
-                    <div className="flex gap-1 text-emerald-400">
-                      {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
-                    </div>
-                    <p className="text-white/80 leading-relaxed italic text-lg">"{t.content}"</p>
+      {/* Trust Bar (Simplified) */}
+      <section className="py-8 border-y border-white/5 bg-black/40">
+        <div className="flex justify-center flex-wrap gap-12 opacity-30 text-xs font-black tracking-tighter uppercase grayscale">
+          <span>COOPERATIVAS</span>
+          <span>ASOCIACIONES</span>
+          <span>INGENIERÍAS</span>
+          <span>ASESORÍAS</span>
+        </div>
+      </section>
+
+      {/* Modelo de Negocio (Section 3 - More Direct) */}
+      <section id="modelo" className="py-24 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-6xl font-black mb-6 tracking-tight">Tu negocio, <span className="text-[var(--color-primary)]">en automático</span></h2>
+            <p className="text-white/80 text-xl max-w-2xl mx-auto font-medium">
+              Te entregamos una plataforma lista para facturar en menos de 5 minutos.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              {[
+                {
+                  title: '1. Te registras GRATIS',
+                  desc: 'Sin tarjetas, sin permanencia, sin cuotas de alta.',
+                  icon: <Zap className="w-6 h-6 text-black" />
+                },
+                {
+                  title: '2. Subes tu logo',
+                  desc: 'Automáticamente toda la plataforma adopta tu identidad visual.',
+                  icon: <Globe className="w-6 h-6 text-black" />
+                },
+                {
+                  title: '3. Invitas a tus socios',
+                  desc: 'Ellos ven una herramienta premium recomendada por TI.',
+                  icon: <Users className="w-6 h-6 text-black" />
+                },
+                {
+                  title: '4. Cobras el 50%',
+                  desc: 'Enviamos tu comisión a tu cuenta cada mes. Así de simple.',
+                  icon: <HandCoins className="w-6 h-6 text-black" />
+                }
+              ].map((step, i) => (
+                <div key={i} className="flex gap-5 p-8 rounded-3xl bg-white/2 hover:bg-white/5 border border-white/5 transition-all group relative overflow-hidden">
+                  <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-[var(--color-primary)] flex items-center justify-center group-hover:rotate-12 transition-transform shadow-[0_0_20px_rgba(0,255,102,0.4)]">
+                    {step.icon}
                   </div>
-                  <div className="mt-8 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center font-black text-white/40">
-                      {t.author_name?.[0]}
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-white">{t.author_name}</span>
-                      <span className="text-xs text-emerald-500 uppercase font-black tracking-widest">{t.author_role}</span>
-                    </div>
+                  <div>
+                    <h3 className="text-2xl font-black mb-1">{step.title}</h3>
+                    <p className="text-white/60 font-medium">{step.desc}</p>
                   </div>
-                </GlassCard>
+                </div>
               ))}
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-24 px-6 relative border-t border-white/5 bg-[#050806]">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-black text-white glow-text">{pricingConfig?.title || 'Planes Adaptados al Tamaño de la Explotación de tus Agricultores y Olivareros'}</h2>
-            <p className="text-white/60 text-lg">Lo mejor de todo es que les ofreces un servicio con tu propia marca.</p>
-          </div>
-
-          <div className="flex justify-center mb-12">
-             <div className="bg-gradient-to-r from-emerald-500/20 via-emerald-500/10 to-transparent border border-emerald-500/30 px-8 py-4 rounded-3xl backdrop-blur-xl flex items-center gap-4 animate-pulse-slow">
-                <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.5)]">
-                   <Sparkles className="text-white" size={20} />
+            
+            <div className="relative">
+              <div className="absolute -inset-4 bg-[var(--color-primary)]/20 blur-3xl rounded-full opacity-30"></div>
+              <GlassCard className="p-0 overflow-hidden border-white/10">
+                <div className="bg-white/5 p-4 flex items-center justify-between border-b border-white/10">
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+                  </div>
+                  <div className="px-3 py-1 bg-white/5 rounded text-xs text-white/40">app.tucooperativa.com</div>
                 </div>
-                <p className="text-sm md:text-md font-bold text-white/90 leading-relaxed">
-                   Precios sin competencia en el mercado, y lo mejor de todo es que tu empresa o cooperativa recibe el <span className="text-emerald-400 text-lg font-black">50%</span> tan solo por colocar su marca e invitar a sus agricultores y olivareros.
-                </p>
-             </div>
-          </div>
-
-            {/* Toggle Billing */}
-            <div className="flex items-center justify-center gap-4 mb-12">
-               <span className={`text-sm font-bold transition-colors ${billingInterval === 'month' ? 'text-white' : 'text-white/40'}`}>Mensual</span>
-               <button 
-                 onClick={() => setBillingInterval(billingInterval === 'month' ? 'year' : 'month')}
-                 className="w-16 h-8 bg-white/10 rounded-full relative p-1 transition-colors hover:bg-white/20 border border-white/10"
-               >
-                 <div className={`w-6 h-6 bg-emerald-500 rounded-full transition-transform ${billingInterval === 'year' ? 'translate-x-8' : 'translate-x-0'}`} />
-               </button>
-               <span className={`text-sm font-bold transition-colors flex items-center gap-2 ${billingInterval === 'year' ? 'text-white' : 'text-white/40'}`}>
-                 Anual <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] rounded-full">Ahorra 2 Meses</span>
-               </span>
+                <Image 
+                  src="/images/dashboard_mockup.png" 
+                  alt="Plataforma White Label Mockup" 
+                  width={800} 
+                  height={600}
+                  className="w-full h-auto"
+                />
+              </GlassCard>
             </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-             {/* Básico */}
-             <GlassCard className="p-8 border-white/10 flex flex-col rounded-3xl h-full shadow-2xl">
-                <h3 className="text-xl font-black text-white mb-1">Básico</h3>
-                <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-emerald-400">Hasta {prices.basico.ha} HA</p>
-                <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.basico.month : prices.basico.year} €</span>
-                  <span className="text-white/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
-                </div>
-                <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Registro SIEX</li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Fitosanitarios</li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Fertilización</li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Labores Agrícolas</li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-500 shrink-0" /> Gestión de Parcelas</li>
-                </ul>
-                <Link href="/login" className="w-full mt-auto">
-                  <GlowButton variant="secondary" className="w-full py-4 rounded-xl text-sm">Comenzar</GlowButton>
-                </Link>
-             </GlassCard>
-
-             {/* Intermedio */}
-             <GlassCard className="p-8 border-white/10 flex flex-col rounded-3xl h-full shadow-2xl">
-                <h3 className="text-xl font-black text-white mb-1">Intermedio</h3>
-                <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-blue-400">Hasta {prices.intermedio.ha} HA</p>
-                <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.intermedio.month : prices.intermedio.year} €</span>
-                  <span className="text-white/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
-                </div>
-                <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> Todo lo de Básico</li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> <b>Control de Costes</b></li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-blue-500 shrink-0" /> <b>Gestión de Cosechas</b></li>
-                </ul>
-                <Link href="/login" className="w-full mt-auto">
-                  <GlowButton variant="secondary" className="w-full py-4 rounded-xl text-sm">Comenzar</GlowButton>
-                </Link>
-             </GlassCard>
-
-             {/* Avanzado */}
-             <GlassCard className="p-8 border-emerald-500/40 bg-emerald-500/5 flex flex-col rounded-3xl relative z-10 h-full shadow-[0_20px_60px_-15px_rgba(16,185,129,0.3)] border-2">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 text-white text-[10px] uppercase font-black tracking-widest rounded-full shadow-lg">
-                  Recomendado
-                </div>
-                <h3 className="text-xl font-black text-emerald-400 mb-1">Avanzado</h3>
-                <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-emerald-400">Hasta {prices.avanzado.ha} HA</p>
-                <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.avanzado.month : prices.avanzado.year} €</span>
-                  <span className="text-emerald-400/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
-                </div>
-                <ul className="space-y-4 mb-8 flex-1 text-white font-medium text-sm">
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> Todo lo de Intermedio</li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>Trazabilidad Total</b></li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>Dashboards Pro</b></li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-emerald-400 shrink-0" /> <b>Exportación PAC</b></li>
-                </ul>
-                <Link href="/login" className="w-full mt-auto">
-                  <GlowButton variant="primary" className="w-full py-4 rounded-xl text-sm bg-emerald-500 hover:scale-105">Suscribirse</GlowButton>
-                </Link>
-             </GlassCard>
-
-             {/* Premium */}
-             <GlassCard className="p-8 border-amber-500/30 bg-amber-500/5 flex flex-col rounded-3xl h-full shadow-2xl">
-                <h3 className="text-xl font-black text-amber-400 mb-1">Premium</h3>
-                <p className="text-white/60 mb-6 font-bold text-[10px] uppercase tracking-widest text-amber-400">Hasta {prices.premium.ha} HA</p>
-                <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black text-white">{billingInterval === 'month' ? prices.premium.month : prices.premium.year} €</span>
-                  <span className="text-amber-400/50 font-bold text-sm">/{billingInterval === 'month' ? 'mes' : 'año'}</span>
-                </div>
-                <ul className="space-y-4 mb-8 flex-1 text-white/80 font-medium text-sm">
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> Todo lo de Avanzado</li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> <b>Sensores IoT</b></li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> <b>Alertas Inteligentes</b></li>
-                   <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-amber-400 shrink-0" /> Estaciones Climáticas</li>
-                </ul>
-                <Link href="/login" className="w-full mt-auto">
-                  <GlowButton variant="secondary" className="w-full py-4 rounded-xl text-sm">Suscribirse</GlowButton>
-                </Link>
-             </GlassCard>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-24 px-6 border-t border-white/5 bg-[#050806]">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-           <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-500 text-white rounded-lg flex items-center justify-center border border-emerald-400">
-                <Leaf size={24} />
+      {/* Beneficios (Section 4 & 5) */}
+      <section id="beneficios" className="py-24 bg-white/2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="md:col-span-2">
+              <h2 className="text-4xl font-bold mb-8">Control total sobre tus <span className="text-[var(--color-primary)]">asociados</span></h2>
+              <div className="grid sm:grid-cols-2 gap-6">
+                {[
+                  {
+                    title: 'Panel centralizado',
+                    desc: 'Visualiza el estado de cumplimiento de todas tus explotaciones desde un único monitor.',
+                    icon: <MonitorText className="w-5 h-5" />
+                  },
+                  {
+                    title: 'Fidelización real',
+                    desc: 'Ofrece una herramienta profesional que aporta valor diario al agricultor bajo tu marca.',
+                    icon: <ShieldCheck className="w-5 h-5" />
+                  },
+                  {
+                    title: 'Diferenciación',
+                    desc: 'Posiciónate como una entidad digitalizada a la vanguardia del sector agrario.',
+                    icon: <Zap className="w-5 h-5" />
+                  },
+                  {
+                    title: 'Soporte Técnico',
+                    desc: 'Accede a los cuadernos de tus asociados para asesorarles en tiempo real.',
+                    icon: <Users className="w-5 h-5" />
+                  }
+                ].map((item, i) => (
+                  <GlassCard key={i} className="p-6">
+                    <div className="w-10 h-10 rounded-lg bg-[var(--color-primary)]/10 flex items-center justify-center text-[var(--color-primary)] mb-4">
+                      {item.icon}
+                    </div>
+                    <h3 className="text-lg font-bold mb-2">{item.title}</h3>
+                    <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
+                  </GlassCard>
+                ))}
               </div>
-              <span className="text-2xl font-black tracking-tighter text-white">INAGROSOLUTIONS</span>
-           </div>
-           
-           <div className="flex flex-wrap justify-center gap-10 text-sm font-bold text-white/60">
-              <a href="/privacy-policy" className="hover:text-emerald-400 transition-colors">Política de Privacidad</a>
-              <a href="/cookie-policy" className="hover:text-emerald-400 transition-colors">Política de Cookies</a>
-              <a href="/legal-notice" className="hover:text-emerald-400 transition-colors">Aviso Legal</a>
-           </div>
-           
-           <p className="text-sm font-bold text-white/40">
-             © 2026 Inagrosolutions.es
-           </p>
+            </div>
+            
+            <div className="bg-gradient-to-br from-[var(--color-primary)]/20 to-transparent p-1 rounded-3xl h-full">
+              <div className="bg-[var(--color-base-200)] p-8 rounded-[1.4rem] h-full flex flex-col justify-center border border-white/5">
+                <div className="text-6xl font-bold text-[var(--color-primary)] mb-4">50%</div>
+                <h3 className="text-2xl font-bold mb-4">Ingresos Compartidos</h3>
+                <p className="text-white/50 mb-8 leading-relaxed">
+                  No es un descuento. Es una comisión directa por cada gestión realizada. Sin cuotas de mantenimiento, sin gastos de entrada.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 text-sm text-white/70">
+                    <CheckCircle2 className="w-4 h-4 text-[var(--color-primary)]" />
+                    Pagos mensuales automáticos
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-white/70">
+                    <CheckCircle2 className="w-4 h-4 text-[var(--color-primary)]" />
+                    Transparencia total en el panel
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Normativa (Section 6) */}
+      <section id="normativa" className="py-24 border-y border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-block px-3 py-1 rounded bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-xs font-bold uppercase tracking-wider mb-6">
+                Cumplimiento SIEX
+              </div>
+              <h2 className="text-4xl font-bold mb-6">Anticípate al RD 1054/2022</h2>
+              <p className="text-white/60 text-lg mb-8 leading-relaxed">
+                El Cuaderno de Explotación Digital será obligatorio para todos los agricultores entre 2027 y 2028. No esperes a que sea tarde: conviértelo hoy en una ventaja competitiva para tu entidad.
+              </p>
+              <div className="space-y-6">
+                {[
+                  'Preparado para la integración con SIEX',
+                  'Gestión automática de PAC y fertilización',
+                  'Reducción de riesgos en inspecciones',
+                  'Validación técnica de tratamientos fitosanitarios'
+                ].map((text, i) => (
+                  <div key={i} className="flex items-center gap-3 font-medium">
+                    <div className="w-5 h-5 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-[var(--color-primary)]"></div>
+                    </div>
+                    {text}
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <GlassCard className="relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                <ShieldCheck className="w-32 h-32 text-[var(--color-primary)]" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Tranquilidad para tus agricultores</h3>
+              <p className="text-white/40 mb-8">
+                Al usar una plataforma supervisada por su cooperativa o asesoría, el agricultor reduce drásticamente el "papeleo" y se asegura de estar siempre dentro de la ley.
+              </p>
+              <div className="p-6 bg-white/5 rounded-xl border border-white/10">
+                <div className="text-sm font-bold uppercase tracking-widest text-white/30 mb-4 text-center">Hoja de ruta obligatoriedad</div>
+                <div className="flex justify-between items-end gap-2 h-32">
+                  <div className="flex-1 bg-white/10 rounded-t-lg h-1/4 relative group/bar">
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] text-white/40">2024</div>
+                  </div>
+                  <div className="flex-1 bg-white/10 rounded-t-lg h-1/3 relative">
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] text-white/40">2025</div>
+                  </div>
+                  <div className="flex-1 bg-white/20 rounded-t-lg h-1/2 relative">
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] text-white/40">2026</div>
+                  </div>
+                  <div className="flex-1 bg-[var(--color-primary)]/50 rounded-t-lg h-full relative">
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] text-[var(--color-primary)] font-bold">2027</div>
+                    <div className="absolute inset-0 bg-[var(--color-primary)] blur-lg opacity-20"></div>
+                  </div>
+                </div>
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+      </section>
+
+      {/* Caso de Uso (Section 9) */}
+      <section className="py-24 bg-gradient-to-b from-transparent to-[var(--color-primary)]/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <GlassCard className="p-12 border-[var(--color-primary)]/20 shadow-[0_0_50px_rgba(0,255,102,0.1)]">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-3xl font-bold mb-6">El potencial de tu entidad en números</h2>
+                <div className="space-y-6">
+                  <div className="flex justify-between text-lg border-b border-white/10 pb-4">
+                    <span className="text-white/60">Número de asociados</span>
+                    <span className="font-bold">200 agricultores</span>
+                  </div>
+                  <div className="flex justify-between text-lg border-b border-white/10 pb-4">
+                    <span className="text-white/60">Ingreso estimado/año p.p.</span>
+                    <span className="font-bold">120 €</span>
+                  </div>
+                  <div className="flex justify-between text-2xl pt-2 text-[var(--color-primary)]">
+                    <span className="font-bold">Tu beneficio recurrente/año</span>
+                    <span className="font-extrabold text-white">12.000 €</span>
+                  </div>
+                </div>
+                <p className="mt-8 text-sm text-white/40 leading-relaxed italic">
+                  * Basado en un modelo de facturación del 50% de ingresos compartidos. Los asociados obtienen una herramienta premium y tú obtienes una nueva línea de negocio sin costes operativos.
+                </p>
+              </div>
+              <div className="relative group">
+                <div className="aspect-square bg-[var(--color-primary)]/5 rounded-full absolute -inset-10 animate-pulse blur-3xl lg:block hidden"></div>
+                <div className="text-center relative">
+                  <div className="w-24 h-24 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,255,102,0.4)]">
+                    <LineChart className="text-black w-12 h-12" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4">Escalabilidad Garantizada</h3>
+                  <p className="text-white/50">
+                    A medida que tus asociados crecen o que la normativa se vuelve más estricta, tu plataforma se revaloriza automáticamente.
+                  </p>
+                  <GlowButton className="mt-8">
+                    Calcular mi beneficio
+                  </GlowButton>
+                </div>
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
+      {/* CTA Intermedio */}
+      <section className="py-20 text-center">
+        <h2 className="text-3xl font-bold mb-8">¿Listo para lanzar tu propia plataforma?</h2>
+        <GlowButton className="text-xl px-12 py-8 h-auto shadow-[0_0_40px_rgba(0,255,102,0.2)]">
+          Empezar ahora (Gratis)
+        </GlowButton>
+        <p className="mt-4 text-white/40 flex items-center justify-center gap-2">
+          <Clock className="w-4 h-4" />
+          Configuración en menos de 5 minutos
+        </p>
+      </section>
+
+      {/* FAQs (Section 12) */}
+      <section id="faqs" className="py-24 border-t border-white/5">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl lg:text-5xl font-bold mb-12 text-center tracking-tight">Preguntas frecuentes</h2>
+          <div className="space-y-6">
+            {[
+              { q: '¿Tiene algún coste de mantenimiento para la entidad?', a: 'Ninguno. El registro, la personalización white label y el acceso al panel centralizado son totalmente gratuitos para cooperativas, ingenierías y asesores.' },
+              { q: '¿Cómo recibo mis ingresos?', a: 'De cada pago que realiza un agricultor en tu plataforma, el sistema separa automáticamente el 50% para ti. Liquidamos tus beneficios de forma mensual directamente en tu cuenta.' },
+              { q: '¿Es realmente White Label?', a: 'Sí. Puedes usar tu propio dominio (ej: cuaderno.tudominio.com), subir el logo de tu entidad y elegir los colores corporativos. InagroSolutions desaparece de la vista del agricultor.' },
+              { q: '¿Necesito conocimientos técnicos?', a: 'No. Nosotros nos encargamos de todo el despliegue técnico, actualizaciones legales y servidores. Tú solo te preocupas de tu negocio.' },
+              { q: '¿Cumple con el SIEX?', a: 'Totalmente. La plataforma está diseñada bajo los requerimientos del RD 1054/2022 y se actualiza en tiempo real con cada cambio normativo del Ministerio.' }
+            ].map((item, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white/2 border border-white/5 hover:border-white/10 transition-colors">
+                <h4 className="text-lg font-bold mb-3 flex items-start gap-3">
+                  <span className="text-[var(--color-primary)]">Q.</span>
+                  {item.q}
+                </h4>
+                <p className="text-white/40 pl-7 leading-relaxed">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA (Section 13) */}
+      <footer className="py-24 bg-black/60 relative overflow-hidden border-t border-white/5">
+        <div className="absolute inset-0 bg-[var(--color-primary)]/5 blur-[120px] rounded-full translate-y-1/2"></div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl lg:text-6xl font-extrabold mb-8 tracking-tighter leading-tight">
+            Convierte la normativa en una <br /> <span className="text-[var(--color-primary)]">nueva fuente de ingresos</span>
+          </h2>
+          <p className="text-xl text-white/50 mb-12 max-w-2xl mx-auto">
+            Únete a la red de partners de InagroSolutions y lidera la digitalización del campo en tu zona.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <GlowButton className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
+              Crear mi plataforma gratis
+            </GlowButton>
+            <GlowButton variant="secondary" className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
+              Solicitar demo técnica
+            </GlowButton>
+          </div>
+          
+          <div className="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                <TrendingUp className="text-white w-5 h-5" />
+              </div>
+              <span className="text-lg font-bold tracking-tight">InagroSolutions</span>
+            </div>
+            <div className="text-sm text-white/30 flex gap-8">
+              <a href="#" className="hover:text-white transition-colors">Aviso Legal</a>
+              <a href="#" className="hover:text-white transition-colors">Privacidad</a>
+              <a href="#" className="hover:text-white transition-colors">Cookies</a>
+            </div>
+            <div className="text-sm text-white/20">
+              © 2026 InagroSolutions. Todos los derechos reservados.
+            </div>
+          </div>
         </div>
       </footer>
-    </div>
-  );
-}
 
-function CheckCircle2({ size, className }: { size?: number, className?: string }) {
-  return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="3" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      className={className}
-    >
-      <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/>
-    </svg>
+      {/* Floating CTA (Mobile) */}
+      <div className="md:hidden fixed bottom-6 left-6 right-6 z-50">
+        <GlowButton className="w-full shadow-2xl py-4">
+          Unirse como Partner
+        </GlowButton>
+      </div>
+    </div>
   );
 }
