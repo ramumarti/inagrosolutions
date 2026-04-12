@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Hexagon, User } from 'lucide-react';
+import { Mail, Lock, Hexagon, User, Building2, ShieldCheck } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { Input } from '@/components/ui/Input';
@@ -16,9 +16,9 @@ export default function SignupPage() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isBusiness, setIsBusiness] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [lawAccepted, setLawAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const router = useRouter();
@@ -34,16 +34,19 @@ export default function SignupPage() {
       return;
     }
 
-    if (isBusiness && !companyName) {
-      toast(language === 'en' ? 'Company name is required' : 'El nombre de la empresa es obligatorio', 'error');
+    if (!lawAccepted) {
+      toast(language === 'en' ? 'You must accept the SIEX/RD 1054/2022 regulations' : 'Debes aceptar la normativa SIEX y el RD 1054/2022', 'error');
+      return;
+    }
+
+    if (!companyName) {
+      toast(language === 'en' ? 'Entity name is required' : 'El nombre de la entidad es obligatorio', 'error');
       return;
     }
 
     setLoading(true);
     
     const origin = window.location.origin;
-    const params = new URLSearchParams(window.location.search);
-    const tenantSlug = params.get('tenant');
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -53,10 +56,10 @@ export default function SignupPage() {
         data: {
           first_name: firstName,
           last_name: lastName,
-          is_business: isBusiness,
-          company_name: isBusiness ? companyName : null,
-          platform_role: isBusiness ? 'tenant_admin' : 'farmer',
-          tenant_slug: tenantSlug
+          is_business: true,
+          company_name: companyName,
+          platform_role: 'tenant_admin',
+          is_partner_reg: true // Internal flag for partner flow
         }
       }
     });
@@ -66,7 +69,7 @@ export default function SignupPage() {
     if (error) {
       toast(error.message, 'error');
     } else {
-      toast(t('signup.success'), 'success');
+      toast(language === 'en' ? 'Account created successfully! Please check your email.' : '¡Cuenta creada con éxito! Por favor, revisa tu correo.', 'success');
       router.push('/login');
     }
   };
@@ -74,21 +77,35 @@ export default function SignupPage() {
   return (
     <GlassCard className="flex flex-col items-center w-full max-w-md mx-auto p-8 sm:p-10">
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center mb-6 shadow-lg shadow-[var(--color-primary)]/30">
-        <Hexagon className="w-8 h-8 text-white" />
+        <Building2 className="w-8 h-8 text-white" />
       </div>
       
-      <h1 className="text-2xl font-bold mb-2 glow-text text-center">
-        {t('signup.title')}
+      <h1 className="text-2xl font-black mb-2 glow-text text-center uppercase tracking-tighter">
+        Registro de Partner
       </h1>
-      <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-sm">
-        {t('app.name')}
+      <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-xs font-bold uppercase tracking-widest">
+        Exclusivo para Entidades y Cooperativas
       </p>
 
       <form onSubmit={handleSignup} className="w-full flex flex-col gap-4">
+        {/* Entity Section */}
+        <div className="space-y-4 mb-2">
+          <Input 
+            type="text" 
+            placeholder="Nombre de la Entidad / Cooperativa" 
+            icon={<Hexagon className="w-5 h-5" />}
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            required
+            className="border-[var(--color-primary)]/20"
+          />
+        </div>
+
+        {/* Responsible Person */}
         <div className="grid grid-cols-2 gap-4">
           <Input 
             type="text" 
-            placeholder={t('signup.firstName')} 
+            placeholder="Nombre Responsable" 
             icon={<User className="w-5 h-5" />}
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
@@ -96,45 +113,17 @@ export default function SignupPage() {
           />
           <Input 
             type="text" 
-            placeholder={t('signup.lastName')} 
+            placeholder="Apellidos" 
             icon={<User className="w-5 h-5" />}
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             required
           />
         </div>
-        <div className="flex bg-white/5 p-1 rounded-xl mb-2">
-          <button
-            type="button"
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${!isBusiness ? 'bg-[var(--color-primary)] text-white shadow-lg' : 'text-white/50 hover:text-white'}`}
-            onClick={() => setIsBusiness(false)}
-          >
-            {language === 'en' ? 'Individual' : 'Particular'}
-          </button>
-          <button
-            type="button"
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${isBusiness ? 'bg-[var(--color-primary)] text-white shadow-lg' : 'text-white/50 hover:text-white'}`}
-            onClick={() => setIsBusiness(true)}
-          >
-            {language === 'en' ? 'Enterprise' : 'Empresa / Coop.'}
-          </button>
-        </div>
-
-        {isBusiness && (
-          <Input 
-            type="text" 
-            placeholder={language === 'en' ? 'Company / Cooperative Name' : 'Nombre de la Empresa / Cooperativa'} 
-            icon={<Hexagon className="w-5 h-5" />}
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            required
-            className="animate-in fade-in slide-in-from-top-2 duration-300"
-          />
-        )}
 
         <Input 
           type="email" 
-          placeholder={t('login.email')} 
+          placeholder="Email de Administración" 
           icon={<Mail className="w-5 h-5" />}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -142,37 +131,53 @@ export default function SignupPage() {
         />
         <Input 
           type="password" 
-          placeholder={t('login.password')} 
+          placeholder="Crear Contraseña" 
           icon={<Lock className="w-5 h-5" />}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
         
-        <div className="flex items-start gap-3 px-1 my-2">
-          <input 
-            type="checkbox" 
-            id="privacy" 
-            checked={privacyAccepted}
-            onChange={(e) => setPrivacyAccepted(e.target.checked)}
-            className="mt-1 w-4 h-4 rounded border-white/10 bg-white/5 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/50 cursor-pointer"
-          />
-          <label htmlFor="privacy" className="text-xs text-white/50 cursor-pointer hover:text-white/70 transition-colors">
-            {t('gdpr.accept')}{' '}
-            <Link href="/privacy-policy" className="text-[var(--color-primary)] hover:underline" target="_blank">
-              ({t('gdpr.privacyPolicy')})
-            </Link>
-          </label>
+        {/* Compliance Section */}
+        <div className="space-y-3 mt-4">
+          <div className="flex items-start gap-3 px-1">
+            <input 
+              type="checkbox" 
+              id="privacy" 
+              checked={privacyAccepted}
+              onChange={(e) => setPrivacyAccepted(e.target.checked)}
+              className="mt-1 w-4 h-4 rounded border-white/10 bg-white/5 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/50 cursor-pointer"
+              required
+            />
+            <label htmlFor="privacy" className="text-[10px] text-white/50 cursor-pointer hover:text-white/70 transition-colors uppercase font-bold tracking-tight">
+              Acepto la <Link href="/privacy-policy" className="text-[var(--color-primary)] hover:underline" target="_blank">Política de Privacidad</Link>
+            </label>
+          </div>
+
+          <div className="flex items-start gap-3 px-1">
+            <input 
+              type="checkbox" 
+              id="legislation" 
+              checked={lawAccepted}
+              onChange={(e) => setLawAccepted(e.target.checked)}
+              className="mt-1 w-4 h-4 rounded border-white/10 bg-white/5 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/50 cursor-pointer"
+              required
+            />
+            <label htmlFor="legislation" className="text-[10px] text-white/50 cursor-pointer hover:text-white/70 transition-colors uppercase font-bold tracking-tight">
+              Acepto la normativa <span className="text-white">RD 1054/2022</span> y legislaciones específicas de la administración para el <span className="text-[var(--color-primary)]">Cuaderno de Campo Digital (SIEX)</span>.
+            </label>
+          </div>
         </div>
         
-        <GlowButton type="submit" isLoading={loading} className="w-full">
-          {t('signup.submit')}
+        <GlowButton type="submit" isLoading={loading} className="w-full mt-4 text-lg py-6 font-black uppercase tracking-widest">
+          REGISTRAR ENTIDAD GRATIS
         </GlowButton>
       </form>
 
-      <div className="mt-6 flex flex-col items-center gap-3 text-sm">
-        <Link href="/login" className="text-[color:var(--color-base-content)] opacity-70 hover:opacity-100 transition-colors">
-          {t('signup.login')}
+      <div className="mt-8 flex flex-col items-center gap-3 text-xs">
+        <span className="text-white/30 uppercase font-black">¿Ya sois partners?</span>
+        <Link href="/login" className="text-[var(--color-primary)] font-bold hover:underline">
+          Inicia Sesión aquí
         </Link>
       </div>
     </GlassCard>
