@@ -37,7 +37,8 @@ export async function updateSession(request: NextRequest) {
     '/forgot-password',
     '/privacy-policy',
     '/cookie-policy',
-    '/legal-notice'
+    '/legal-notice',
+    '/partner-policy'
   ]
   const isPublicRoute = publicPaths.includes(pathname) || pathname.startsWith('/api') || pathname.startsWith('/auth')
 
