@@ -85,24 +85,27 @@ export const ProfitCalculator = ({ isOpen, onClose }: CalculatorProps) => {
                 
                 <div className="space-y-4">
                   {[
-                    { id: 'small', label: 'Menos de 5 ha', price: '9.99€' },
-                    { id: 'medium', label: 'De 5 a 20 ha', price: '19.99€' },
-                    { id: 'large', label: 'De 20 a 50 ha', price: '49.99€' },
-                    { id: 'premium', label: 'De 50 a 100 ha', price: '89.99€' },
+                    { id: 'small', label: 'Menos de 5 ha', price: 9.99 },
+                    { id: 'medium', label: 'De 5 a 20 ha', price: 19.99 },
+                    { id: 'large', label: 'De 20 a 50 ha', price: 49.99 },
+                    { id: 'premium', label: 'De 50 a 100 ha', price: 89.99 },
                   ].map((cat) => (
-                    <div key={cat.id} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 focus-within:border-[var(--color-primary)]/40 transition-all">
-                      <div>
+                    <div key={cat.id} className="p-5 rounded-2xl bg-white/5 border border-white/5 focus-within:border-[var(--color-primary)]/40 transition-all space-y-3">
+                      <div className="flex items-center justify-between">
                         <div className="text-sm font-bold">{cat.label}</div>
-                        <div className="text-[10px] text-white/30 uppercase">PVP: {cat.price}/mes</div>
+                        <input 
+                          type="number" 
+                          min="0"
+                          value={counts[cat.id as keyof typeof counts] || ''}
+                          onChange={(e) => handleInputChange(cat.id as keyof typeof counts, e.target.value)}
+                          placeholder="0"
+                          className="w-20 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-right font-bold text-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
+                        />
                       </div>
-                      <input 
-                        type="number" 
-                        min="0"
-                        value={counts[cat.id as keyof typeof counts] || ''}
-                        onChange={(e) => handleInputChange(cat.id as keyof typeof counts, e.target.value)}
-                        placeholder="0"
-                        className="w-20 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-right font-bold text-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
-                      />
+                      <div className="flex justify-between items-center pt-2 border-t border-white/5">
+                        <div className="text-[10px] text-white/40 uppercase font-bold tracking-tight">Cuota mensual: <span className="text-white/80">{cat.price}€/usuario</span></div>
+                        <div className="text-[10px] text-[var(--color-primary)]/60 font-black uppercase tracking-tight text-right">Tu 50%: {(cat.price * 0.5).toFixed(2)}€/u</div>
+                      </div>
                     </div>
                   ))}
                 </div>
