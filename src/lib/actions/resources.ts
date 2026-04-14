@@ -48,6 +48,45 @@ export async function createWorker(worker: { nombre: string; nif?: string; espec
     ]);
 
   if (error) throw error;
+  revalidatePath('/admin/workers');
+  revalidatePath('/cuaderno/recursos');
+  return { success: true };
+}
+
+export async function updateWorker(id: string, worker: any) {
+  const supabase = await getSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
+
+  const { error } = await supabase
+    .from('workers')
+    .update(worker)
+    .eq('id', id)
+    .eq('tenant_id', userData?.tenant_id);
+
+  if (error) throw error;
+  revalidatePath('/admin/workers');
+  revalidatePath('/cuaderno/recursos');
+  return { success: true };
+}
+
+export async function deleteWorker(id: string) {
+  const supabase = await getSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
+
+  const { error } = await supabase
+    .from('workers')
+    .delete()
+    .eq('id', id)
+    .eq('tenant_id', userData?.tenant_id);
+
+  if (error) throw error;
+  revalidatePath('/admin/workers');
   revalidatePath('/cuaderno/recursos');
   return { success: true };
 }
@@ -82,6 +121,45 @@ export async function createMachinery(machine: { nombre: string; matricula?: str
     ]);
 
   if (error) throw error;
+  revalidatePath('/admin/machinery');
+  revalidatePath('/cuaderno/recursos');
+  return { success: true };
+}
+
+export async function updateMachinery(id: string, machine: any) {
+  const supabase = await getSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
+
+  const { error } = await supabase
+    .from('machinery')
+    .update(machine)
+    .eq('id', id)
+    .eq('tenant_id', userData?.tenant_id);
+
+  if (error) throw error;
+  revalidatePath('/admin/machinery');
+  revalidatePath('/cuaderno/recursos');
+  return { success: true };
+}
+
+export async function deleteMachinery(id: string) {
+  const supabase = await getSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
+
+  const { error } = await supabase
+    .from('machinery')
+    .delete()
+    .eq('id', id)
+    .eq('tenant_id', userData?.tenant_id);
+
+  if (error) throw error;
+  revalidatePath('/admin/machinery');
   revalidatePath('/cuaderno/recursos');
   return { success: true };
 }

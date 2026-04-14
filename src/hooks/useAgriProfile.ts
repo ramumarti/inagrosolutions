@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { AgriTier, ModuloSistema } from '@/lib/modules';
 import { canAccessModule, isModuleActive } from '@/lib/modules';
+import { getImpersonatedTenantId } from '@/lib/actions/superadmin';
 
 export interface AgriProfile {
   userId: string;
@@ -14,6 +15,8 @@ export interface AgriProfile {
   parcelas: any[];
   campanas: any[];
   alertasPendientes: number;
+  tratamientosHoy: number;
+  laboresHoy: number;
   tier: string;
   totalHectareas: number;
   modulosActivos: string[];
@@ -74,60 +77,74 @@ export function useAgriProfile() {
         .eq('id', user.id)
         .single();
 
-      // Modules
-      const { data: modulosData } = await supabase
-        .from('modulos_sistema')
-        .select('*')
-        .order('orden');
+        let actualTenantId = userData?.tenant_id;
+        let actualTenantData = userData?.tenants as any;
 
-      // Explotaciones (Con nuevos campos PAC)
-      const { data: explotaciones } = await supabase
-        .from('explotaciones')
-        .select('*, parcelas(*)')
-        .eq('user_id', user.id);
+        if (userData?.platform_role === 'superadmin') {
+           const impId = await getImpersonatedTenantId();
+           if (impId) {
+             const { data: impTenant } = await supabase.from('tenants').select('*').eq('id', impId).single();
+             if (impTenant) {
+               actualTenantId = impId;
+               actualTenantData = impTenant;
+             }
+           }
+        }
 
-      // Campañas
-      const { data: campanasData } = await supabase
-        .from('campanas')
-        .select('*')
-        .order('anio_inicio', { ascending: false });
+        // --- Fetch Business Logic Data based on Actual Context ---
+        const { data: modulosData } = await supabase
+          .from('modulos_sistema')
+          .select('*')
+          .order('orden');
 
-      // Resumen (alertas)
-      const { data: alertasData } = await supabase
-        .from('alertas_cuaderno')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('leida', false);
+        const { data: explotaciones } = await supabase
+          .from('explotaciones')
+          .select('*, parcelas(*)')
+          .eq(actualTenantId ? 'tenant_id' : 'user_id', actualTenantId || user.id);
+
+        const { data: campanasData } = await supabase
+          .from('campanas')
+          .select('*')
+          .eq(actualTenantId ? 'tenant_id' : 'explotacion_id', actualTenantId ? actualTenantId : (explotaciones?.[0]?.id || ''))
+          .order('anio_inicio', { ascending: false });
+
+        const today = new Date().toISOString().split('T')[0];
+        const [alertasData, tratsHoy, labsHoy] = await Promise.all([
+          supabase.from('alertas_cuaderno').select('id').eq(actualTenantId ? 'tenant_id' : 'user_id', actualTenantId || user.id).eq('leida', false),
+          supabase.from('tratamientos_fitosanitarios').select('id', { count: 'exact', head: true }).eq(actualTenantId ? 'tenant_id' : 'user_id', actualTenantId || user.id).gte('fecha', today),
+          supabase.from('labores').select('id', { count: 'exact', head: true }).eq(actualTenantId ? 'tenant_id' : 'user_id', actualTenantId || user.id).gte('fecha', today)
+        ]);
 
       const allParcelas = explotaciones?.flatMap((e: any) => e.parcelas || []) || [];
       const totalHa = allParcelas.reduce((sum: number, p: any) => sum + (Number(p.hectareas) || 0), 0);
 
-      const tenantData = userData?.tenants as any;
-      const rawTier = tenantData?.subscription_tier || userData?.agri_tier || 'basico';
+      const rawTier = actualTenantData?.subscription_tier || userData?.agri_tier || 'basico';
       const safeTier = ['basico', 'intermedio', 'avanzado', 'premium'].includes(rawTier) ? rawTier : 'basico';
 
       setProfile({
         userId: user.id,
-        tenant_id: userData?.tenant_id,
+        tenant_id: actualTenantId,
         platform_role: userData?.platform_role || 'farmer',
         onboardedAgri: userData?.onboarded_agri || false,
         explotaciones: explotaciones || [],
         parcelas: allParcelas,
         campanas: campanasData || [],
         alertasPendientes: alertasData?.length || 0,
+        tratamientosHoy: tratsHoy?.count || 0,
+        laboresHoy: labsHoy?.count || 0,
         tier: safeTier,
         totalHectareas: totalHa,
-        modulosActivos: tenantData?.active_modules || userData?.modulos_activos || [],
-        tenant: tenantData ? {
-          id: tenantData.id,
-          name: tenantData.name,
-          logo_url: tenantData.logo_url,
-          primary_color: tenantData.primary_color,
-          secondary_color: tenantData.secondary_color,
-          custom_domain: tenantData.custom_domain,
-          type: tenantData.type || 'cooperativa',
-          subscription_tier: tenantData.subscription_tier,
-          active_modules: tenantData.active_modules
+        modulosActivos: actualTenantData?.active_modules || userData?.modulos_activos || [],
+        tenant: actualTenantData ? {
+          id: actualTenantData.id,
+          name: actualTenantData.name,
+          logo_url: actualTenantData.logo_url,
+          primary_color: actualTenantData.primary_color,
+          secondary_color: actualTenantData.secondary_color,
+          custom_domain: actualTenantData.custom_domain,
+          type: actualTenantData.type || 'cooperativa',
+          subscription_tier: actualTenantData.subscription_tier,
+          active_modules: actualTenantData.active_modules
         } : undefined
       });
 

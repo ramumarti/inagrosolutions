@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { 
   Hexagon, LayoutGrid, ChevronLeft, ChevronRight, Home, CreditCard, 
   Shield, Mail, Leaf, Bug, Droplets, MapPin, Wallet, Crown, 
-  BookOpen, FileDown, Bell, Users, Building2, Scale, Package, FileJson, History
+  BookOpen, FileDown, Bell, Users, Building2, Scale, Package, FileJson, History, Truck, Layers, ShieldAlert
 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
@@ -103,10 +103,40 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         isActive: pathname === '/dashboard'
       },
       {
+        label: language === 'en' ? 'Supervision' : 'Supervisión Cuadernos',
+        href: '/admin/supervision',
+        icon: BookOpen,
+        isActive: pathname.startsWith('/admin/supervision')
+      },
+      {
         label: language === 'en' ? 'Member Management' : 'Gestión de Socios',
         href: '/admin/members',
         icon: Users,
         isActive: pathname === '/admin/members'
+      },
+      {
+        label: language === 'en' ? 'Field Operators' : 'Mis Operarios',
+        href: '/admin/workers',
+        icon: Users,
+        isActive: pathname === '/admin/workers'
+      },
+      {
+        label: language === 'en' ? 'Machinery' : 'Maquinaria',
+        href: '/admin/machinery',
+        icon: Truck,
+        isActive: pathname === '/admin/machinery'
+      },
+      {
+        label: language === 'en' ? 'Assignments' : 'Asignar Técnicos',
+        href: '/admin/assignments',
+        icon: Layers,
+        isActive: pathname === '/admin/assignments'
+      },
+      {
+        label: language === 'en' ? 'Audit Logs' : 'Auditoría',
+        href: '/admin/audit',
+        icon: ShieldAlert,
+        isActive: pathname === '/admin/audit'
       },
       {
         label: language === 'en' ? 'Revenue Sharing' : 'Facturación y Comisiones',

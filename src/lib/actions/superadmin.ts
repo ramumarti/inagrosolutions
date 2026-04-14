@@ -41,26 +41,99 @@ export async function getPlatformStats() {
   const supabase = getAdminClient();
   
   try {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
     const [
       { count: totalTenants },
       { count: totalUsers },
-      { count: totalFarms }
+      { count: totalFarms },
+      { data: recentActivity },
+      { data: tierStats }
     ] = await Promise.all([
       supabase.from('tenants').select('*', { count: 'exact', head: true }),
       supabase.from('users').select('*', { count: 'exact', head: true }),
-      supabase.from('explotaciones').select('*', { count: 'exact', head: true })
+      supabase.from('explotaciones').select('*', { count: 'exact', head: true }),
+      supabase.from('audit_log')
+        .select(`
+          id, 
+          action, 
+          entity_type, 
+          created_at,
+          user:users(first_name, last_name, email),
+          tenant:tenants(name)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10),
+      supabase.from('tenants').select('subscription_tier')
     ]);
+
+    // Calculate MRR from real tiers
+    const { data: plans } = await supabase.from('plans').select('slug, price_monthly');
+    const priceMap = (plans || []).reduce((acc: any, p) => {
+       acc[p.slug] = Number(p.price_monthly) || 0;
+       return acc;
+    }, {});
+
+    const totalMRR = (tierStats || []).reduce((sum, t) => {
+       return sum + (priceMap[t.subscription_tier] || 0);
+    }, 0);
+
+    // Fetch activity trend for the last 7 days
+    const { data: trendData } = await supabase
+      .rpc('get_activity_trend', { days_count: 7 });
 
     return {
       totalTenants: totalTenants || 0,
       totalUsers: totalUsers || 0,
       totalFarms: totalFarms || 0,
-      mrr: (totalTenants || 0) * 89,
+      mrr: totalMRR,
+      recentActivity: recentActivity || [],
+      trend: trendData || []
     };
   } catch (err: any) {
     console.error('Error fetching stats:', err);
-    return { totalTenants: 0, totalUsers: 0, totalFarms: 0, mrr: 0 };
+    return { totalTenants: 0, totalUsers: 0, totalFarms: 0, mrr: 0, recentActivity: [], trend: [] };
   }
+}
+
+export async function getGlobalAuditLogs() {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return [];
+
+  const supabase = getAdminClient();
+  
+  const { data, error } = await supabase
+    .from('audit_log')
+    .select(`
+      *,
+      user:users(first_name, last_name, email),
+      tenant:tenants(name)
+    `)
+    .order('created_at', { ascending: false })
+    .limit(100);
+    
+  if (error) {
+    console.error('Error listing audit logs:', error);
+    return [];
+  }
+  return data;
+}
+
+export async function getAuditLogDetail(logId: string) {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) throw new Error(auth.error);
+
+  const supabase = getAdminClient();
+  
+  const { data, error } = await supabase
+    .from('audit_log')
+    .select('*')
+    .eq('id', logId)
+    .single();
+    
+  if (error) throw error;
+  return data;
 }
 
 export async function getTenantsList() {
@@ -138,20 +211,21 @@ export async function switchContext(tenantId: string | null) {
   if (!auth.isAuthorized) return { success: false, error: auth.error };
 
   const cookieStore = await cookies();
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-    cookies: { getAll() { return cookieStore.getAll() }, setAll() {} }
-  });
   
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: 'No user found' };
+  // SEC-7: Use a secure cookie for impersonation instead of mutating the DB
+  // This prevents the superadmin's actual tenant_id from being overwritten
+  if (tenantId) {
+    cookieStore.set('x-impersonate-tenant', tenantId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 4 // 4 hours max impersonation session
+    });
+  } else {
+    cookieStore.delete('x-impersonate-tenant');
+  }
 
-  const adminClient = getAdminClient();
-  const { error } = await adminClient
-    .from('users')
-    .update({ tenant_id: tenantId })
-    .eq('id', user.id);
-    
-  if (error) return { success: false, error: error.message };
   return { success: true };
 }
 
@@ -161,11 +235,16 @@ export async function deleteTenant(tenantId: string) {
 
   const supabase = getAdminClient();
   
+  // SEC-8: Soft-delete instead of hard-delete to preserve data integrity
+  // Mark as inactive and prefix name to indicate deletion
   const { error } = await supabase
     .from('tenants')
-    .delete()
+    .update({ 
+      is_active: false,
+      name: `[ELIMINADO] ${new Date().toISOString().slice(0, 10)}`
+    })
     .eq('id', tenantId);
-    
+  
   if (error) return { success: false, error: error.message };
   return { success: true };
 }
@@ -231,6 +310,15 @@ export async function getGlobalAuditLogs() {
     .limit(200);
     
   return data || [];
+}
+
+/**
+ * SEC-7: Get the impersonated tenant ID from cookie (server-side only)
+ * Returns null if no impersonation is active
+ */
+export async function getImpersonatedTenantId(): Promise<string | null> {
+  const cookieStore = await cookies();
+  return cookieStore.get('x-impersonate-tenant')?.value || null;
 }
 
 

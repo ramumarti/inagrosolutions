@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
+import { getImpersonatedTenantId } from '@/lib/actions/superadmin';
 
 export type PlatformRole = 'superadmin' | 'tenant_admin' | 'technician' | 'farmer' | 'worker';
 
@@ -73,15 +74,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (error) throw error;
 
+        let tenantIdToUse = userData?.tenant_id;
+        let tenantDataToUse = userData?.tenants;
+
+        // Superadmin Impersonation Logic
+        if (userData?.platform_role === 'superadmin') {
+          const impersonatedId = await getImpersonatedTenantId();
+          if (impersonatedId) {
+             const { data: impTenant } = await supabase.from('tenants').select('*').eq('id', impersonatedId).single();
+             if (impTenant) {
+                tenantIdToUse = impersonatedId;
+                tenantDataToUse = impTenant;
+             }
+          }
+        }
+
         const authUser: AuthUser = {
           ...session.user,
           platform_role: userData?.platform_role as PlatformRole,
-          tenant_id: userData?.tenant_id,
+          tenant_id: tenantIdToUse,
         };
 
         setUser(authUser);
-        if (userData?.tenants) {
-          setTenant((userData.tenants as unknown) as TenantData);
+        if (tenantDataToUse) {
+          setTenant((tenantDataToUse as unknown) as TenantData);
         }
 
       } catch (error) {

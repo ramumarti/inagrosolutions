@@ -8,7 +8,7 @@ import {
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { cn } from '@/lib/utils';
-import * as XLSX from 'xlsx';
+import { useRouter } from 'next/navigation';
 
 interface ExportacionModuleProps {
   profile: any;
@@ -17,6 +17,7 @@ interface ExportacionModuleProps {
 }
 
 export function ExportacionModule({ profile, explotacionId, campanaId }: ExportacionModuleProps) {
+  const router = useRouter();
   const [isExporting, setIsExporting] = useState(false);
   const selectedExplotacion = profile.explotaciones.find((e: any) => e.id === explotacionId);
   const selectedCampana = profile.campanas.find((c: any) => c.id === campanaId);
@@ -103,8 +104,7 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
   };
 
   const handlePrintNotebook = () => {
-    // Implementación real de impresión del Cuaderno de Campo
-    window.print();
+    router.push('/cuaderno/report');
   };
 
   return (

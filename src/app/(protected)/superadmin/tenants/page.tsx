@@ -28,11 +28,18 @@ export default function SuperadminTenantsPage() {
     subscription_tier: 'basico'
   });
 
-  const handleSwitch = async (tenantId: string) => {
+  const [impersonatedId, setImpersonatedId] = useState<string | null>(null);
+
+  const handleSwitch = async (tenantId: string | null) => {
     try {
       const res = await switchContext(tenantId);
       if (res.success) {
-        window.location.href = '/dashboard';
+        if (tenantId) {
+          window.location.href = '/dashboard';
+        } else {
+          load();
+          setImpersonatedId(null);
+        }
       } else {
         alert(res.error || 'Error al cambiar contexto');
       }
@@ -50,10 +57,10 @@ export default function SuperadminTenantsPage() {
       .catch(err => {
         console.error('Error cargando entidades:', err);
         setLoadError('Error al cargar las entidades');
-      })
-      .finally(() => {
-        setLoading(false);
       });
+
+    getImpersonatedTenantId().then(id => setImpersonatedId(id));
+    setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
@@ -110,18 +117,37 @@ export default function SuperadminTenantsPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 relative">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-emerald-400" />
-          Gestión de Entidades
-        </h2>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Crear Entidad
-        </button>
+      <div className="flex justify-between items-center bg-white/5 p-6 rounded-2xl border border-white/10">
+        <div className="space-y-1">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-emerald-400" />
+            Gestión de Entidades
+          </h2>
+          {impersonatedId && (
+            <div className="flex items-center gap-2 animate-in slide-in-from-left-2 duration-300">
+              <span className="flex h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+              <p className="text-xs font-bold text-amber-400 uppercase tracking-widest">Suplantación Activa</p>
+            </div>
+          )}
+        </div>
+        
+        <div className="flex items-center gap-3">
+          {impersonatedId && (
+            <button
+               onClick={() => handleSwitch(null)}
+               className="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-all active:scale-95"
+            >
+               Limpiar Sesión
+            </button>
+          )}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            Crear Entidad
+          </button>
+        </div>
       </div>
 
       {loadError && (
