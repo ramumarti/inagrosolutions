@@ -7,18 +7,6 @@ import { useToast } from '@/components/ui/Toast';
 import { useI18n } from '@/lib/i18n';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
 import { 
-  Users, 
-  Search, 
-  Map, 
-  ChevronRight,
-  Eye,
-  FileText,
-  AlertTriangle,
-  CheckCircle,
-  TrendingUp,
-  ExternalLink
-} from 'lucide-center'; // Wait, it's lucide-react
-import { 
   Users as UsersIcon, 
   Search as SearchIcon, 
   Map as MapIcon, 
