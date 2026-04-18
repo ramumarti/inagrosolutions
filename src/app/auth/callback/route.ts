@@ -22,19 +22,34 @@ export async function GET(request: Request) {
       // con SECURITY DEFINER, lo que evita problemas con RLS.
       // ---------------------------------------------------------------
 
-      // -- Flujo para Auto-vinculación de Agricultores (/c/[slug]) --
-      if (metadata?.tenant_slug && !metadata?.is_business) {
-        const { data: targetTenant } = await supabase
-          .from('tenants')
-          .select('id')
-          .eq('slug', metadata.tenant_slug)
-          .single();
-          
-        if (targetTenant) {
-          await supabase.from('users').update({
-            tenant_id: targetTenant.id,
-            platform_role: 'farmer'
-          }).eq('id', authData.user.id);
+      // -- Flujo para Agricultores (Auto-vinculación a /c/[slug] y/o asignación de Plan) --
+      if (metadata?.is_partner_reg === false || metadata?.is_business === false) {
+        let updateData: any = {};
+        
+        // Asignar el rol siempre a tenant_member (o el que venga en el auth)
+        updateData.platform_role = metadata?.platform_role || 'tenant_member';
+        
+        // Asignar plan_id si existe
+        if (metadata?.plan_id) {
+          updateData.plan_id = metadata.plan_id;
+        }
+
+        // Si viene desde un tenant, obtenemos el tenant_id
+        if (metadata?.tenant_slug) {
+          const { data: targetTenant } = await supabase
+            .from('tenants')
+            .select('id')
+            .eq('slug', metadata.tenant_slug)
+            .single();
+            
+          if (targetTenant) {
+            updateData.tenant_id = targetTenant.id;
+          }
+        }
+
+        // Ejecutar actualización si hay algo que actualizar
+        if (Object.keys(updateData).length > 0) {
+          await supabase.from('users').update(updateData).eq('id', authData.user.id);
         }
       }
 

@@ -2,24 +2,29 @@
 
 import React, { useEffect, useState } from 'react';
 import { getPlatformStats } from '@/lib/actions/superadmin';
+import { getSuperadminBillingStats } from '@/lib/actions/billing';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Users, Building2, Map, TrendingUp, History, ArrowRight, Activity } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SuperadminPage() {
   const [stats, setStats] = useState<any>(null);
+  const [billingStats, setBillingStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    getPlatformStats().then(data => {
-      setStats(data);
-      setLoading(false);
-    }).catch(err => {
-      console.error(err);
-      setErrorMsg(err.message || 'Error al cargar los datos');
-      setLoading(false);
-    });
+    Promise.all([getPlatformStats(), getSuperadminBillingStats()])
+      .then(([statsData, billingData]) => {
+        setStats(statsData);
+        setBillingStats(billingData);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setErrorMsg(err.message || 'Error al cargar los datos');
+        setLoading(false);
+      });
   }, []);
 
   if (loading) return (
@@ -36,8 +41,8 @@ export default function SuperadminPage() {
   const kpis = [
     { label: 'Entidades Activas', value: stats.totalTenants, icon: Building2, color: 'text-indigo-400' },
     { label: 'Usuarios Totales', value: stats.totalUsers, icon: Users, color: 'text-emerald-400' },
-    { label: 'Explotaciones', value: stats.totalFarms, icon: Map, color: 'text-amber-400' },
-    { label: 'MRR Estimado', value: `€${stats.mrr}`, icon: TrendingUp, color: 'text-blue-400' },
+    { label: 'Tasa Conversión', value: `${billingStats?.conversionRate || 0}%`, icon: Crown, color: 'text-amber-400' },
+    { label: 'MRR (Facturado)', value: `${billingStats?.mrr?.toFixed(2) || '0.00'} €`, icon: TrendingUp, color: 'text-blue-400' },
   ];
 
   const maxTrend = Math.max(...(stats.trend?.map((t: any) => t.count) || [1]));

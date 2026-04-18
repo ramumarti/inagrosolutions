@@ -85,7 +85,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                Acceso
              </Link>
              <Link 
-               href={`/signup?tenant=${tenant.slug}`} 
+               href={`/cuaderno/planes?tenant=${tenant.slug}`} 
                className="group relative px-6 py-2.5 text-sm font-black uppercase tracking-widest rounded-xl transition-all hover:scale-105 flex items-center gap-2 overflow-hidden shadow-xl"
                style={{ backgroundColor: primaryColor, color: '#000', boxShadow: `0 4px 20px ${primaryColor}40` }}
              >
@@ -123,7 +123,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
               
               <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link 
-                  href={`/signup?tenant=${tenant.slug}`}
+                  href={`/cuaderno/planes?tenant=${tenant.slug}`}
                   className="group relative flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-black text-lg uppercase tracking-widest overflow-hidden transition-all hover:scale-105"
                   style={{ backgroundColor: primaryColor, color: '#000', boxShadow: `0 8px 30px ${primaryColor}55` }}
                 >
@@ -256,7 +256,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                 No esperes a la fecha límite para el Cuaderno Digital. Regístrate en nuestra cooperativa y obtén acceso total.
               </p>
               <Link 
-                  href={`/signup?tenant=${tenant.slug}`}
+                  href={`/cuaderno/planes?tenant=${tenant.slug}`}
                   className="inline-flex items-center justify-center px-10 py-5 rounded-2xl font-black text-lg uppercase tracking-widest transition-transform hover:scale-[1.03] shadow-2xl border border-white/20"
                   style={{ backgroundColor: 'white', color: 'black' }}
                 >

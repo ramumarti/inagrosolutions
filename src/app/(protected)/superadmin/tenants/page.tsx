@@ -13,7 +13,7 @@ import { TIER_CONFIG, type AgriTier } from '@/lib/modules';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Building2, X, Plus, Loader2, Trash2, FileText } from 'lucide-react';
+import { Building2, X, Plus, Loader2, Trash2, CreditCard, ExternalLink, Activity } from 'lucide-react';
 
 export default function SuperadminTenantsPage() {
   const [tenants, setTenants] = useState<any[]>([]);
@@ -120,6 +120,23 @@ export default function SuperadminTenantsPage() {
     }
   };
 
+  const handleConnectStripe = async (tenantId: string) => {
+    try {
+      const res = await fetch('/api/stripe/connect/create-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tenantId })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al conectar');
+      if (data.onboardingUrl) {
+        window.location.href = data.onboardingUrl;
+      }
+    } catch (err: any) {
+      alert('Error de Stripe: ' + err.message);
+    }
+  };
+
   if (loading) return <div className="text-white/50 text-sm font-bold animate-pulse">Cargando entidades...</div>;
 
   return (
@@ -171,6 +188,7 @@ export default function SuperadminTenantsPage() {
               <th className="px-6 py-4">Tipo</th>
               <th className="px-6 py-4">Suscripción</th>
               <th className="px-6 py-4">Usuarios</th>
+              <th className="px-6 py-4">Pagos / Stripe</th>
               <th className="px-6 py-4">Alta</th>
               <th className="px-6 py-4 text-center">Estado</th>
               <th className="px-6 py-4 text-center">Acciones</th>
@@ -202,6 +220,34 @@ export default function SuperadminTenantsPage() {
                   })()}
                 </td>
                 <td className="px-6 py-4">{t.users?.[0]?.count || 0}</td>
+                <td className="px-6 py-4">
+                  {t.stripe_account_id ? (
+                    <div className="space-y-1">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                        t.stripe_onboarding_status === 'completed'
+                          ? 'bg-emerald-500/20 text-emerald-400'
+                          : t.stripe_onboarding_status === 'restricted'
+                            ? 'bg-amber-500/20 text-amber-400'
+                            : 'bg-blue-500/20 text-blue-400'
+                      }`}>
+                        {t.stripe_onboarding_status === 'completed' ? 'Connect OK' : t.stripe_onboarding_status === 'restricted' ? 'Datos Faltantes' : 'Pendiente KYC'}
+                      </span>
+                      <button 
+                        onClick={() => handleConnectStripe(t.id)}
+                        className="text-[10px] font-medium text-white/50 hover:text-white flex items-center gap-1 transition-colors"
+                      >
+                        <ExternalLink size={10} /> Actualizar KYC
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleConnectStripe(t.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 rounded-lg text-[10px] font-bold uppercase transition-colors"
+                    >
+                      <CreditCard size={12} /> Vincular Stripe
+                    </button>
+                  )}
+                </td>
                 <td className="px-6 py-4 text-white/50">
                   {t.created_at ? format(new Date(t.created_at), 'dd MMM yyyy', { locale: es }) : '—'}
                 </td>

@@ -6,9 +6,8 @@ import { GlowButton } from '@/components/ui/GlowButton';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
 import { TIER_CONFIG, TIER_ORDER } from '@/lib/modules';
 import type { AgriTier } from '@/lib/modules';
-import { Check, X, Crown, Zap, ArrowLeft, Loader2 } from 'lucide-react';
+import { Check, X, Crown, Zap, ArrowLeft, Loader2, ExternalLink, CreditCard } from 'lucide-react';
 import Link from 'next/link';
-import { createCheckoutSession } from '@/lib/actions/stripe';
 
 export default function CuadernoPlanes() {
   const { profile, modulos, loading } = useAgriProfile();
@@ -18,12 +17,41 @@ export default function CuadernoPlanes() {
   const handleUpgrade = async (tier: AgriTier) => {
     try {
       setCheckingOut(tier);
-      const { url } = await createCheckoutSession(tier, interval);
-      if (url) window.location.href = url;
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: tier, interval })
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Error al crear la sesión');
+      }
     } catch (e: any) {
       console.error(e);
       alert('Error iniciando el pago: ' + e.message);
       setCheckingOut(null);
+    }
+  };
+
+  const [portalLoading, setPortalLoading] = React.useState(false);
+  const openStripePortal = async () => {
+    setPortalLoading(true);
+    try {
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ returnUrl: window.location.href }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (e: any) {
+      alert('Error al abrir el portal: ' + e.message);
+    } finally {
+      setPortalLoading(false);
     }
   };
 
@@ -54,19 +82,31 @@ export default function CuadernoPlanes() {
         </div>
 
         {/* Toggle Interval */}
-        <div className="flex items-center p-1 bg-white/5 border border-white/10 rounded-2xl w-fit">
-          <button 
-            onClick={() => setInterval('month')}
-            className={`px-6 py-3 rounded-xl text-xs font-bold transition-all ${interval === 'month' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-white/40 hover:text-white/60'}`}
-          >
-            Mensual
-          </button>
-          <button 
-            onClick={() => setInterval('year')}
-            className={`px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${interval === 'year' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-white/40 hover:text-white/60'}`}
-          >
-            Anual <span className="px-2 py-0.5 bg-emerald-400/20 text-emerald-400 text-[8px] rounded-md tracking-tighter">-2 MESES</span>
-          </button>
+        <div className="flex flex-col items-end gap-3">
+          {profile?.subscription_status === 'active' && (
+            <button 
+              onClick={openStripePortal}
+              disabled={portalLoading}
+              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-white transition-all"
+            >
+              {portalLoading ? <Loader2 size={12} className="animate-spin" /> : <ExternalLink size={12} />}
+              Gestionar Suscripción
+            </button>
+          )}
+          <div className="flex items-center p-1 bg-white/5 border border-white/10 rounded-2xl w-fit">
+            <button 
+              onClick={() => setInterval('month')}
+              className={`px-6 py-3 rounded-xl text-xs font-bold transition-all ${interval === 'month' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-white/40 hover:text-white/60'}`}
+            >
+              Mensual
+            </button>
+            <button 
+              onClick={() => setInterval('year')}
+              className={`px-6 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${interval === 'year' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'text-white/40 hover:text-white/60'}`}
+            >
+              Anual <span className="px-2 py-0.5 bg-emerald-400/20 text-emerald-400 text-[8px] rounded-md tracking-tighter">-2 MESES</span>
+            </button>
+          </div>
         </div>
       </div>
 
