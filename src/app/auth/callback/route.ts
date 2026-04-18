@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   
   // Determinamos el origin seguro para evitar redirecciones a localhost en producción
-  const safeOrigin = browserOrigin.includes('localhost') ? browserOrigin : 'https://inagrosolutions.com';
+  const safeOrigin = browserOrigin;
   
   if (code) {
     const supabase = await createClient()
