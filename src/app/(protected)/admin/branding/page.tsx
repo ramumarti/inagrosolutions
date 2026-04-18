@@ -37,10 +37,19 @@ export default function BrandingPage() {
   const [publicDescription, setPublicDescription] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [socialFacebook, setSocialFacebook] = useState('');
+  const [socialTwitter, setSocialTwitter] = useState('');
+  const [socialInstagram, setSocialInstagram] = useState('');
+  const [socialLinkedin, setSocialLinkedin] = useState('');
   const [showPublicPage, setShowPublicPage] = useState(true);
+  const [origin, setOrigin] = useState('');
 
   // Safety timeout to prevent infinite loading screen
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOrigin(window.location.origin);
+    }
     const timer = setTimeout(() => {
       if (profileLoading) {
         console.warn("Branding page loading taking too long, forcing visible state.");
@@ -62,6 +71,12 @@ export default function BrandingPage() {
       setPublicDescription(tenant.public_description || '');
       setContactEmail(tenant.contact_email || '');
       setContactPhone(tenant.contact_phone || '');
+      setAddress(tenant.address || '');
+      const links = tenant.social_links as any || {};
+      setSocialFacebook(links.facebook || '');
+      setSocialTwitter(links.twitter || '');
+      setSocialInstagram(links.instagram || '');
+      setSocialLinkedin(links.linkedin || '');
       setShowPublicPage(tenant.show_public_page ?? true);
     }
   }, [tenant]);
@@ -86,6 +101,13 @@ export default function BrandingPage() {
         public_description: publicDescription,
         contact_email: contactEmail,
         contact_phone: contactPhone,
+        address: address,
+        social_links: {
+          facebook: socialFacebook,
+          twitter: socialTwitter,
+          instagram: socialInstagram,
+          linkedin: socialLinkedin
+        },
         show_public_page: showPublicPage,
         updated_at: new Date().toISOString()
       })
@@ -315,17 +337,31 @@ export default function BrandingPage() {
             </h2>
 
             <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <input 
-                  type="checkbox" 
-                  id="show_public"
-                  checked={showPublicPage}
-                  onChange={(e) => setShowPublicPage(e.target.checked)}
-                  className="w-4 h-4 rounded border-white/20 bg-black/40 text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 focus:ring-0 cursor-pointer transition-colors"
-                />
-                <label htmlFor="show_public" className="font-medium text-sm text-white/80 cursor-pointer">
-                  {language === 'en' ? 'Enable public landing page (/c/slug)' : 'Habilitar página pública corporativa (/c/slug)'}
-                </label>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <input 
+                    type="checkbox" 
+                    id="show_public"
+                    checked={showPublicPage}
+                    onChange={(e) => setShowPublicPage(e.target.checked)}
+                    className="w-4 h-4 rounded border-white/20 bg-black/40 text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 focus:ring-0 cursor-pointer transition-colors"
+                  />
+                  <label htmlFor="show_public" className="font-medium text-sm text-white/80 cursor-pointer">
+                    {language === 'en' ? 'Enable public landing page (/c/slug)' : 'Habilitar página pública corporativa'}
+                  </label>
+                </div>
+                
+                {showPublicPage && tenant?.slug && (
+                  <a 
+                    href={`/c/${tenant.slug}`} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg transition-colors border border-white/10"
+                  >
+                    <Globe className="w-4 h-4" />
+                    {language === 'en' ? 'View Public Page' : 'Ver Página Pública'}
+                  </a>
+                )}
               </div>
 
               {showPublicPage && (
@@ -382,6 +418,38 @@ export default function BrandingPage() {
                         placeholder="900 123 456"
                       />
                     </div>
+                    <div className="space-y-2">
+                       <label className="text-sm font-medium text-white/70">
+                         {language === 'en' ? 'Address' : 'Dirección Física'}
+                       </label>
+                       <Input 
+                         value={address} 
+                         onChange={(e) => setAddress(e.target.value)} 
+                         placeholder={language === 'en' ? 'Main Headquarters' : 'Sede Principal, C/ Mayor 1'}
+                       />
+                    </div>
+                  </div>
+                  
+                  <hr className="border-white/10 my-4" />
+                  
+                  <h3 className="text-sm font-bold text-[var(--color-primary)]">Redes Sociales</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <div className="space-y-2">
+                      <label className="text-xs font-medium text-white/70">Facebook URL</label>
+                      <Input value={socialFacebook} onChange={(e) => setSocialFacebook(e.target.value)} placeholder="https://facebook.com/..." />
+                     </div>
+                     <div className="space-y-2">
+                      <label className="text-xs font-medium text-white/70">Twitter URL</label>
+                      <Input value={socialTwitter} onChange={(e) => setSocialTwitter(e.target.value)} placeholder="https://twitter.com/..." />
+                     </div>
+                     <div className="space-y-2">
+                      <label className="text-xs font-medium text-white/70">Instagram URL</label>
+                      <Input value={socialInstagram} onChange={(e) => setSocialInstagram(e.target.value)} placeholder="https://instagram.com/..." />
+                     </div>
+                     <div className="space-y-2">
+                      <label className="text-xs font-medium text-white/70">LinkedIn URL</label>
+                      <Input value={socialLinkedin} onChange={(e) => setSocialLinkedin(e.target.value)} placeholder="https://linkedin.com/..." />
+                     </div>
                   </div>
                 </div>
               )}
@@ -483,6 +551,45 @@ export default function BrandingPage() {
                 ? 'Your farmers will see this style when they log in.' 
                 : 'Tus agricultores verán este estilo al iniciar sesión.'}
             </div>
+
+            {showPublicPage && tenant?.slug && (
+              <GlassCard className="p-5 mt-6 border border-[var(--color-primary)]/30 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/10 to-transparent pointer-events-none" />
+                <h3 className="font-bold text-sm flex items-center gap-2 text-white mb-2 relative z-10">
+                  <Globe className="w-5 h-5 text-[var(--color-primary)]" />
+                  {language === 'en' ? 'Your Public Landing Page' : 'Tu Landing Page Pública'}
+                </h3>
+                <p className="text-xs text-white/60 mb-4 relative z-10 leading-relaxed">
+                  {language === 'en' 
+                    ? 'Share this link to onboard your farmers and showcase your cooperative.' 
+                    : 'Comparte este enlace para captar socios y mostrar los servicios de tu entidad.'}
+                </p>
+                <div className="flex items-center gap-2 relative z-10">
+                  <input 
+                    type="text" 
+                    readOnly 
+                    value={`${origin}/c/${tenant.slug}`}
+                    className="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[var(--color-primary)] transition-colors selection:bg-[var(--color-primary)]/30"
+                    onClick={(e) => {
+                      (e.target as HTMLInputElement).select();
+                      navigator.clipboard.writeText(`${origin}/c/${tenant.slug}`);
+                      toast(language === 'en' ? 'Link copied!' : '¡Enlace copiado!', 'success');
+                    }}
+                    title={language === 'en' ? 'Click to copy' : 'Haz clic para copiar'}
+                  />
+                  <a 
+                    href={`/c/${tenant.slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-shrink-0 p-2 font-bold text-black rounded-lg transition-transform hover:scale-105 active:scale-95 shadow-lg"
+                    style={{ backgroundColor: primaryColor, boxShadow: `0 4px 14px ${primaryColor}40` }}
+                    title={language === 'en' ? 'Visit Page' : 'Visitar Página'}
+                  >
+                    <Globe className="w-4 h-4" />
+                  </a>
+                </div>
+              </GlassCard>
+            )}
           </div>
         </div>
       </div>
