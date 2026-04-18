@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { 
   Hexagon, LayoutGrid, ChevronLeft, ChevronRight, Home, CreditCard, 
   Shield, Mail, Leaf, Bug, Droplets, MapPin, Wallet, Crown, 
-  BookOpen, FileDown, Bell, Users, Building2, Scale, Package, FileJson, History, Truck, Layers, ShieldAlert
+  BookOpen, FileDown, Bell, Users, Building2, Scale, Package, FileJson, History, Truck, Layers, ShieldAlert, Star
 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
