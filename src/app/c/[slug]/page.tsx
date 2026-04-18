@@ -1,5 +1,5 @@
 import React from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { MapPin, Mail, Phone, ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -7,11 +7,7 @@ import { MapPin, Mail, Phone, ArrowRight, CheckCircle2 } from 'lucide-react';
 export const revalidate = 60; // Revalidate every minute
 
 export default async function TenantPublicPage({ params }: { params: { slug: string } }) {
-  // Use service role to bypass RLS for public read
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = await createClient();
 
   // Fetch the tenant by slug
   const { data: tenant } = await supabase
