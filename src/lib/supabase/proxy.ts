@@ -40,7 +40,10 @@ export async function updateSession(request: NextRequest) {
     '/legal-notice',
     '/partner-policy'
   ]
-  const isPublicRoute = publicPaths.includes(pathname) || pathname.startsWith('/api') || pathname.startsWith('/auth')
+  const isPublicRoute = publicPaths.includes(pathname) || 
+                       pathname.startsWith('/api') || 
+                       pathname.startsWith('/auth') ||
+                       pathname.startsWith('/c/')
 
   if (user && (pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password' || pathname === '/enrutar')) {
     const { data: userData } = await supabase.from('users').select('platform_role').eq('id', user.id).single();

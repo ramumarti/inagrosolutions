@@ -6,14 +6,15 @@ import { MapPin, Mail, Phone, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export const revalidate = 60; // Revalidate every minute
 
-export default async function TenantPublicPage({ params }: { params: { slug: string } }) {
+export default async function TenantPublicPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const supabase = await createClient();
 
   // Fetch the tenant by slug
   const { data: tenant } = await supabase
     .from('tenants')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single();
 
   if (!tenant || !tenant.show_public_page) {
