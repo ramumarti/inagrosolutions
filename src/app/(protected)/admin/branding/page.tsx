@@ -210,13 +210,42 @@ export default function BrandingPage() {
                   placeholder={language === 'en' ? 'Enter company name' : 'Nombre de la cooperativa'}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/70">{language === 'en' ? 'Custom Domain' : 'Dominio Personalizado'}</label>
-                <Input 
-                  value={customDomain} 
-                  onChange={(e) => setCustomDomain(e.target.value)} 
-                  placeholder="portal.tucooperativa.com"
-                />
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white/70">{language === 'en' ? 'Custom Domain' : 'Dominio Personalizado'}</label>
+                  <Input 
+                    value={customDomain} 
+                    onChange={(e) => setCustomDomain(e.target.value)} 
+                    placeholder="cuadernodc.micooperativa.com"
+                  />
+                </div>
+                
+                {customDomain && customDomain.length > 3 && customDomain.includes('.') && (
+                  <div className="p-4 bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 rounded-xl space-y-3 animate-in fade-in slide-in-from-top-2">
+                    <h4 className="text-sm font-bold flex items-center gap-2" style={{ color: primaryColor }}>
+                      <Globe className="w-4 h-4" /> 
+                      Instrucciones de DNS
+                    </h4>
+                    <p className="text-xs text-white/70 leading-relaxed">
+                      Para conectar este subdominio, accede a tu proveedor de dominio (GoDaddy, nominalia, etc.) y crea el siguiente registro:
+                    </p>
+                    <div className="bg-black/40 rounded-lg p-3 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs border border-white/5 shadow-inner">
+                       <div className="flex flex-col">
+                         <span className="text-white/40 mb-1 font-semibold uppercase text-[10px]">Tipo</span>
+                         <span className="font-mono font-bold" style={{ color: primaryColor }}>CNAME</span>
+                       </div>
+                       <div className="flex flex-col">
+                         <span className="text-white/40 mb-1 font-semibold uppercase text-[10px]">Nombre / Host</span>
+                         <span className="font-mono text-white/90">{customDomain.split('.')[0]}</span>
+                       </div>
+                       <div className="flex flex-col">
+                         <span className="text-white/40 mb-1 font-semibold uppercase text-[10px]">Destino / Valor</span>
+                         <span className="font-mono text-white/90">cname.vercel-dns.com</span>
+                       </div>
+                    </div>
+                    <p className="text-[10px] text-white/40 italic">Nota: Los cambios en los registros DNS pueden tardar algunas horas en propagarse.</p>
+                  </div>
+                )}
               </div>
             </div>
 
