@@ -5,9 +5,10 @@ import { Loader2 } from 'lucide-react';
 interface GlowButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'premium';
   isLoading?: boolean;
+  icon?: React.ReactNode;
 }
 
-export function GlowButton({ className, variant = 'primary', isLoading, children, ...props }: GlowButtonProps) {
+export function GlowButton({ className, variant = 'primary', isLoading, icon, children, ...props }: GlowButtonProps) {
   const baseStyles = "relative inline-flex items-center justify-center px-4 py-2 font-medium rounded-lg transition-all duration-300 overflow-hidden";
   
   const variants = {
@@ -24,6 +25,7 @@ export function GlowButton({ className, variant = 'primary', isLoading, children
       {...props}
     >
       {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+      {!isLoading && icon && <span className="mr-2">{icon}</span>}
       {children}
     </button>
   );

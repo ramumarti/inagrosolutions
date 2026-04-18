@@ -9,6 +9,7 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import * as XLSX from 'xlsx';
 
 interface ExportacionModuleProps {
   profile: any;

@@ -4,7 +4,7 @@ import { updateSession } from '@/lib/supabase/proxy'
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   const host = request.headers.get('host') || '';
-  const mainDomain = 'inagrosolutions.es'; // Dominio principal plataforma
+  const mainDomain = 'inagrosolutions.com'; // Dominio principal plataforma
 
   // Paso 2.5: Detección de Dominio Personalizado
   // Si el host no es el principal y no es localhost, intentamos detectar si es un tenant

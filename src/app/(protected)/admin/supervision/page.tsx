@@ -16,7 +16,8 @@ import {
   AlertTriangle as WarningIcon,
   CheckCircle as SuccessIcon,
   TrendingUp as TrendIcon,
-  ExternalLink as LinkIcon
+  ExternalLink as LinkIcon,
+  FileText
 } from 'lucide-react';
 import { getTenantFarmers } from '@/lib/actions/tenant-dashboard';
 import Link from 'next/link';

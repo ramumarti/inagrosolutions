@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getGlobalAuditLogs, getAuditLogDetail } from '@/lib/actions/superadmin';
+import { fetchGlobalAuditLogs, getAuditLogDetail } from '@/lib/actions/superadmin';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { ShieldCheck, History, User, Building, Search, FileJson, X, Globe, Fingerprint } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -13,7 +13,7 @@ export default function SuperadminAuditPage() {
   const [selectedLog, setSelectedLog] = useState<any | null>(null);
 
   useEffect(() => {
-    getGlobalAuditLogs().then(data => {
+    fetchGlobalAuditLogs().then(data => {
       setLogs(data);
       setLoading(false);
     });

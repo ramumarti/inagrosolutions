@@ -19,7 +19,8 @@ import {
   MapPin,
   Sparkles,
   Tractor,
-  Droplets
+  Droplets,
+  Star
 } from 'lucide-react';
 
 // Reusable Components
@@ -435,7 +436,7 @@ export default function LandingPage() {
            </div>
            
            <p className="text-sm font-bold text-white/40">
-             © 2026 Inagrosolutions.es
+             © 2026 Inagrosolutions.com
            </p>
         </div>
       </footer>

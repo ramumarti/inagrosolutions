@@ -97,29 +97,6 @@ export async function getPlatformStats() {
   }
 }
 
-export async function getGlobalAuditLogs() {
-  const auth = await verifySuperadmin();
-  if (!auth.isAuthorized) return [];
-
-  const supabase = getAdminClient();
-  
-  const { data, error } = await supabase
-    .from('audit_log')
-    .select(`
-      *,
-      user:users(first_name, last_name, email),
-      tenant:tenants(name)
-    `)
-    .order('created_at', { ascending: false })
-    .limit(100);
-    
-  if (error) {
-    console.error('Error listing audit logs:', error);
-    return [];
-  }
-  return data;
-}
-
 export async function getAuditLogDetail(logId: string) {
   const auth = await verifySuperadmin();
   if (!auth.isAuthorized) throw new Error(auth.error);
@@ -213,7 +190,6 @@ export async function switchContext(tenantId: string | null) {
   const cookieStore = await cookies();
   
   // SEC-7: Use a secure cookie for impersonation instead of mutating the DB
-  // This prevents the superadmin's actual tenant_id from being overwritten
   if (tenantId) {
     cookieStore.set('x-impersonate-tenant', tenantId, {
       httpOnly: true,
@@ -236,7 +212,6 @@ export async function deleteTenant(tenantId: string) {
   const supabase = getAdminClient();
   
   // SEC-8: Soft-delete instead of hard-delete to preserve data integrity
-  // Mark as inactive and prefix name to indicate deletion
   const { error } = await supabase
     .from('tenants')
     .update({ 
@@ -294,7 +269,7 @@ export async function rotatePlatformRole(userId: string, newRole: string) {
   return { success: true };
 }
 
-export async function getGlobalAuditLogs() {
+export async function fetchGlobalAuditLogs() {
   const auth = await verifySuperadmin();
   if (!auth.isAuthorized) return [];
 
@@ -320,6 +295,3 @@ export async function getImpersonatedTenantId(): Promise<string | null> {
   const cookieStore = await cookies();
   return cookieStore.get('x-impersonate-tenant')?.value || null;
 }
-
-
-

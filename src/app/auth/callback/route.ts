@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams, origin: browserOrigin } = new URL(request.url)
   const code = searchParams.get('code')
+  
+  // Determinamos el origin seguro para evitar redirecciones a localhost en producción
+  const safeOrigin = browserOrigin.includes('localhost') ? browserOrigin : 'https://inagrosolutions.com';
   
   if (code) {
     const supabase = await createClient()
@@ -62,9 +65,11 @@ export async function GET(request: Request) {
 
       // Redirigir al portal principal (el Middleware se encargará de llevarle 
       // a su dashboard correspondiente según su rol)
-      return NextResponse.redirect(`${origin}/enrutar`)
+      return NextResponse.redirect(`${safeOrigin}/enrutar`)
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth-link-failed`)
+  // Si llegamos aquí es que algo falló (link caducado o inválido)
+  // Intentamos redirigir al login con un mensaje claro
+  return NextResponse.redirect(`${safeOrigin}/login?error=auth-link-failed&details=otp-expired-or-invalid`)
 }

@@ -46,7 +46,10 @@ export default function SignupPage() {
 
     setLoading(true);
     
-    const origin = window.location.origin;
+    // Determine the redirect origin. Force production URL if not on localhost.
+    const origin = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+      ? window.location.origin 
+      : 'https://inagrosolutions.com';
     
     const { error } = await supabase.auth.signUp({
       email,

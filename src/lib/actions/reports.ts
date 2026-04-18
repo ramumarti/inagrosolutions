@@ -33,7 +33,7 @@ export async function getFullNotebookData(userId: string) {
     .select('*, parcelas(*)')
     .eq('user_id', userId);
 
-  const parcelaIds = explotaciones?.flatMap(e => e.parcelas?.map(p => p.id)) || [];
+  const parcelaIds = explotaciones?.flatMap(e => e.parcelas?.map((p: any) => p.id)) || [];
 
   // 3. Fitosanitarios
   const { data: treatments } = await supabase

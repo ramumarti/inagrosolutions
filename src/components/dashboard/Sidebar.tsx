@@ -143,6 +143,12 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         href: '/admin/billing',
         icon: Wallet,
         isActive: pathname.startsWith('/admin/billing')
+      },
+      {
+        label: language === 'en' ? 'Success Guide' : 'Guía de Éxito',
+        href: '/admin/guia',
+        icon: Star,
+        isActive: pathname === '/admin/guia'
       }
     ] : []),
     ...(hasRole(['technician', 'tenant_admin']) && (!isSuperadmin || tenant) ? [

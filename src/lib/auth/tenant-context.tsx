@@ -17,12 +17,22 @@ export interface TenantData {
   secondary_color: string;
   subscription_tier: string;
   active_modules: string[];
+  custom_domain?: string;
+  show_public_page?: boolean;
+  public_description?: string;
+  contact_email?: string;
+  contact_phone?: string;
+  hero_title?: string;
+  hero_subtitle?: string;
 }
 
 export interface AuthUser extends User {
   platform_role: PlatformRole;
   tenant_id: string;
   tenant?: TenantData;
+  onboarded_agri: boolean;
+  stripe_customer_id?: string;
+  stripe_subscription_id?: string;
 }
 
 interface AuthContextType {
@@ -30,6 +40,10 @@ interface AuthContextType {
   tenant: TenantData | null;
   isLoading: boolean;
   isSuperadmin: boolean;
+  onboardedAgri: boolean;
+  stripe_customer_id?: string;
+  stripe_subscription_id?: string;
+  explotaciones: any[];
   hasRole: (roles: PlatformRole[]) => boolean;
 }
 
@@ -67,8 +81,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .select(`
             platform_role,
             tenant_id,
-            tenants (*)
-          `)
+            onboarded_agri,
+            stripe_customer_id,
+            stripe_subscription_id,
+            tenants (
+              id,
+              name,
+              type,
+              subscription_tier,
+              active_modules,
+              logo_url,
+              primary_color,
+              secondary_color,
+              custom_domain,
+              slug,
+              show_public_page,
+              public_description,
+              contact_email,
+              contact_phone,
+              hero_title,
+              hero_subtitle
+            )`)
           .eq('id', session.user.id)
           .single();
 

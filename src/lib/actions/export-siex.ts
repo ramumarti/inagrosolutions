@@ -5,7 +5,7 @@ import * as XLSX from 'xlsx';
 import { validateGlobalSiexPayload } from '../validators/siex-validator';
 
 export async function generateSiexData(explotacionId: string, campanaId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const [parcelasRes, explotacionRes, tratamientosRes, laboresRes, fertRes] = await Promise.all([
     supabase.from('parcelas').select('*').eq('explotacion_id', explotacionId),

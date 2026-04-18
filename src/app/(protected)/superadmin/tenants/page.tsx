@@ -1,12 +1,19 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getTenantsList, toggleTenantStatus, createTenant, switchContext, deleteTenant } from '@/lib/actions/superadmin';
+import { 
+  getTenantsList, 
+  toggleTenantStatus, 
+  createTenant, 
+  switchContext, 
+  deleteTenant,
+  getImpersonatedTenantId
+} from '@/lib/actions/superadmin';
 import { TIER_CONFIG, type AgriTier } from '@/lib/modules';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Building2, X, Plus, Loader2, Trash2 } from 'lucide-react';
+import { Building2, X, Plus, Loader2, Trash2, FileText } from 'lucide-react';
 
 export default function SuperadminTenantsPage() {
   const [tenants, setTenants] = useState<any[]>([]);

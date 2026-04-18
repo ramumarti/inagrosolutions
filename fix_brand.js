@@ -20,7 +20,7 @@ walkDir('./src', (filePath) => {
     
     // Normalizar IASOLUTIONS
     content = content.replace(/IASOLUTIONS/g, 'INAGROSOLUTIONS');
-    content = content.replace(/iasolutions\.ai/g, 'inagrosolutions.es');
+    content = content.replace(/iasolutions\.ai/g, 'inagrosolutions.com');
     content = content.replace(/iasolutions/g, 'inagrosolutions');
     
     if (content !== original) {

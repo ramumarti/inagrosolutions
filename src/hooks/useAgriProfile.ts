@@ -5,12 +5,18 @@ import { createClient } from '@/lib/supabase/client';
 import type { AgriTier, ModuloSistema } from '@/lib/modules';
 import { canAccessModule, isModuleActive } from '@/lib/modules';
 import { getImpersonatedTenantId } from '@/lib/actions/superadmin';
+import type { TenantData } from '@/lib/auth/tenant-context';
 
 export interface AgriProfile {
   userId: string;
   tenant_id?: string;
   platform_role: string;
+  first_name?: string;
   onboardedAgri: boolean;
+  stripe_customer_id?: string;
+  stripe_subscription_id?: string;
+  subscription_status?: string;
+  subscription_tier?: string;
   explotaciones: any[];
   parcelas: any[];
   campanas: any[];
@@ -57,12 +63,17 @@ export function useAgriProfile() {
       const { data: userData } = await supabase
         .from('users')
         .select(`
+          first_name,
           agri_tier, 
           total_hectareas, 
           modulos_activos, 
           onboarded_agri,
           platform_role,
           tenant_id,
+          stripe_customer_id,
+          stripe_subscription_id,
+          subscription_status,
+          subscription_tier,
           tenants (
             id,
             name,
@@ -71,7 +82,12 @@ export function useAgriProfile() {
             logo_url,
             primary_color,
             secondary_color,
-            custom_domain
+            custom_domain,
+            slug,
+            show_public_page,
+            public_description,
+            contact_email,
+            contact_phone
           )
         `)
         .eq('id', user.id)
@@ -125,11 +141,16 @@ export function useAgriProfile() {
         userId: user.id,
         tenant_id: actualTenantId,
         platform_role: userData?.platform_role || 'farmer',
+        first_name: userData?.first_name,
         onboardedAgri: userData?.onboarded_agri || false,
+        stripe_customer_id: userData?.stripe_customer_id,
+        stripe_subscription_id: userData?.stripe_subscription_id,
+        subscription_status: userData?.subscription_status,
+        subscription_tier: userData?.subscription_tier,
         explotaciones: explotaciones || [],
         parcelas: allParcelas,
         campanas: campanasData || [],
-        alertasPendientes: alertasData?.length || 0,
+        alertasPendientes: (alertasData?.data as any[])?.length || 0,
         tratamientosHoy: tratsHoy?.count || 0,
         laboresHoy: labsHoy?.count || 0,
         tier: safeTier,
@@ -142,6 +163,13 @@ export function useAgriProfile() {
           primary_color: actualTenantData.primary_color,
           secondary_color: actualTenantData.secondary_color,
           custom_domain: actualTenantData.custom_domain,
+          slug: actualTenantData.slug,
+          show_public_page: actualTenantData.show_public_page,
+          hero_title: actualTenantData.hero_title,
+          hero_subtitle: actualTenantData.hero_subtitle,
+          contact_email: actualTenantData.contact_email,
+          contact_phone: actualTenantData.contact_phone,
+          public_description: actualTenantData.public_description,
           type: actualTenantData.type || 'cooperativa',
           subscription_tier: actualTenantData.subscription_tier,
           active_modules: actualTenantData.active_modules
@@ -158,7 +186,7 @@ export function useAgriProfile() {
           total_hectareas: totalHa,
           tratamientos_hoy: 0,
           labores_hoy: 0,
-          alertas_pendientes: alertasData?.length || 0,
+          alertas_pendientes: (alertasData?.data as any[])?.length || 0,
         });
       }
     } catch (err) {
