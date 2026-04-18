@@ -129,11 +129,29 @@ export default function BrandingPage() {
   // If loading persists more than 3s, we show the form anyway to avoid "blank" sensation
   if (profileLoading && !tenant) {
     return (
-      <div className="h-screen w-full flex items-center justify-center p-8">
-        <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-white/40 font-medium animate-pulse">Sincronizando Identidad Corporativa...</p>
+      <div className="h-screen w-full flex items-center justify-center p-8 bg-black">
+        <div className="text-center space-y-6 max-w-sm">
+          <div className="w-16 h-16 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin mx-auto shadow-[0_0_30px_rgba(16,185,129,0.3)]" />
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold tracking-tight text-white uppercase italic">Sincronizando Identidad</h2>
+            <p className="text-white/40 text-sm">Configurando tu nuevo espacio de trabajo. Esto solo tomará unos segundos...</p>
+          </div>
         </div>
+      </div>
+    );
+  }
+
+  if (!tenant && !profileLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center p-8 bg-black">
+        <GlassCard className="p-10 text-center space-y-6 max-w-md border-red-500/20">
+          <Blocks className="w-16 h-16 text-red-500 mx-auto opacity-50" />
+          <div className="space-y-2">
+            <h1 className="text-2xl font-black uppercase tracking-tighter text-white">Configuración Pendiente</h1>
+            <p className="text-white/50 text-sm">No hemos podido localizar tu cuenta de entidad. Por favor, intenta recargar la página o contacta con soporte si el problema persiste.</p>
+          </div>
+          <GlowButton onClick={() => window.location.reload()}>Recargar Portal</GlowButton>
+        </GlassCard>
       </div>
     );
   }

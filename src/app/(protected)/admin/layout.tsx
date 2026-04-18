@@ -7,13 +7,24 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  const { data } = await supabase
-    .from('users')
-    .select('platform_role')
-    .eq('id', user.id)
-    .single();
+  let isAuthorized = false;
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('platform_role')
+      .eq('id', user.id)
+      .single();
 
-  const isAuthorized = data?.platform_role === 'superadmin' || data?.platform_role === 'tenant_admin';
+    if (error) {
+      console.error('Error fetching admin role:', error);
+      // Si hay error pero el usuario existe, podemos ser menos restrictivos o 
+      // redirigir a una página de espera
+    }
+
+    isAuthorized = data?.platform_role === 'superadmin' || data?.platform_role === 'tenant_admin';
+  } catch (err) {
+    console.error('Crash in AdminLayout:', err);
+  }
 
   if (!isAuthorized) {
     redirect('/');
