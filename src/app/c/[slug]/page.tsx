@@ -21,7 +21,14 @@ import {
   AlertTriangle,
   FileCheck,
   ThumbsUp,
-  Star
+  Star,
+  WifiOff,
+  Droplets,
+  Tractor,
+  Sparkles,
+  Calculator,
+  Layout,
+  Navigation
 } from 'lucide-react';
 
 export const revalidate = 60; // Revalidate every minute
@@ -137,10 +144,10 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                   <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
-                  href="#servicios"
+                  href="#pasos"
                   className="flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold text-lg border border-white/20 hover:bg-white/10 transition-colors"
                 >
-                  Saber más
+                  Cómo funciona
                 </Link>
               </div>
 
@@ -190,6 +197,12 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
         </section>
 
         {/* Empathy / Problem Section */}
+          </div>
+        </section>
+
+        {/* HERO ENDS */}
+        
+        {/* Empathy / Problem Section */}
         <section className="py-24 px-6 relative z-10 bg-black/50 border-y border-white/5">
           <div className="max-w-7xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full text-xs font-bold uppercase tracking-wider border border-white/10 bg-white/5 text-white/70">
@@ -214,10 +227,127 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
               </div>
             </div>
             <div className="mt-12 text-center">
-              <p className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r" style={{ backgroundImage: `linear-gradient(to right, ${primaryColor}, ${secondaryColor || '#ffffff'})` }}>
+              <p className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r uppercase tracking-tight" style={{ backgroundImage: `linear-gradient(to right, ${primaryColor}, ${secondaryColor || '#ffffff'})` }}>
                 Por eso en nuestra entidad nos encargamos de todo.
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* Mechanism / How it works Section */}
+        <section id="pasos" className="py-24 px-6 relative z-10 border-b border-white/5 bg-gradient-to-b from-black to-[#050505]">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-sm font-black uppercase text-emerald-500 tracking-[0.3em] mb-4" style={{ color: primaryColor }}>Tu Digitalización en 3 Pasos</h2>
+              <h3 className="text-4xl md:text-5xl font-black">¿Cómo empiezo mi Cuaderno Digital?</h3>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-12 relative">
+              {/* Connector line (desktop) */}
+              <div className="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-y-1/2 z-0" />
+              
+              {[
+                { 
+                  step: "01", 
+                  title: "Únete a la Entidad", 
+                  desc: "Regístrate en nuestro portal. Si ya eres socio, vincularemos tu cuenta automáticamente con tus datos de la cooperativa.",
+                  icon: <Users size={24} />
+                },
+                { 
+                  step: "02", 
+                  title: "Configuración SIGPAC", 
+                  desc: "Nosotros nos encargamos del trabajo pesado. Cargamos tus parcelas y fincas directamente del sistema oficial para que no tengas que picar datos.",
+                  icon: <Navigation size={24} />
+                },
+                { 
+                  step: "03", 
+                  title: "Registra desde el Tractor", 
+                  desc: "Ya puedes empezar a apuntar labores, abonos y tratamientos desde tu móvil, incluso sin cobertura. Nosotros generamos los libros legales.",
+                  icon: <Tractor size={24} />
+                }
+              ].map((step, i) => (
+                <div key={i} className="relative z-10 group text-center space-y-6">
+                  <div 
+                    className="w-20 h-20 rounded-3xl mx-auto flex items-center justify-center border border-white/10 bg-white/5 backdrop-blur-xl group-hover:scale-110 transition-transform duration-500 shadow-2xl"
+                    style={{ backgroundColor: `${primaryColor}10` }}
+                  >
+                    <div style={{ color: primaryColor }}>{step.icon}</div>
+                  </div>
+                  <div className="space-y-3 px-4">
+                    <span className="text-sm font-black opacity-20 uppercase tracking-widest">{step.step}</span>
+                    <h4 className="text-2xl font-bold">{step.title}</h4>
+                    <p className="text-white/50 leading-relaxed">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-16 text-center">
+               <Link 
+                  href={`/cuaderno/planes?tenant=${tenant.slug}`}
+                  className="inline-flex items-center gap-3 px-10 py-5 rounded-2xl font-black text-lg uppercase tracking-widest transition-all hover:scale-105"
+                  style={{ backgroundColor: primaryColor, color: '#000' }}
+               >
+                  Empezar ahora mismo <ArrowRight size={20} />
+               </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Feature Matrix - Rescued from home-v1 */}
+        <section id="tecnologia" className="py-24 px-6 relative z-10 bg-[#020202]">
+           <div className="max-w-7xl mx-auto text-center mb-16 px-4">
+              <h2 className="text-sm font-black uppercase tracking-[0.2em] mb-4" style={{ color: primaryColor }}>Tecnología InagroSolutions</h2>
+              <p className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">Diseñado para la realidad del campo</p>
+              <p className="text-lg text-white/50 max-w-2xl mx-auto">Nuestra tecnología se adapta a tus necesidades diarias, no al revés.</p>
+           </div>
+           
+           <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { 
+                  icon: <WifiOff />, 
+                  title: "Uso sin Cobertura (Offline)", 
+                  desc: "Apúntalo todo desde el tractor incluso si no tienes señal. Se sincroniza automáticamente cuando recuperas internet." 
+                },
+                { 
+                  icon: <FileCheck />, 
+                  title: "Reportes SIEX Automáticos", 
+                  desc: "Exporta tu cuaderno oficial al formato legal requerido por el Ministerio con un solo clic. Sin errores." 
+                },
+                { 
+                  icon: <Layout />, 
+                  title: "Interfaz con Botones Grandes", 
+                  desc: "Pensado para manos de agricultor. Botones grandes, contrastes altos y navegación intuitiva sin distracciones." 
+                },
+                { 
+                  icon: <Droplets />, 
+                  title: "Control de Fitosanitarios", 
+                  desc: "Calcula dosis exactas y evita multas. Incluimos validadores técnicos para que tus tratamientos cumplan la normativa." 
+                },
+                { 
+                  icon: <Smartphone />, 
+                  title: "Tu App de Cooperativa", 
+                  desc: "Accede desde cualquier dispositivo. Es una PWA que se instala en tu pantalla de inicio como cualquier otra aplicación." 
+                },
+                { 
+                  icon: <ShieldCheck />, 
+                  title: "Soporte Técnico Especializado", 
+                  desc: "Nuestros ingenieros revisan tus datos para que tengas tranquilidad total ante cualquier inspección de la administración." 
+                }
+              ].map((feat, i) => (
+                <div key={i} className="group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07] backdrop-blur-sm">
+                   <div 
+                     className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110"
+                     style={{ backgroundColor: `${primaryColor}20`, color: primaryColor, border: `1px solid ${primaryColor}30` }}
+                   >
+                     {React.cloneElement(feat.icon as React.ReactElement, { size: 28 })}
+                   </div>
+                   <h4 className="text-xl font-bold mb-3">{feat.title}</h4>
+                   <p className="text-white/50 leading-relaxed text-sm">{feat.desc}</p>
+                </div>
+              ))}
+           </div>
+        </section>
           </div>
         </section>
 
@@ -267,17 +397,66 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
              
              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {(services as any[]).map((srv: any, i: number) => (
-                  <div key={i} className="group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all duration-300 relative overflow-hidden backdrop-blur-sm">
-                     <div className="absolute top-0 left-0 w-full h-1 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500" style={{ backgroundColor: primaryColor }} />
-                     <div 
-                       className="w-14 h-14 rounded-2xl bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center mb-6 border border-white/10 group-hover:bg-white/20 transition-colors shadow-lg"
-                     >
-                       <CheckCircle2 size={28} style={{ color: primaryColor }} />
-                     </div>
-                     <h3 className="font-black text-xl mb-3 tracking-tight text-white">{srv.title}</h3>
-                     <p className="text-white/50 leading-relaxed text-sm">{srv.description}</p>
-                  </div>
+                   <div key={i} className="group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all duration-300 relative overflow-hidden backdrop-blur-sm">
+                      <div className="absolute top-0 left-0 w-full h-1 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500" style={{ backgroundColor: primaryColor }} />
+                      <div 
+                        className="w-14 h-14 rounded-2xl bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center mb-6 border border-white/10 group-hover:bg-white/20 transition-colors shadow-lg"
+                      >
+                        <CheckCircle2 size={28} style={{ color: primaryColor }} />
+                      </div>
+                      <h3 className="font-black text-xl mb-3 tracking-tight text-white">{srv.title}</h3>
+                      <p className="text-white/50 leading-relaxed text-sm">{srv.description}</p>
+                   </div>
                 ))}
+             </div>
+
+             {/* Pricing Packages Preview */}
+             <div className="mt-24">
+                <div className="text-center mb-16">
+                   <h3 className="text-3xl font-black mb-4">Planes Adaptados a tu Explotación</h3>
+                   <p className="text-white/50">Todos los planes incluyen el Cuaderno Digital oficial y soporte técnico.</p>
+                </div>
+                
+                <div className="grid lg:grid-cols-4 gap-6">
+                   {[
+                     { name: "Básico", size: "Hasta 5 HA", color: "#6366f1" },
+                     { name: "Intermedio", size: "Hasta 20 HA", color: "#3b82f6" },
+                     { name: "Avanzado", size: "Hasta 50 HA", color: "#a855f7", best: true },
+                     { name: "Premium", size: "Hasta 100 HA", color: "#f59e0b" }
+                   ].map((pkg, i) => (
+                     <div 
+                       key={i} 
+                       className={`p-8 rounded-[32px] border transition-all hover:scale-105 flex flex-col items-center text-center ${pkg.best ? 'bg-white/10 border-white/20 shadow-2xl relative overflow-hidden' : 'bg-white/5 border-white/10'}`}
+                     >
+                        {pkg.best && (
+                          <div 
+                            className="absolute -top-3 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-black z-20"
+                            style={{ backgroundColor: primaryColor }}
+                          >
+                            Más popular
+                          </div>
+                        )}
+                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-xl" style={{ backgroundColor: `${pkg.color}30`, color: pkg.color }}>
+                           <Sparkles size={24} />
+                        </div>
+                        <h4 className="text-2xl font-black mb-1">{pkg.name}</h4>
+                        <span className="text-xs font-black uppercase tracking-widest opacity-40 mb-8">{pkg.size}</span>
+                        
+                        <ul className="space-y-4 mb-10 text-sm font-medium text-white/60">
+                           <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={14} style={{ color: primaryColor }} /> Registro SIEX</li>
+                           <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={14} style={{ color: primaryColor }} /> Fitosanitarios</li>
+                           <li className="flex items-center gap-2 justify-center"><CheckCircle2 size={14} style={{ color: primaryColor }} /> PAC Digital</li>
+                        </ul>
+                        
+                        <Link 
+                           href={`/cuaderno/planes?tenant=${tenant.slug}`}
+                           className="w-full py-4 rounded-2xl font-bold transition-colors border border-white/10 hover:bg-white/10 mt-auto"
+                        >
+                           Ver Detalles
+                        </Link>
+                     </div>
+                   ))}
+                </div>
              </div>
           </div>
         </section>
