@@ -16,7 +16,12 @@ import {
   Twitter, 
   Facebook, 
   Linkedin, 
-  Globe 
+  Globe,
+  Clock,
+  AlertTriangle,
+  FileCheck,
+  ThumbsUp,
+  Star
 } from 'lucide-react';
 
 export const revalidate = 60; // Revalidate every minute
@@ -44,10 +49,10 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
   let services = tenant.services;
   if (!Array.isArray(services) || services.length === 0) {
     services = [
-      { title: 'Asesoramiento Técnico', description: 'Visitas a finca y elaboración del Cuaderno Digital bajo normativas europeas e internacionales.' },
-      { title: 'Central de Compras', description: 'Optimización de costes mediante la adquisición conjunta de fertilizantes, semillas y fitosanitarios.' },
-      { title: 'Gestión de Subvenciones', description: 'Tramitación integral de la PAC, pagos básicos y ayudas medioambientales.' },
-      { title: 'Comercialización', description: 'Canalización agrupada de productos para alcanzar mejores precios en los mercados globales.' }
+      { title: 'Gestión del Cuaderno Digital (CUE)', description: 'Tus registros al día y conectados al SIEX. Nosotros configuramos el cuaderno para que te olvides del papeleo.' },
+      { title: 'Asesoramiento Técnico Integrado', description: 'Nuestros ingenieros o técnicos te ayudan con tratamientos, fertilización y normativas.' },
+      { title: 'Tranquilidad con tu PAC', description: 'Garantizamos que tus registros cumplen todos los requisitos y eco-regímenes de la PAC vigentes.' },
+      { title: 'Soporte Continuo', description: 'Atención personalizada por teléfono, WhatsApp o directamente con visitas a tu finca.' }
     ];
   }
 
@@ -184,6 +189,38 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
           </div>
         </section>
 
+        {/* Empathy / Problem Section */}
+        <section className="py-24 px-6 relative z-10 bg-black/50 border-y border-white/5">
+          <div className="max-w-7xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full text-xs font-bold uppercase tracking-wider border border-white/10 bg-white/5 text-white/70">
+              <AlertTriangle size={14} /> Te Entendemos
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black mb-12">Sabemos lo que te preocupa</h2>
+            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              <div className="p-8 rounded-2xl bg-red-950/20 border border-red-500/20 flex flex-col items-center">
+                <Clock className="text-red-400 w-12 h-12 mb-4" />
+                <h3 className="text-xl font-bold mb-2">Falta de tiempo</h3>
+                <p className="text-white/60">El campo exige tu atención diaria. No deberías perder horas valiosas delante de un ordenador rellenando informes.</p>
+              </div>
+              <div className="p-8 rounded-2xl bg-amber-950/20 border border-amber-500/20 flex flex-col items-center">
+                <ShieldCheck className="text-amber-400 w-12 h-12 mb-4" />
+                <h3 className="text-xl font-bold mb-2">Miedo a multas</h3>
+                <p className="text-white/60">La normativa CUE/SIEX es estricta. Un error u olvido en tu libreta puede suponer inspecciones y recortes en tus ayudas.</p>
+              </div>
+              <div className="p-8 rounded-2xl bg-blue-950/20 border border-blue-500/20 flex flex-col items-center">
+                <FileCheck className="text-blue-400 w-12 h-12 mb-4" />
+                <h3 className="text-xl font-bold mb-2">Trámites liosos</h3>
+                <p className="text-white/60">Nuevas leyes, SIGPAC, registros y validaciones que cambian constantemente sin que nadie te explique fácilmente qué hacer.</p>
+              </div>
+            </div>
+            <div className="mt-12 text-center">
+              <p className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r" style={{ backgroundImage: `linear-gradient(to right, ${primaryColor}, ${secondaryColor || '#ffffff'})` }}>
+                Por eso en nuestra entidad nos encargamos de todo.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* About Section */}
         <section id="nosotros" className="py-24 px-6 relative z-10 bg-white/[0.02] border-y border-white/5">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-16 items-center">
@@ -242,6 +279,54 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                   </div>
                 ))}
              </div>
+          </div>
+        </section>
+
+        {/* Benefits Section */}
+        <section className="py-24 px-6 relative z-10 bg-white/[0.02] border-t border-white/5">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+            <div className="flex-1 space-y-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border border-white/10 bg-white/5 text-white/70">
+                <ThumbsUp size={14} /> Ventajas Exclusivas
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black">Lo que ganas al unirte a la entidad</h2>
+              <div className="space-y-6">
+                {[
+                  { title: 'Ahorras horas cada mes', desc: 'Olvídate del papeleo interminable o de encender el ordenador a deshoras. Ese tiempo es tuyo para el campo.' },
+                  { title: 'Tranquilidad frente a inspecciones', desc: 'Nuestros técnicos especializados mantienen tus datos 100% correctos y preparados para pasar cualquier inspección oficial sin estrés.' },
+                  { title: 'Toda tu explotación en el móvil', desc: 'Parcelas, tratamientos, operarios y estado de la PAC accesibles desde el teléfono en un clic, sin complicaciones.' }
+                ].map((ben, i) => (
+                  <div key={i} className="flex gap-4 items-start p-4 hover:bg-white/5 rounded-2xl transition-colors border border-transparent hover:border-white/10">
+                    <div className="mt-1 w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: secondaryColor }}>
+                      <CheckCircle2 size={16} className="text-white" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold">{ben.title}</h4>
+                      <p className="text-white/60 leading-relaxed mt-1">{ben.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex-1 w-full relative">
+              <div className="absolute inset-0 bg-gradient-to-tr from-black to-transparent z-10 rounded-3xl" />
+              <div className="p-10 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md relative overflow-hidden text-center z-20 shadow-2xl">
+                <div className="absolute -right-8 -top-8 w-40 h-40 blur-[50px] opacity-20 pointer-events-none" style={{ backgroundColor: primaryColor }} />
+                <h3 className="text-6xl md:text-7xl font-black mb-2" style={{ color: primaryColor }}>+500</h3>
+                <p className="text-xl font-bold mb-8 uppercase tracking-widest text-white/80">Socios ya nos confían su gestión</p>
+                <div className="flex justify-center gap-1 text-yellow-400 mb-6">
+                  <Star fill="currentColor" size={24} />
+                  <Star fill="currentColor" size={24} />
+                  <Star fill="currentColor" size={24} />
+                  <Star fill="currentColor" size={24} />
+                  <Star fill="currentColor" size={24} />
+                </div>
+                <p className="italic text-white/70 text-lg md:text-xl leading-relaxed">
+                  "El Cuaderno Digital me quitaba el sueño. Desde que la cooperativa se ocupa junto con inagrosolutions, tengo todo al día y la PAC en regla sin tener que tocar un solo botón."
+                </p>
+                <p className="mt-4 font-bold text-white">— Socio Agricultor</p>
+              </div>
+            </div>
           </div>
         </section>
 
