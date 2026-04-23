@@ -164,39 +164,51 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
               </div>
             </div>
 
-            {/* Decorative Side Elements */}
-            <div className="hidden lg:block relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-black to-transparent z-10 rounded-full" />
-              <div className="relative w-full aspect-square rounded-full border border-white/10 bg-white/5 backdrop-blur-3xl flex items-center justify-center animate-[pulse_4s_infinite]">
-                 {/* Internal Floating Cards mimicking UI elements */}
-                 <div className="absolute top-10 left-[-20px] p-4 bg-black/60 rounded-xl border border-white/10 backdrop-blur-md shadow-2xl animate-[bounce_8s_infinite] flex items-center gap-4 z-20">
-                    <div className="p-3 bg-green-500/20 rounded-lg text-green-400">
-                      <ShieldCheck size={24} />
+            {/* Decorative Side Mockup */}
+            <div className="hidden lg:block relative animate-in fade-in zoom-in duration-1000">
+              <div className="relative w-full aspect-[4/3] rounded-[40px] border border-white/10 bg-white/5 backdrop-blur-3xl overflow-hidden shadow-2xl skew-y-2 hover:skew-y-0 transition-transform duration-700">
+                 <img 
+                   src="/brain/6214425b-d09c-45a9-aa76-4775c7712706/modern_agrotech_dashboard_1776933422129.png" 
+                   alt="Plataforma Digital" 
+                   className="w-full h-full object-cover opacity-90"
+                 />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                 
+                 {/* Floating floating elements */}
+                 <div className="absolute -top-10 -right-10 w-40 h-40 blur-[80px]" style={{ backgroundColor: primaryColor + '44' }} />
+                 <div className="absolute -bottom-10 -left-10 w-40 h-40 blur-[80px]" style={{ backgroundColor: secondaryColor + '22' }} />
+                 
+                 <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                       <div className="p-2 rounded-lg" style={{ backgroundColor: primaryColor + '22' }}>
+                          <ShieldCheck size={20} style={{ color: primaryColor }} />
+                       </div>
+                       <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Garantía SIEX</p>
+                          <p className="text-xs font-bold">Cumplimiento Legal 100%</p>
+                       </div>
                     </div>
-                    <div>
-                      <h6 className="font-bold">SIEX Compatible</h6>
-                      <p className="text-xs text-white/50">Normativa al día</p>
+                    <div className="flex -space-x-2">
+                       {[1,2,3].map(i => (
+                         <div key={i} className="w-6 h-6 rounded-full border-2 border-black bg-white/10" />
+                       ))}
                     </div>
                  </div>
-
-                 <div className="absolute bottom-20 right-[-30px] p-4 bg-black/60 rounded-xl border border-white/10 backdrop-blur-md shadow-2xl animate-[bounce_7s_infinite_reverse] flex items-center gap-4 z-20">
-                    <div className="p-3 bg-blue-500/20 rounded-lg text-blue-400">
-                       <Target size={24} />
+              </div>
+              
+              {/* Floating Badge */}
+              <div className="absolute -top-6 -left-6 p-6 rounded-3xl bg-white/5 backdrop-blur-2xl border border-white/10 shadow-2xl animate-bounce-slow">
+                 <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style={{ backgroundColor: primaryColor }}>
+                       <TrendingUp size={24} />
                     </div>
                     <div>
-                      <h6 className="font-bold">Datos en Tiempo Real</h6>
-                      <p className="text-xs text-white/50">Informes automatizados</p>
+                       <p className="text-2xl font-black">+45%</p>
+                       <p className="text-[10px] uppercase font-bold text-white/50">Eficiencia en campo</p>
                     </div>
                  </div>
-
-                 <div className="w-1/2 h-1/2 bg-white/5 rounded-full blur-[80px] absolute" style={{ backgroundColor: primaryColor }} />
-                 {logoUrl && <img src={logoUrl} alt="Floating Logo" className="relative z-10 w-40 h-40 object-contain drop-shadow-[0_0_80px_rgba(255,255,255,0.4)]" />}
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* Empathy / Problem Section */}
           </div>
         </section>
 
@@ -396,18 +408,30 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
              </div>
              
              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {(services as any[]).map((srv: any, i: number) => (
-                   <div key={i} className="group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all duration-300 relative overflow-hidden backdrop-blur-sm">
-                      <div className="absolute top-0 left-0 w-full h-1 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500" style={{ backgroundColor: primaryColor }} />
-                      <div 
-                        className="w-14 h-14 rounded-2xl bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center mb-6 border border-white/10 group-hover:bg-white/20 transition-colors shadow-lg"
-                      >
-                        <CheckCircle2 size={28} style={{ color: primaryColor }} />
-                      </div>
-                      <h3 className="font-black text-xl mb-3 tracking-tight text-white">{srv.title}</h3>
-                      <p className="text-white/50 leading-relaxed text-sm">{srv.description}</p>
-                   </div>
-                ))}
+                {(services as any[]).map((srv: any, i: number) => {
+                  const title = srv.title.toLowerCase();
+                  let Icon = CheckCircle2;
+                  if (title.includes('cuaderno') || title.includes('digital')) Icon = Layout;
+                  if (title.includes('técnico') || title.includes('asesora')) Icon = ShieldCheck;
+                  if (title.includes('pac') || title.includes('ayuda')) Icon = FileCheck;
+                  if (title.includes('soporte') || title.includes('atención')) Icon = Smartphone;
+
+                  return (
+                    <div key={i} className="group p-8 rounded-[32px] bg-white/[0.03] border border-white/5 hover:border-white/20 hover:bg-white/[0.08] transition-all duration-500 relative overflow-hidden backdrop-blur-md flex flex-col h-full">
+                       <div className="absolute top-0 left-0 w-full h-1 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-700" style={{ backgroundColor: primaryColor }} />
+                       <div 
+                         className="w-14 h-14 rounded-2xl flex items-center justify-center mb-8 border transition-all duration-500 shadow-xl group-hover:rotate-6 bg-white/5 border-white/10 group-hover:bg-white/10"
+                       >
+                         <Icon size={28} style={{ color: primaryColor }} />
+                       </div>
+                       <h3 className="font-black text-xl mb-4 tracking-tight text-white leading-tight">{srv.title}</h3>
+                       <p className="text-white/40 leading-relaxed text-sm font-medium">{srv.description}</p>
+                       <div className="mt-8 pt-8 border-t border-white/5 mt-auto opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2 text-xs font-bold uppercase tracking-widest" style={{ color: primaryColor }}>
+                         Saber más <ArrowRight size={14} />
+                       </div>
+                    </div>
+                  );
+                })}
              </div>
 
              {/* Pricing Packages Preview */}
