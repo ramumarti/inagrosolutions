@@ -270,7 +270,7 @@ Tras acceder al Cuaderno Digital, el sistema comprueba el estado de suscripción
 > | Página | Ruta real | Archivo | Propósito |
 > |--------|----------|---------|----------|
 > | **Pública** | `/cuaderno/planes` | `src/app/cuaderno/planes/page.tsx` | Landing de venta para visitantes sin cuenta |
-> | **Protegida** | `/cuaderno/planes` | `src/app/(protected)/cuaderno/planes/page.tsx` | Gestión de suscripción para usuarios logueados |
+> | **Protegida** | `/cuaderno/suscripcion` | `src/app/(protected)/cuaderno/suscripcion/page.tsx` | Gestión de suscripción para usuarios logueados |
 
 ### Opciones de facturación
 
@@ -491,7 +491,7 @@ Antonio ve en su Panel de Inicio las **prescripciones del técnico** y las **ale
 | Login | `/login` | Iniciar sesión |
 | Onboarding | `/onboarding` | Configuración inicial (solo primera vez) |
 | Cuaderno Digital | `/cuaderno` | Panel principal del cuaderno |
-| Planes/Suscripción | `/cuaderno/planes` | Gestionar plan y suscripción |
+| Planes/Suscripción | `/cuaderno/suscripcion` | Gestionar plan y suscripción |
 | Almacén | `/cuaderno/recursos` | Inventario de insumos |
 | Informes SIEX | `/cuaderno/report` | Exportación oficial |
 | Perfil | `/profile` | Datos personales |
@@ -508,7 +508,7 @@ Antonio ve en su Panel de Inicio las **prescripciones del técnico** y las **ale
 | Formulario de Registro | `src/app/(auth)/signup/page.tsx` |
 | Onboarding | `src/app/(protected)/onboarding/page.tsx` |
 | Cuaderno Digital | `src/app/(protected)/cuaderno/page.tsx` |
-| Planes y Suscripción (protegida) | `src/app/(protected)/cuaderno/planes/page.tsx` |
+| Planes y Suscripción (protegida) | `src/app/(protected)/cuaderno/suscripcion/page.tsx` |
 | Informes SIEX | `src/app/(protected)/cuaderno/report/page.tsx` |
 | Configuración de Tiers | `src/lib/modules.ts` |
 | Checkout Stripe | `src/app/api/stripe/checkout/route.ts` |
