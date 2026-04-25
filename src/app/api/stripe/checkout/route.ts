@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
       }],
       mode: 'subscription',
       success_url: `${origin}/cuaderno?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/cuaderno/planes`,
+      cancel_url: `${origin}/cuaderno/suscripcion`,
       metadata: {
         userId: user.id,
         tenantId: tenantId || '',

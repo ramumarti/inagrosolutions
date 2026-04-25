@@ -80,7 +80,7 @@ export async function createCheckoutSession(tier: AgriTier, interval: 'month' | 
       billing_interval: interval
     },
     success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/cuaderno?upgrade=success`,
-    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/cuaderno/planes?upgrade=cancelled`,
+    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/cuaderno/suscripcion?upgrade=cancelled`,
   });
 
   return { url: session.url };

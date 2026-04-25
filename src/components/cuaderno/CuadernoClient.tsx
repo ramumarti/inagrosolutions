@@ -263,7 +263,7 @@ export default function CuadernoPage() {
                 </div>
               </div>
               {profile.tier !== 'premium' && (
-                <a href="/cuaderno/planes" className="flex items-center gap-2 px-5 py-3 bg-white/5 rounded-xl border border-white/10 text-sm font-bold text-white/80 hover:text-white hover:bg-white/10 transition-all">
+                <a href="/cuaderno/suscripcion" className="flex items-center gap-2 px-5 py-3 bg-white/5 rounded-xl border border-white/10 text-sm font-bold text-white/80 hover:text-white hover:bg-white/10 transition-all">
                   Mejorar Plan <ArrowRight size={16} />
                 </a>
               )}
