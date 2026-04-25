@@ -75,23 +75,26 @@ export default function HomePage() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-sm font-medium mb-8 animate-fade-in">
-            <DollarSign className="w-4 h-4" />
-            <span>Programa Partner 2026: 50% de ingresos recurrentes</span>
+            <Target className="w-4 h-4" />
+            <span>Para Cooperativas, Empresas y Técnicos</span>
           </div>
           
-          <h1 className="text-5xl lg:text-8xl font-black tracking-tighter mb-8 leading-[1]">
-            Gana el <span className="glow-text">50% de cada agricultor</span> sin invertir un solo euro
+          <h1 className="text-5xl lg:text-7xl font-black tracking-tighter mb-6 leading-[1.1]">
+            El motor tecnológico para el <span className="glow-text">Cuaderno Digital</span> de tus agricultores
           </h1>
           
-          <p className="text-xl lg:text-2xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed font-bold">
-            Tú pones la marca, nosotros ponemos la tecnología. <br className="hidden lg:block" /> 
-            Genera ingresos recurrentes ayudando a tus asociados a cumplir la ley.
+          <p className="text-xl lg:text-2xl text-white/90 max-w-4xl mx-auto mb-6 leading-relaxed font-bold">
+            InagroSolutions es un desarrollo tecnológico al servicio de cooperativas, empresas y técnicos que quieren ayudar con la gestión del Cuaderno Digital de la Explotación Agrícola.
+          </p>
+
+          <p className="text-lg text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
+            Tú pones la marca, nosotros ponemos la tecnología. Gana el 50% de cada agricultor y genera ingresos recurrentes ayudando a tus asociados a cumplir la ley.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link href="/signup" className="w-full sm:w-auto">
               <GlowButton className="text-xl px-12 py-8 h-auto shadow-[0_0_50px_rgba(0,255,102,0.3)] hover:scale-105 active:scale-95 transition-transform w-full sm:w-auto">
-                RECUPERAR MI MARCA Y EMPEZAR GRATIS
+                CREAR MI PLATAFORMA GRATIS
                 <ArrowRight className="ml-2 w-6 h-6" />
               </GlowButton>
             </Link>
