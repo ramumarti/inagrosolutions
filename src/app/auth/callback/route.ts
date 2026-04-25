@@ -31,7 +31,7 @@ export async function GET(request: Request) {
         
         // Asignar plan_id si existe
         if (metadata?.plan_id) {
-          updateData.plan_id = metadata.plan_id;
+          updateData.agri_tier = metadata.plan_id;
         }
 
         // Si viene desde un tenant, obtenemos el tenant_id

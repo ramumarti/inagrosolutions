@@ -79,8 +79,16 @@ function SignupPageContent() {
     if (error) {
       toast(error.message, 'error');
     } else {
-      toast(language === 'en' ? 'Account created successfully! Please check your email.' : '¡Cuenta creada con éxito! Por favor, revisa tu correo.', 'success');
-      router.push('/login');
+      const successTitle = language === 'en' ? 'Account Created!' : '¡Cuenta Creada!';
+      const successMsg = language === 'en' 
+        ? 'Check your email to confirm and proceed to the secure payment.' 
+        : 'Confirma tu email ahora para proceder al pago seguro y activar tus servicios.';
+      
+      toast(successMsg, 'success');
+      
+      // We can redirect to a specific "Success / Wait for email" landing page if we had one
+      // For now, /login is okay but the message is clear.
+      router.push('/login?msg=awaiting-confirmation');
     }
   };
 

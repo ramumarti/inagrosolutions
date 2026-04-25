@@ -104,6 +104,30 @@ export default function CuadernoPage() {
     }
   };
 
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  const handlePayment = async () => {
+    if (!profile) return;
+    setIsProcessingPayment(true);
+    try {
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: profile.tier || 'basico', 
+          tenantSlug: profile.tenant?.slug,
+          interval: 'month'
+        }),
+      });
+      const { url } = await response.json();
+      if (url) window.location.href = url;
+    } catch (err) {
+      console.error('Payment error:', err);
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -128,6 +152,62 @@ export default function CuadernoPage() {
   }
 
   const tierInfo = TIER_CONFIG[profile.tier as AgriTier];
+
+  // -- BLOQUEO POR SUSCRIPCIÓN PENDIENTE --
+  const isFarmer = profile.platform_role === 'farmer';
+  const subscriptionInactive = profile.subscription_status !== 'active' && profile.subscription_status !== 'trialing';
+
+  if (isFarmer && subscriptionInactive) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full min-h-[80vh] px-6 text-center animate-in fade-in zoom-in duration-700">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent opacity-30 pointer-events-none" />
+        <GlassCard className="p-12 max-w-2xl border-white/10 relative overflow-hidden group">
+          {/* Decorative background 3D element effect */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors" />
+          
+          <div className="w-20 h-20 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 flex items-center justify-center mx-auto mb-8 shadow-2xl">
+            <Zap size={32} className="text-emerald-400 animate-pulse" />
+          </div>
+
+          <h2 className="text-4xl font-black text-white mb-4 tracking-tight">Bienvenido, {profile.first_name || 'Agricultor'}</h2>
+          <p className="text-white/60 mb-8 text-lg font-medium">
+            Tu cuenta ha sido creada con éxito en la plataforma. Para comenzar a gestionar tus parcelas y cumplir con el 
+            <span className="text-white font-bold"> SIEX (RD 1054/2022)</span>, activa tu suscripción.
+          </p>
+
+          <div className="grid grid-cols-2 gap-4 mb-8 text-left">
+            <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+              <p className="text-[10px] text-white/30 font-black uppercase tracking-widest mb-1">Plan Seleccionado</p>
+              <p className="text-lg font-black text-white uppercase">{tierInfo.label_es}</p>
+            </div>
+            <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+              <p className="text-[10px] text-white/30 font-black uppercase tracking-widest mb-1">Operador SIEX</p>
+              <p className="text-lg font-black text-white">{profile.tenant?.name || 'InagroSolutions'}</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <GlowButton 
+              className="w-full py-4 text-lg font-black uppercase tracking-widest"
+              onClick={handlePayment}
+              disabled={isProcessingPayment}
+            >
+              {isProcessingPayment ? 'Redirigiendo...' : 'Activar mi Cuaderno Ahora'}
+            </GlowButton>
+            <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">
+              Pago 100% seguro gestionado por Stripe Connect
+            </p>
+          </div>
+
+          {/* Trust Badges */}
+          <div className="mt-12 pt-8 border-t border-white/5 flex justify-center gap-8 opacity-40">
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter"><Shield size={14} /> SIEX Compliant</div>
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter"><Globe size={14} /> European Union</div>
+          </div>
+        </GlassCard>
+      </div>
+    );
+  }
 
   const tabs = [
     { key: 'inicio' as TabKey, label: 'Inicio', icon: Home, always: true },

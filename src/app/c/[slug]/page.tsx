@@ -544,11 +544,11 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                 No esperes a la fecha límite para el Cuaderno Digital. Regístrate en nuestra cooperativa y obtén acceso total.
               </p>
               <Link 
-                  href={`/cuaderno/planes?tenant=${tenant.slug}`}
-                  className="inline-flex items-center justify-center px-10 py-5 rounded-2xl font-black text-lg uppercase tracking-widest transition-transform hover:scale-[1.03] shadow-2xl border border-white/20"
+                  href="#planes"
+                  className="inline-flex h-16 items-center justify-center rounded-2xl px-10 font-black text-lg transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] uppercase tracking-wider"
                   style={{ backgroundColor: 'white', color: 'black' }}
                 >
-                  Darse de Alta
+                  Regístrate ahora
               </Link>
             </div>
           </div>
