@@ -76,7 +76,7 @@ export default function HomePage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-sm font-medium mb-8 animate-fade-in">
             <Target className="w-4 h-4" />
-            <span>Para Cooperativas, Empresas y Técnicos</span>
+            <span>Para Entidades, Cooperativas, Empresas y Técnicos</span>
           </div>
           
           <h1 className="text-5xl lg:text-7xl font-black tracking-tighter mb-6 leading-[1.1]">
@@ -84,7 +84,7 @@ export default function HomePage() {
           </h1>
           
           <p className="text-xl lg:text-2xl text-white/90 max-w-4xl mx-auto mb-6 leading-relaxed font-bold">
-            InagroSolutions es un desarrollo tecnológico al servicio de cooperativas, empresas y técnicos que quieren ayudar con la gestión del Cuaderno Digital de la Explotación Agrícola.
+            InagroSolutions es un desarrollo tecnológico al servicio de entidades, cooperativas, empresas y técnicos que quieren ayudar con la gestión del Cuaderno Digital de la Explotación Agrícola.
           </p>
 
           <p className="text-lg text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
