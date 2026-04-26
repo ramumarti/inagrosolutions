@@ -51,7 +51,7 @@ export default function HomePage() {
                 Acceso Partner
               </GlowButton>
             </Link>
-            <Link href="/signup">
+            <Link href="/signup?role=partner">
               <GlowButton variant="primary">
                 Crear mi plataforma gratis
               </GlowButton>
