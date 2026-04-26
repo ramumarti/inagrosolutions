@@ -64,10 +64,10 @@ export default function HomePage() {
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image 
-            src="/images/hero_olivos.png" 
-            alt="AgTech Background" 
+            src="/images/olivar_tradicional.png" 
+            alt="Olivar Tradicional al atardecer" 
             fill 
-            className="object-cover opacity-30 scale-105"
+            className="object-cover opacity-40 scale-105"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-base-100)] via-[var(--color-base-100)]/60 to-[var(--color-base-100)]"></div>
@@ -184,11 +184,11 @@ export default function HomePage() {
                   <div className="px-3 py-1 bg-white/5 rounded text-xs text-white/40">app.tucooperativa.com</div>
                 </div>
                 <Image 
-                  src="/images/dashboard_mockup.png" 
-                  alt="Plataforma White Label Mockup" 
+                  src="/images/agricultor_app.png" 
+                  alt="Agricultor usando InagroSolutions en su móvil" 
                   width={800} 
                   height={600}
-                  className="w-full h-auto"
+                  className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
                 />
               </GlassCard>
             </div>
@@ -236,8 +236,20 @@ export default function HomePage() {
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-[var(--color-primary)]/20 to-transparent p-1 rounded-3xl h-full">
-              <div className="bg-[var(--color-base-200)] p-8 rounded-[1.4rem] h-full flex flex-col justify-center border border-white/5">
+            <div className="flex flex-col gap-6 h-full">
+              <div className="relative h-48 rounded-3xl overflow-hidden border border-white/10 group">
+                <Image 
+                  src="/images/agricultores_trabajando.png" 
+                  alt="Agricultores trabajando en el olivar" 
+                  fill 
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute bottom-4 left-4 font-bold text-white tracking-widest text-xs uppercase">Conectando el campo</div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-[var(--color-primary)]/20 to-transparent p-1 rounded-3xl flex-1">
+                <div className="bg-[var(--color-base-200)] p-8 rounded-[1.4rem] h-full flex flex-col justify-center border border-white/5">
                 <div className="text-6xl font-bold text-[var(--color-primary)] mb-4">50%</div>
                 <h3 className="text-2xl font-bold mb-4">Ingresos Compartidos</h3>
                 <p className="text-white/50 mb-8 leading-relaxed">
