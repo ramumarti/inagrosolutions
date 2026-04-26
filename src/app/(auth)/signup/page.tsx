@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Hexagon, User, Building2, Leaf } from 'lucide-react';
+import { Mail, Lock, Hexagon, User, Building2, Leaf, ChevronLeft } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { Input } from '@/components/ui/Input';
@@ -12,6 +12,13 @@ import { useToast } from '@/components/ui/Toast';
 import { createClient } from '@/lib/supabase/client';
 
 function SignupPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const plan = searchParams?.get('plan');
+  const tenantSlug = searchParams?.get('tenant');
+  const roleParam = searchParams?.get('role'); // New parameter
+
+  const [mode, setMode] = useState<'select' | 'farmer' | 'partner' | null>(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -21,13 +28,18 @@ function SignupPageContent() {
   const [lawAccepted, setLawAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const plan = searchParams?.get('plan');
-  const tenantSlug = searchParams?.get('tenant');
+  // Determine initial mode from URL and Context
+  useEffect(() => {
+    if (roleParam === 'farmer' || plan || tenantSlug) {
+      setMode('farmer');
+    } else if (roleParam === 'partner') {
+      setMode('partner');
+    } else {
+      setMode('select');
+    }
+  }, [plan, tenantSlug, roleParam]);
 
-  // Determine if it's a Farmer/User signup or Partner signup
-  const isFarmer = !!plan || !!tenantSlug;
+  const isFarmer = mode === 'farmer';
   const planName = plan ? plan.charAt(0).toUpperCase() + plan.slice(1) : '';
   
   const { t, language } = useI18n();
@@ -66,7 +78,7 @@ function SignupPageContent() {
           last_name: lastName,
           is_business: !isFarmer,
           company_name: isFarmer ? (companyName || null) : companyName,
-          platform_role: isFarmer ? 'tenant_member' : 'tenant_admin',
+          platform_role: isFarmer ? 'farmer' : 'tenant_admin',
           is_partner_reg: !isFarmer,
           plan_id: isFarmer ? plan : null,
           tenant_slug: tenantSlug || null
@@ -92,17 +104,83 @@ function SignupPageContent() {
     }
   };
 
+  if (mode === 'select') {
+    return (
+      <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto relative z-10 p-4 min-h-screen">
+        <div className="text-center mb-12 space-y-4">
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic">
+            Bienvenido a <span className="text-emerald-400">Inagro</span>Solutions
+          </h1>
+          <p className="text-white/40 font-bold uppercase tracking-widest text-sm">Selecciona tu tipo de perfil para continuar</p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 w-full">
+          {/* Opción Agricultor */}
+          <button 
+            onClick={() => setMode('farmer')}
+            className="group relative flex flex-col items-center p-10 bg-white/[0.03] border border-white/10 rounded-3xl hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all duration-500 text-center"
+          >
+            <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 blur-3xl transition-opacity" />
+            <div className="w-20 h-20 bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-6 shadow-2xl group-hover:scale-110 transition-transform">
+              <Leaf className="w-10 h-10 text-emerald-400" />
+            </div>
+            <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Soy Agricultor</h2>
+            <p className="text-white/40 text-sm leading-relaxed mb-8">
+              Gestiona tu Cuaderno Digital (CUE/SIEX), parcelas, tratamientos y exportaciones oficiales de forma sencilla.
+            </p>
+            <div className="mt-auto py-3 px-6 bg-white/5 rounded-xl border border-white/10 group-hover:bg-emerald-500 group-hover:text-black font-black text-xs uppercase tracking-widest transition-all">
+              Crear mi Explotación
+            </div>
+          </button>
+
+          {/* Opción Partner */}
+          <button 
+            onClick={() => setMode('partner')}
+            className="group relative flex flex-col items-center p-10 bg-white/[0.03] border border-white/10 rounded-3xl hover:bg-indigo-500/10 hover:border-indigo-500/30 transition-all duration-500 text-center"
+          >
+            <div className="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 blur-3xl transition-opacity" />
+            <div className="w-20 h-20 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-6 shadow-2xl group-hover:scale-110 transition-transform">
+              <Building2 className="w-10 h-10 text-indigo-400" />
+            </div>
+            <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Soy Partner / Cooperativa</h2>
+            <p className="text-white/40 text-sm leading-relaxed mb-8">
+              Gestiona cientos de cuadernos, supervisa técnicos y ofrece un servicio digital avanzado a tus socios.
+            </p>
+            <div className="mt-auto py-3 px-6 bg-white/5 rounded-xl border border-white/10 group-hover:bg-indigo-500 group-hover:text-white font-black text-xs uppercase tracking-widest transition-all">
+              Registrar mi Entidad
+            </div>
+          </button>
+        </div>
+
+        <div className="mt-12 text-center space-y-4">
+          <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">Software de Gestión Agrícola • SIEX Ready</p>
+          <div className="flex items-center justify-center gap-6 opacity-30">
+             <Link href="/login" className="text-xs font-bold text-white hover:text-emerald-400 transition-colors uppercase tracking-widest">¿Ya tienes cuenta? Inicia Sesión</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-md mx-auto relative z-10 p-4 min-h-screen pt-24 pb-12">
+      <div className="w-full mb-6">
+        <button 
+          onClick={() => setMode('select')}
+          className="flex items-center gap-2 text-[10px] font-black text-white/30 hover:text-white uppercase tracking-widest transition-colors"
+        >
+          <ChevronLeft className="w-3 h-3" /> Volver a selección
+        </button>
+      </div>
+      
       <GlassCard className="flex flex-col items-center w-full p-8 sm:p-10 relative overflow-hidden">
-        {/* Dynamic header depending on type of signup */}
         {isFarmer ? (
           <>
             <div className="absolute top-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-emerald-300" />
             <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/20 border border-emerald-500/30">
               <Leaf className="w-8 h-8 text-emerald-400" />
             </div>
-            <h1 className="text-2xl font-black mb-2 text-center uppercase tracking-tighter text-white">
+            <h1 className="text-2xl font-black mb-2 text-center uppercase tracking-tighter text-white italic">
               Crea tu Explotación
             </h1>
             {plan && (
@@ -118,15 +196,15 @@ function SignupPageContent() {
           </>
         ) : (
           <>
-            <div className="absolute top-0 w-full h-1.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent-pink)]" />
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center mb-6 shadow-lg shadow-[var(--color-primary)]/30">
-              <Building2 className="w-8 h-8 text-white" />
+            <div className="absolute top-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 to-indigo-300" />
+            <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20 border border-indigo-500/30">
+              <Building2 className="w-8 h-8 text-indigo-400" />
             </div>
-            <h1 className="text-2xl font-black mb-2 glow-text text-center uppercase tracking-tighter">
+            <h1 className="text-2xl font-black mb-2 text-center uppercase tracking-tighter text-white italic">
               Registro de Partner
             </h1>
-            <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-xs font-bold uppercase tracking-widest">
-              Exclusivo para Entidades y Cooperativas
+            <p className="text-indigo-400 mb-8 text-center text-xs font-bold uppercase tracking-widest bg-indigo-500/10 px-3 py-1 rounded border border-indigo-500/20">
+              Entidades y Cooperativas
             </p>
           </>
         )}
@@ -159,7 +237,7 @@ function SignupPageContent() {
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
               required={!isFarmer}
-              className={!isFarmer ? "border-[var(--color-primary)]/20" : ""}
+              className={!isFarmer ? "border-indigo-500/20" : ""}
             />
           </div>
 
@@ -188,11 +266,11 @@ function SignupPageContent() {
                 id="privacy" 
                 checked={privacyAccepted}
                 onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-white/10 bg-white/5 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/50 cursor-pointer"
+                className={`mt-1 w-4 h-4 rounded border-white/10 bg-white/5 ${isFarmer ? 'text-emerald-500' : 'text-indigo-500'} focus:ring-current/50 cursor-pointer`}
                 required
               />
               <label htmlFor="privacy" className="text-[10px] text-white/50 cursor-pointer hover:text-white/70 transition-colors uppercase font-bold tracking-tight">
-                Acepto la <Link href="/privacy-policy" className="text-[var(--color-primary)] hover:underline" target="_blank">Política de Privacidad</Link>
+                Acepto la <Link href="/privacy-policy" className={`${isFarmer ? 'text-emerald-400' : 'text-indigo-400'} hover:underline`} target="_blank">Política de Privacidad</Link>
               </label>
             </div>
 
@@ -202,14 +280,14 @@ function SignupPageContent() {
                 id="legislation" 
                 checked={lawAccepted}
                 onChange={(e) => setLawAccepted(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-white/10 bg-white/5 text-[var(--color-primary)] focus:ring-[var(--color-primary)]/50 cursor-pointer"
+                className={`mt-1 w-4 h-4 rounded border-white/10 bg-white/5 ${isFarmer ? 'text-emerald-500' : 'text-indigo-500'} focus:ring-current/50 cursor-pointer`}
                 required
               />
               <label htmlFor="legislation" className="text-[10px] text-white/50 cursor-pointer hover:text-white/70 transition-colors uppercase font-bold tracking-tight">
                 {isFarmer ? (
                   <>Acepto las condiciones del <span className="text-white">Cuaderno SIEX</span> y la exención de responsabilidad.</>
                 ) : (
-                  <>Acepto la normativa <span className="text-white">RD 1054/2022</span> y <Link href="/partner-policy" className="text-[var(--color-primary)] hover:underline">legislaciones específicas</Link> de la administración en SIEX.</>
+                  <>Acepto la normativa <span className="text-white">RD 1054/2022</span> y <Link href="/partner-policy" className={`${isFarmer ? 'text-emerald-400' : 'text-indigo-400'} hover:underline`}>legislaciones específicas</Link>.</>
                 )}
               </label>
             </div>
@@ -218,7 +296,7 @@ function SignupPageContent() {
           <GlowButton 
             type="submit" 
             isLoading={loading} 
-            className={`w-full mt-4 text-lg py-6 font-black uppercase tracking-widest ${isFarmer ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-emerald-500/20' : ''}`}
+            className={`w-full mt-4 text-lg py-6 font-black uppercase tracking-widest ${isFarmer ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-emerald-500/20' : 'bg-indigo-500 hover:bg-indigo-400 text-white shadow-indigo-500/20'}`}
           >
             {isFarmer ? 'CREAR MI CUENTA' : 'REGISTRAR ENTIDAD GRATIS'}
           </GlowButton>
@@ -228,7 +306,7 @@ function SignupPageContent() {
           <span className="text-white/30 uppercase font-black">
             {isFarmer ? '¿Ya tienes cuenta?' : '¿Ya sois partners?'}
           </span>
-          <Link href="/login" className={`${isFarmer ? 'text-emerald-400' : 'text-[var(--color-primary)]'} font-bold hover:underline`}>
+          <Link href="/login" className={`${isFarmer ? 'text-emerald-400' : 'text-indigo-400'} font-bold hover:underline`}>
             Inicia Sesión aquí
           </Link>
         </div>

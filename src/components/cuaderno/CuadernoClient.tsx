@@ -317,11 +317,11 @@ export default function CuadernoPage() {
     const content = (() => {
       switch (activeTab) {
         case 'fitosanitarios':
-          return <TratamientoForm parcelas={profile.parcelas} initialParcelaId={preSelectedPlotId || undefined} onSuccess={() => { setActiveTab('inicio'); setPreSelectedPlotId(null); }} />;
+          return <TratamientoForm parcelas={profile.parcelas} userProfile={profile} initialParcelaId={preSelectedPlotId || undefined} onSuccess={() => { setActiveTab('inicio'); setPreSelectedPlotId(null); }} />;
         case 'labores':
-          return <LaborForm parcelas={profile.parcelas} initialParcelaId={preSelectedPlotId || undefined} onSuccess={() => { setActiveTab('inicio'); setPreSelectedPlotId(null); }} />;
+          return <LaborForm parcelas={profile.parcelas} userProfile={profile} initialParcelaId={preSelectedPlotId || undefined} onSuccess={() => { setActiveTab('inicio'); setPreSelectedPlotId(null); }} />;
         case 'fertilizacion':
-          return <FertilizacionForm parcelas={profile.parcelas} initialParcelaId={preSelectedPlotId || undefined} onSuccess={() => { setActiveTab('inicio'); setPreSelectedPlotId(null); }} />;
+          return <FertilizacionForm parcelas={profile.parcelas} userProfile={profile} initialParcelaId={preSelectedPlotId || undefined} onSuccess={() => { setActiveTab('inicio'); setPreSelectedPlotId(null); }} />;
         case 'inventario':
           return profile.explotaciones[0] ? (
             <InventarioModule explotacionId={profile.explotaciones[0].id} />

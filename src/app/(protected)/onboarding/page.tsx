@@ -22,10 +22,10 @@ export default function OnboardingPage() {
   const [saving, setSaving] = useState(false);
   const [userId, setUserId] = useState<string>('');
 
-  // Step 1: Perfil
   const [perfil, setPerfil] = useState({
-    first_name: '', last_name: '', role: 'propietario', empresa: ''
+    first_name: '', last_name: '', role: 'propietario', empresa: '', nif: ''
   });
+  const [userTenantId, setUserTenantId] = useState<string | null>(null);
 
   // Step 2: Explotación
   const [explotacion, setExplotacion] = useState({
@@ -48,11 +48,12 @@ export default function OnboardingPage() {
         .single();
 
       if (userData?.platform_role === 'tenant_admin' || userData?.platform_role === 'superadmin') {
-        window.location.href = '/dashboard'; // Hard redirect to break out of any client-side routing issues
+        window.location.href = '/dashboard'; 
         return;
       }
 
       setUserId(user.id);
+      setUserTenantId(userData?.tenant_id || null);
       setPerfil(prev => ({
         ...prev,
         first_name: user.user_metadata?.first_name || '',
@@ -85,9 +86,12 @@ export default function OnboardingPage() {
       // Create explotación
       const { data: explotacionData } = await supabase.from('explotaciones').insert({
         user_id: userId,
+        tenant_id: userTenantId,
         nombre: explotacion.nombre || `Explotación de ${perfil.first_name}`,
         num_registro_siex: explotacion.num_registro_siex || null,
         total_hectareas: Number(explotacion.total_hectareas) || 0,
+        titular: `${perfil.first_name} ${perfil.last_name}`,
+        nif_cif: perfil.nif || null
       }).select().single();
 
       // Update user tier
@@ -121,7 +125,7 @@ export default function OnboardingPage() {
 
   const tiers: AgriTier[] = ['basico', 'intermedio', 'avanzado', 'premium'];
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white text-sm outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all placeholder:text-white/15";
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all placeholder:text-white/10 backdrop-blur-sm hover:border-white/20";
 
   return (
     <div className="min-h-screen bg-[#050510] flex items-center justify-center p-6 md:p-12 overflow-hidden relative">
@@ -176,10 +180,16 @@ export default function OnboardingPage() {
                       <input className={inputClass} value={perfil.last_name} onChange={e => setPerfil({...perfil, last_name: e.target.value})} />
                    </div>
                 </div>
-                <div className="space-y-2">
-                   <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">Empresa / Cooperativa (opcional)</label>
-                   <input className={inputClass} placeholder="Ej: Cooperativa del Valle" value={perfil.empresa} onChange={e => setPerfil({...perfil, empresa: e.target.value})} />
-                </div>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">NIF / DNI</label>
+                       <input className={inputClass} placeholder="12345678X" value={perfil.nif} onChange={e => setPerfil({...perfil, nif: e.target.value})} />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black text-white/30 uppercase tracking-widest">Empresa / Cooperativa (opcional)</label>
+                       <input className={inputClass} placeholder="Ej: Cooperativa del Valle" value={perfil.empresa} onChange={e => setPerfil({...perfil, empresa: e.target.value})} />
+                    </div>
+                 </div>
                 <div className="pt-2">
                    <GlowButton variant="primary" className="w-full py-5 rounded-2xl text-[11px]" onClick={() => setStep(2)}>
                       Continuar <ChevronRight size={16} className="ml-2" />

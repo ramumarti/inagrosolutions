@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { AgriTier, ModuloSistema } from '@/lib/modules';
-import { canAccessModule, isModuleActive } from '@/lib/modules';
+import { canAccessModule, isModuleActive, TIER_ORDER } from '@/lib/modules';
 import { getImpersonatedTenantId } from '@/lib/actions/superadmin';
 import type { TenantData } from '@/lib/auth/tenant-context';
 
@@ -134,8 +134,22 @@ export function useAgriProfile() {
       const allParcelas = explotaciones?.flatMap((e: any) => e.parcelas || []) || [];
       const totalHa = allParcelas.reduce((sum: number, p: any) => sum + (Number(p.hectareas) || 0), 0);
 
-      const rawTier = actualTenantData?.subscription_tier || userData?.agri_tier || 'basico';
-      const safeTier = ['basico', 'intermedio', 'avanzado', 'premium'].includes(rawTier) ? rawTier : 'basico';
+      // --- Logic: Pick the BEST tier available ---
+      // If a farmer pays for 'intermedio' but their coop is 'basico', they should get 'intermedio'.
+      // If a farmer is 'basico' but their coop is 'premium', they should get 'premium'.
+      const userTier = userData?.agri_tier || 'basico';
+      const tenantTier = actualTenantData?.subscription_tier || 'basico';
+      
+      const userTierIndex = TIER_ORDER.indexOf(userTier as AgriTier);
+      const tenantTierIndex = TIER_ORDER.indexOf(tenantTier as AgriTier);
+      
+      const finalTier = userTierIndex >= tenantTierIndex ? userTier : tenantTier;
+      const safeTier = (['basico', 'intermedio', 'avanzado', 'premium'].includes(finalTier) ? finalTier : 'basico') as AgriTier;
+
+      // Merge active modules if both sources provide them
+      const userModules = userData?.modulos_activos || [];
+      const tenantModules = actualTenantData?.active_modules || [];
+      const mergedModules = Array.from(new Set([...userModules, ...tenantModules]));
 
       setProfile({
         userId: user.id,
@@ -155,7 +169,7 @@ export function useAgriProfile() {
         laboresHoy: labsHoy?.count || 0,
         tier: safeTier,
         totalHectareas: totalHa,
-        modulosActivos: actualTenantData?.active_modules || userData?.modulos_activos || [],
+        modulosActivos: mergedModules,
         tenant: actualTenantData ? {
           id: actualTenantData.id,
           name: actualTenantData.name,

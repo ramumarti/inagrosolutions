@@ -8,11 +8,12 @@ import { Droplets, Check, ChevronDown } from 'lucide-react';
 
 interface FertilizacionFormProps {
   parcelas: any[];
+  userProfile: any;
   initialParcelaId?: string;
   onSuccess: () => void;
 }
 
-export function FertilizacionForm({ parcelas, initialParcelaId, onSuccess }: FertilizacionFormProps) {
+export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onSuccess }: FertilizacionFormProps) {
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -45,6 +46,8 @@ export function FertilizacionForm({ parcelas, initialParcelaId, onSuccess }: Fer
         dosis: Number(form.dosis),
         unidad_dosis: form.unidad_dosis,
         n_p_k: form.n_p_k || null,
+        user_id: userProfile?.userId || null,
+        tenant_id: userProfile?.tenant_id || null,
       });
       if (error) throw error;
       setSuccess(true);

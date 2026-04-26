@@ -9,11 +9,12 @@ import { Bug, Calendar, Beaker, Ruler, Tractor, User, Check, AlertTriangle, Chev
 
 interface TratamientoFormProps {
   parcelas: any[];
+  userProfile: any; // Add this
   initialParcelaId?: string;
   onSuccess: () => void;
 }
 
-export function TratamientoForm({ parcelas, initialParcelaId, onSuccess }: TratamientoFormProps) {
+export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuccess }: TratamientoFormProps) {
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -110,6 +111,8 @@ export function TratamientoForm({ parcelas, initialParcelaId, onSuccess }: Trata
         superficie_tratada: form.superficie_tratada ? Number(form.superficie_tratada) : null,
         maquinaria_usada: form.maquinaria_usada || null,
         operario: form.operario || null,
+        user_id: userProfile?.userId || null,
+        tenant_id: userProfile?.tenant_id || null,
       });
       if (error) throw error;
 

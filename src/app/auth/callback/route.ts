@@ -27,7 +27,7 @@ export async function GET(request: Request) {
         let updateData: any = {};
         
         // Asignar el rol siempre a tenant_member (o el que venga en el auth)
-        updateData.platform_role = metadata?.platform_role || 'tenant_member';
+        updateData.platform_role = metadata?.platform_role || 'farmer';
         
         // Asignar plan_id si existe
         if (metadata?.plan_id) {

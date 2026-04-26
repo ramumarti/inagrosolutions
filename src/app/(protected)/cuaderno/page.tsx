@@ -266,16 +266,17 @@ export default function CuadernoPage() {
           <GlowButton 
             className="px-12 py-6 text-lg font-black bg-blue-600 border-none shadow-blue-500/20"
             onClick={async () => {
+              const currentYear = new Date().getFullYear();
               await createCampana({ 
-                nombre: `Campaña ${new Date().getFullYear()}`, 
-                anio_inicio: new Date().getFullYear(),
-                anio_fin: new Date().getFullYear() + 1,
+                nombre: `Campaña ${currentYear}`, 
+                anio_inicio: currentYear,
+                anio_fin: currentYear,
                 explotacion_id: profile.explotaciones[0].id
               });
               reload();
             }}
           >
-            Activar Campaña 2024/25
+            Activar Campaña {new Date().getFullYear()}
           </GlowButton>
         </div>
       );

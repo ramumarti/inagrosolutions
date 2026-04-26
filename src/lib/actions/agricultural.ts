@@ -81,11 +81,18 @@ export async function deleteParcela(id: string) {
   revalidatePath('/cuaderno');
 }
 
-export async function createCampana(data: { explotacion_id: string, nombre: string, anio_inicio: number, anio_fin: number }) {
+export async function createCampana(data: { explotacion_id: string, nombre: string, anio_inicio: number, anio_fin: number, tenant_id?: string }) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
   const { data: res, error } = await supabase
     .from('campanas')
-    .insert([data])
+    .insert([{
+      ...data,
+      user_id: user.id,
+      tenant_id: data.tenant_id || null
+    }])
     .select()
     .single();
 
