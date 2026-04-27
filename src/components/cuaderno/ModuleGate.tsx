@@ -34,9 +34,11 @@ export function ModuleGate({ children, isActive, tierMinimo, moduleName, userTie
             Requiere plan {tierInfo.label_es} o superior
           </p>
         </div>
-        <button className={`mt-2 px-6 py-2.5 bg-gradient-to-r ${tierInfo.gradient} rounded-xl text-[10px] font-black text-white uppercase tracking-widest hover:scale-105 transition-transform shadow-lg`}>
-          Obtener {tierInfo.label_es}
-        </button>
+        <a href="/cuaderno/suscripcion">
+          <button className={`mt-2 px-6 py-2.5 bg-gradient-to-r ${tierInfo.gradient} rounded-xl text-[10px] font-black text-white uppercase tracking-widest hover:scale-105 transition-transform shadow-lg`}>
+            Obtener {tierInfo.label_es}
+          </button>
+        </a>
       </div>
 
       {/* Blurred preview */}

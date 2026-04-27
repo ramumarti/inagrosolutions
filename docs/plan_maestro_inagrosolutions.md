@@ -117,16 +117,16 @@
 
 | # | Tarea | Archivos | Estado |
 |---|---|---|---|
-| 6.1 | **Verificar módulos obligatorios** (SIEX, Fitosanitarios, Fertilización, Labores, Parcelas, Exportación): que todos funcionen end-to-end con datos reales | `src/components/cuaderno/` (6 componentes) | ⬜ Pendiente |
-| 6.2 | **Verificar el importador SIGPAC** para carga de parcelas desde referencia catastral | `src/components/cuaderno/MassSigpacImporter.tsx` | ⬜ Pendiente |
-| 6.3 | **Verificar módulo de Inventario** (almacén de insumos) | `src/components/cuaderno/InventarioModule.tsx` | ⬜ Pendiente |
-| 6.4 | **Verificar módulo de Costes / Rentabilidad** | `src/components/cuaderno/RentabilidadModule.tsx`, `CostesModule.tsx` | ⬜ Pendiente |
-| 6.5 | **Verificar módulo de Exportación** (generación Excel SIEX) | `src/components/cuaderno/ExportacionModule.tsx` | ⬜ Pendiente |
-| 6.6 | **Verificar módulo de Trazabilidad** (cosechas + lotes) | `src/components/cuaderno/TrazabilidadModule.tsx` | ⬜ Pendiente |
-| 6.7 | **Verificar módulo de Dashboards** (gráficos y KPIs) | `src/components/cuaderno/DashboardsModule.tsx` | ⬜ Pendiente |
-| 6.8 | **Verificar módulo de Sensores IoT** | `src/components/cuaderno/SensoresModule.tsx` | ⬜ Pendiente |
-| 6.9 | **Verificar ModuleGate** (bloqueo correcto de módulos según plan del usuario) | `src/components/cuaderno/ModuleGate.tsx` | ⬜ Pendiente |
-| 6.10 | **Verificar PWA Widget** para uso móvil en campo | `src/components/cuaderno/MobilePWAWidget.tsx` | ⬜ Pendiente |
+| 6.1 | **Verificar módulos obligatorios** (SIEX, Fitosanitarios, Fertilización, Labores, Parcelas, Exportación): que todos funcionen end-to-end con datos reales | `src/components/cuaderno/` (6 componentes) | ✅ Completado |
+| 6.2 | **Verificar el importador SIGPAC** para carga de parcelas desde referencia catastral | `src/components/cuaderno/MassSigpacImporter.tsx` | ✅ Completado |
+| 6.3 | **Verificar módulo de Inventario** (almacén de insumos) | `src/components/cuaderno/InventarioModule.tsx` | ✅ Completado |
+| 6.4 | **Verificar módulo de Costes / Rentabilidad** | `src/components/cuaderno/RentabilidadModule.tsx`, `CostesModule.tsx` | ✅ Completado |
+| 6.5 | **Verificar módulo de Exportación** (generación Excel SIEX) | `src/components/cuaderno/ExportacionModule.tsx` | ✅ Completado |
+| 6.6 | **Verificar módulo de Trazabilidad** (cosechas + lotes) | `src/components/cuaderno/TrazabilidadModule.tsx` | ✅ Completado |
+| 6.7 | **Verificar módulo de Dashboards** (gráficos y KPIs) | `src/components/cuaderno/DashboardsModule.tsx` | ✅ Completado |
+| 6.8 | **Verificar módulo de Sensores IoT** | `src/components/cuaderno/SensoresModule.tsx` | ✅ Completado |
+| 6.9 | **Verificar ModuleGate** (bloqueo correcto de módulos según plan del usuario) | `src/components/cuaderno/ModuleGate.tsx` | ✅ Completado |
+| 6.10 | **Verificar PWA Widget** para uso móvil en campo | `src/components/cuaderno/MobilePWAWidget.tsx` | ✅ Completado |
 
 **Criterio de aceptación**: Cada módulo del cuaderno digital funciona correctamente según el plan contratado. Los módulos bloqueados muestran el upsell. Los datos se guardan y recuperan correctamente de Supabase.
 
@@ -137,11 +137,11 @@
 
 | # | Tarea | Archivos | Estado |
 |---|---|---|---|
-| 7.1 | **Verificar métricas del dashboard** (socios, hectáreas, alertas, salud) con datos reales | `src/app/(protected)/dashboard/page.tsx`, `src/lib/actions/tenant-dashboard.ts` | ⬜ Pendiente |
-| 7.2 | **Verificar gestión de miembros** (invitar, listar, desactivar socios) | `src/app/(protected)/admin/members/` | ⬜ Pendiente |
-| 7.3 | **Verificar personalización de marca** (logo, colores, slug) | `src/app/(protected)/admin/branding/` | ⬜ Pendiente |
-| 7.4 | **Verificar panel de facturación** del tenant (ingresos, comisiones, historial) | `src/app/(protected)/admin/billing/` | ⬜ Pendiente |
-| 7.5 | **Verificar supervisión técnica** (acceso del técnico a cuadernos de sus asignados) | `src/app/(protected)/admin/supervision/` | ⬜ Pendiente |
+| 7.1 | **Verificar métricas del dashboard** (socios, hectáreas, alertas, salud) con datos reales | `src/app/(protected)/dashboard/page.tsx`, `src/lib/actions/tenant-dashboard.ts` | ✅ Completado |
+| 7.2 | **Verificar gestión de miembros** (invitar, listar, desactivar socios) | `src/app/(protected)/admin/members/` | ✅ Completado |
+| 7.3 | **Verificar personalización de marca** (logo, colores, slug) | `src/app/(protected)/admin/branding/` | ✅ Completado |
+| 7.4 | **Verificar panel de facturación** del tenant (ingresos, comisiones, historial) | `src/app/(protected)/admin/billing/` | ✅ Completado |
+| 7.5 | **Verificar supervisión técnica** (acceso del técnico a cuadernos de sus asignados) | `src/app/(protected)/admin/supervision/` | ✅ Completado |
 
 **Criterio de aceptación**: La cooperativa puede gestionar a sus socios, ver sus ingresos, personalizar su marca y supervisar cuadernos desde su panel admin.
 
@@ -155,8 +155,8 @@
 | 8.1 | **Test E2E Flujo Partner**: Landing → Signup → Confirmar email → Onboarding → Configurar marca → Ver dashboard | Navegador | ⬜ Pendiente |
 | 8.2 | **Test E2E Flujo Agricultor**: Landing cooperativa → Ver planes → Signup → Confirmar email → Onboarding → Pagar → Cuaderno activo | Navegador | ⬜ Pendiente |
 | 8.3 | **Test Stripe en modo test**: checkout, webhook, portal, direct charges, 50/50 split | Stripe Dashboard + App | ⬜ Pendiente |
-| 8.4 | **Verificar RLS Supabase** para todos los roles (superadmin, tenant_admin, technician, farmer) | Supabase Dashboard | ⬜ Pendiente |
-| 8.5 | **Build de producción** (`npm run build`) sin errores | Terminal | ⬜ Pendiente |
+| 8.4 | **Verificar RLS Supabase** para todos los roles (superadmin, tenant_admin, technician, farmer) | Supabase Dashboard | ✅ Completado |
+| 8.5 | **Build de producción** (`npm run build`) sin errores | Terminal | ✅ Completado |
 | 8.6 | **Deploy a Vercel** (o hosting elegido) con variables de entorno de producción | Vercel Dashboard | ⬜ Pendiente |
 
 ---
