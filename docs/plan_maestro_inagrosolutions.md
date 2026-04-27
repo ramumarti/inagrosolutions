@@ -8,19 +8,19 @@
 
 | Área | Estado | Notas |
 |---|---|---|
-| Landing B2B (`page.tsx`) | ✅ Contenido y estructura listos | Faltan imágenes reales / generadas de calidad |
-| Formulario Registro Partner (`/signup`) | ✅ Funcional | Falta conexión con Stripe Connect Onboarding |
-| Landing Cooperativa (`/c/[slug]`) | ✅ Estructura base | Imagen de dashboard rota, contenido genérico |
-| Página de Planes (`/cuaderno/planes`) | ✅ Funcional | Enlace desde cooperativa OK |
-| Registro Agricultor (`/signup?role=farmer`) | ✅ Funcional | Falta integración tenant context en signup |
-| Onboarding Agricultor (`/onboarding`) | ✅ Wizard 4 pasos | Falta trigger automático post-signup |
-| Stripe Checkout (`/api/stripe/checkout`) | ✅ API Route existe | Falta Stripe Connect (Direct Charges) |
-| Stripe Webhook (`/api/stripe/webhook`) | ✅ Existe | Falta lógica completa de activación |
-| Cuaderno Digital (`/cuaderno`) | ✅ 25 componentes | Módulos funcionales parcialmente |
-| Suscripción interna (`/cuaderno/suscripcion`) | ✅ Existe | Funcional |
-| Dashboard Tenant (`/dashboard`) | ✅ Base implementada | Falta data real |
-| Panel Admin Tenant (`/admin/*`) | ✅ 12 subsecciones | Parcialmente funcional |
-| DB Supabase | ✅ 44 tablas con RLS | Completa |
+| Landing B2B (`page.tsx`) | ✅ Completada | Imágenes IA finales, animaciones y responsive OK |
+| Formulario Registro Partner (`/signup`) | ✅ Completada | Conexión con Stripe Connect Onboarding OK |
+| Landing Cooperativa (`/c/[slug]`) | ✅ Completada | Marca blanca, imágenes y CTAs funcionales |
+| Página de Planes (`/cuaderno/planes`) | ✅ Completada | Integración con tenant context OK |
+| Registro Agricultor (`/signup`) | ✅ Completada | Selección de plan y tenant context integrados |
+| Onboarding Agricultor (`/onboarding`) | ✅ Completada | Flujo de 4 pasos con redirección automática OK |
+| Stripe Checkout (`/api/stripe/checkout`) | ✅ Completada | Soporte Direct Charges (50/50 split) OK |
+| Stripe Webhook (`/api/stripe/webhook`) | ✅ Completada | Activación de suscripción y registro de transacciones OK |
+| Cuaderno Digital (`/cuaderno`) | ✅ Completada | 10 módulos verificados y ModuleGate funcional |
+| Suscripción interna (`/cuaderno/suscripcion`) | ✅ Completada | Gestión vía Stripe Customer Portal OK |
+| Dashboard Tenant (`/dashboard`) | ✅ Completada | Métricas y KPIs con data real OK |
+| Panel Admin Tenant (`/admin/*`) | ✅ Completada | Gestión de socios, branding y facturación OK |
+| DB Supabase | ✅ Completada | RLS verificado para todos los roles |
 
 ---
 
@@ -173,31 +173,31 @@ graph TD
     F6 --> F7[FASE 7: Dashboard Cooperativa<br/>Panel Admin]
     F7 --> F8[FASE 8: Testing E2E<br/>+ Deploy Producción]
 
-    style F1 fill:#dc2626,color:#fff
-    style F2 fill:#dc2626,color:#fff
-    style F3 fill:#dc2626,color:#fff
-    style F5 fill:#dc2626,color:#fff
-    style F4 fill:#eab308,color:#000
-    style F6 fill:#eab308,color:#000
-    style F7 fill:#22c55e,color:#000
-    style F8 fill:#dc2626,color:#fff
+    style F1 fill:#22c55e,color:#fff
+    style F2 fill:#22c55e,color:#fff
+    style F3 fill:#22c55e,color:#fff
+    style F4 fill:#22c55e,color:#fff
+    style F5 fill:#22c55e,color:#fff
+    style F6 fill:#22c55e,color:#fff
+    style F7 fill:#22c55e,color:#fff
+    style F8 fill:#eab308,color:#000
 ```
 
 ---
 
 ## 📊 Resumen de Tareas
 
-| Fase | Tareas | Prioridad |
-|---|---|---|
-| **FASE 1**: Landing B2B | 8 tareas | 🔴 ALTA |
-| **FASE 2**: Registro Partner | 5 tareas | 🔴 ALTA |
-| **FASE 3**: Landing Cooperativa | 8 tareas | 🔴 ALTA |
-| **FASE 4**: Módulos y Planes | 5 tareas | 🟡 MEDIA |
-| **FASE 5**: Registro + Pago | 8 tareas | 🔴 ALTA |
-| **FASE 6**: Cuaderno Digital | 10 tareas | 🟡 MEDIA |
-| **FASE 7**: Dashboard Cooperativa | 5 tareas | 🟢 BAJA |
-| **FASE 8**: Testing + Deploy | 6 tareas | 🔴 ALTA |
-| **TOTAL** | **55 tareas** | |
+| Fase | Tareas | Estado | Prioridad |
+|---|---|---|---|
+| **FASE 1**: Landing B2B | 8/8 | ✅ Completada | 🔴 ALTA |
+| **FASE 2**: Registro Partner | 5/5 | ✅ Completada | 🔴 ALTA |
+| **FASE 3**: Landing Cooperativa | 8/8 | ✅ Completada | 🔴 ALTA |
+| **FASE 4**: Módulos y Planes | 5/5 | ✅ Completada | 🟡 MEDIA |
+| **FASE 5**: Registro + Pago | 8/8 | ✅ Completada | 🔴 ALTA |
+| **FASE 6**: Cuaderno Digital | 10/10 | ✅ Completada | 🟡 MEDIA |
+| **FASE 7**: Dashboard Cooperativa | 5/5 | ✅ Completada | 🟢 BAJA |
+| **FASE 8**: Testing + Deploy | 4/6 | 🟡 En curso | 🔴 ALTA |
+| **TOTAL** | **53/55** | | |
 
 ---
 
