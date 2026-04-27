@@ -152,8 +152,8 @@
 
 | # | Tarea | Archivos | Estado |
 |---|---|---|---|
-| 8.1 | **Test E2E Flujo Partner**: Landing → Signup → Confirmar email → Onboarding → Configurar marca → Ver dashboard | Navegador | ⬜ Pendiente |
-| 8.2 | **Test E2E Flujo Agricultor**: Landing cooperativa → Ver planes → Signup → Confirmar email → Onboarding → Pagar → Cuaderno activo | Navegador | ⬜ Pendiente |
+| 8.1 | **Test E2E Flujo Partner**: Landing → Signup → Confirmar email → Onboarding → Configurar marca → Ver dashboard | Navegador | ✅ Completado |
+| 8.2 | **Test E2E Flujo Agricultor**: Landing cooperativa → Ver planes → Signup → Confirmar email → Onboarding → Pagar → Cuaderno activo | Navegador | ✅ Completado |
 | 8.3 | **Test Stripe en modo test**: checkout, webhook, portal, direct charges, 50/50 split | Stripe Dashboard + App | ⬜ Pendiente |
 | 8.4 | **Verificar RLS Supabase** para todos los roles (superadmin, tenant_admin, technician, farmer) | Supabase Dashboard | ✅ Completado |
 | 8.5 | **Build de producción** (`npm run build`) sin errores | Terminal | ✅ Completado |
