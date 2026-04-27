@@ -216,6 +216,7 @@ function PricingLandingPageContent() {
                     : TIER_CONFIG.basico.price_monthly.toFixed(2).replace('.', ',')} €
                 </span>
                 <span className="text-gray-500 font-medium ml-1">/{annualBilling ? 'año' : 'mes'}</span>
+                <p className="text-xs text-white/40 mt-1 text-center">+ IVA</p>
               </div>
               
               <PlanFeatures 
@@ -244,6 +245,7 @@ function PricingLandingPageContent() {
                     : TIER_CONFIG.intermedio.price_monthly.toFixed(2).replace('.', ',')} €
                 </span>
                 <span className="text-gray-500 font-medium ml-1">/{annualBilling ? 'año' : 'mes'}</span>
+                <p className="text-xs text-white/40 mt-1 text-center">+ IVA</p>
               </div>
               
               <PlanFeatures 
@@ -274,6 +276,7 @@ function PricingLandingPageContent() {
                     : TIER_CONFIG.avanzado.price_monthly.toFixed(2).replace('.', ',')} €
                 </span>
                 <span className="text-gray-500 font-medium ml-1">/{annualBilling ? 'año' : 'mes'}</span>
+                <p className="text-xs text-white/40 mt-1 text-center">+ IVA</p>
               </div>
               
               <PlanFeatures 
@@ -305,6 +308,7 @@ function PricingLandingPageContent() {
                     : TIER_CONFIG.premium.price_monthly.toFixed(2).replace('.', ',')} €
                 </span>
                 <span className="text-gray-500 font-medium ml-1">/{annualBilling ? 'año' : 'mes'}</span>
+                <p className="text-xs text-white/40 mt-1 text-center">+ IVA</p>
               </div>
               
               <PlanFeatures 

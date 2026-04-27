@@ -23,7 +23,9 @@ import { FincasModule } from '@/components/cuaderno/FincasModule';
 import { CampanaSelector } from '@/components/cuaderno/CampanaSelector';
 import { ParcelasMaster } from '@/components/cuaderno/ParcelasMaster';
 import { createExplotacion, createCampana, deleteExplotacion, updateExplotacion } from '@/lib/actions/agricultural';
+import { SuccessModal } from '@/components/cuaderno/SuccessModal';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { Suspense } from 'react';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { TIER_CONFIG } from '@/lib/modules';
 import type { AgriTier } from '@/lib/modules';
@@ -105,6 +107,7 @@ export default function CuadernoPage() {
   };
 
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [annualBilling, setAnnualBilling] = useState(false);
 
   const handlePayment = async () => {
     if (!profile) return;
@@ -116,7 +119,7 @@ export default function CuadernoPage() {
         body: JSON.stringify({
           plan: profile.tier || 'basico', 
           tenantSlug: profile.tenant?.slug,
-          interval: 'month'
+          interval: annualBilling ? 'year' : 'month'
         }),
       });
       const { url } = await response.json();
@@ -186,7 +189,25 @@ export default function CuadernoPage() {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
+            {/* Toggle Billing */}
+            <div className="flex justify-center mb-6">
+              <div className="inline-flex items-center p-1 bg-white/5 rounded-full border border-white/10 shrink-0">
+                <button 
+                  onClick={() => setAnnualBilling(false)}
+                  className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${!annualBilling ? 'bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'text-gray-400 hover:text-white'}`}
+                >
+                  Mensual
+                </button>
+                <button 
+                  onClick={() => setAnnualBilling(true)}
+                  className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${annualBilling ? 'bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'text-gray-400 hover:text-white'}`}
+                >
+                  Anual <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/20 text-white font-black">-2 MESES</span>
+                </button>
+              </div>
+            </div>
+
             <GlowButton 
               className="w-full py-4 text-lg font-black uppercase tracking-widest"
               onClick={handlePayment}
@@ -194,7 +215,7 @@ export default function CuadernoPage() {
             >
               {isProcessingPayment ? 'Redirigiendo...' : 'Activar mi Cuaderno Ahora'}
             </GlowButton>
-            <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">
+            <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest text-center">
               Pago 100% seguro gestionado por Stripe Connect
             </p>
           </div>
@@ -468,6 +489,7 @@ export default function CuadernoPage() {
 
   return (
     <div className="flex h-full overflow-hidden">
+      <Suspense fallback={null}><SuccessModal /></Suspense>
       {/* Module sidebar */}
       <aside className="hidden lg:flex w-56 shrink-0 border-r border-white/5 flex-col py-6 overflow-y-auto">
         <div className="px-4 mb-6">

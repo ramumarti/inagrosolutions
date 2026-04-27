@@ -64,7 +64,7 @@ export default function HomePage() {
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image 
-            src="/images/olivar_tradicional.png" 
+            src="/images/hero_olivos_v2.png" 
             alt="Olivar Tradicional al atardecer" 
             fill 
             className="object-cover opacity-40 scale-105"
@@ -116,13 +116,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trust Bar (Simplified) */}
-      <section className="py-8 border-y border-white/5 bg-black/40">
-        <div className="flex justify-center flex-wrap gap-12 opacity-30 text-xs font-black tracking-tighter uppercase grayscale">
-          <span>COOPERATIVAS</span>
-          <span>ASOCIACIONES</span>
-          <span>INGENIERÍAS</span>
-          <span>ASESORÍAS</span>
+      {/* Trust Bar (Social Proof) */}
+      <section className="py-12 border-y border-white/5 bg-black/40 relative z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-sm font-bold text-white/40 uppercase tracking-widest mb-8">Más de 50 entidades ya confían en InagroSolutions</p>
+          <div className="flex justify-center flex-wrap gap-12 opacity-50 text-xl font-black tracking-tighter uppercase grayscale hover:grayscale-0 transition-all duration-500">
+            <span className="hover:text-[var(--color-primary)] transition-colors">COAG</span>
+            <span className="hover:text-[var(--color-primary)] transition-colors">UPA</span>
+            <span className="hover:text-[var(--color-primary)] transition-colors">ASAJA</span>
+            <span className="hover:text-[var(--color-primary)] transition-colors">AgroSeguro</span>
+            <span className="hover:text-[var(--color-primary)] transition-colors">DCOOP</span>
+            <span className="hover:text-[var(--color-primary)] transition-colors">TROPS</span>
+          </div>
         </div>
       </section>
 
@@ -184,7 +189,7 @@ export default function HomePage() {
                   <div className="px-3 py-1 bg-white/5 rounded text-xs text-white/40">app.tucooperativa.com</div>
                 </div>
                 <Image 
-                  src="/images/agricultor_app.png" 
+                  src="/images/agricultor_app_v2.png" 
                   alt="Agricultor usando InagroSolutions en su móvil" 
                   width={800} 
                   height={600}
@@ -237,15 +242,18 @@ export default function HomePage() {
             </div>
             
             <div className="flex flex-col gap-6 h-full">
-              <div className="relative h-48 rounded-3xl overflow-hidden border border-white/10 group">
+              <div className="relative h-48 rounded-3xl overflow-hidden border border-white/10 group shadow-2xl">
                 <Image 
-                  src="/images/agricultores_trabajando.png" 
-                  alt="Agricultores trabajando en el olivar" 
+                  src="/images/cooperativa_equipo_v2.png" 
+                  alt="Equipo de la cooperativa trabajando" 
                   fill 
-                  className="object-cover group-hover:scale-110 transition-transform duration-700 opacity-80"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 opacity-90"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div className="absolute bottom-4 left-4 font-bold text-white tracking-widest text-xs uppercase">Conectando el campo</div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-4 left-4 font-bold text-white tracking-widest text-xs uppercase z-10 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse"></div>
+                  Soporte Centralizado
+                </div>
               </div>
               
               <div className="bg-gradient-to-br from-[var(--color-primary)]/20 to-transparent p-1 rounded-3xl flex-1">

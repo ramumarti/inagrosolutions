@@ -22,19 +22,22 @@ export async function POST(req: Request) {
 
     const { data: profile } = await supabase
       .from('users')
-      .select('platform_role')
+      .select('platform_role, tenant_id')
       .eq('id', user.id)
       .single();
-
-    if (profile?.platform_role !== 'superadmin') {
-      return NextResponse.json({ error: 'Solo SuperAdmin puede crear cuentas Connect' }, { status: 403 });
-    }
 
     // 2. Obtener tenantId del body
     const { tenantId } = await req.json();
 
     if (!tenantId) {
       return NextResponse.json({ error: 'tenantId es obligatorio' }, { status: 400 });
+    }
+
+    const isSuperAdmin = profile?.platform_role === 'superadmin';
+    const isOwnTenant = profile?.platform_role === 'tenant_admin' && profile?.tenant_id === tenantId;
+
+    if (!isSuperAdmin && !isOwnTenant) {
+      return NextResponse.json({ error: 'Solo el SuperAdmin o el Administrador de la cooperativa pueden crear cuentas Connect' }, { status: 403 });
     }
 
     // 3. Obtener datos del tenant

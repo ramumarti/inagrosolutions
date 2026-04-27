@@ -11,6 +11,7 @@ import {
   Smartphone, Headset, FileSpreadsheet, Map
 } from 'lucide-react';
 import { TIER_CONFIG } from '@/lib/modules';
+import { TenantPricing } from '@/components/cuaderno/TenantPricing';
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -28,6 +29,12 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
   if (!tenant || !tenant.show_public_page) {
     notFound();
   }
+
+  const { data: testimonials } = await supabase
+    .from('site_testimonials')
+    .select('*')
+    .eq('tenant_id', tenant.id)
+    .order('created_at', { ascending: false });
 
   // Define brand styles based on tenant colors
   const primaryColor = tenant.primary_color || '#10B981';
@@ -86,18 +93,28 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
 
       <main>
         {/* 1. HERO SECTION (Centered, like Planes page) */}
-        <section className="relative pt-40 pb-20 px-6 max-w-7xl mx-auto text-center z-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <div 
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-semibold mb-8"
-            style={{ 
-              backgroundColor: `${primaryColor}15`, 
-              borderColor: `${primaryColor}30`,
-              color: primaryColor 
-            }}
-          >
-            <Leaf className="w-4 h-4" />
-            <span>Entidad Colaboradora InagroSolutions</span>
+        <section className="relative pt-40 pb-20 px-6 w-full text-center z-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 min-h-[70vh] flex flex-col justify-center overflow-hidden border-b border-white/5">
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            <img 
+              src="/images/hero_cooperativa_v2.png" 
+              alt="Fondo de campo" 
+              className="w-full h-full object-cover opacity-40 mix-blend-luminosity scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/90 to-black"></div>
           </div>
+          
+          <div className="relative z-10 max-w-7xl mx-auto">
+            <div 
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-semibold mb-8"
+              style={{ 
+                backgroundColor: `${primaryColor}15`, 
+                borderColor: `${primaryColor}30`,
+                color: primaryColor 
+              }}
+            >
+              <Leaf className="w-4 h-4" />
+              <span>Entidad Colaboradora InagroSolutions</span>
+            </div>
           
           <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 text-white leading-tight">
             Digitalización total para <br className="hidden md:block" />
@@ -131,6 +148,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                 Contactar a la Entidad
               </button>
             </a>
+          </div>
           </div>
         </section>
 
@@ -169,7 +187,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
              <div className="flex-1">
                 <div className="relative aspect-square max-w-md mx-auto">
                    <div className="absolute inset-0 rounded-full blur-[80px] opacity-20 animate-pulse-slow" style={{ backgroundColor: primaryColor }} />
-                   <img src="/brain/6214425b-d09c-45a9-aa76-4775c7712706/modern_agrotech_dashboard_1776933422129.png" className="relative z-10 w-full h-full object-cover rounded-[40px] border border-white/10 shadow-2xl skew-y-2 hover:skew-y-0 transition-transform duration-700" alt="Dashboard Agrícola" />
+                   <img src="/images/dashboard_agricola_v2.png" className="relative z-10 w-full h-full object-cover rounded-[40px] border border-white/10 shadow-2xl skew-y-2 hover:skew-y-0 transition-transform duration-700" alt="Dashboard Agrícola" />
                    
                    <div className="absolute -bottom-6 -left-6 p-6 rounded-3xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl z-20">
                       <div className="flex items-center gap-4">
@@ -221,44 +239,69 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
 
         {/* 4. PLANS */}
         <section id="planes" className="py-24 relative bg-[#0B0F15] border-y border-white/5">
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <h2 className="text-4xl font-black text-white mb-6">Elige el plan para tu explotación</h2>
-            <p className="text-gray-400 text-lg mb-12 max-w-2xl mx-auto">Selecciona tu plan ahora y disfruta de la plataforma completa. Todos los planes incluyen acceso inmediato.</p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {['basico', 'intermedio', 'avanzado', 'premium'].map((tierStr) => {
-                const tier = tierStr as keyof typeof TIER_CONFIG;
-                const info = TIER_CONFIG[tier];
-                return (
-                  <GlassCard key={tier} className="p-8 flex flex-col items-center text-center hover:border-white/20 transition-all group">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${info.gradient} flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-                      {tier === 'premium' ? <Star size={20} /> : <Leaf size={20} />}
+          <TenantPricing tenantSlug={tenant.slug} primaryColor={primaryColor} />
+        </section>
+
+        {/* 4.5. TESTIMONIALS */}
+        {testimonials && testimonials.length > 0 && (
+          <section className="py-24 bg-white/[0.02]">
+            <div className="max-w-7xl mx-auto px-6 text-center">
+              <h2 className="text-3xl font-bold mb-12 text-white">Lo que dicen nuestros socios</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {testimonials.map((t: any) => (
+                  <GlassCard key={t.id} className="p-8 text-left relative overflow-hidden">
+                    <div className="text-8xl text-white/5 absolute -top-4 right-2 font-serif">"</div>
+                    <p className="text-gray-300 italic mb-6 relative z-10 text-sm leading-relaxed">
+                      {t.content}
+                    </p>
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full border flex items-center justify-center font-bold" style={{ backgroundColor: `${primaryColor}20`, borderColor: primaryColor, color: primaryColor }}>
+                        {t.author_name.substring(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white">{t.author_name}</h4>
+                        <p className="text-xs text-gray-400">{t.author_role}</p>
+                      </div>
                     </div>
-                    <h3 className="text-xl font-black text-white mb-1">{info.label_es}</h3>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6">Hasta {info.max_ha} HA</p>
-                    <div className="mb-8">
-                      <span className="text-4xl font-black text-white">{info.price_monthly.toString().replace('.', ',')} €</span>
-                      <span className="text-gray-500 font-medium">/mes</span>
-                    </div>
-                    <Link href={`/cuaderno/planes?tenant=${tenant.slug}`} className="w-full mt-auto">
-                      <button className="w-full py-3 rounded-xl font-bold bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-white text-sm">
-                        Ver Detalles
-                      </button>
-                    </Link>
                   </GlassCard>
-                )
-              })}
+                ))}
+              </div>
             </div>
-            
-            <div className="mt-12">
-              <Link href={`/cuaderno/planes?tenant=${tenant.slug}`}>
-                <button 
-                  className="px-10 py-5 rounded-2xl font-black text-lg shadow-2xl hover:scale-105 transition-all"
-                  style={{ backgroundColor: primaryColor, color: '#000' }}
-                >
-                  Ver Comparativa de Planes
-                </button>
-              </Link>
+          </section>
+        )}
+
+        {/* 4.6. FAQ */}
+        <section className="py-24 bg-black border-t border-white/5">
+          <div className="max-w-4xl mx-auto px-6">
+            <h2 className="text-3xl font-bold mb-12 text-center text-white">Preguntas Frecuentes</h2>
+            <div className="space-y-4">
+              {[
+                {
+                  q: '¿Qué validez legal tiene este cuaderno?',
+                  a: 'El Cuaderno Digital generado a través de nuestra plataforma cumple al 100% con la normativa SIEX (Sistema de información de explotaciones agrícolas) y está preparado para cualquier inspección del MAPA o CC.AA.'
+                },
+                {
+                  q: '¿Necesito conocimientos de informática avanzados?',
+                  a: 'En absoluto. El sistema está diseñado para que cualquier persona que sepa usar un smartphone pueda gestionar su explotación con un par de clics. Además, cuentas con nuestro soporte técnico directo.'
+                },
+                {
+                  q: '¿Qué pasa si mi finca no tiene cobertura móvil?',
+                  a: 'Puedes apuntar los tratamientos en el campo con nuestra app móvil. Los datos se guardarán localmente y se sincronizarán automáticamente en cuanto recuperes la conexión a internet.'
+                },
+                {
+                  q: '¿Puedo cambiar de plan más adelante?',
+                  a: 'Sí, puedes ampliar tu plan en cualquier momento si tus necesidades crecen. El cambio se aplica de forma automática y solo pagas la diferencia proporcional.'
+                }
+              ].map((faq, i) => (
+                <GlassCard key={i} className="p-6 border-white/10 hover:border-white/20 transition-all">
+                  <h3 className="font-bold text-lg mb-2 text-white flex items-center gap-3">
+                    <span style={{ color: primaryColor }}>Q.</span> {faq.q}
+                  </h3>
+                  <p className="text-gray-400 text-sm leading-relaxed pl-8">
+                    {faq.a}
+                  </p>
+                </GlassCard>
+              ))}
             </div>
           </div>
         </section>

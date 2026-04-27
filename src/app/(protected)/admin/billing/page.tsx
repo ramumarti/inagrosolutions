@@ -73,14 +73,14 @@ export default function TenantBillingPage() {
   const handleConnectStripe = async () => {
     if (!tenant?.id) return;
     try {
-      const res = await fetch('/api/stripe/connect/account-link', {
+      const res = await fetch('/api/stripe/connect/create-account', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tenantId: tenant.id })
       });
       const data = await res.json();
-      if (res.ok && data.url) {
-        window.location.href = data.url;
+      if (res.ok && data.onboardingUrl) {
+        window.location.href = data.onboardingUrl;
       } else {
         alert(data.error || 'Error al generar link');
       }

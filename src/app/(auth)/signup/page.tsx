@@ -3,7 +3,7 @@
 import { useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Hexagon, User, Building2, Leaf, ChevronLeft } from 'lucide-react';
+import { Mail, Lock, Hexagon, User, Building2, Leaf, ChevronLeft, Phone, MapPin, Users } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { Input } from '@/components/ui/Input';
@@ -27,6 +27,13 @@ function SignupPageContent() {
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [lawAccepted, setLawAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  // Partner specific fields
+  const [cif, setCif] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [province, setProvince] = useState('');
+  const [estimatedMembers, setEstimatedMembers] = useState('');
   
   // Determine initial mode from URL and Context
   useEffect(() => {
@@ -81,7 +88,8 @@ function SignupPageContent() {
           platform_role: isFarmer ? 'farmer' : 'tenant_admin',
           is_partner_reg: !isFarmer,
           plan_id: isFarmer ? plan : null,
-          tenant_slug: tenantSlug || null
+          tenant_slug: tenantSlug || null,
+          ...( !isFarmer ? { nif_cif: cif, phone, address, province, estimated_members: estimatedMembers } : {} )
         }
       }
     });
@@ -93,14 +101,12 @@ function SignupPageContent() {
     } else {
       const successTitle = language === 'en' ? 'Account Created!' : '¡Cuenta Creada!';
       const successMsg = language === 'en' 
-        ? 'Check your email to confirm and proceed to the secure payment.' 
-        : 'Confirma tu email ahora para proceder al pago seguro y activar tus servicios.';
+        ? 'Check your email to confirm and proceed.' 
+        : (isFarmer ? 'Confirma tu email ahora para proceder al pago seguro y activar tus servicios.' : 'Confirma tu email para configurar tu entidad y acceder al panel.');
       
       toast(successMsg, 'success');
       
-      // We can redirect to a specific "Success / Wait for email" landing page if we had one
-      // For now, /login is okay but the message is clear.
-      router.push('/login?msg=awaiting-confirmation');
+      router.push(!isFarmer ? '/signup/success' : '/login?msg=awaiting-confirmation');
     }
   };
 
@@ -239,6 +245,45 @@ function SignupPageContent() {
               required={!isFarmer}
               className={!isFarmer ? "border-indigo-500/20" : ""}
             />
+            {!isFarmer && (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <Input 
+                    type="text" 
+                    placeholder="CIF / NIF" 
+                    icon={<Building2 className="w-5 h-5" />}
+                    value={cif}
+                    onChange={(e) => setCif(e.target.value)}
+                    required
+                  />
+                  <Input 
+                    type="tel" 
+                    placeholder="Teléfono" 
+                    icon={<Phone className="w-5 h-5" />}
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Input 
+                    type="text" 
+                    placeholder="Provincia" 
+                    icon={<MapPin className="w-5 h-5" />}
+                    value={province}
+                    onChange={(e) => setProvince(e.target.value)}
+                    required
+                  />
+                  <Input 
+                    type="number" 
+                    placeholder="Nº estimado de socios" 
+                    icon={<Users className="w-5 h-5" />}
+                    value={estimatedMembers}
+                    onChange={(e) => setEstimatedMembers(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
           </div>
 
           <Input 

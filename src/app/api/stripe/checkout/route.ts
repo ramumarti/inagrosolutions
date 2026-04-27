@@ -130,9 +130,7 @@ export async function POST(req: NextRequest) {
 
     // ── 5. Si hay cuenta Connect → Direct Charge con application_fee ──
     if (stripeAccountId) {
-      sessionParams.payment_intent_data = {
-        application_fee_percent: 50,
-      };
+      sessionParams.subscription_data.application_fee_percent = 50;
     }
 
     const session = stripeAccountId

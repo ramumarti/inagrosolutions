@@ -50,9 +50,15 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
     // Hard redirect out of onboarding for admins
     const isAdmin = profile?.platform_role === 'tenant_admin' || profile?.platform_role === 'superadmin';
-    if (isAdmin && pathname === '/onboarding') {
-      window.location.href = '/dashboard';
-      return;
+    
+    if (isAdmin) {
+      if (!profile?.tenant_id && pathname !== '/onboarding-partner') {
+        router.push('/onboarding-partner');
+        return;
+      } else if (profile?.tenant_id && (pathname === '/onboarding' || pathname === '/onboarding-partner')) {
+        window.location.href = '/dashboard';
+        return;
+      }
     }
 
     // Redirect farmers TO onboarding if they have no farms
