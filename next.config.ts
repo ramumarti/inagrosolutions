@@ -3,15 +3,20 @@ import withSerwistInit from "@serwist/next";
 import fs from "fs";
 import path from "path";
 
-// FORCE DELETE VERCEL GHOST DIRECTORY BEFORE NEXT.JS COMPILES
-try {
-  const ghostDir = path.join(process.cwd(), 'src', 'app', '(protected)', 'cuaderno', 'planes');
-  if (fs.existsSync(ghostDir)) {
-    fs.rmSync(ghostDir, { recursive: true, force: true });
-    console.log('DELETED GHOST DIR:', ghostDir);
+// FORCE DELETE VERCEL GHOST DIRECTORIES BEFORE NEXT.JS COMPILES
+const ghostDirs = [
+  path.join(process.cwd(), 'src', 'app', '(protected)', 'cuaderno', 'planes'),
+  path.join(process.cwd(), 'src', 'app', 'cuaderno', 'planes'),
+];
+for (const ghostDir of ghostDirs) {
+  try {
+    if (fs.existsSync(ghostDir)) {
+      fs.rmSync(ghostDir, { recursive: true, force: true });
+      console.log('[CLEANUP] DELETED GHOST DIR:', ghostDir);
+    }
+  } catch (e) {
+    console.log('[CLEANUP] Failed to delete:', ghostDir, e);
   }
-} catch (e) {
-  // Ignore
 }
 
 const withSerwist = withSerwistInit({
