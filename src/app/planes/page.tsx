@@ -14,7 +14,6 @@ const PlanFeatures = ({ costes, cosechas, traz, dash, iot, alertas }: { costes: 
       {active ? <Check className="w-4 h-4 text-emerald-500 font-bold shrink-0" strokeWidth={3} /> : <X className="w-4 h-4 text-white/20 font-bold shrink-0" strokeWidth={3} />}
       <span className={`text-sm flex items-center gap-2 ${active ? 'text-white' : 'text-white/30'} font-medium`}>
         {name}
-        {isComingSoon && <span className="text-[10px] uppercase tracking-wider font-bold text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">Próximamente</span>}
       </span>
       {isLegal && (
         <span className="ml-auto text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded tracking-widest">LEGAL</span>
@@ -30,12 +29,12 @@ const PlanFeatures = ({ costes, cosechas, traz, dash, iot, alertas }: { costes: 
       <Feature name="Fertilización" active={true} isLegal={true} />
       <Feature name="Labores Agrícolas" active={true} isLegal={true} />
       <Feature name="Gestión de Parcelas" active={true} isLegal={true} />
-      <Feature name="Control de Costes" active={costes} isComingSoon={true} />
-      <Feature name="Gestión de Cosechas" active={cosechas} isComingSoon={true} />
-      <Feature name="Trazabilidad" active={traz} isComingSoon={true} />
+      <Feature name="Control de Costes" active={costes} />
+      <Feature name="Gestión de Cosechas" active={cosechas} />
+      <Feature name="Trazabilidad" active={traz} />
       <Feature name="Dashboards Pro" active={dash} />
-      <Feature name="Sensores IoT" active={iot} isComingSoon={true} />
-      <Feature name="Alertas Inteligentes" active={alertas} isComingSoon={true} />
+      <Feature name="Sensores IoT" active={iot} />
+      <Feature name="Alertas Inteligentes" active={alertas} />
       <Feature name="Exportación PAC" active={true} isLegal={true} />
     </ul>
   );
