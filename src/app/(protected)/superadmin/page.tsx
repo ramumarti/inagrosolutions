@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { getPlatformStats } from '@/lib/actions/superadmin';
 import { getSuperadminBillingStats } from '@/lib/actions/billing';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { Users, Building2, Map, TrendingUp, History, ArrowRight, Activity } from 'lucide-react';
+import { Users, Building2, Map, TrendingUp, History, ArrowRight, Activity, Crown } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SuperadminPage() {
