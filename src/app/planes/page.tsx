@@ -174,7 +174,7 @@ function PricingLandingPageContent() {
             </h4>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 tracking-tight">ESCOGE EL PLAN PARA TU EXPLOTACIÓN</h2>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 tracking-tight">TU PLAN DE EXPLOTACIÓN</h2>
                 <p className="text-gray-400 text-lg">Todos los módulos obligatorios incluidos. Ahorra 2 meses con el pago anual.</p>
               </div>
               
