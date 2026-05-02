@@ -218,6 +218,16 @@ export async function deleteTenant(tenantId: string) {
     .eq('id', tenantId);
   
   if (error) return { success: false, error: error.message };
+
+  // Delete related audit log entries (entity_type = 'tenant' and entity_id = tenantId)
+  const { error: auditError } = await supabase
+    .from('audit_log')
+    .delete()
+    .eq('entity_type', 'tenant')
+    .eq('entity_id', tenantId);
+
+  if (auditError) console.warn('Failed to clean audit logs:', auditError.message);
+
   return { success: true };
 }
 
