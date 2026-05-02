@@ -187,7 +187,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
              <div className="flex-1">
                 <div className="relative aspect-square max-w-md mx-auto">
                    <div className="absolute inset-0 rounded-full blur-[80px] opacity-20 animate-pulse-slow" style={{ backgroundColor: primaryColor }} />
-                   <img src="/images/dashboard_agricola_v2.png" className="relative z-10 w-full h-full object-cover rounded-[40px] border border-white/10 shadow-2xl skew-y-2 hover:skew-y-0 transition-transform duration-700" alt="Dashboard Agrícola" />
+                   <img src="/images/olivar_campesino_v1.png" className="relative z-10 w-full h-full object-cover rounded-[40px] border border-white/10 shadow-2xl skew-y-2 hover:skew-y-0 transition-transform duration-700" alt="Dashboard Agrícola" />
                    
                    <div className="absolute -bottom-6 -left-6 p-6 rounded-3xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl z-20">
                       <div className="flex items-center gap-4">
