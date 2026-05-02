@@ -189,8 +189,8 @@ export default function HomePage() {
                   <div className="px-3 py-1 bg-white/5 rounded text-xs text-white/40">app.tucooperativa.com</div>
                 </div>
                 <Image 
-                  src="/images/agricultor_app_v2.png" 
-                  alt="Agricultor usando InagroSolutions en su móvil" 
+                  src="/images/olivar_campesino_v1.png" 
+                  alt="Agricultor en olivar usando InagroSolutions en su móvil" 
                   width={800} 
                   height={600}
                   className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
