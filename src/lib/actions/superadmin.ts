@@ -211,13 +211,10 @@ export async function deleteTenant(tenantId: string) {
 
   const supabase = getAdminClient();
   
-  // SEC-8: Soft-delete instead of hard-delete to preserve data integrity
+  // Hard delete tenant permanently
   const { error } = await supabase
     .from('tenants')
-    .update({ 
-      is_active: false,
-      name: `[ELIMINADO] ${new Date().toISOString().slice(0, 10)}`
-    })
+    .delete()
     .eq('id', tenantId);
   
   if (error) return { success: false, error: error.message };
