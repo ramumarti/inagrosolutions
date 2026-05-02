@@ -426,27 +426,44 @@ export default function HomePage() {
       {/* Final CTA (Section 13) */}
       <footer className="py-24 bg-black/60 relative overflow-hidden border-t border-white/5">
         <div className="absolute inset-0 bg-[var(--color-primary)]/5 blur-[120px] rounded-full translate-y-1/2"></div>
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl lg:text-6xl font-extrabold mb-8 tracking-tighter leading-tight">
-            Convierte la normativa en una <br /> <span className="text-[var(--color-primary)]">nueva fuente de ingresos</span>
-          </h2>
-          <p className="text-xl text-white/50 mb-12 max-w-2xl mx-auto">
-            Únete a la red de partners de Inagrosolutions y lidera la digitalización del campo en tu zona.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link href="/signup" className="w-full sm:w-auto">
-              <GlowButton className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
-                Crear mi plataforma gratis
-              </GlowButton>
-            </Link>
-            <Link href="/signup" className="w-full sm:w-auto">
-              <GlowButton variant="secondary" className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
-                Solicitar demo técnica
-              </GlowButton>
-            </Link>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+            <div className="flex-1 text-center lg:text-left">
+              <h2 className="text-4xl lg:text-6xl font-extrabold mb-8 tracking-tighter leading-tight">
+                Convierte la normativa en una <br /> <span className="text-[var(--color-primary)]">nueva fuente de ingresos</span>
+              </h2>
+              <p className="text-xl text-white/50 mb-12 max-w-2xl mx-auto lg:mx-0">
+                Únete a la red de partners de Inagrosolutions y lidera la digitalización del campo en tu zona.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
+                <Link href="/signup" className="w-full sm:w-auto">
+                  <GlowButton className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
+                    Crear mi plataforma gratis
+                  </GlowButton>
+                </Link>
+                <Link href="/signup" className="w-full sm:w-auto">
+                  <GlowButton variant="secondary" className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
+                    Solicitar demo técnica
+                  </GlowButton>
+                </Link>
+              </div>
+            </div>
+            
+            <div className="flex-1 w-full relative max-w-2xl mx-auto mt-12 lg:mt-0">
+              <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-primary)]/20 to-transparent rounded-3xl blur-2xl"></div>
+              <Image 
+                src="/images/ingresos_normativa_v1.png" 
+                alt="Gestor de cooperativa agrícola usando tecnología" 
+                width={800} 
+                height={600}
+                className="relative z-10 w-full h-auto object-cover rounded-3xl border border-white/10 shadow-2xl hover:scale-[1.02] transition-transform duration-500"
+              />
+            </div>
           </div>
           
-          <LegalFooter />
+          <div className="mt-24">
+            <LegalFooter />
+          </div>
         </div>
       </footer>
 
