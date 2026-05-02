@@ -231,6 +231,31 @@ export async function deleteTenant(tenantId: string) {
   return { success: true };
 }
 
+export async function deleteAllTenants() {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return { success: false, error: auth.error };
+
+  const supabase = getAdminClient();
+
+  // Delete all tenants permanently
+  const { error: tenantError } = await supabase
+    .from('tenants')
+    .delete();
+
+  if (tenantError) return { success: false, error: tenantError.message };
+
+  // Delete all related audit logs for tenants
+  const { error: auditError } = await supabase
+    .from('audit_log')
+    .delete()
+    .eq('entity_type', 'tenant');
+
+  if (auditError) console.warn('Failed to clean tenant audit logs:', auditError.message);
+
+  return { success: true };
+}
+
+
 export async function getGlobalPlans() {
   const auth = await verifySuperadmin();
   if (!auth.isAuthorized) return [];
