@@ -18,14 +18,14 @@ export default function CuadernoLayout({ children }: { children: React.ReactNode
     <div className="min-h-screen bg-black text-white relative">
       <nav className="absolute top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/50 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <Link href="/cuaderno/planes" className="flex items-center gap-2">
+          <Link href="/cuaderno/planes-suscripcion" className="flex items-center gap-2">
             <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)]">
               <TrendingUp className="text-black w-6 h-6" />
             </div>
             <span className="text-2xl font-bold tracking-tight">Inagro<span className="text-emerald-500">Solutions</span></span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
-            <Link href="/cuaderno/planes" className="hover:text-emerald-500 transition-colors">Planes</Link>
+            <Link href="/cuaderno/planes-suscripcion" className="hover:text-emerald-500 transition-colors">Planes</Link>
             <a href="#faqs" className="hover:text-emerald-500 transition-colors">FAQs</a>
             <a href="#contacto" className="hover:text-emerald-500 transition-colors">Contacto</a>
           </div>
