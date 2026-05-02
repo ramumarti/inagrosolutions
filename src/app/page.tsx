@@ -92,7 +92,7 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link href="/signup" className="w-full sm:w-auto">
+            <Link href="/signup?role=partner" className="w-full sm:w-auto">
               <GlowButton className="text-xl px-12 py-8 h-auto shadow-[0_0_50px_rgba(0,255,102,0.3)] hover:scale-105 active:scale-95 transition-transform w-full sm:w-auto">
                 CREAR MI PLATAFORMA GRATIS
                 <ArrowRight className="ml-2 w-6 h-6" />
@@ -388,7 +388,7 @@ export default function HomePage() {
       {/* CTA Intermedio */}
       <section className="py-20 text-center">
         <h2 className="text-3xl font-bold mb-8">¿Listo para lanzar tu propia plataforma?</h2>
-        <Link href="/signup">
+        <Link href="/signup?role=partner">
           <GlowButton className="text-xl px-12 py-8 h-auto shadow-[0_0_40px_rgba(0,255,102,0.2)]">
             Empezar ahora (Gratis)
           </GlowButton>
@@ -436,12 +436,12 @@ export default function HomePage() {
                 Únete a la red de partners de Inagrosolutions y lidera la digitalización del campo en tu zona.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
-                <Link href="/signup" className="w-full sm:w-auto">
+                <Link href="/signup?role=partner" className="w-full sm:w-auto">
                   <GlowButton className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
                     Crear mi plataforma gratis
                   </GlowButton>
                 </Link>
-                <Link href="/signup" className="w-full sm:w-auto">
+                <Link href="/signup?role=partner" className="w-full sm:w-auto">
                   <GlowButton variant="secondary" className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
                     Solicitar demo técnica
                   </GlowButton>
