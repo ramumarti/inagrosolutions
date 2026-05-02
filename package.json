@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
+    "prebuild": "node -e \"const fs=require('fs'); fs.rmSync('src/app/(protected)/cuaderno/planes', {recursive:true, force:true});\"",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint"
