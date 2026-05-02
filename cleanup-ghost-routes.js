@@ -9,8 +9,8 @@ const fs = require('fs');
 const path = require('path');
 
 const ghostDirs = [
-  path.join(__dirname, 'src', 'app', '(protected)', 'cuaderno', 'planes'),
-  path.join(__dirname, 'src', 'app', 'cuaderno', 'planes'),
+  // Old cuaderno/planes directories that conflict with (protected)/cuaderno/
+  path.join(__dirname, 'src', 'app', 'cuaderno'),
 ];
 
 for (const dir of ghostDirs) {

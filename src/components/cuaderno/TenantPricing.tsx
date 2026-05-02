@@ -55,7 +55,7 @@ export function TenantPricing({ tenantSlug, primaryColor }: { tenantSlug: string
                 <span className="text-4xl font-black text-white">{price.toFixed(2).replace('.', ',')} €</span>
               </div>
               <p className="text-gray-500 font-medium mb-8">/{period} <span className="text-xs text-white/40">+ IVA</span></p>
-              <Link href={`/cuaderno/planes-suscripcion?tenant=${tenantSlug}`} className="w-full mt-auto">
+              <Link href={`/planes?tenant=${tenantSlug}`} className="w-full mt-auto">
                 <button className="w-full py-3 rounded-xl font-bold bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-white text-sm">
                   Ver Detalles
                 </button>
@@ -66,7 +66,7 @@ export function TenantPricing({ tenantSlug, primaryColor }: { tenantSlug: string
       </div>
       
       <div className="mt-12">
-        <Link href={`/cuaderno/planes-suscripcion?tenant=${tenantSlug}`}>
+        <Link href={`/planes?tenant=${tenantSlug}`}>
           <button 
             className="px-10 py-5 rounded-2xl font-black text-lg shadow-2xl hover:scale-105 transition-all"
             style={{ backgroundColor: primaryColor, color: '#000' }}

@@ -39,7 +39,7 @@ export async function updateSession(request: NextRequest) {
     '/cookie-policy',
     '/legal-notice',
     '/partner-policy',
-    '/cuaderno/planes-suscripcion'
+    '/planes'
   ]
   const isPublicRoute = publicPaths.includes(pathname) || 
                        pathname.startsWith('/api') || 
