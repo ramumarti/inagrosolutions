@@ -143,7 +143,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link href={`/planes?tenant=${tenant.slug}`} className="w-full sm:w-auto">
+            <Link href={`/planes?tenant=${tenant.slug}#planes`} className="w-full sm:w-auto">
               <button 
                 className="w-full sm:w-auto h-14 px-8 text-lg font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:scale-105"
                 style={{ backgroundColor: primaryColor, color: '#000' }}
@@ -427,7 +427,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             <GlassCard className="p-10 border-white/10 text-center space-y-6 bg-white/5">
               <h3 className="text-2xl font-bold text-white">Únete a {tenant.name}</h3>
               <p className="text-gray-400">Simplifica tu día a día en el campo con la garantía de tu cooperativa y la tecnología de InagroSolutions.</p>
-              <Link href={`/planes?tenant=${tenant.slug}`} className="block">
+              <Link href={`/planes?tenant=${tenant.slug}#planes`} className="block">
                 <button 
                   className="w-full py-4 rounded-xl font-bold text-black transition-transform hover:scale-105 shadow-xl"
                   style={{ backgroundColor: primaryColor }}
