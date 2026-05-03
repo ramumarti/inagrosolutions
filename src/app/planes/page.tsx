@@ -450,11 +450,11 @@ function PricingLandingPageContent() {
             Evita sanciones por mala documentación. Empieza a proteger tu explotación ahora mismo y gestiona todo de la forma más fácil del mundo.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link href={getSignupUrl('intermedio')}>
+            <a href="#planes" className="w-full sm:w-auto">
               <GlowButton className="w-full sm:w-auto h-16 px-10 text-lg rounded-xl">
                 Comenzar Hoy Mismo
               </GlowButton>
-            </Link>
+            </a>
             <button className="w-full sm:w-auto h-16 px-10 rounded-xl font-bold text-white bg-white/5 border border-white/20 hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
               <Headset className="w-6 h-6" />
               Hablar con un Agente
