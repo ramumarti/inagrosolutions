@@ -372,7 +372,7 @@ function PricingLandingPageContent() {
                     <img src={tenant.logo_url} alt={partnerName} className="h-10 object-contain" />
                   </div>
                 )}
-                <h3 className="text-2xl font-bold">Ofrecido por la red de Distribuidores <span className="text-emerald-400">{partnerName}</span></h3>
+                <h3 className="text-2xl font-bold">Ofrecido por tu entidad asesora de confianza <span className="text-emerald-400">{partnerName}</span></h3>
                 <p className="text-gray-300 text-sm leading-relaxed italic border-l-4 border-emerald-500 pl-4 py-2">
                   {partnerDesc}
                 </p>
@@ -388,7 +388,7 @@ function PricingLandingPageContent() {
                   <a href={`https://wa.me/${tenant.contact_phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer">
                     <button className="w-full md:w-auto bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(22,163,74,0.4)]">
                       <Smartphone className="w-5 h-5" />
-                      Contactar a mi cooperativa
+                      Contactar con mi Entidad Asesora
                     </button>
                   </a>
                 ) : (
