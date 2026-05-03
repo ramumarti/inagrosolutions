@@ -422,7 +422,6 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                   </div>
                 )}
               </div>
-              </div>
             </div>
             
             <GlassCard className="p-10 border-white/10 text-center space-y-6 bg-white/5">
