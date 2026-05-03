@@ -168,7 +168,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
               <div className="relative order-2 md:order-1">
                  <div className="absolute inset-0 rounded-full blur-[100px] opacity-10" style={{ backgroundColor: primaryColor }} />
                  <img 
-                   src="/images/hero_cooperativa_v2.png" 
+                   src="/images/olivar_cooperativa.png" 
                    alt="Nuestra Historia" 
                    className="relative z-10 w-full aspect-[4/3] object-cover rounded-[2rem] border border-white/10 grayscale hover:grayscale-0 transition-all duration-700 shadow-2xl" 
                  />
