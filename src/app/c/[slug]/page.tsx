@@ -117,8 +117,19 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             </div>
           
           <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 text-white leading-tight">
-            Digitalización total para <br className="hidden md:block" />
-            <span style={{ color: primaryColor, textShadow: `0 0 30px ${primaryColor}50` }}>{tenant.name}</span>
+            {tenant.hero_title ? (
+              <>
+                {tenant.hero_title.split(' ').slice(0, -2).join(' ')} <br className="hidden md:block" />
+                <span style={{ color: primaryColor, textShadow: `0 0 30px ${primaryColor}50` }}>
+                  {tenant.hero_title.split(' ').slice(-2).join(' ')}
+                </span>
+              </>
+            ) : (
+              <>
+                Digitalización total para <br className="hidden md:block" />
+                <span style={{ color: primaryColor, textShadow: `0 0 30px ${primaryColor}50` }}>{tenant.name}</span>
+              </>
+            )}
           </h1>
           
           <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed">
@@ -151,6 +162,50 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
           </div>
           </div>
         </section>
+
+        {/* 1.5. ABOUT US SECTION (Public Description) */}
+        {tenant.public_description && (
+          <section className="py-24 relative overflow-hidden">
+            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+              <div className="relative order-2 md:order-1">
+                 <div className="absolute inset-0 rounded-full blur-[100px] opacity-10" style={{ backgroundColor: primaryColor }} />
+                 <img 
+                   src="/images/hero_cooperativa_v2.png" 
+                   alt="Nuestra Historia" 
+                   className="relative z-10 w-full aspect-[4/3] object-cover rounded-[2rem] border border-white/10 grayscale hover:grayscale-0 transition-all duration-700 shadow-2xl" 
+                 />
+                 <div className="absolute -top-6 -right-6 w-32 h-32 rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl flex items-center justify-center z-20">
+                    <div className="text-center">
+                      <p className="text-3xl font-black" style={{ color: primaryColor }}>30+</p>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Años de Exp.</p>
+                    </div>
+                 </div>
+              </div>
+              
+              <div className="space-y-8 order-1 md:order-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border border-white/10 bg-white/5 text-gray-300">
+                  <Users size={14} style={{ color: primaryColor }} /> Sobre Nosotros
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
+                  Nuestra <span style={{ color: primaryColor }}>Cooperativa</span>
+                </h2>
+                <p className="text-lg text-gray-400 leading-relaxed whitespace-pre-wrap">
+                  {tenant.public_description}
+                </p>
+                <div className="pt-4 flex gap-4">
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <p className="text-white font-bold">Confianza</p>
+                    <p className="text-xs text-gray-500 mt-1">Servicio cercano y personalizado.</p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <p className="text-white font-bold">Innovación</p>
+                    <p className="text-xs text-gray-500 mt-1">Lo último en tecnología agrícola.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* 2. VALUE PROP CARDS */}
         <section id="ventajas" className="py-20 relative border-y border-white/5 bg-white/[0.02]">
@@ -342,6 +397,33 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                     <p className="text-white font-medium">{tenant.contact_email || 'Contacto vía web'}</p>
                   </div>
                 </div>
+
+                {/* Social Links */}
+                {tenant.social_links && Object.values(tenant.social_links as any).some(v => !!v) && (
+                  <div className="pt-4 flex gap-4">
+                    {(tenant.social_links as any).facebook && (
+                      <a href={(tenant.social_links as any).facebook} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+                        <Facebook size={18} />
+                      </a>
+                    )}
+                    {(tenant.social_links as any).twitter && (
+                      <a href={(tenant.social_links as any).twitter} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+                        <Twitter size={18} />
+                      </a>
+                    )}
+                    {(tenant.social_links as any).instagram && (
+                      <a href={(tenant.social_links as any).instagram} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+                        <Instagram size={18} />
+                      </a>
+                    )}
+                    {(tenant.social_links as any).linkedin && (
+                      <a href={(tenant.social_links as any).linkedin} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+                        <Linkedin size={18} />
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
               </div>
             </div>
             

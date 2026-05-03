@@ -49,17 +49,27 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     if (!user || loading) return;
 
     // Hard redirect out of onboarding for admins
-    const isAdmin = profile?.platform_role === 'tenant_admin' || profile?.platform_role === 'superadmin';
+    const isSuperadmin = profile?.platform_role === 'superadmin';
+    const isTenantAdmin = profile?.platform_role === 'tenant_admin';
     
-    if (isAdmin) {
+    if (isSuperadmin) {
+      // Superadmins can go anywhere, especially /superadmin
+      if (pathname === '/onboarding' || pathname === '/onboarding-partner') {
+        router.push('/superadmin');
+        return;
+      }
+    } else if (isTenantAdmin) {
+      // Tenant admins must have a tenant or be in the onboarding-partner flow
       if (!profile?.tenant_id && pathname !== '/onboarding-partner') {
         router.push('/onboarding-partner');
         return;
       } else if (profile?.tenant_id && (pathname === '/onboarding' || pathname === '/onboarding-partner')) {
-        window.location.href = '/dashboard';
+        router.push('/dashboard');
         return;
       }
     }
+
+    const isAdmin = isSuperadmin || isTenantAdmin;
 
     // Redirect farmers TO onboarding if they have no farms
     if (!isAdmin && pathname !== '/onboarding') {
