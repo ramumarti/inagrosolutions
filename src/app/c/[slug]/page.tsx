@@ -13,7 +13,7 @@ import {
 import { TIER_CONFIG } from '@/lib/modules';
 import { TenantPricing } from '@/components/cuaderno/TenantPricing';
 
-export const revalidate = 60; // Revalidate every minute
+export const revalidate = 0; // Disable cache to show branding changes immediately
 
 export default async function TenantPublicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
