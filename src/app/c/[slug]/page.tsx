@@ -118,18 +118,16 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
           
           <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 text-white leading-tight">
             {tenant.hero_title ? (
-              <>
-                {tenant.hero_title.split(' ').slice(0, -2).join(' ')} <br className="hidden md:block" />
-                <span style={{ color: primaryColor, textShadow: `0 0 30px ${primaryColor}50` }}>
-                  {tenant.hero_title.split(' ').slice(-2).join(' ')}
-                </span>
-              </>
+              <span style={{ color: primaryColor, textShadow: `0 0 30px ${primaryColor}50` }}>
+                {tenant.hero_title}
+              </span>
             ) : (
               <>
                 Digitalización total para <br className="hidden md:block" />
                 <span style={{ color: primaryColor, textShadow: `0 0 30px ${primaryColor}50` }}>{tenant.name}</span>
               </>
             )}
+            <span className="block text-[10px] opacity-20 uppercase mt-4">V3-BRANDING-FIX</span>
           </h1>
           
           <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed">
@@ -165,7 +163,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
 
         {/* 1.5. ABOUT US SECTION (Public Description) */}
         {tenant.public_description && (
-          <section className="py-24 relative overflow-hidden">
+          <section className="py-24 relative overflow-hidden border-y border-[var(--color-primary)]/20 bg-[var(--color-primary)]/5">
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
               <div className="relative order-2 md:order-1">
                  <div className="absolute inset-0 rounded-full blur-[100px] opacity-10" style={{ backgroundColor: primaryColor }} />
