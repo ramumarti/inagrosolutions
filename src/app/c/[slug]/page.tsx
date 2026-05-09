@@ -440,10 +440,15 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
         </section>
       </main>
 
-      <footer className="py-8 px-6 border-t border-white/5 text-center bg-black">
+      <footer className="py-8 px-6 border-t border-white/5 text-center bg-black space-y-3">
         <p className="text-sm text-gray-600">
           © {new Date().getFullYear()} {tenant.name}. Todos los derechos reservados. Portal impulsado por <span className="text-gray-400">InagroSolutions</span>.
         </p>
+        <div className="flex items-center justify-center gap-4 text-[11px] text-gray-600">
+          <Link href={`/privacy-policy?tenant=${tenant.slug}`} className="hover:text-white transition-colors">Política de Privacidad</Link>
+          <Link href={`/cookie-policy?tenant=${tenant.slug}`} className="hover:text-white transition-colors">Política de Cookies</Link>
+          <Link href={`/legal-notice?tenant=${tenant.slug}`} className="hover:text-white transition-colors">Aviso Legal</Link>
+        </div>
       </footer>
     </div>
   );

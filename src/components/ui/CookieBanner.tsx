@@ -5,14 +5,20 @@ import Link from 'next/link';
 import { Cookie, X } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import { GlowButton } from './GlowButton';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 function CookieBannerContent() {
   const { t, language } = useI18n();
   const [isVisible, setIsVisible] = useState(false);
   const searchParams = useSearchParams();
-  const tenantSlug = searchParams.get('tenant');
+  const pathname = usePathname();
+  
+  // Detect tenant from ?tenant= param OR from /c/[slug] path
+  const tenantFromParam = searchParams.get('tenant');
+  const tenantFromPath = pathname.startsWith('/c/') ? pathname.split('/c/')[1]?.split('/')[0] : null;
+  const tenantSlug = tenantFromParam || tenantFromPath || null;
+  
   const [tenantName, setTenantName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -95,3 +101,4 @@ export function CookieBanner() {
     </Suspense>
   );
 }
+
