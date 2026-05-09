@@ -42,7 +42,7 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
   const [annualBilling, setAnnualBilling] = useState(false);
 
   const primaryColor = tenant?.primary_color || '#10B981';
-  const partnerName = tenant?.name || "InagroSolutions";
+  const partnerName = tenant?.name || "Plataforma Oficial";
   const logoUrl = tenant?.logo_url;
   const partnerDesc = tenant?.public_description || "\"Contamos con Partners en toda España que conocen el campo en primera persona. Ellos pueden brindarte este sistema bajo su propia marca, con la garantía y cercanía que tú te mereces.\"";
 

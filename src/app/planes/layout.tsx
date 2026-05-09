@@ -4,10 +4,10 @@ import { GlowButton } from '@/components/ui/GlowButton';
 import { LegalFooter } from '@/components/ui/LegalFooter';
 
 export const metadata = {
-  title: 'Planes Cuaderno Digital Agrícola | InagroSolutions',
+  title: 'Planes Cuaderno Digital Agrícola | Plataforma Oficial',
   description: 'Elige el plan de Cuaderno de Campo Digital para tu explotación. Cumple SIEX, gestiona parcelas y fitosanitarios cómodamente.',
   openGraph: {
-    title: 'Cuaderno Digital para Agricultores | InagroSolutions',
+    title: 'Cuaderno Digital para Agricultores | Plataforma Oficial',
     description: 'Gestiona tu explotación desde el móvil o el ordenador.',
     images: ['/icon.png'],
   },

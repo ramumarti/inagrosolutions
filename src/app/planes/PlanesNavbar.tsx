@@ -4,7 +4,7 @@ import { TrendingUp } from 'lucide-react';
 export function PlanesNavbar({ serverTenant, tenantSlug }: { serverTenant?: any, tenantSlug?: string }) {
   const primaryColor = serverTenant?.primary_color || '#10B981';
   const logoUrl = serverTenant?.logo_url;
-  const partnerName = serverTenant?.name || "InagroSolutions";
+  const partnerName = serverTenant?.name || "Plataforma Oficial";
 
   return (
     <nav className="absolute top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/50 backdrop-blur-md">
