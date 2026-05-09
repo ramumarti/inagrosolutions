@@ -387,9 +387,9 @@ function SignupPageContent() {
             : `© 2026 ${tenant?.name || 'INAGROSOLUTIONS'}. Todos los derechos reservados.`}
         </p>
         <div className="flex items-center justify-center gap-4 text-[9px] text-gray-600">
-          <Link href="/privacy-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.privacyPolicy')}</Link>
-          <Link href="/cookie-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.cookiePolicy')}</Link>
-          <Link href="/legal-notice" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.legalNotice')}</Link>
+          <Link href={`/privacy-policy${tenantSlug ? `?tenant=${tenantSlug}` : ''}`} className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.privacyPolicy')}</Link>
+          <Link href={`/cookie-policy${tenantSlug ? `?tenant=${tenantSlug}` : ''}`} className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.cookiePolicy')}</Link>
+          <Link href={`/legal-notice${tenantSlug ? `?tenant=${tenantSlug}` : ''}`} className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.legalNotice')}</Link>
           {!tenantSlug && <Link href="/partner-policy" className="hover:text-[var(--color-primary)] transition-colors font-bold uppercase tracking-tighter">Política de Partners</Link>}
         </div>
       </footer>

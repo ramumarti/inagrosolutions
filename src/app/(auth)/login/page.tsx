@@ -113,14 +113,14 @@ function LoginContent() {
       <footer className="w-full text-center py-6 mt-12 border-t border-white/5 flex flex-col gap-2 max-w-2xl mx-auto">
         <p className="text-[10px] text-gray-500">
           {t('language') === 'en'
-            ? '© 2026 INAGROSOLUTIONS. All rights reserved.'
-            : '© 2026 INAGROSOLUTIONS. Todos los derechos reservados.'}
+            ? `© 2026 ${searchParams.get('tenant') ? 'Entidad' : 'INAGROSOLUTIONS'}. All rights reserved.`
+            : `© 2026 ${searchParams.get('tenant') ? 'Entidad' : 'INAGROSOLUTIONS'}. Todos los derechos reservados.`}
         </p>
         <div className="flex items-center justify-center gap-4 text-[9px] text-gray-600">
-          <Link href="/privacy-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.privacyPolicy')}</Link>
-          <Link href="/cookie-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.cookiePolicy')}</Link>
-          <Link href="/legal-notice" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.legalNotice')}</Link>
-          <Link href="/partner-policy" className="hover:text-[var(--color-primary)] transition-colors font-bold uppercase tracking-tighter">Política de Partners</Link>
+          <Link href={`/privacy-policy${searchParams.get('tenant') ? `?tenant=${searchParams.get('tenant')}` : ''}`} className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.privacyPolicy')}</Link>
+          <Link href={`/cookie-policy${searchParams.get('tenant') ? `?tenant=${searchParams.get('tenant')}` : ''}`} className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.cookiePolicy')}</Link>
+          <Link href={`/legal-notice${searchParams.get('tenant') ? `?tenant=${searchParams.get('tenant')}` : ''}`} className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.legalNotice')}</Link>
+          {!searchParams.get('tenant') && <Link href="/partner-policy" className="hover:text-[var(--color-primary)] transition-colors font-bold uppercase tracking-tighter">Política de Partners</Link>}
         </div>
       </footer>
     </div>

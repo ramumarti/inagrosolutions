@@ -1,14 +1,32 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { Cookie, X } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import { GlowButton } from './GlowButton';
+import { useSearchParams } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
-export function CookieBanner() {
-  const { t } = useI18n();
+function CookieBannerContent() {
+  const { t, language } = useI18n();
   const [isVisible, setIsVisible] = useState(false);
+  const searchParams = useSearchParams();
+  const tenantSlug = searchParams.get('tenant');
+  const [tenantName, setTenantName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (tenantSlug) {
+      const fetchTenant = async () => {
+        const supabase = createClient();
+        const { data } = await supabase.from('tenants').select('name').eq('slug', tenantSlug).single();
+        if (data) {
+          setTenantName(data.name);
+        }
+      };
+      fetchTenant();
+    }
+  }, [tenantSlug]);
 
   useEffect(() => {
     const consent = localStorage.getItem('cookie_consent');
@@ -40,7 +58,9 @@ export function CookieBanner() {
               {t('cookies.title')}
             </h3>
             <p className="text-sm text-white/60 leading-relaxed">
-              {t('cookies.description')}
+              {tenantName 
+                ? (language === 'en' ? `We use cookies from ${tenantName} to improve your experience.` : `Utilizamos cookies de ${tenantName} para mejorar tu experiencia. Al continuar navegando, aceptas nuestro uso de cookies.`)
+                : t('cookies.description')}
             </p>
           </div>
         </div>
@@ -49,7 +69,7 @@ export function CookieBanner() {
           <GlowButton onClick={handleAccept} className="w-full text-sm py-2">
             {t('cookies.accept')}
           </GlowButton>
-          <Link href="/cookie-policy" className="w-full sm:w-auto">
+          <Link href={`/cookie-policy${tenantSlug ? `?tenant=${tenantSlug}` : ''}`} className="w-full sm:w-auto">
             <button className="w-full h-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-white/70 hover:bg-white/10 transition-colors">
               {t('cookies.settings')}
             </button>
@@ -65,5 +85,13 @@ export function CookieBanner() {
         </button>
       </div>
     </div>
+  );
+}
+
+export function CookieBanner() {
+  return (
+    <Suspense fallback={null}>
+      <CookieBannerContent />
+    </Suspense>
   );
 }

@@ -1,13 +1,31 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { Shield, ChevronLeft } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { useI18n } from '@/lib/i18n';
+import { useSearchParams } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
-export default function PrivacyPolicyPage() {
+function PrivacyPolicyContent() {
   const { t, language } = useI18n();
+  const searchParams = useSearchParams();
+  const tenantSlug = searchParams.get('tenant');
+  const [tenantName, setTenantName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (tenantSlug) {
+      const fetchTenant = async () => {
+        const supabase = createClient();
+        const { data } = await supabase.from('tenants').select('name').eq('slug', tenantSlug).single();
+        if (data) setTenantName(data.name);
+      };
+      fetchTenant();
+    }
+  }, [tenantSlug]);
+
+  const entityName = tenantName || 'InagroSolutions';
   
   return (
     <main className="min-h-screen w-full bg-[var(--color-base-100)] py-20 px-4 flex justify-center">
@@ -25,7 +43,7 @@ export default function PrivacyPolicyPage() {
               <Shield className="w-8 h-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">{t('gdpr.privacyPolicy')}</h1>
+              <h1 className="text-3xl font-bold text-white">{t('gdpr.privacyPolicy')} {tenantName ? `de ${tenantName}` : ''}</h1>
               <p className="text-white/40 text-sm">{t('legal.lastUpdated')}: Marzo 2026</p>
             </div>
           </div>
@@ -35,7 +53,7 @@ export default function PrivacyPolicyPage() {
               <>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Responsable del Tratamiento</h2>
-                  <p>InagroSolutions (operando bajo inagrosolutions.com), con domicilio en España, es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protección de sus datos o privacidad en nuestra plataforma SaaS, puede contactarnos en legal@inagrosolutions.com.</p>
+                  <p>{entityName} {tenantName ? '' : '(operando bajo inagrosolutions.com), con domicilio en España,'} es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protección de sus datos o privacidad en nuestra plataforma SaaS, puede contactarnos en {tenantName ? 'los canales oficiales de la entidad' : 'legal@inagrosolutions.com'}.</p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">2. Datos que Recopilamos</h2>
@@ -62,14 +80,14 @@ export default function PrivacyPolicyPage() {
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">5. Tus Derechos</h2>
-                  <p>Tienes en todo momento derecho a acceder, rectificar, solicitar la portabilidad o supresión de tus datos. Al tratarse de una plataforma SaaS Multi-Entidad, los agricultores vinculados a un Partner podrán canalizar sus solicitudes directamente a su Entidad o contactar con soporte@inagrosolutions.com.</p>
+                  <p>Tienes en todo momento derecho a acceder, rectificar, solicitar la portabilidad o supresión de tus datos. Al tratarse de una plataforma SaaS Multi-Entidad, los agricultores vinculados a un Partner podrán canalizar sus solicitudes directamente a su Entidad o contactar con {tenantName ? 'soporte técnico' : 'soporte@inagrosolutions.com'}.</p>
                 </section>
               </>
             ) : (
               <>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Data Controller</h2>
-                  <p>InagroSolutions (operating at inagrosolutions.com), based in Spain, is the controller of your personal data. For any questions regarding your data protection or privacy on our SaaS platform, you can contact us at legal@inagrosolutions.com.</p>
+                  <p>{entityName} {tenantName ? '' : '(operating at inagrosolutions.com), based in Spain,'} is the controller of your personal data. For any questions regarding your data protection or privacy on our SaaS platform, you can contact us at {tenantName ? 'the official channels of the entity' : 'legal@inagrosolutions.com'}.</p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">2. Data We Collect</h2>
@@ -96,7 +114,7 @@ export default function PrivacyPolicyPage() {
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">5. Your Rights</h2>
-                  <p>You have the right to access, rectify, request portability, or delete your data at any time. Due to our Multi-Tenant SaaS structure, farmers linked to a Partner may route their requests directly to their managing Entity or contact support@inagrosolutions.com.</p>
+                  <p>You have the right to access, rectify, request portability, or delete your data at any time. Due to our Multi-Tenant SaaS structure, farmers linked to a Partner may route their requests directly to their managing Entity or contact {tenantName ? 'technical support' : 'support@inagrosolutions.com'}.</p>
                 </section>
               </>
             )}
@@ -104,5 +122,13 @@ export default function PrivacyPolicyPage() {
         </GlassCard>
       </div>
     </main>
+  );
+}
+
+export default function PrivacyPolicyPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-white">Cargando...</div>}>
+      <PrivacyPolicyContent />
+    </Suspense>
   );
 }
