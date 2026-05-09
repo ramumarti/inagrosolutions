@@ -76,7 +76,7 @@ function ConfirmContent() {
           </div>
 
           <p className="text-[10px] text-white/20 uppercase font-black tracking-widest pt-4">
-            InagroSolutions Secure Auth Gateway
+            Secure Auth Gateway
           </p>
         </div>
       </GlassCard>

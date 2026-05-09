@@ -158,8 +158,8 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             <footer className="w-full text-center py-8 mt-auto border-t border-white/5 flex flex-col gap-2">
               <p className="text-xs text-gray-500">
                 {language === 'en'
-                  ? '© 2026 INAGROSOLUTIONS. All rights reserved.'
-                  : '© 2026 INAGROSOLUTIONS. Todos los derechos reservados.'}
+                  ? `© ${new Date().getFullYear()} ${tenant?.name || 'Plataforma Agrícola'}. All rights reserved.`
+                  : `© ${new Date().getFullYear()} ${tenant?.name || 'Plataforma Agrícola'}. Todos los derechos reservados.`}
               </p>
               <div className="flex items-center justify-center gap-4 text-[10px] text-gray-600">
                 <Link href="/privacy-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.privacyPolicy')}</Link>
