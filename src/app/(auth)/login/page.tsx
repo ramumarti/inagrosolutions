@@ -60,53 +60,70 @@ function LoginContent() {
   };
 
   return (
-    <GlassCard className="flex flex-col items-center w-full max-w-md mx-auto p-8 sm:p-10">
-      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center mb-6 shadow-lg shadow-[var(--color-primary)]/30">
-        <Building2 className="w-8 h-8 text-white" />
-      </div>
-      
-      <h1 className="text-2xl font-black mb-2 glow-text text-center uppercase tracking-tighter">
-        Acceso a la Plataforma
-      </h1>
-      <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-xs font-bold uppercase tracking-widest">
-        Gestión de Entidades y Cuadernos
-      </p>
-
-      <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
-        <Input 
-          type="email" 
-          placeholder={t('login.email')} 
-          icon={<Mail className="w-5 h-5" />}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Input 
-          type="password" 
-          placeholder={t('login.password')} 
-          icon={<Lock className="w-5 h-5" />}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        
-        <GlowButton type="submit" isLoading={loading} className="w-full mt-4 text-lg py-6 font-black uppercase tracking-widest">
-          {t('login.submit')}
-        </GlowButton>
-      </form>
-
-      <div className="mt-8 flex flex-col items-center gap-3 text-xs">
-        <Link href="/forgot-password" className="text-white/50 hover:text-white transition-colors uppercase font-bold tracking-tight">
-          {t('login.forgot')}
-        </Link>
-        <div className="flex flex-col items-center gap-1 mt-2">
-          <span className="text-white/30 uppercase font-black">¿Aún no eres partner?</span>
-          <Link href="/signup" className="text-[var(--color-primary)] font-bold hover:underline uppercase">
-            REGISTRAR ENTIDAD GRATIS
-          </Link>
+    <div className="flex flex-col items-center w-full relative z-10 pt-12">
+      <GlassCard className="flex flex-col items-center w-full max-w-md mx-auto p-8 sm:p-10">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center mb-6 shadow-lg shadow-[var(--color-primary)]/30">
+          <Building2 className="w-8 h-8 text-white" />
         </div>
-      </div>
-    </GlassCard>
+        
+        <h1 className="text-2xl font-black mb-2 glow-text text-center uppercase tracking-tighter">
+          Acceso a la Plataforma
+        </h1>
+        <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-xs font-bold uppercase tracking-widest">
+          Gestión de Entidades y Cuadernos
+        </p>
+
+        <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
+          <Input 
+            type="email" 
+            placeholder={t('login.email')} 
+            icon={<Mail className="w-5 h-5" />}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input 
+            type="password" 
+            placeholder={t('login.password')} 
+            icon={<Lock className="w-5 h-5" />}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          
+          <GlowButton type="submit" isLoading={loading} className="w-full mt-4 text-lg py-6 font-black uppercase tracking-widest">
+            {t('login.submit')}
+          </GlowButton>
+        </form>
+
+        <div className="mt-8 flex flex-col items-center gap-3 text-xs">
+          <Link href="/forgot-password" className="text-white/50 hover:text-white transition-colors uppercase font-bold tracking-tight">
+            {t('login.forgot')}
+          </Link>
+          <div className="flex flex-col items-center gap-1 mt-2">
+            <span className="text-white/30 uppercase font-black">¿Aún no eres partner?</span>
+            <Link href="/signup" className="text-[var(--color-primary)] font-bold hover:underline uppercase">
+              REGISTRAR ENTIDAD GRATIS
+            </Link>
+          </div>
+        </div>
+      </GlassCard>
+      
+      {/* Footer */}
+      <footer className="w-full text-center py-6 mt-12 border-t border-white/5 flex flex-col gap-2 max-w-2xl mx-auto">
+        <p className="text-[10px] text-gray-500">
+          {t('language') === 'en'
+            ? '© 2026 INAGROSOLUTIONS. All rights reserved.'
+            : '© 2026 INAGROSOLUTIONS. Todos los derechos reservados.'}
+        </p>
+        <div className="flex items-center justify-center gap-4 text-[9px] text-gray-600">
+          <Link href="/privacy-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.privacyPolicy')}</Link>
+          <Link href="/cookie-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.cookiePolicy')}</Link>
+          <Link href="/legal-notice" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.legalNotice')}</Link>
+          <Link href="/partner-policy" className="hover:text-[var(--color-primary)] transition-colors font-bold uppercase tracking-tighter">Política de Partners</Link>
+        </div>
+      </footer>
+    </div>
   );
 }
 

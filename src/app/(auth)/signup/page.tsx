@@ -335,7 +335,7 @@ function SignupPageContent() {
                 required
               />
               <label htmlFor="privacy" className="text-[10px] text-white/50 cursor-pointer hover:text-white/70 transition-colors uppercase font-bold tracking-tight">
-                Acepto la <Link href="/privacy-policy" className={`hover:underline ${!isFarmer && 'text-indigo-400'}`} style={isFarmer ? { color: primaryColor } : {}} target="_blank">Política de Privacidad</Link>
+                Acepto la <Link href="/privacy-policy" className={`hover:underline ${!isFarmer && 'text-indigo-400'}`} style={isFarmer ? { color: primaryColor } : {}} target="_blank">Política de Privacidad {(isFarmer && tenant?.name) ? `de ${tenant.name}` : ''}</Link>
               </label>
             </div>
 
@@ -351,7 +351,7 @@ function SignupPageContent() {
               />
               <label htmlFor="legislation" className="text-[10px] text-white/50 cursor-pointer hover:text-white/70 transition-colors uppercase font-bold tracking-tight">
                 {isFarmer ? (
-                  <>Acepto las condiciones del <span className="text-white">Cuaderno SIEX</span> y la exención de responsabilidad.</>
+                  <>Acepto las condiciones del <span className="text-white">Cuaderno SIEX</span> y la exención de responsabilidad {(isFarmer && tenant?.name) ? `de ${tenant.name}` : ''}.</>
                 ) : (
                   <>Acepto la normativa <span className="text-white">RD 1054/2022</span> y <Link href="/partner-policy" className="text-indigo-400 hover:underline">legislaciones específicas</Link>.</>
                 )}
@@ -378,6 +378,21 @@ function SignupPageContent() {
           </Link>
         </div>
       </GlassCard>
+
+      {/* Dynamic Footer */}
+      <footer className="w-full text-center py-6 mt-12 border-t border-white/5 flex flex-col gap-2 max-w-2xl mx-auto">
+        <p className="text-[10px] text-gray-500">
+          {language === 'en'
+            ? `© 2026 ${tenant?.name || 'INAGROSOLUTIONS'}. All rights reserved.`
+            : `© 2026 ${tenant?.name || 'INAGROSOLUTIONS'}. Todos los derechos reservados.`}
+        </p>
+        <div className="flex items-center justify-center gap-4 text-[9px] text-gray-600">
+          <Link href="/privacy-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.privacyPolicy')}</Link>
+          <Link href="/cookie-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.cookiePolicy')}</Link>
+          <Link href="/legal-notice" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.legalNotice')}</Link>
+          {!tenantSlug && <Link href="/partner-policy" className="hover:text-[var(--color-primary)] transition-colors font-bold uppercase tracking-tighter">Política de Partners</Link>}
+        </div>
+      </footer>
     </div>
   );
 }

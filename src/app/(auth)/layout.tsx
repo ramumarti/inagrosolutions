@@ -22,25 +22,10 @@ export default function AuthLayout({
         <LanguageSwitcher />
       </div>
 
-      <div className="relative z-10 w-full px-4 flex flex-col items-center fade-in-section">
+      <div className="relative z-10 w-full px-4 flex flex-col items-center fade-in-section pb-12">
         <div className="w-full flex justify-center mb-8">
           {children}
         </div>
-        
-        {/* Footer */}
-        <footer className="w-full text-center py-6 mt-4 border-t border-white/5 flex flex-col gap-2">
-          <p className="text-[10px] text-gray-500">
-            {language === 'en'
-              ? '© 2026 INAGROSOLUTIONS. All rights reserved.'
-              : '© 2026 INAGROSOLUTIONS. Todos los derechos reservados.'}
-          </p>
-          <div className="flex items-center justify-center gap-4 text-[9px] text-gray-600">
-            <Link href="/privacy-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.privacyPolicy')}</Link>
-            <Link href="/cookie-policy" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.cookiePolicy')}</Link>
-            <Link href="/legal-notice" className="hover:text-[var(--color-primary)] transition-colors">{t('gdpr.legalNotice')}</Link>
-            <Link href="/partner-policy" className="hover:text-[var(--color-primary)] transition-colors font-bold uppercase tracking-tighter">Política de Partners</Link>
-          </div>
-        </footer>
       </div>
     </main>
   );
