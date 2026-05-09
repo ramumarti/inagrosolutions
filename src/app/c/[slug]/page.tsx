@@ -113,7 +113,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
               }}
             >
               <Leaf className="w-4 h-4" />
-              <span>Entidad Colaboradora InagroSolutions</span>
+              <span>Plataforma Agrícola Oficial</span>
             </div>
           
           <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 text-white leading-tight">
@@ -127,7 +127,6 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                 <span style={{ color: primaryColor, textShadow: `0 0 30px ${primaryColor}50` }}>{tenant.name}</span>
               </>
             )}
-            <span className="block text-[10px] opacity-20 uppercase mt-4">V3-BRANDING-FIX</span>
           </h1>
           
           <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed">
@@ -220,7 +219,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                 { icon: FileCheck, title: "Garantía de cumplimiento", desc: "Te avisamos de alertas de dosis y generamos los Excel legales que te pedirá la administración." },
                 { icon: Headset, title: "Soporte de confianza", desc: "Si tienes dudas, nos llamas. Tu entidad de siempre respaldándote con la nueva tecnología." },
                 { icon: Tractor, title: "Control de costes", desc: "Lleva el control de lo que gastas en cada finca de manera automática al registrar tus insumos." },
-                { icon: Users, title: "Precio preferente", desc: "Al ser socio te beneficias de un modelo colaborativo con InagroSolutions a precio de volumen." }
+                { icon: Users, title: "Precio preferente", desc: "Al ser socio te beneficias de un modelo colaborativo a precio de volumen." }
               ].map((benefit, i) => (
                 <GlassCard key={i} className="p-8 border-white/5 hover:border-white/20 transition-all text-left group">
                   <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110" style={{ backgroundColor: `${primaryColor}20`, color: primaryColor }}>
@@ -258,7 +257,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
              
              <div className="flex-1 space-y-8">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border border-white/10 bg-white/5 text-gray-300">
-                  <Star size={14} style={{ color: primaryColor }} /> Tecnología InagroSolutions
+                  <Star size={14} style={{ color: primaryColor }} /> Tecnología de Vanguardia
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
                   Más que una app,<br/>es tu tranquilidad
@@ -426,7 +425,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             
             <GlassCard className="p-10 border-white/10 text-center space-y-6 bg-white/5">
               <h3 className="text-2xl font-bold text-white">Únete a {tenant.name}</h3>
-              <p className="text-gray-400">Simplifica tu día a día en el campo con la garantía de tu cooperativa y la tecnología de InagroSolutions.</p>
+              <p className="text-gray-400">Simplifica tu día a día en el campo con la garantía de tu cooperativa y la tecnología más avanzada.</p>
               <Link href={`/planes?tenant=${tenant.slug}#planes`} className="block">
                 <button 
                   className="w-full py-4 rounded-xl font-bold text-black transition-transform hover:scale-105 shadow-xl"
@@ -442,7 +441,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
 
       <footer className="py-8 px-6 border-t border-white/5 text-center bg-black space-y-3">
         <p className="text-sm text-gray-600">
-          © {new Date().getFullYear()} {tenant.name}. Todos los derechos reservados. Portal impulsado por <span className="text-gray-400">InagroSolutions</span>.
+          © {new Date().getFullYear()} {tenant.name}. Todos los derechos reservados.
         </p>
         <div className="flex items-center justify-center gap-4 text-[11px] text-gray-600">
           <Link href={`/privacy-policy?tenant=${tenant.slug}`} className="hover:text-white transition-colors">Política de Privacidad</Link>
