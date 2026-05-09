@@ -70,7 +70,7 @@ function LoginContent() {
           Acceso a la Plataforma
         </h1>
         <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-xs font-bold uppercase tracking-widest">
-          Gestión de Entidades y Cuadernos
+          Gestión de Entidades
         </p>
 
         <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
