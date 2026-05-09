@@ -131,7 +131,8 @@ export default function MembersPage() {
         body: JSON.stringify({ 
           email: inviteEmail, 
           tenantName: tenant.name,
-          logoUrl: tenant.logo_url
+          logoUrl: tenant.logo_url,
+          tenantSlug: tenant.slug
         })
       });
 

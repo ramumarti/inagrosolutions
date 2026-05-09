@@ -5,7 +5,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export async function POST(req: Request) {
   try {
-    const { email, tenantName, logoUrl } = await req.json();
+    const { email, tenantName, logoUrl, tenantSlug } = await req.json();
 
     if (!email || !tenantName) {
       return NextResponse.json({ error: 'Faltan datos obligatorios' }, { status: 400 });
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       },
     });
 
-    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/signup?email=${encodeURIComponent(email)}&invite=true`;
+    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/signup?email=${encodeURIComponent(email)}&invite=true&role=farmer&tenant=${tenantSlug || ''}`;
 
     // 3. Diseño del Email White Label
     const htmlContent = `
