@@ -1,30 +1,10 @@
-"use client";
-
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { TrendingUp } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
-import { GlowButton } from '@/components/ui/GlowButton';
 
-export function PlanesNavbar() {
-  const searchParams = useSearchParams();
-  const tenantSlug = searchParams?.get('tenant');
-  const [tenant, setTenant] = useState<any>(null);
-
-  useEffect(() => {
-    if (tenantSlug) {
-      import('@/lib/supabase/client').then(({ createClient }) => {
-        const supabase = createClient();
-        supabase.from('tenants').select('*').eq('slug', tenantSlug).single().then(({ data }) => {
-          if (data) setTenant(data);
-        });
-      });
-    }
-  }, [tenantSlug]);
-
-  const primaryColor = tenant?.primary_color || '#10B981';
-  const logoUrl = tenant?.logo_url;
-  const partnerName = tenant?.name || "InagroSolutions";
+export function PlanesNavbar({ serverTenant, tenantSlug }: { serverTenant?: any, tenantSlug?: string }) {
+  const primaryColor = serverTenant?.primary_color || '#10B981';
+  const logoUrl = serverTenant?.logo_url;
+  const partnerName = serverTenant?.name || "InagroSolutions";
 
   return (
     <nav className="absolute top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/50 backdrop-blur-md">

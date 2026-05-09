@@ -2,8 +2,6 @@ import Link from 'next/link';
 import { TrendingUp } from 'lucide-react';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { LegalFooter } from '@/components/ui/LegalFooter';
-import { PlanesNavbar } from './PlanesNavbar';
-import { Suspense } from 'react';
 
 export const metadata = {
   title: 'Planes Cuaderno Digital Agrícola | InagroSolutions',
@@ -18,10 +16,6 @@ export const metadata = {
 export default function PlanesLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-black text-white relative">
-      <Suspense fallback={<nav className="absolute top-0 left-0 right-0 z-50 h-20 border-b border-white/5 bg-black/50 backdrop-blur-md" />}>
-        <PlanesNavbar />
-      </Suspense>
-
       <main>
         {children}
       </main>
