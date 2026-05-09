@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { createClient } from '@/lib/supabase/server';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export async function POST(req: Request) {
   try {
@@ -11,9 +12,14 @@ export async function POST(req: Request) {
     }
 
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
     
-    // 1. Obtener la configuración SMTP (la que configuramos de Gmail)
-    const { data: smtp } = await supabase
+    if (!user) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+    
+    // 1. Obtener la configuración SMTP usando supabaseAdmin para saltar RLS
+    const { data: smtp } = await supabaseAdmin
       .from('smtp_settings')
       .select('*')
       .single();

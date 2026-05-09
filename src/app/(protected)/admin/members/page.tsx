@@ -8,7 +8,7 @@ import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/Toast';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
 import { createClient } from '@/lib/supabase/client';
-import { setTenantUserRole } from '@/lib/actions/tenant-users';
+import { setTenantUserRole, removeTenantInvitation } from '@/lib/actions/tenant-users';
 import { 
   Users, 
   UserPlus, 
@@ -21,7 +21,8 @@ import {
   TrendingUp,
   Map,
   CheckCircle2,
-  Clock
+  Clock,
+  Trash2
 } from 'lucide-react';
 
 interface Member {
@@ -95,6 +96,17 @@ export default function MembersPage() {
     }
   };
 
+  const handleDeleteInvitation = async (id: string) => {
+    if (!confirm(language === 'en' ? 'Are you sure you want to delete this invitation?' : '¿Seguro que quieres eliminar esta invitación?')) return;
+    try {
+      await removeTenantInvitation(id);
+      toast(language === 'en' ? 'Invitation deleted' : 'Invitación eliminada', 'success');
+      fetchMembers();
+    } catch(e) {
+      toast('Error al eliminar la invitación', 'error');
+    }
+  };
+
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inviteEmail || !tenant) return;
@@ -123,7 +135,10 @@ export default function MembersPage() {
         })
       });
 
-      if (!res.ok) console.warn('Email invitation failed but database entry created');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Error al enviar el email. La invitación se ha guardado, pero el correo no ha salido.');
+      }
 
       toast(language === 'en' ? 'Invitation sent successfully' : 'Invitación enviada correctamente', 'success');
       setInviteEmail('');
@@ -289,7 +304,16 @@ export default function MembersPage() {
                       </td>
                       <td className="px-6 py-4">—</td>
                       <td className="px-6 py-4 text-right">
-                         <button className="text-[10px] font-bold text-amber-400/50 hover:text-amber-400">Recordar</button>
+                         <div className="flex items-center justify-end gap-3">
+                           <button className="text-[10px] font-bold text-amber-400/50 hover:text-amber-400">Recordar</button>
+                           <button 
+                             onClick={() => handleDeleteInvitation(invite.id)}
+                             className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+                             title={language === 'en' ? 'Delete invitation' : 'Eliminar invitación'}
+                           >
+                             <Trash2 size={14} />
+                           </button>
+                         </div>
                       </td>
                     </tr>
                   ))}
