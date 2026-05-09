@@ -45,6 +45,7 @@ function PricingLandingPageContent() {
   const searchParams = useSearchParams();
   const tenantSlug = searchParams?.get('tenant');
   const [tenant, setTenant] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(!!tenantSlug);
 
   useEffect(() => {
     if (tenantSlug) {
@@ -52,32 +53,54 @@ function PricingLandingPageContent() {
         const supabase = createClient();
         supabase.from('tenants').select('*').eq('slug', tenantSlug).single().then(({ data }) => {
           if (data) setTenant(data);
+          setIsLoading(false);
         });
       });
     }
   }, [tenantSlug]);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const primaryColor = tenant?.primary_color || '#10B981';
   const partnerName = tenant?.name || "InagroSolutions";
+  const logoUrl = tenant?.logo_url;
   const partnerDesc = tenant?.public_description || "\"Contamos con Partners en toda España que conocen el campo en primera persona. Ellos pueden brindarte este sistema bajo su propia marca, con la garantía y cercanía que tú te mereces.\"";
 
   const getSignupUrl = (plan: string) => `/signup?plan=${plan}${tenantSlug ? `&tenant=${tenantSlug}` : ''}`;
 
   return (
-    <div className="py-20 bg-black text-white selection:bg-[#10B981]/30 overflow-hidden relative">
+    <div className="py-20 bg-black text-white selection:bg-white/20 overflow-hidden relative">
       {/* Background gradients */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[40%] rounded-full bg-emerald-700/10 blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] pointer-events-none opacity-20" style={{ backgroundColor: primaryColor }} />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[40%] rounded-full blur-[120px] pointer-events-none opacity-10" style={{ backgroundColor: primaryColor }} />
 
       {/* 1. HERO SECTION */}
       <section className="relative pb-20 px-6 max-w-7xl mx-auto text-center z-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold mb-8">
+        <div 
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-semibold mb-8"
+          style={{ backgroundColor: `${primaryColor}15`, borderColor: `${primaryColor}30`, color: primaryColor }}
+        >
           <Leaf className="w-4 h-4" />
           <span>El Cuaderno Digital más fácil del campo</span>
         </div>
         
+        {logoUrl && (
+          <div className="mb-8 flex justify-center">
+            <div className="bg-white/10 p-3 rounded-2xl border border-white/5 shadow-2xl backdrop-blur-md">
+              <img src={logoUrl} alt={partnerName} className="h-16 object-contain" />
+            </div>
+          </div>
+        )}
+        
         <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
           Lleva tu explotación al día, <br className="hidden md:block" />
-          <span className="text-emerald-500 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]">sin tocar un solo papel.</span>
+          <span style={{ color: primaryColor, textShadow: `0 0 15px ${primaryColor}80` }}>sin tocar un solo papel.</span>
         </h1>
         
         <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed">
@@ -86,18 +109,21 @@ function PricingLandingPageContent() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm md:text-base text-gray-300 font-medium mb-12">
-          <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Sin complicaciones informáticas</div>
-          <div className="hidden sm:block text-emerald-500">•</div>
-          <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Adaptado a la normativa SIEX</div>
-          <div className="hidden sm:block text-emerald-500">•</div>
-          <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Soporte humano real</div>
+          <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5" style={{ color: primaryColor }} /> Sin complicaciones informáticas</div>
+          <div className="hidden sm:block" style={{ color: primaryColor }}>•</div>
+          <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5" style={{ color: primaryColor }} /> Adaptado a la normativa SIEX</div>
+          <div className="hidden sm:block" style={{ color: primaryColor }}>•</div>
+          <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5" style={{ color: primaryColor }} /> Soporte humano real</div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
           <a href="#planes" className="w-full sm:w-auto">
-            <GlowButton className="w-full sm:w-auto h-14 px-8 text-lg rounded-xl">
+            <button 
+              className="w-full sm:w-auto h-14 px-8 text-lg font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:scale-105"
+              style={{ backgroundColor: primaryColor, color: '#000' }}
+            >
               Ver Planes de Precios
-            </GlowButton>
+            </button>
           </a>
           <button className="w-full sm:w-auto h-14 px-8 rounded-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-colors flex items-center justify-center gap-2 backdrop-blur-sm">
             <Headset className="w-5 h-5" />
@@ -140,7 +166,7 @@ function PricingLandingPageContent() {
 
       {/* 3. BENEFITS */}
       <section className="py-24 max-w-7xl mx-auto px-6 relative">
-        <h2 className="text-3xl md:text-5xl font-black text-center mb-16">Tu día a día en el campo, <br className="hidden sm:block" /><span className="text-emerald-500">mucho más sencillo.</span></h2>
+        <h2 className="text-3xl md:text-5xl font-black text-center mb-16">Tu día a día en el campo, <br className="hidden sm:block" /><span style={{ color: primaryColor }}>mucho más sencillo.</span></h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
@@ -152,8 +178,8 @@ function PricingLandingPageContent() {
             { icon: Leaf, title: "Calculadora de Dosis", desc: "Control automático de volúmenes de caldo y compatibilidades en cada parcela." }
           ].map((benefit, i) => (
             <div key={i} className="flex gap-4 p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                <benefit.icon className="w-6 h-6 text-emerald-400" />
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${primaryColor}20` }}>
+                <benefit.icon className="w-6 h-6" style={{ color: primaryColor }} />
               </div>
               <div>
                 <h3 className="font-bold text-lg mb-2 text-white">{benefit.title}</h3>
@@ -182,15 +208,17 @@ function PricingLandingPageContent() {
               <div className="inline-flex items-center p-1 bg-white/5 rounded-full border border-white/10 shrink-0">
                 <button 
                   onClick={() => setAnnualBilling(false)}
-                  className={`px-8 py-3 rounded-full text-sm font-bold transition-all ${!annualBilling ? 'bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'text-gray-400 hover:text-white'}`}
+                  className={`px-8 py-3 rounded-full text-sm font-bold transition-all ${!annualBilling ? 'text-black shadow-[0_0_20px_rgba(255,255,255,0.1)]' : 'text-gray-400 hover:text-white'}`}
+                  style={!annualBilling ? { backgroundColor: primaryColor } : {}}
                 >
                   Mensual
                 </button>
                 <button 
                   onClick={() => setAnnualBilling(true)}
-                  className={`px-8 py-3 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${annualBilling ? 'bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'text-gray-400 hover:text-white'}`}
+                  className={`px-8 py-3 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${annualBilling ? 'text-black shadow-[0_0_20px_rgba(255,255,255,0.1)]' : 'text-gray-400 hover:text-white'}`}
+                  style={annualBilling ? { backgroundColor: primaryColor } : {}}
                 >
-                  Anual <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-900/50 text-emerald-400 border border-emerald-500/30">-2 MESES</span>
+                  Anual <span className="text-[10px] px-2 py-0.5 rounded-full bg-black/30 text-white border border-white/20">-2 MESES</span>
                 </button>
               </div>
             </div>
@@ -253,7 +281,10 @@ function PricingLandingPageContent() {
               
               <div className="mt-8 pt-8 border-t border-white/5 mt-auto">
                 <Link href={getSignupUrl('intermedio')}>
-                  <button className="w-full py-4 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-colors shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                  <button 
+                    className="w-full py-4 rounded-xl font-bold text-black transition-colors shadow-lg hover:scale-[1.02]"
+                    style={{ backgroundColor: primaryColor }}
+                  >
                     Seleccionar Intermedio
                   </button>
                 </Link>
@@ -284,7 +315,10 @@ function PricingLandingPageContent() {
               
               <div className="mt-8 pt-8 border-t border-white/5 mt-auto">
                 <Link href={getSignupUrl('avanzado')}>
-                  <button className="w-full py-4 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-colors shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                  <button 
+                    className="w-full py-4 rounded-xl font-bold text-black transition-colors shadow-lg hover:scale-[1.02]"
+                    style={{ backgroundColor: primaryColor }}
+                  >
                     Seleccionar Avanzado
                   </button>
                 </Link>
@@ -316,7 +350,10 @@ function PricingLandingPageContent() {
               
               <div className="mt-8 pt-8 border-t border-white/5 mt-auto">
                 <Link href={getSignupUrl('premium')}>
-                  <button className="w-full py-4 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-colors shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                  <button 
+                    className="w-full py-4 rounded-xl font-bold text-black transition-colors shadow-lg hover:scale-[1.02]"
+                    style={{ backgroundColor: primaryColor }}
+                  >
                     Seleccionar Premium
                   </button>
                 </Link>
@@ -363,16 +400,15 @@ function PricingLandingPageContent() {
       {/* 6. PARTNER BLOCK (WHITE LABEL) */}
       <section className="py-20 relative">
         <div className="max-w-5xl mx-auto px-6">
-          <GlassCard className="p-8 md:p-12 border-emerald-500/30 relative overflow-hidden bg-white/5">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/20 to-transparent pointer-events-none" />
+          <GlassCard className="p-8 md:p-12 border-white/10 relative overflow-hidden bg-white/5" style={{ borderColor: `${primaryColor}40` }}>
+            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ background: `linear-gradient(to right, ${primaryColor}, transparent)` }} />
             <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-16">
               <div className="flex-1 space-y-6 text-center md:text-left">
-                {tenant?.logo_url && (
-                  <div className="bg-white/10 p-4 rounded-xl border border-white/5 inline-block -mb-2 shadow-lg">
-                    <img src={tenant.logo_url} alt={partnerName} className="h-10 object-contain" />
-                  </div>
+                {tenantSlug ? (
+                  <h3 className="text-2xl font-bold">Portal oficial de <span style={{ color: primaryColor }}>{partnerName}</span></h3>
+                ) : (
+                  <h3 className="text-2xl font-bold">Ofrecido por tu entidad asesora de confianza <span style={{ color: primaryColor }}>{partnerName}</span></h3>
                 )}
-                <h3 className="text-2xl font-bold">Ofrecido por tu entidad asesora de confianza <span className="text-emerald-400">{partnerName}</span></h3>
                 <p className="text-gray-300 text-sm leading-relaxed italic border-l-4 border-emerald-500 pl-4 py-2">
                   {partnerDesc}
                 </p>
@@ -451,9 +487,12 @@ function PricingLandingPageContent() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <a href="#planes" className="w-full sm:w-auto">
-              <GlowButton className="w-full sm:w-auto h-16 px-10 text-lg rounded-xl">
+              <button 
+                className="w-full sm:w-auto h-16 px-10 text-lg font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:scale-105"
+                style={{ backgroundColor: primaryColor, color: '#000' }}
+              >
                 Comenzar Hoy Mismo
-              </GlowButton>
+              </button>
             </a>
             <button className="w-full sm:w-auto h-16 px-10 rounded-xl font-bold text-white bg-white/5 border border-white/20 hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
               <Headset className="w-6 h-6" />

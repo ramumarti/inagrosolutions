@@ -17,11 +17,11 @@ export async function POST(req: Request) {
 
     const { data: userData } = await supabase
       .from('users')
-      .select('role')
+      .select('role, platform_role')
       .eq('id', user.id)
       .single();
 
-    if (userData?.role !== 'admin') {
+    if (userData?.role !== 'admin' && userData?.platform_role !== 'superadmin' && userData?.platform_role !== 'tenant_admin') {
       return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
     }
 

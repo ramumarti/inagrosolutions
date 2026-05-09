@@ -35,6 +35,8 @@ function SignupPageContent() {
   const [province, setProvince] = useState('');
   const [estimatedMembers, setEstimatedMembers] = useState('');
   
+  const [tenant, setTenant] = useState<any>(null);
+
   // Determine initial mode from URL and Context
   useEffect(() => {
     if (roleParam === 'farmer' || plan || tenantSlug) {
@@ -44,10 +46,21 @@ function SignupPageContent() {
     } else {
       setMode('select');
     }
+    
+    if (tenantSlug) {
+      import('@/lib/supabase/client').then(({ createClient }) => {
+        const supabase = createClient();
+        supabase.from('tenants').select('*').eq('slug', tenantSlug).single().then(({ data }) => {
+          if (data) setTenant(data);
+        });
+      });
+    }
   }, [plan, tenantSlug, roleParam]);
 
   const isFarmer = mode === 'farmer';
   const planName = plan ? plan.charAt(0).toUpperCase() + plan.slice(1) : '';
+  const primaryColor = tenant?.primary_color || '#10B981'; // emerald-500 default
+  const logoUrl = tenant?.logo_url;
   
   const { t, language } = useI18n();
   const { toast } = useToast();
@@ -182,15 +195,21 @@ function SignupPageContent() {
       <GlassCard className="flex flex-col items-center w-full p-8 sm:p-10 relative overflow-hidden">
         {isFarmer ? (
           <>
-            <div className="absolute top-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-emerald-300" />
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/20 border border-emerald-500/30">
-              <Leaf className="w-8 h-8 text-emerald-400" />
-            </div>
+            <div className="absolute top-0 w-full h-1.5" style={{ background: `linear-gradient(to right, ${primaryColor}, transparent)` }} />
+            {logoUrl ? (
+              <div className="mb-6 p-2 bg-white/10 rounded-xl border border-white/5 backdrop-blur-md shadow-lg">
+                <img src={logoUrl} alt="Logo Entidad" className="h-12 object-contain" />
+              </div>
+            ) : (
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg border" style={{ backgroundColor: `${primaryColor}33`, borderColor: `${primaryColor}4D`, boxShadow: `0 0 20px ${primaryColor}33` }}>
+                <Leaf className="w-8 h-8" style={{ color: primaryColor }} />
+              </div>
+            )}
             <h1 className="text-2xl font-black mb-2 text-center uppercase tracking-tighter text-white italic">
               Crea tu Explotación
             </h1>
             {plan && (
-               <p className="text-emerald-400 mb-8 text-center text-xs font-bold uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded border border-emerald-500/20">
+               <p className="mb-8 text-center text-xs font-bold uppercase tracking-widest px-3 py-1 rounded border" style={{ color: primaryColor, backgroundColor: `${primaryColor}1A`, borderColor: `${primaryColor}33` }}>
                  Plan seleccionado: {planName}
                </p>
             )}
@@ -311,11 +330,12 @@ function SignupPageContent() {
                 id="privacy" 
                 checked={privacyAccepted}
                 onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                className={`mt-1 w-4 h-4 rounded border-white/10 bg-white/5 ${isFarmer ? 'text-emerald-500' : 'text-indigo-500'} focus:ring-current/50 cursor-pointer`}
+                className={`mt-1 w-4 h-4 rounded border-white/10 bg-white/5 focus:ring-current/50 cursor-pointer`}
+                style={{ color: isFarmer ? primaryColor : undefined }}
                 required
               />
               <label htmlFor="privacy" className="text-[10px] text-white/50 cursor-pointer hover:text-white/70 transition-colors uppercase font-bold tracking-tight">
-                Acepto la <Link href="/privacy-policy" className={`${isFarmer ? 'text-emerald-400' : 'text-indigo-400'} hover:underline`} target="_blank">Política de Privacidad</Link>
+                Acepto la <Link href="/privacy-policy" className={`hover:underline ${!isFarmer && 'text-indigo-400'}`} style={isFarmer ? { color: primaryColor } : {}} target="_blank">Política de Privacidad</Link>
               </label>
             </div>
 
@@ -325,14 +345,15 @@ function SignupPageContent() {
                 id="legislation" 
                 checked={lawAccepted}
                 onChange={(e) => setLawAccepted(e.target.checked)}
-                className={`mt-1 w-4 h-4 rounded border-white/10 bg-white/5 ${isFarmer ? 'text-emerald-500' : 'text-indigo-500'} focus:ring-current/50 cursor-pointer`}
+                className={`mt-1 w-4 h-4 rounded border-white/10 bg-white/5 focus:ring-current/50 cursor-pointer`}
+                style={{ color: isFarmer ? primaryColor : undefined }}
                 required
               />
               <label htmlFor="legislation" className="text-[10px] text-white/50 cursor-pointer hover:text-white/70 transition-colors uppercase font-bold tracking-tight">
                 {isFarmer ? (
                   <>Acepto las condiciones del <span className="text-white">Cuaderno SIEX</span> y la exención de responsabilidad.</>
                 ) : (
-                  <>Acepto la normativa <span className="text-white">RD 1054/2022</span> y <Link href="/partner-policy" className={`${isFarmer ? 'text-emerald-400' : 'text-indigo-400'} hover:underline`}>legislaciones específicas</Link>.</>
+                  <>Acepto la normativa <span className="text-white">RD 1054/2022</span> y <Link href="/partner-policy" className="text-indigo-400 hover:underline">legislaciones específicas</Link>.</>
                 )}
               </label>
             </div>
@@ -341,7 +362,8 @@ function SignupPageContent() {
           <GlowButton 
             type="submit" 
             isLoading={loading} 
-            className={`w-full mt-4 text-lg py-6 font-black uppercase tracking-widest ${isFarmer ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-emerald-500/20' : 'bg-indigo-500 hover:bg-indigo-400 text-white shadow-indigo-500/20'}`}
+            className={`w-full mt-4 text-lg py-6 font-black uppercase tracking-widest ${!isFarmer && 'bg-indigo-500 hover:bg-indigo-400 text-white shadow-indigo-500/20'}`}
+            style={isFarmer ? { backgroundColor: primaryColor, color: '#000', boxShadow: `0 0 20px ${primaryColor}33` } : {}}
           >
             {isFarmer ? 'CREAR MI CUENTA' : 'REGISTRAR ENTIDAD GRATIS'}
           </GlowButton>
@@ -351,7 +373,7 @@ function SignupPageContent() {
           <span className="text-white/30 uppercase font-black">
             {isFarmer ? '¿Ya tienes cuenta?' : '¿Ya sois partners?'}
           </span>
-          <Link href="/login" className={`${isFarmer ? 'text-emerald-400' : 'text-indigo-400'} font-bold hover:underline`}>
+          <Link href="/login" className={`font-bold hover:underline ${!isFarmer && 'text-indigo-400'}`} style={isFarmer ? { color: primaryColor } : {}}>
             Inicia Sesión aquí
           </Link>
         </div>
