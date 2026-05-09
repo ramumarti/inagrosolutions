@@ -445,12 +445,12 @@ function PricingLandingPageContent() {
           <h2 className="text-3xl font-bold mb-12">Lo que dicen quienes ya lo usan en el campo</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <GlassCard className="p-8 text-left relative overflow-hidden">
-              <div className="text-8xl text-emerald-500/10 absolute -top-4 right-2 font-serif">"</div>
+              <div className="text-8xl absolute -top-4 right-2 font-serif opacity-10" style={{ color: primaryColor }}>"</div>
               <p className="text-gray-300 italic mb-6 relative z-10 text-sm md:text-base leading-relaxed">
                 Antes me pasaba el domingo por la tarde recopilando facturas. Ahora apunto el tratamiento con el móvil según me bajo del tractor y el fin de semana descanso.
               </p>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-black border border-emerald-500/50 flex items-center justify-center font-bold text-emerald-400">AM</div>
+                <div className="w-12 h-12 rounded-full bg-black border flex items-center justify-center font-bold" style={{ borderColor: `${primaryColor}80`, color: primaryColor }}>AM</div>
                 <div>
                   <h4 className="font-bold text-white">Antonio Martínez</h4>
                   <p className="text-xs text-gray-400">Agricultor (Cereales)</p>
@@ -459,12 +459,12 @@ function PricingLandingPageContent() {
             </GlassCard>
             
             <GlassCard className="p-8 text-left relative overflow-hidden">
-              <div className="text-8xl text-emerald-500/10 absolute -top-4 right-2 font-serif">"</div>
+              <div className="text-8xl absolute -top-4 right-2 font-serif opacity-10" style={{ color: primaryColor }}>"</div>
               <p className="text-gray-300 italic mb-6 relative z-10 text-sm md:text-base leading-relaxed">
                 Le tenía terror a las multas de medio ambiente. Desde que todo está en la app, descargo el archivo Excel oficial con un botón y el informe pericial 100% legal.
               </p>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-black border border-emerald-500/50 flex items-center justify-center font-bold text-emerald-400">PG</div>
+                <div className="w-12 h-12 rounded-full bg-black border flex items-center justify-center font-bold" style={{ borderColor: `${primaryColor}80`, color: primaryColor }}>PG</div>
                 <div>
                   <h4 className="font-bold text-white">Pilar G.</h4>
                   <p className="text-xs text-gray-400">Propiedad de Olivar tradicional</p>
@@ -477,8 +477,8 @@ function PricingLandingPageContent() {
 
       {/* 8. FINAL CTA */}
       <section className="py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-emerald-900/20" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundColor: primaryColor }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[100px] pointer-events-none opacity-10" style={{ backgroundColor: primaryColor }} />
         
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6">No te la juegues con la próxima PAC.</h2>
