@@ -18,7 +18,7 @@ function SignupPageContent() {
   const tenantSlug = searchParams?.get('tenant');
   const roleParam = searchParams?.get('role'); // New parameter
 
-  const [mode, setMode] = useState<'select' | 'farmer' | 'partner' | null>(null);
+  const [mode, setMode] = useState<'farmer' | 'partner' | null>(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -41,10 +41,9 @@ function SignupPageContent() {
   useEffect(() => {
     if (roleParam === 'farmer' || plan || tenantSlug) {
       setMode('farmer');
-    } else if (roleParam === 'partner') {
-      setMode('partner');
     } else {
-      setMode('select');
+      // Default: partner registration (farmers register through their entity's page)
+      setMode('partner');
     }
     
     if (tenantSlug) {
@@ -123,74 +122,26 @@ function SignupPageContent() {
     }
   };
 
-  if (mode === 'select') {
+  if (mode === null) {
     return (
-      <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto relative z-10 p-4 min-h-screen">
-        <div className="text-center mb-12 space-y-4">
-          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic">
-            Bienvenido a <span className="text-emerald-400">Inagro</span>Solutions
-          </h1>
-          <p className="text-white/40 font-bold uppercase tracking-widest text-sm">Selecciona tu tipo de perfil para continuar</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8 w-full">
-          {/* Opción Agricultor */}
-          <button 
-            onClick={() => setMode('farmer')}
-            className="group relative flex flex-col items-center p-10 bg-white/[0.03] border border-white/10 rounded-3xl hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all duration-500 text-center"
-          >
-            <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 blur-3xl transition-opacity" />
-            <div className="w-20 h-20 bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-6 shadow-2xl group-hover:scale-110 transition-transform">
-              <Leaf className="w-10 h-10 text-emerald-400" />
-            </div>
-            <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Soy Agricultor</h2>
-            <p className="text-white/40 text-sm leading-relaxed mb-8">
-              Gestiona tu Cuaderno Digital (CUE/SIEX), parcelas, tratamientos y exportaciones oficiales de forma sencilla.
-            </p>
-            <div className="mt-auto py-3 px-6 bg-white/5 rounded-xl border border-white/10 group-hover:bg-emerald-500 group-hover:text-black font-black text-xs uppercase tracking-widest transition-all">
-              Crear mi Explotación
-            </div>
-          </button>
-
-          {/* Opción Partner */}
-          <button 
-            onClick={() => setMode('partner')}
-            className="group relative flex flex-col items-center p-10 bg-white/[0.03] border border-white/10 rounded-3xl hover:bg-indigo-500/10 hover:border-indigo-500/30 transition-all duration-500 text-center"
-          >
-            <div className="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 blur-3xl transition-opacity" />
-            <div className="w-20 h-20 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-6 shadow-2xl group-hover:scale-110 transition-transform">
-              <Building2 className="w-10 h-10 text-indigo-400" />
-            </div>
-            <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">Soy Partner / Cooperativa</h2>
-            <p className="text-white/40 text-sm leading-relaxed mb-8">
-              Gestiona cientos de cuadernos, supervisa técnicos y ofrece un servicio digital avanzado a tus socios.
-            </p>
-            <div className="mt-auto py-3 px-6 bg-white/5 rounded-xl border border-white/10 group-hover:bg-indigo-500 group-hover:text-white font-black text-xs uppercase tracking-widest transition-all">
-              Registrar mi Entidad
-            </div>
-          </button>
-        </div>
-
-        <div className="mt-12 text-center space-y-4">
-          <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">Software de Gestión Agrícola • SIEX Ready</p>
-          <div className="flex items-center justify-center gap-6 opacity-30">
-             <Link href="/login" className="text-xs font-bold text-white hover:text-emerald-400 transition-colors uppercase tracking-widest">¿Ya tienes cuenta? Inicia Sesión</Link>
-          </div>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-md mx-auto relative z-10 p-4 min-h-screen pt-24 pb-12">
-      <div className="w-full mb-6">
-        <button 
-          onClick={() => setMode('select')}
-          className="flex items-center gap-2 text-[10px] font-black text-white/30 hover:text-white uppercase tracking-widest transition-colors"
-        >
-          <ChevronLeft className="w-3 h-3" /> Volver a selección
-        </button>
-      </div>
+      {isFarmer && (
+        <div className="w-full mb-6">
+          <button 
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-[10px] font-black text-white/30 hover:text-white uppercase tracking-widest transition-colors"
+          >
+            <ChevronLeft className="w-3 h-3" /> Volver
+          </button>
+        </div>
+      )}
       
       <GlassCard className="flex flex-col items-center w-full p-8 sm:p-10 relative overflow-hidden">
         {isFarmer ? (
