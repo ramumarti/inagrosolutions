@@ -78,6 +78,12 @@ export async function GET(request: Request) {
         }
       }
 
+      const next = searchParams.get('next')
+      
+      if (next) {
+        return NextResponse.redirect(`${safeOrigin}${next}`)
+      }
+
       // Redirigir al portal principal (el Middleware se encargará de llevarle 
       // a su dashboard correspondiente según su rol)
       return NextResponse.redirect(`${safeOrigin}/enrutar`)

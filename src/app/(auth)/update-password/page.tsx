@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { Mail, Hexagon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Lock, Hexagon } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { Input } from '@/components/ui/Input';
@@ -10,21 +10,27 @@ import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/Toast';
 import { createClient } from '@/lib/supabase/client';
 
-export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('');
+export default function UpdatePasswordPage() {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const { t } = useI18n();
   const { toast } = useToast();
   const supabase = createClient();
 
-  const handleReset = async (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      toast("Las contraseñas no coinciden", 'error');
+      return;
+    }
+
     setLoading(true);
     
-    const origin = window.location.origin;
-    
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${origin}/auth/callback?next=/update-password`,
+    const { error } = await supabase.auth.updateUser({
+      password: password
     });
     
     setLoading(false);
@@ -32,8 +38,8 @@ export default function ForgotPasswordPage() {
     if (error) {
       toast(error.message, 'error');
     } else {
-      toast(t('forgot.success'), 'success');
-      setEmail('');
+      toast("Contraseña actualizada correctamente", 'success');
+      router.push('/login');
     }
   };
 
@@ -44,32 +50,37 @@ export default function ForgotPasswordPage() {
       </div>
       
       <h1 className="text-2xl font-bold mb-2 glow-text text-center">
-        {t('forgot.title')}
+        Actualizar Contraseña
       </h1>
       <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-sm">
         {t('app.name')}
       </p>
 
-      <form onSubmit={handleReset} className="w-full flex flex-col gap-4">
+      <form onSubmit={handleUpdate} className="w-full flex flex-col gap-4">
         <Input 
-          type="email" 
-          placeholder={t('login.email')} 
-          icon={<Mail className="w-5 h-5" />}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="password" 
+          placeholder="Nueva contraseña" 
+          icon={<Lock className="w-5 h-5" />}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           required
+          minLength={6}
+        />
+        
+        <Input 
+          type="password" 
+          placeholder="Confirmar contraseña" 
+          icon={<Lock className="w-5 h-5" />}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          minLength={6}
         />
         
         <GlowButton type="submit" isLoading={loading} className="w-full mt-2">
-          {t('forgot.submit')}
+          Actualizar y Entrar
         </GlowButton>
       </form>
-
-      <div className="mt-6 flex flex-col items-center gap-3 text-sm">
-        <Link href="/login" className="text-[color:var(--color-base-content)] opacity-70 hover:opacity-100 transition-colors">
-          {t('forgot.back')}
-        </Link>
-      </div>
     </GlassCard>
   );
 }
