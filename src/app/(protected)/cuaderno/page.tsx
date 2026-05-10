@@ -27,6 +27,7 @@ import { SuccessModal } from '@/components/cuaderno/SuccessModal';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Suspense } from 'react';
 import { GlowButton } from '@/components/ui/GlowButton';
+import { useToast } from '@/components/ui/Toast';
 import { TIER_CONFIG } from '@/lib/modules';
 import type { AgriTier } from '@/lib/modules';
 import {
@@ -47,6 +48,7 @@ const ICON_MAP: Record<string, any> = {
 
 export default function CuadernoPage() {
   const { profile, modulos: rawModulos, resumen, loading, hasModule, canAccess, reload } = useAgriProfile();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<TabKey>('inicio');
   const [selectedExplotacionId, setSelectedExplotacionId] = useState<string | null>(null);
   const [selectedCampanaId, setSelectedCampanaId] = useState<string | null>(null);
@@ -122,10 +124,15 @@ export default function CuadernoPage() {
           interval: annualBilling ? 'year' : 'month'
         }),
       });
-      const { url } = await response.json();
-      if (url) window.location.href = url;
-    } catch (err) {
+      const data = await response.json();
+      if (data.error) {
+        toast(data.error, 'error');
+      } else if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (err: any) {
       console.error('Payment error:', err);
+      toast(err.message || "Error al iniciar el pago", 'error');
     } finally {
       setIsProcessingPayment(false);
     }
