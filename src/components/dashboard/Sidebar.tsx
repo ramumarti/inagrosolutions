@@ -76,6 +76,12 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         isActive: pathname.startsWith('/superadmin/audit')
       },
       {
+        label: 'Facturación',
+        href: '/superadmin/billing',
+        icon: Wallet,
+        isActive: pathname.startsWith('/superadmin/billing')
+      },
+      {
         label: 'Email',
         href: '/admin/email',
         icon: Mail,
