@@ -91,7 +91,7 @@ function SignupPageContent() {
       email,
       password,
       options: {
-        emailRedirectTo: `${origin}/auth/confirm`,
+        emailRedirectTo: `${origin}/auth/confirm${tenantSlug ? `?tenant=${tenantSlug}` : ''}`,
         data: {
           first_name: firstName,
           last_name: lastName,
