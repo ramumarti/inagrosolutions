@@ -55,10 +55,20 @@ export async function POST(req: Request) {
     // 4. Si ya tiene cuenta Connect, devolver la existente
     if (tenant.stripe_account_id) {
       // Generar nuevo Account Link para retomar el onboarding
+      // Las URLs de retorno dependen del rol: tenant_admin vuelve a su billing, superadmin a tenants
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://inagrosolutions.com';
+      const isTenantAdmin = isOwnTenant;
+      const returnUrl = isTenantAdmin
+        ? `${baseUrl}/admin/billing?onboarding=complete`
+        : `${baseUrl}/superadmin/tenants?onboarding=complete&tenant=${tenant.slug}`;
+      const refreshUrl = isTenantAdmin
+        ? `${baseUrl}/admin/billing?refresh=true`
+        : `${baseUrl}/superadmin/tenants?refresh=true`;
+
       const accountLink = await stripe.accountLinks.create({
         account: tenant.stripe_account_id,
-        refresh_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://inagrosolutions.com'}/superadmin/tenants?refresh=true`,
-        return_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://inagrosolutions.com'}/superadmin/tenants?onboarding=complete&tenant=${tenant.slug}`,
+        refresh_url: refreshUrl,
+        return_url: returnUrl,
         type: 'account_onboarding',
       });
 
@@ -112,10 +122,15 @@ export async function POST(req: Request) {
       .eq('id', tenantId);
 
     // 7. Generar Account Link para onboarding
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://inagrosolutions.com';
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://inagrosolutions.com'}/superadmin/tenants?refresh=true`,
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://inagrosolutions.com'}/superadmin/tenants?onboarding=complete&tenant=${tenant.slug}`,
+      refresh_url: isOwnTenant
+        ? `${baseUrl}/admin/billing?refresh=true`
+        : `${baseUrl}/superadmin/tenants?refresh=true`,
+      return_url: isOwnTenant
+        ? `${baseUrl}/admin/billing?onboarding=complete`
+        : `${baseUrl}/superadmin/tenants?onboarding=complete&tenant=${tenant.slug}`,
       type: 'account_onboarding',
     });
 
