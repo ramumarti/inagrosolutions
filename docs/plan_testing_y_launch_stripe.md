@@ -190,7 +190,7 @@ stripe listen --forward-to http://localhost:3000/api/stripe/webhook
 Esto te dará un `whsec_xxx` temporal. **Cópialo como tu `STRIPE_WEBHOOK_SECRET` en `.env.local`**.
 
 ### Checklist Paso 5
-- [ ] **5.1** — Instalar Stripe CLI
+- [x] **5.1** — Instalar Stripe CLI
 - [ ] **5.2** — Ejecutar `stripe login` y autenticarse
 - [ ] **5.3** — Ejecutar `stripe listen --forward-to ...` y copiar el `whsec_xxx`
 - [ ] **5.4** — Actualizar `STRIPE_WEBHOOK_SECRET` en `.env.local`
