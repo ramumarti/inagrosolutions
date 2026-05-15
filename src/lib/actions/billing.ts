@@ -118,8 +118,9 @@ export async function getSuperadminBillingStats() {
   // Cooperativas con Connect
   const { count: connectedTenants } = await admin.from('tenants').select('*', { count: 'exact', head: true }).eq('stripe_charges_enabled', true);
   
-  // Agricultores activos
+  // Agricultores activos y cancelados
   const { count: paidUsers } = await admin.from('users').select('*', { count: 'exact', head: true }).eq('subscription_status', 'active');
+  const { count: cancelledUsers } = await admin.from('users').select('*', { count: 'exact', head: true }).eq('subscription_status', 'cancelled');
   const { count: totalUsers } = await admin.from('users').select('*', { count: 'exact', head: true }).not('platform_role', 'eq', 'superadmin');
 
   return {
@@ -128,6 +129,7 @@ export async function getSuperadminBillingStats() {
     connectedTenants: connectedTenants || 0,
     paidUsers: paidUsers || 0,
     totalUsers: totalUsers || 0,
-    conversionRate: totalUsers ? Math.round(((paidUsers || 0) / (totalUsers)) * 100) : 0
+    conversionRate: totalUsers ? Math.round(((paidUsers || 0) / (totalUsers)) * 100) : 0,
+    churnRate: (paidUsers || cancelledUsers) ? Math.round(((cancelledUsers || 0) / ((paidUsers || 0) + (cancelledUsers || 0))) * 100) : 0
   };
 }

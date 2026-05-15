@@ -310,26 +310,32 @@ PAYMENT_TRANSACTIONS (auditoría)
 | Billing UI (tenant admin) | `/admin/billing/page.tsx` | ✅ UI base con portal link |
 | Campo `stripe_customer_id` en users | tenant-context + hooks | ✅ Integrado en queries |
 | Dependencias npm | `stripe`, `@stripe/stripe-js` | ✅ Instalados |
+| Migración SQL: campos Connect en `tenants` y `users` | Supabase DB | ✅ Aplicado |
+| Migración SQL: tabla `payment_transactions` | Supabase DB | ✅ Aplicado |
 
 ### ❌ Pendiente de implementar
 
 | Nº | Componente | Prioridad | Complejidad |
 |----|-----------|-----------|-------------|
-| 1 | Migración SQL: campos Connect en `tenants` | 🔴 Crítica | ⚡ Baja |
-| 2 | Migración SQL: tabla `payment_transactions` | 🔴 Crítica | ⚡ Baja |
-| 3 | API: Crear cuenta Connect Express para cooperativa | 🔴 Crítica | 🔥 Media |
-| 4 | API: Generar Account Link (onboarding URL) | 🔴 Crítica | ⚡ Baja |
-| 5 | Webhook: `account.updated` (verificar KYC) | 🔴 Crítica | ⚡ Media |
-| 6 | Refactorizar checkout para usar Direct Charges | 🔴 Crítica | 🔥 Media |
-| 7 | Registrar transacciones en `payment_transactions` | 🟡 Alta | ⚡ Baja |
-| 8 | Consolidar webhooks (eliminar duplicados) | 🟡 Alta | ⚡ Baja |
-| 9 | UI SuperAdmin: Panel métricas MRR/churn | 🟡 Media | 🔥 Media |
-| 10 | UI SuperAdmin: Gestión Connect cooperativas | 🟡 Media | 🔥 Media |
-| 11 | UI Tenant Admin: Dashboard comisiones real | 🟡 Media | 🔥 Media |
-| 12 | UI Agricultor: Vista suscripción y facturas | 🟡 Media | ⚡ Baja |
+| API: Crear cuenta Connect Express para cooperativa | `/api/stripe/connect/create-account` | ✅ Implementado |
+| API: Generar Account Link (onboarding URL) | `/api/stripe/connect/account-link` | ✅ Implementado |
+| Webhook: `account.updated` (verificar KYC) | `/api/stripe/webhook` | ✅ Implementado |
+| Refactorizar checkout para usar Direct Charges | `/api/stripe/checkout` | ✅ Implementado |
+| Registrar transacciones en `payment_transactions` | `/api/stripe/webhook` | ✅ Implementado |
+| Consolidar webhooks (eliminar duplicados) | `/api/stripe/webhook` | ✅ Implementado |
+| UI SuperAdmin: Panel métricas MRR/churn | `/superadmin/page.tsx` | ✅ Implementado |
+| UI SuperAdmin: Gestión Connect cooperativas | `/superadmin/tenants/page.tsx` | ✅ Implementado |
+
+| UI Tenant Admin: Dashboard comisiones real | `/admin/billing` | ✅ Implementado |
+| UI Agricultor: Vista suscripción y facturas | `/cuaderno/suscripcion` | ✅ Implementado |
+
+### ❌ Pendiente de configurar en Stripe Dashboard
+
+| Nº | Componente | Prioridad | Complejidad |
+|----|-----------|-----------|-------------|
 | 13 | Stripe Tax: configurar para España | 🟢 Baja | ⚡ Baja |
 | 14 | Stripe Customer Portal: personalizar branding | 🟢 Baja | ⚡ Baja |
-| 15 | Eliminar `/api/checkout/route.ts` (legacy) | 🟢 Baja | ⚡ Trivial |
+| 15 | Eliminar `/api/checkout/route.ts` (legacy) | ✅ Hecho | ⚡ Trivial |
 
 ---
 
@@ -725,32 +731,32 @@ SEMANA 4 (Días 17-20): Testing y Launch
 ## 14. Checklist de Implementación
 
 ### Subfase 6.1 — Base de Datos
-- [ ] **6.1.1** — Migración: campos `stripe_account_id`, `stripe_onboarding_status`, `fiscal_*` en `tenants`
-- [ ] **6.1.2** — Migración: campos `billing_interval`, `subscription_current_period_end`, `subscription_cancel_at_period_end` en `users`
-- [ ] **6.1.3** — Migración: crear tabla `payment_transactions` con RLS
-- [ ] **6.1.4** — Verificar campos existentes (`stripe_customer_id`, `subscription_status`) están en tabla `users` real
+- [x] **6.1.1** — Migración: campos `stripe_account_id`, `stripe_onboarding_status`, `fiscal_*` en `tenants`
+- [x] **6.1.2** — Migración: campos `billing_interval`, `subscription_current_period_end`, `subscription_cancel_at_period_end` en `users`
+- [x] **6.1.3** — Migración: crear tabla `payment_transactions` con RLS
+- [x] **6.1.4** — Verificar campos existentes (`stripe_customer_id`, `subscription_status`) están en tabla `users` real
 
 ### Subfase 6.2 — Stripe Connect
-- [ ] **6.2.1** — Crear endpoint `POST /api/stripe/connect/create-account`
-- [ ] **6.2.2** — Crear endpoint `POST /api/stripe/connect/account-link`
-- [ ] **6.2.3** — Crear endpoint `GET /api/stripe/connect/status/[tenantId]`
-- [ ] **6.2.4** — Añadir handler `account.updated` en webhook consolidado
-- [ ] **6.2.5** — UI en `/superadmin/tenants`: botón "Activar Stripe Connect" + estado KYC
+- [x] **6.2.1** — Crear endpoint `POST /api/stripe/connect/create-account`
+- [x] **6.2.2** — Crear endpoint `POST /api/stripe/connect/account-link`
+- [x] **6.2.3** — Crear endpoint `GET /api/stripe/connect/status/[tenantId]`
+- [x] **6.2.4** — Añadir handler `account.updated` en webhook consolidado
+- [x] **6.2.5** — UI en `/superadmin/tenants`: botón "Activar Stripe Connect" + estado KYC
 - [ ] **6.2.6** — UI en `/admin/billing`: mostrar estado onboarding + link Stripe dashboard
 
 ### Subfase 6.3 — Checkout Refactorizado
-- [ ] **6.3.1** — Refactorizar `/api/stripe/checkout` para aceptar `tenantSlug` y usar Direct Charges
-- [ ] **6.3.2** — Eliminar `/api/checkout/route.ts` (legacy duplicado)
-- [ ] **6.3.3** — Consolidar `/api/webhook` y `/api/webhooks/stripe` en un único endpoint
-- [ ] **6.3.4** — Añadir registro en `payment_transactions` en cada evento de pago exitoso
-- [ ] **6.3.5** — Implementar idempotency check para evitar dobles cobros
+- [x] **6.3.1** — Refactorizar `/api/stripe/checkout` para aceptar `tenantSlug` y usar Direct Charges
+- [x] **6.3.2** — Eliminar `/api/checkout/route.ts` (legacy duplicado)
+- [x] **6.3.3** — Consolidar `/api/webhook` y `/api/webhooks/stripe` en un único endpoint
+- [x] **6.3.4** — Añadir registro en `payment_transactions` en cada evento de pago exitoso
+- [x] **6.3.5** — Implementar idempotency check para evitar dobles cobros
 - [ ] **6.3.6** — Crear productos y precios en Stripe Dashboard (test mode)
 
 ### Subfase 6.4 — Frontend Billing
-- [ ] **6.4.1** — Componente "Mi Plan" en sidebar/dashboard del agricultor
-- [ ] **6.4.2** — Botón "Suscribirse" en landing → redirect a Checkout
-- [ ] **6.4.3** — Actualizar `/admin/billing` con datos reales de `payment_transactions`
-- [ ] **6.4.4** — Dashboard SuperAdmin: cards MRR, churn, cooperativas activas
+- [x] **6.4.1** — Componente "Mi Plan" en sidebar/dashboard del agricultor
+- [x] **6.4.2** — Botón "Suscribirse" en landing → redirect a Checkout
+- [x] **6.4.3** — Actualizar `/admin/billing` con datos reales de `payment_transactions`
+- [x] **6.4.4** — Dashboard SuperAdmin: cards MRR, churn, cooperativas activas
 - [ ] **6.4.5** — Export CSV de transacciones para contabilidad
 
 ### Subfase 6.5 — Testing y Launch

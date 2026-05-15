@@ -40,9 +40,11 @@ export default function SuperadminPage() {
 
   const kpis = [
     { label: 'Entidades Activas', value: stats.totalTenants, icon: Building2, color: 'text-indigo-400' },
-    { label: 'Usuarios Totales', value: stats.totalUsers, icon: Users, color: 'text-emerald-400' },
     { label: 'Tasa Conversión', value: `${billingStats?.conversionRate || 0}%`, icon: Crown, color: 'text-amber-400' },
     { label: 'MRR (Facturado)', value: `${billingStats?.mrr?.toFixed(2) || '0.00'} €`, icon: TrendingUp, color: 'text-blue-400' },
+    { label: 'Ingresos Totales', value: `${billingStats?.totalRevenue?.toFixed(2) || '0.00'} €`, icon: TrendingUp, color: 'text-emerald-400' },
+    { label: 'Usuarios Totales', value: stats.totalUsers, icon: Users, color: 'text-emerald-400' },
+    { label: 'Churn Rate', value: `${billingStats?.churnRate || 0}%`, icon: Activity, color: 'text-red-400' },
   ];
 
   const maxTrend = Math.max(...(stats.trend?.map((t: any) => t.count) || [1]));
@@ -55,7 +57,7 @@ export default function SuperadminPage() {
       </header>
 
       {/* KPI GRID */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {kpis.map((kpi, i) => {
           const Icon = kpi.icon;
           return (
