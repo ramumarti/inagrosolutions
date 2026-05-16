@@ -3,19 +3,19 @@
 Este documento sirve para verificar la integridad y funcionamiento de todas las rutas y funcionalidades de la plataforma tras el despliegue exitoso.
 
 ## 1. Acceso Público y Landing Pages
-- [ ] **Landing Principal (`/`)**: Verificar diseño premium, animaciones y carga de imágenes.
-- [ ] **Página de Planes (`/planes`)**: Verificar que cargan los precios y que los botones de "Seleccionar" llevan al registro.
-- [ ] **Landing de Marca Blanca (`/c/[slug]`)**: Probar con un slug de cooperativa existente.
-- [ ] **Páginas Legales**:
-    - [ ] Aviso Legal (`/legal-notice`)
-    - [ ] Política de Privacidad (`/privacy-policy`)
-    - [ ] Política de Cookies (`/cookie-policy`)
-    - [ ] Política de Partners (`/partner-policy`)
+- [x] **Landing Principal (`/`)**: Verificar diseño premium, animaciones y carga de imágenes.
+- [x] **Página de Planes (`/planes`)**: Verificar que cargan los precios y que los botones de "Seleccionar" llevan al registro.
+- [ ] **Landing de Marca Blanca (`/c/[slug]`)**: Probar con un slug de cooperativa existente. (https://www.inagrosolutions.com/admin/branding
+- [x] **Páginas Legales**:
+    - [x] Aviso Legal (`/legal-notice`)
+    - [x] Política de Privacidad (`/privacy-policy`)
+    - [x] Política de Cookies (`/cookie-policy`)
+    - [x] Política de Partners (`/partner-policy`)
 
 ## 2. Autenticación y Onboarding
 - [ ] **Registro (`/signup`)**: Crear un nuevo usuario de prueba.
 - [ ] **Login (`/login`)**: Acceder con credenciales válidas.
-- [ ] **Recuperar Contraseña (`/forgot-password`)**.
+- [x] **Recuperar Contraseña (`/forgot-password`)**.
 - [ ] **Onboarding Agricultor (`/onboarding`)**: Probar flujo inicial tras registro.
 - [ ] **Onboarding Partner (`/onboarding-partner`)**: Flujo para nuevas cooperativas.
 
