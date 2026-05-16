@@ -44,7 +44,7 @@ function BillingContent() {
         listMyInvoices(),
       ]).then(([dash, inv]) => {
         setDashboardData(dash);
-        setInvoices(inv);
+        setInvoices(inv || []);
       }).catch(console.error).finally(() => setLoadingData(false));
     } else {
       setLoadingData(false);
