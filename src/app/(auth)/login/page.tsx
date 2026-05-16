@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Building2 } from 'lucide-react';
+import { Mail, Lock, Building2, Leaf } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { Input } from '@/components/ui/Input';
@@ -22,6 +22,9 @@ function LoginContent() {
   const { t } = useI18n();
   const { toast } = useToast();
   const supabase = createClient();
+
+  const tenantSlug = searchParams.get('tenant');
+  const isTenantLogin = !!tenantSlug;
 
   useEffect(() => {
     if (searchParams.get('verified') === 'true') {
@@ -63,14 +66,14 @@ function LoginContent() {
     <div className="flex flex-col items-center w-full relative z-10 pt-12">
       <GlassCard className="flex flex-col items-center w-full max-w-md mx-auto p-8 sm:p-10">
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center mb-6 shadow-lg shadow-[var(--color-primary)]/30">
-          <Building2 className="w-8 h-8 text-white" />
+          {isTenantLogin ? <Leaf className="w-8 h-8 text-white" /> : <Building2 className="w-8 h-8 text-white" />}
         </div>
         
         <h1 className="text-2xl font-black mb-2 glow-text text-center uppercase tracking-tighter">
-          Acceso a la Plataforma
+          {isTenantLogin ? 'Acceso de Agricultores' : 'Acceso a la Plataforma'}
         </h1>
         <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-xs font-bold uppercase tracking-widest">
-          Gestión de Entidades
+          {isTenantLogin ? `Bienvenido de vuelta` : 'Gestión de Entidades'}
         </p>
 
         <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
@@ -97,15 +100,24 @@ function LoginContent() {
         </form>
 
         <div className="mt-8 flex flex-col items-center gap-3 text-xs">
-          <Link href="/forgot-password" className="text-white/50 hover:text-white transition-colors uppercase font-bold tracking-tight">
+          <Link href={`/forgot-password${tenantSlug ? `?tenant=${tenantSlug}` : ''}`} className="text-white/50 hover:text-white transition-colors uppercase font-bold tracking-tight">
             {t('login.forgot')}
           </Link>
-          <div className="flex flex-col items-center gap-1 mt-2">
-            <span className="text-white/30 uppercase font-black">¿Aún no eres partner?</span>
-            <Link href="/signup" className="text-[var(--color-primary)] font-bold hover:underline uppercase">
-              REGISTRAR ENTIDAD GRATIS
-            </Link>
-          </div>
+          {isTenantLogin ? (
+            <div className="flex flex-col items-center gap-1 mt-2">
+              <span className="text-white/30 uppercase font-black">¿Eres nuevo aquí?</span>
+              <Link href={`/planes?tenant=${tenantSlug}`} className="text-[var(--color-primary)] font-bold hover:underline uppercase">
+                VER PLANES Y REGISTRARSE
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-1 mt-2">
+              <span className="text-white/30 uppercase font-black">¿Aún no eres partner?</span>
+              <Link href="/signup" className="text-[var(--color-primary)] font-bold hover:underline uppercase">
+                REGISTRAR ENTIDAD GRATIS
+              </Link>
+            </div>
+          )}
         </div>
       </GlassCard>
       
