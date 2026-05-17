@@ -189,7 +189,7 @@ export default function HomePage() {
                   <div className="px-3 py-1 bg-white/5 rounded text-xs text-white/40">app.tucooperativa.com</div>
                 </div>
                 <Image 
-                  src="/images/olivar_campesino_v1.png" 
+                  src="/images/olive_grower_mobile.png" 
                   alt="Agricultor en olivar usando InagroSolutions en su móvil" 
                   width={800} 
                   height={600}
