@@ -60,10 +60,23 @@ export async function POST(req: Request) {
       <body>
         <div className="card">
           ${logoUrl ? `<img src="${logoUrl}" class="logo" alt="${tenantName}">` : `<h2>${tenantName}</h2>`}
-          <h1>Tu Cuaderno Digital está listo</h1>
-          <p>La cooperativa <strong>${tenantName}</strong> te invita a unirte a su plataforma de gestión agrícola digital.</p>
-          <p>A partir de ahora, podrás registrar tus tratamientos, abonos y labores de forma rápida y cumplir con la normativa SIEX/PAC.</p>
-          <a href="${inviteLink}" class="btn">Confirmar y Registrarme</a>
+          <h1>¡Tu tiempo vale oro!</h1>
+          <p style="font-size: 18px; font-weight: bold; color: #10B981;">Activa ya tu Cuaderno Digital en <strong>${tenantName}</strong>.</p>
+          
+          <p>Sabemos que el papeleo de la PAC y el SIEX te quita el sueño. Por eso, hemos creado la solución definitiva para ti. A partir de ahora, registrar tus tratamientos, abonos y labores te llevará solo unos minutos.</p>
+          
+          <div style="text-align: left; background: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin-top: 0; font-size: 16px;"><strong>¿Por qué activar tu cuenta hoy?</strong></p>
+            <ul style="padding-left: 20px; margin-bottom: 0;">
+              <li style="margin-bottom: 10px;"><strong>Evitas riesgos:</strong> Proteges tus ayudas PAC frente a inspecciones.</li>
+              <li style="margin-bottom: 10px;"><strong>Ahorras dinero:</strong> Optimizas tus recursos y reduces costes de gestión.</li>
+              <li><strong>Ganas vida:</strong> Menos horas de oficina, más tiempo para ti.</li>
+            </ul>
+          </div>
+          
+          <p>No dejes que la burocracia te deje atrás. Es tu oportunidad de digitalizar tu explotación con el respaldo de tu cooperativa de confianza.</p>
+          
+          <a href="${inviteLink}" class="btn">👉 Entra y Regístrate</a>
           <div class="footer">
             Este mensaje ha sido enviado por ${tenantName} a través de la tecnología de Inagrosolutions.
           </div>
