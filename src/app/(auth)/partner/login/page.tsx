@@ -1,17 +1,18 @@
 "use client";
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Leaf, Building2 } from 'lucide-react';
+import { Mail, Lock, Building2 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { Input } from '@/components/ui/Input';
 import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/Toast';
 import { createClient } from '@/lib/supabase/client';
+import { Suspense } from 'react';
 
-function FarmerLoginContent() {
+function PartnerLoginContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,14 +22,9 @@ function FarmerLoginContent() {
   const { toast } = useToast();
   const supabase = createClient();
 
-  const tenantSlug = searchParams.get('tenant');
-
   useEffect(() => {
     if (searchParams.get('verified') === 'true') {
       toast(t('toast.verified'), 'success');
-    }
-    if (searchParams.get('error') === 'auth-link-failed') {
-      toast(t('toast.authlinkfailed'), 'error');
     }
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
@@ -61,16 +57,17 @@ function FarmerLoginContent() {
 
   return (
     <div className="flex flex-col items-center w-full relative z-10 pt-12">
-      <GlassCard className="flex flex-col items-center w-full max-w-md mx-auto p-8 sm:p-10">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-pink)] flex items-center justify-center mb-6 shadow-lg shadow-[var(--color-primary)]/30">
-          <Leaf className="w-8 h-8 text-white" />
+      <GlassCard className="flex flex-col items-center w-full max-w-md mx-auto p-8 sm:p-10 relative overflow-hidden border-indigo-500/20">
+        <div className="absolute top-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 to-indigo-300" />
+        <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20 border border-indigo-500/30">
+          <Building2 className="w-8 h-8 text-indigo-400" />
         </div>
         
         <h1 className="text-2xl font-black mb-2 glow-text text-center uppercase tracking-tighter">
-          Acceso de Agricultores
+          Acceso Partner
         </h1>
         <p className="text-[color:var(--color-base-content)] opacity-70 mb-8 text-center text-xs font-bold uppercase tracking-widest">
-          Cuaderno Digital de Explotación
+          Gestión de Entidades y Cooperativas
         </p>
 
         <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
@@ -81,6 +78,7 @@ function FarmerLoginContent() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            className="border-indigo-500/20"
           />
           <Input 
             type="password" 
@@ -89,49 +87,49 @@ function FarmerLoginContent() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="border-indigo-500/20"
           />
           
-          <GlowButton type="submit" isLoading={loading} className="w-full mt-4 text-lg py-6 font-black uppercase tracking-widest">
+          <GlowButton type="submit" isLoading={loading} className="w-full mt-4 text-lg py-6 font-black uppercase tracking-widest bg-indigo-500 hover:bg-indigo-400 text-white shadow-indigo-500/20">
             {t('login.submit')}
           </GlowButton>
         </form>
 
-        <div className="mt-8 flex flex-col items-center gap-3 text-xs w-full">
-          <Link href={`/forgot-password${tenantSlug ? `?tenant=${tenantSlug}` : ''}`} className="text-white/50 hover:text-white transition-colors uppercase font-bold tracking-tight">
+        <div className="mt-8 flex flex-col items-center gap-3 text-xs">
+          <Link href="/forgot-password" className="text-white/50 hover:text-white transition-colors uppercase font-bold tracking-tight">
             {t('login.forgot')}
           </Link>
-          
-          <div className="flex flex-col items-center gap-1 mt-4">
-            <span className="text-white/30 uppercase font-black">¿Aún no tienes cuenta?</span>
-            <Link href={tenantSlug ? `/planes?tenant=${tenantSlug}` : '/signup'} className="text-[var(--color-primary)] font-bold hover:underline uppercase text-center">
-              REGISTRARSE CON CÓDIGO DE ENTIDAD
-            </Link>
-          </div>
-          
-          <div className="w-full border-t border-white/10 mt-6 pt-6 flex flex-col items-center gap-1">
-            <span className="text-white/30 uppercase font-black">¿Eres Administrador de Entidad?</span>
-            <Link href="/partner/login" className="text-indigo-400 font-bold hover:underline uppercase flex items-center gap-1">
-              <Building2 className="w-3 h-3" /> Acceso Partner
+          <div className="flex flex-col items-center gap-1 mt-2">
+            <span className="text-white/30 uppercase font-black">¿Aún no eres partner?</span>
+            <Link href="/partner/signup" className="text-indigo-400 font-bold hover:underline uppercase">
+              REGISTRAR ENTIDAD GRATIS
             </Link>
           </div>
         </div>
       </GlassCard>
       
+      {/* Footer */}
       <footer className="w-full text-center py-6 mt-12 border-t border-white/5 flex flex-col gap-2 max-w-2xl mx-auto">
         <p className="text-[10px] text-gray-500">
           {language === 'en'
             ? `© 2026 INAGROSOLUTIONS. All rights reserved.`
             : `© 2026 INAGROSOLUTIONS. Todos los derechos reservados.`}
         </p>
+        <div className="flex items-center justify-center gap-4 text-[9px] text-gray-600">
+          <Link href="/privacy-policy" className="hover:text-indigo-400 transition-colors">{t('gdpr.privacyPolicy')}</Link>
+          <Link href="/cookie-policy" className="hover:text-indigo-400 transition-colors">{t('gdpr.cookiePolicy')}</Link>
+          <Link href="/legal-notice" className="hover:text-indigo-400 transition-colors">{t('gdpr.legalNotice')}</Link>
+          <Link href="/partner-policy" className="hover:text-indigo-400 transition-colors font-bold uppercase tracking-tighter">Política de Partners</Link>
+        </div>
       </footer>
     </div>
   );
 }
 
-export default function FarmerLoginPage() {
+export default function PartnerLoginPage() {
   return (
-    <Suspense fallback={<div className="text-white">Cargando...</div>}>
-      <FarmerLoginContent />
+    <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center"><div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" /></div>}>
+      <PartnerLoginContent />
     </Suspense>
   );
 }

@@ -46,12 +46,12 @@ export default function HomePage() {
             <a href="#faqs" className="hover:text-[var(--color-primary)] transition-colors">FAQs</a>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/login">
+            <Link href="/partner/login">
               <GlowButton variant="secondary" className="hidden sm:flex">
                 Acceso Partner
               </GlowButton>
             </Link>
-            <Link href="/signup?role=partner">
+            <Link href="/partner/signup">
               <GlowButton variant="primary">
                 Crear mi plataforma gratis
               </GlowButton>
@@ -92,7 +92,7 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link href="/signup?role=partner" className="w-full sm:w-auto">
+            <Link href="/partner/signup" className="w-full sm:w-auto">
               <GlowButton className="text-xl px-12 py-8 h-auto shadow-[0_0_50px_rgba(0,255,102,0.3)] hover:scale-105 active:scale-95 transition-transform w-full sm:w-auto">
                 CREAR MI PLATAFORMA GRATIS
                 <ArrowRight className="ml-2 w-6 h-6" />
@@ -386,7 +386,7 @@ export default function HomePage() {
       {/* CTA Intermedio */}
       <section className="py-20 text-center">
         <h2 className="text-3xl font-bold mb-8">¿Listo para lanzar tu propia plataforma?</h2>
-        <Link href="/signup?role=partner">
+        <Link href="/partner/signup">
           <GlowButton className="text-xl px-12 py-8 h-auto shadow-[0_0_40px_rgba(0,255,102,0.2)]">
             Empezar ahora (Gratis)
           </GlowButton>
@@ -434,12 +434,12 @@ export default function HomePage() {
                 Únete a la red de partners de Inagrosolutions y lidera la digitalización del campo en tu zona.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
-                <Link href="/signup?role=partner" className="w-full sm:w-auto">
+                <Link href="/partner/signup" className="w-full sm:w-auto">
                   <GlowButton className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
                     Crear mi plataforma gratis
                   </GlowButton>
                 </Link>
-                <Link href="/signup?role=partner" className="w-full sm:w-auto">
+                <Link href="/partner/signup" className="w-full sm:w-auto">
                   <GlowButton variant="secondary" className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
                     Solicitar demo técnica
                   </GlowButton>
@@ -467,7 +467,7 @@ export default function HomePage() {
 
       {/* Floating CTA (Mobile) */}
       <div className="md:hidden fixed bottom-6 left-6 right-6 z-50">
-        <Link href="/signup">
+        <Link href="/partner/signup">
           <GlowButton className="w-full shadow-2xl py-4 font-bold">
             Unirse como Partner
           </GlowButton>
