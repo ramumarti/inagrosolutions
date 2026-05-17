@@ -119,14 +119,12 @@ export default function HomePage() {
       {/* Trust Bar (Social Proof) */}
       <section className="py-12 border-y border-white/5 bg-black/40 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm font-bold text-white/40 uppercase tracking-widest mb-8">Más de 50 entidades ya confían en InagroSolutions</p>
-          <div className="flex justify-center flex-wrap gap-12 opacity-50 text-xl font-black tracking-tighter uppercase grayscale hover:grayscale-0 transition-all duration-500">
-            <span className="hover:text-[var(--color-primary)] transition-colors">COAG</span>
+          <p className="text-sm font-bold text-white/40 uppercase tracking-widest mb-8">Organizaciones agrarias y cooperativas que ya confían en nosotros</p>
+          <div className="flex justify-center items-center flex-wrap gap-12 opacity-50 text-xl font-black tracking-tighter uppercase grayscale hover:grayscale-0 transition-all duration-500">
             <span className="hover:text-[var(--color-primary)] transition-colors">UPA</span>
+            <span className="hover:text-[var(--color-primary)] transition-colors">COAG</span>
             <span className="hover:text-[var(--color-primary)] transition-colors">ASAJA</span>
-            <span className="hover:text-[var(--color-primary)] transition-colors">AgroSeguro</span>
-            <span className="hover:text-[var(--color-primary)] transition-colors">DCOOP</span>
-            <span className="hover:text-[var(--color-primary)] transition-colors">TROPS</span>
+            <span className="hover:text-[var(--color-primary)] transition-colors text-base md:text-xl">La Remediadora S. Coop. And.</span>
           </div>
         </div>
       </section>
