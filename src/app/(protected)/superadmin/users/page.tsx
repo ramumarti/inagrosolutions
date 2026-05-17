@@ -5,6 +5,7 @@ import { getGlobalUsers, rotatePlatformRole } from '@/lib/actions/superadmin';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Users, Shield, Building2, Search, ChevronRight, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function SuperadminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -107,13 +108,24 @@ export default function SuperadminUsersPage() {
                     {new Date(u.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <button 
-                      onClick={() => handleRoleChange(u.id, u.platform_role)}
-                      disabled={loadingId === u.id}
-                      className="p-2 hover:bg-white/10 rounded-lg text-emerald-400/50 hover:text-emerald-400 transition-all flex items-center justify-center mx-auto"
-                    >
-                      {loadingId === u.id ? <Loader2 size={16} className="animate-spin" /> : <ChevronRight size={18} />}
-                    </button>
+                    <div className="flex items-center justify-center gap-2">
+                      <button 
+                        onClick={() => handleRoleChange(u.id, u.platform_role)}
+                        disabled={loadingId === u.id}
+                        title="Cambiar Rol"
+                        className="p-2 hover:bg-white/10 rounded-lg text-white/30 hover:text-white transition-all"
+                      >
+                        {loadingId === u.id ? <Loader2 size={16} className="animate-spin" /> : <Shield size={16} />}
+                      </button>
+                      <Link href={`/superadmin/users/${u.id}`}>
+                        <button 
+                          title="Ver Perfil"
+                          className="p-2 hover:bg-white/10 rounded-lg text-emerald-400/50 hover:text-emerald-400 transition-all flex items-center justify-center"
+                        >
+                          <ChevronRight size={18} />
+                        </button>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}

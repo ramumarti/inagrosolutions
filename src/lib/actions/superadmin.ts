@@ -291,6 +291,31 @@ export async function getGlobalUsers() {
   return data || [];
 }
 
+export async function getGlobalUserDetail(userId: string) {
+  const auth = await verifySuperadmin();
+  if (!auth.isAuthorized) return null;
+
+  const supabase = getAdminClient();
+  const { data } = await supabase
+    .from('users')
+    .select(`
+      *,
+      tenant:tenants(*)
+    `)
+    .eq('id', userId)
+    .single();
+    
+  if (!data) return null;
+  
+  // Fetch related farms
+  const { data: farms } = await supabase
+    .from('explotaciones')
+    .select('*')
+    .eq('owner_id', userId);
+    
+  return { ...data, farms: farms || [] };
+}
+
 export async function rotatePlatformRole(userId: string, newRole: string) {
   const auth = await verifySuperadmin();
   if (!auth.isAuthorized) return { success: false, error: auth.error };
