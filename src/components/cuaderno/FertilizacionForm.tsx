@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { createClient } from '@/lib/supabase/client';
+import { getInventory, deductStock } from '@/lib/actions/inventory';
 import { VoiceRecorderButton } from '@/components/cuaderno/VoiceRecorderButton';
-import { Droplets, Check, ChevronDown } from 'lucide-react';
+import { Droplets, Check, ChevronDown, PackageOpen, AlertTriangle } from 'lucide-react';
 
 interface FertilizacionFormProps {
   parcelas: any[];
@@ -19,6 +20,18 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [inventory, setInventory] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (parcelas.length > 0 && parcelas[0].explotacion_id) {
+      getInventory(parcelas[0].explotacion_id).then(data => {
+        // En fertilización podemos mostrar abonos o fertilizantes
+        setInventory(data.filter((i: any) => i.tipo !== 'fitosanitario' && i.cantidad_actual > 0));
+      }).catch(console.error);
+    }
+  }, [parcelas]);
+
   React.useEffect(() => {
     if (initialParcelaId) {
       setForm(prev => ({ ...prev, parcela_id: initialParcelaId }));
@@ -27,10 +40,12 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
   const [form, setForm] = useState({
     parcela_id: '',
     fecha: new Date().toISOString().split('T')[0],
+    inventario_id: '',
     tipo_abono: '',
     dosis: '',
     unidad_dosis: 'kg/ha',
     n_p_k: '',
+    superficie_tratada: '',
   });
 
   const tiposAbono = ['Mineral sólido', 'Mineral líquido', 'Orgánico', 'Organomineral', 'Fertirrigación', 'Foliar'];
@@ -51,12 +66,50 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
       tipo_abono: data.fertilizante || prev.tipo_abono,
       dosis: data.dosis ? String(data.dosis) : prev.dosis,
       unidad_dosis: data.unidad_dosis || prev.unidad_dosis,
+      superficie_tratada: data.superficie_tratada ? String(data.superficie_tratada) : prev.superficie_tratada,
     }));
+  };
+
+  const handleInventoryChange = (invId: string) => {
+    if (!invId) {
+      setForm({ ...form, inventario_id: '', tipo_abono: '' });
+      return;
+    }
+    const item = inventory.find(i => i.id === invId);
+    if (item) {
+      setForm({
+        ...form,
+        inventario_id: invId,
+        tipo_abono: item.nombre_producto
+      });
+    }
+  };
+
+  const validate = (): string[] => {
+    const errors: string[] = [];
+    if (!form.parcela_id) errors.push('Seleccione una parcela');
+    if (!form.tipo_abono && !form.inventario_id) errors.push('Especifique el tipo de abono');
+    if (!form.dosis || Number(form.dosis) <= 0) errors.push('La dosis debe ser mayor que 0');
+    
+    if (form.inventario_id) {
+      const item = inventory.find(i => i.id === form.inventario_id);
+      const p = parcelas.find(x => x.id === form.parcela_id);
+      const usedHa = form.superficie_tratada ? Number(form.superficie_tratada) : (p ? Number(p.hectareas) : 1);
+      const totalUsedVolume = usedHa * Number(form.dosis);
+      
+      if (item && totalUsedVolume > item.cantidad_actual && form.unidad_dosis.startsWith(item.unidad === 'L' ? 'L' : 'kg')) {
+        errors.push(`Stock insuficiente. Necesitas ${totalUsedVolume.toFixed(2)} ${item.unidad} pero te quedan ${item.cantidad_actual} ${item.unidad}.`);
+      }
+    }
+    return errors;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.parcela_id || !form.tipo_abono || !form.dosis) return;
+    const errors = validate();
+    setValidationErrors(errors);
+    if (errors.length > 0) return;
+
     setSaving(true);
     try {
       const { error } = await supabase.from('fertilizaciones').insert({
@@ -66,14 +119,29 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
         dosis: Number(form.dosis),
         unidad_dosis: form.unidad_dosis,
         n_p_k: form.n_p_k || null,
+        superficie_tratada: form.superficie_tratada ? Number(form.superficie_tratada) : null,
         user_id: userProfile?.userId || null,
         tenant_id: userProfile?.tenant_id || null,
       });
       if (error) throw error;
+
+      if (form.inventario_id) {
+        const p = parcelas.find(x => x.id === form.parcela_id);
+        const usedHa = form.superficie_tratada ? Number(form.superficie_tratada) : (p ? Number(p.hectareas) : 1);
+        let totalUsedVolume = usedHa * Number(form.dosis);
+        
+        if (form.unidad_dosis === 't/ha') totalUsedVolume *= 1000;
+
+        await deductStock(form.inventario_id, totalUsedVolume).catch(err => {
+          console.error("No se pudo descontar del stock: ", err);
+        });
+      }
+
       setSuccess(true);
       setTimeout(() => { setSuccess(false); onSuccess(); }, 1500);
     } catch (err) {
       console.error(err);
+      setValidationErrors(['Error al guardar la fertilización.']);
     } finally {
       setSaving(false);
     }
@@ -111,6 +179,18 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
         </div>
       </div>
 
+      {validationErrors.length > 0 && (
+        <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-start gap-3 text-red-400">
+          <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <h4 className="text-sm font-bold">No se puede guardar:</h4>
+            <ul className="text-sm list-disc pl-4 space-y-1 opacity-80">
+              {validationErrors.map((err, i) => <li key={i}>{err}</li>)}
+            </ul>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label className={labelClass}>Parcela *</label>
@@ -126,6 +206,33 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
         <div>
           <label className={labelClass}>Fecha *</label>
           <input type="date" className={inputClass} value={form.fecha} onChange={e => setForm({...form, fecha: e.target.value})} />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className={labelClass}>
+            <div className="flex items-center gap-2">
+              <PackageOpen size={16} className="text-emerald-400" />
+              Seleccionar del Almacén (Opcional)
+            </div>
+          </label>
+          <div className="relative">
+            <select 
+              className={`${inputClass} appearance-none cursor-pointer bg-emerald-500/5 border-emerald-500/20 text-emerald-100`}
+              value={form.inventario_id}
+              onChange={e => handleInventoryChange(e.target.value)}
+            >
+              <option value="">-- No usar producto del almacén --</option>
+              {inventory.map(i => (
+                <option key={i.id} value={i.id}>
+                  {i.nombre_producto} ({i.cantidad_actual} {i.unidad} disponibles)
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-400/50 pointer-events-none" />
+          </div>
+          <p className="text-[11px] text-emerald-400/60 mt-2 ml-1">
+            Si seleccionas un producto del almacén, se descontará automáticamente el stock al guardar.
+          </p>
         </div>
 
         <div>
@@ -160,6 +267,11 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
         <div>
           <label className={labelClass}>N-P-K (Riqueza)</label>
           <input className={inputClass} placeholder="Ej: 20-10-5" value={form.n_p_k} onChange={e => setForm({...form, n_p_k: e.target.value})} />
+        </div>
+
+        <div>
+          <label className={labelClass}>Superficie Tratada (ha) - Opcional</label>
+          <input type="number" step="0.01" className={inputClass} placeholder="Por defecto toda la parcela" value={form.superficie_tratada} onChange={e => setForm({...form, superficie_tratada: e.target.value})} />
         </div>
       </div>
 
