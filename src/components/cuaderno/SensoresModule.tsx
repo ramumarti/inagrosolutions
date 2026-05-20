@@ -15,6 +15,7 @@ export function SensoresModule({ explotacionId, parcelas }: SensoresModuleProps)
   const [lecturas, setLecturas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [weather, setWeather] = useState<any>(null);
   const supabase = createClient();
 
   const [form, setForm] = useState({
@@ -25,6 +26,20 @@ export function SensoresModule({ explotacionId, parcelas }: SensoresModuleProps)
   });
 
   const tiposMedicion = ['Humedad de Suelo', 'Temperatura', 'Radiación UV', 'Fertilidad NPK', 'Salinidad', 'Pluviómetro'];
+
+  const loadWeather = useCallback(async (lat: number, lng: number) => {
+    try {
+      // Usamos Open-Meteo para obtener clima actual (temperatura, viento, humedad relativa) y precipitación
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&timezone=auto`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data && data.current) {
+        setWeather(data.current);
+      }
+    } catch (err) {
+      console.error("No se pudo cargar el clima", err);
+    }
+  }, []);
 
   const loadLecturas = useCallback(async () => {
     try {
@@ -45,7 +60,17 @@ export function SensoresModule({ explotacionId, parcelas }: SensoresModuleProps)
 
   useEffect(() => {
     loadLecturas();
-  }, [loadLecturas]);
+    
+    // Obtenemos localización para el clima
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => loadWeather(pos.coords.latitude, pos.coords.longitude),
+        () => loadWeather(37.8882, -4.7794) // Fallback: Córdoba (zona agrícola)
+      );
+    } else {
+      loadWeather(37.8882, -4.7794);
+    }
+  }, [loadLecturas, loadWeather]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,8 +195,8 @@ export function SensoresModule({ explotacionId, parcelas }: SensoresModuleProps)
             <Radio className="w-6 h-6 text-blue-400" />
           </div>
           <div>
-            <h3 className="text-lg font-black text-white uppercase tracking-tight">Sensores IoT Telemétricos</h3>
-            <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Estaciones y sondas en campo</p>
+            <h3 className="text-lg font-black text-white uppercase tracking-tight">Sensores y Climatología</h3>
+            <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest">Estaciones en campo y meteorología</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -183,6 +208,42 @@ export function SensoresModule({ explotacionId, parcelas }: SensoresModuleProps)
           </GlowButton>
         </div>
       </div>
+
+      {weather && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <GlassCard className="p-4 border-white/5 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Temperatura</span>
+              <ThermometerSun size={16} className="text-amber-400" />
+            </div>
+            <p className="text-2xl font-black text-white">{weather.temperature_2m}°C</p>
+          </GlassCard>
+          <GlassCard className="p-4 border-white/5 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Humedad Rel.</span>
+              <Droplets size={16} className="text-blue-400" />
+            </div>
+            <p className="text-2xl font-black text-white">{weather.relative_humidity_2m}%</p>
+          </GlassCard>
+          <GlassCard className="p-4 border-white/5 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Precipitación</span>
+              <Droplets size={16} className="text-blue-500" />
+            </div>
+            <p className="text-2xl font-black text-white">{weather.precipitation} mm</p>
+          </GlassCard>
+          <GlassCard className={`p-4 border-white/5 flex flex-col justify-between ${weather.wind_speed_10m > 15 ? 'border-red-500/50 bg-red-500/10' : ''}`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Viento</span>
+              <Wind size={16} className={weather.wind_speed_10m > 15 ? "text-red-400" : "text-emerald-400"} />
+            </div>
+            <p className="text-2xl font-black text-white">{weather.wind_speed_10m} km/h</p>
+            {weather.wind_speed_10m > 15 && (
+              <p className="text-[9px] font-bold text-red-400 mt-1 uppercase tracking-wider">No pulverizar</p>
+            )}
+          </GlassCard>
+        </div>
+      )}
 
       {loading && lecturas.length === 0 ? (
         <div className="p-12 text-center text-white/40 animate-pulse">Obteniendo espectro telemétrico...</div>

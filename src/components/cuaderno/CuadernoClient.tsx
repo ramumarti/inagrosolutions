@@ -12,6 +12,7 @@ import { CostesModule } from '@/components/cuaderno/CostesModule';
 
 import { CalendarioModule } from '@/components/cuaderno/CalendarioModule';
 import { TrazabilidadModule } from '@/components/cuaderno/TrazabilidadModule';
+import { CosechasModule } from '@/components/cuaderno/CosechasModule';
 import { DashboardsModule } from '@/components/cuaderno/DashboardsModule';
 import { SensoresModule } from '@/components/cuaderno/SensoresModule';
 import { ExcelParcelImporter } from '@/components/cuaderno/ExcelParcelImporter';
@@ -335,6 +336,9 @@ export default function CuadernoPage() {
             />
           );
         case 'cosechas':
+          return profile.explotaciones[0] ? (
+            <CosechasModule explotacionId={profile.explotaciones[0].id} parcelas={profile.parcelas} />
+          ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
         case 'trazabilidad':
           return profile.explotaciones[0] ? (
             <TrazabilidadModule explotacionId={profile.explotaciones[0].id} parcelas={profile.parcelas} />
