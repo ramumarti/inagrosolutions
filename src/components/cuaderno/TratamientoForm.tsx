@@ -5,6 +5,8 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { createClient } from '@/lib/supabase/client';
 import { getInventory, deductStock } from '@/lib/actions/inventory';
+import { VoiceRecorderButton } from '@/components/cuaderno/VoiceRecorderButton';
+import { VademecumAlert, type VademecumValidationResult } from '@/components/cuaderno/VademecumAlert';
 import { Bug, Calendar, Beaker, Ruler, Tractor, User, Check, AlertTriangle, ChevronDown, PackageOpen } from 'lucide-react';
 
 interface TratamientoFormProps {
@@ -34,6 +36,8 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
     operario: '',
   });
 
+  const [vademecumResult, setVademecumResult] = useState<VademecumValidationResult | null>(null);
+
   const unidades = ['L/ha', 'kg/ha', 'mL/ha', 'g/ha', 'cc/100L'];
 
   useEffect(() => {
@@ -51,6 +55,49 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
     }
   }, [initialParcelaId]);
 
+  // Vademecum Real-time Validation (Debounced)
+  useEffect(() => {
+    const validateVademecum = async () => {
+      if (!form.parcela_id || !form.nombre_producto || !form.dosis) {
+        setVademecumResult(null);
+        return;
+      }
+
+      setVademecumResult(prev => prev ? { ...prev, loading: true } : { valid: true, warnings: [], errors: [], info: {}, loading: true });
+
+      const parcela = parcelas.find(p => p.id === form.parcela_id);
+      // Extraemos posible nombre de cultivo de la parcela, si no existe usamos "Cultivo genérico"
+      const cultivoStr = parcela?.cultivos && parcela.cultivos.length > 0 ? parcela.cultivos[0].nombre : 'Desconocido';
+
+      try {
+        const res = await fetch('/api/ai/validate-treatment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            producto_nombre: form.nombre_producto,
+            producto_registro: form.producto_mapa_id,
+            cultivo: cultivoStr,
+            dosis: Number(form.dosis),
+            unidad_dosis: form.unidad_dosis
+          })
+        });
+        const data = await res.json();
+        
+        if (data.error && data.error === 'CREDITS_EXHAUSTED') {
+          // Si no hay créditos, se ignora la validación IA
+          setVademecumResult(null);
+        } else {
+          setVademecumResult({ ...data, loading: false });
+        }
+      } catch (err) {
+        setVademecumResult(null);
+      }
+    };
+
+    const timeoutId = setTimeout(validateVademecum, 800);
+    return () => clearTimeout(timeoutId);
+  }, [form.parcela_id, form.nombre_producto, form.dosis, form.unidad_dosis, form.producto_mapa_id, parcelas]);
+
   // Si seleccionan del inventario, auto-rellenar producto y MAPA id
   const handleInventoryChange = (invId: string) => {
     if (!invId) {
@@ -66,6 +113,30 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
         producto_mapa_id: item.numero_registro || ''
       });
     }
+  };
+
+  const handleAIDataExtracted = (data: any) => {
+    if (!data) return;
+    
+    // Buscar parcela por nombre si viene
+    let pId = form.parcela_id;
+    if (data.parcela) {
+      const found = parcelas.find(p => p.nombre.toLowerCase().includes(data.parcela.toLowerCase()));
+      if (found) pId = found.id;
+    }
+
+    // Actualizar formulario con datos detectados
+    setForm(prev => ({
+      ...prev,
+      parcela_id: pId,
+      fecha: data.fecha || prev.fecha,
+      nombre_producto: data.producto || prev.nombre_producto,
+      dosis: data.dosis ? String(data.dosis) : prev.dosis,
+      unidad_dosis: data.unidad_dosis || prev.unidad_dosis,
+      superficie_tratada: data.superficie_tratada ? String(data.superficie_tratada) : prev.superficie_tratada,
+      maquinaria_usada: data.maquinaria || prev.maquinaria_usada,
+      operario: data.operario || prev.operario,
+    }));
   };
 
   const validate = (): string[] => {
@@ -90,6 +161,11 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
     if (Number(form.dosis) > 100) {
       errors.push('⚠️ Alerta normativa: La dosis supera los 100 L/ha. Verifique con la ficha técnica del producto.');
     }
+    
+    if (vademecumResult && !vademecumResult.loading && !vademecumResult.valid) {
+      errors.push('Bloqueado por Vademécum: ' + vademecumResult.errors[0]);
+    }
+
     return errors;
   };
 
@@ -168,9 +244,15 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
         <div className="w-16 h-16 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/10 shrink-0">
           <Bug className="w-8 h-8 text-blue-400" />
         </div>
-        <div>
+        <div className="flex-1">
           <h3 className="text-xl font-black text-white tracking-tight">Nuevo Tratamiento</h3>
           <p className="text-sm text-white/60 font-bold">Fitosanitarios • Vinculado al Almacén</p>
+        </div>
+        <div className="shrink-0">
+          <VoiceRecorderButton 
+            type="tratamiento" 
+            onDataExtracted={handleAIDataExtracted} 
+          />
         </div>
       </div>
 
@@ -282,6 +364,10 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
               <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 pointer-events-none" />
             </div>
           </div>
+        </div>
+
+        <div className="md:col-span-2">
+          <VademecumAlert result={vademecumResult} />
         </div>
 
         <div>

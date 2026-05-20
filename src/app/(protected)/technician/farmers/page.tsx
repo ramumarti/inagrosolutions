@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { getAssignedFarmers } from '@/lib/actions/technician';
 import { GlassCard } from '@/components/ui/GlassCard';
 import Link from 'next/link';
+import { Search, User, FileText, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
 
 export default function TechnicianFarmersPage() {
   const [farmers, setFarmers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     getAssignedFarmers().then(data => {
@@ -16,52 +18,93 @@ export default function TechnicianFarmersPage() {
     });
   }, []);
 
+  const filteredFarmers = farmers.filter(f => 
+    f.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) return <div className="text-white/50 text-sm font-bold animate-pulse">Cargando agricultores...</div>;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-white">Mis Clientes Asignados</h2>
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/5 pb-6">
+        <div>
+          <h2 className="text-2xl font-black text-white tracking-tight">Mis Agricultores</h2>
+          <p className="text-sm font-bold text-white/50 mt-1">
+            Gestiona los cuadernos de campo de tus clientes asignados
+          </p>
+        </div>
+        
+        <div className="relative w-full sm:w-64">
+          <input
+            type="text"
+            placeholder="Buscar por email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-indigo-500/50 outline-none transition-all"
+          />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
+        </div>
       </div>
 
-      <GlassCard className="border-white/5 overflow-x-auto">
-        <table className="w-full text-left text-sm text-white/70">
-          <thead className="bg-white/[0.02] border-b border-white/5 text-xs uppercase font-bold text-white/50">
-            <tr>
-              <th className="px-6 py-4">Email</th>
-              <th className="px-6 py-4">Explotaciones</th>
-              <th className="px-6 py-4 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5 text-white/80 font-medium">
-            {farmers.map(f => (
-              <tr key={f.id} className="hover:bg-white/[0.02] transition-colors">
-                <td className="px-6 py-4">
-                  <p className="font-bold text-white">{f.email}</p>
-                </td>
-                <td className="px-6 py-4">{f.explotaciones?.[0]?.count || 0} explotaciones</td>
-                <td className="px-6 py-4 text-center">
-                  <Link href={`/technician/farmer/${f.id}/cuaderno`}>
-                    <button className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all border bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 mr-2">
-                      Ver Cuaderno
+      <div className="grid grid-cols-1 gap-4">
+        {filteredFarmers.map(f => {
+          const numExplotaciones = f.explotaciones?.[0]?.count || 0;
+          
+          return (
+            <GlassCard key={f.id} className="p-0 overflow-hidden border-white/5 hover:border-white/10 transition-colors group">
+              <div className="flex flex-col md:flex-row items-center p-5 gap-6">
+                
+                {/* Farmer Info */}
+                <div className="flex items-center gap-4 min-w-[250px] w-full md:w-auto">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-white/5">
+                    <User size={20} className="text-indigo-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-white">{f.email}</h3>
+                    <p className="text-[10px] uppercase tracking-widest text-white/40 font-black mt-0.5">
+                      {numExplotaciones} Explotaciones
+                    </p>
+                  </div>
+                </div>
+
+                {/* Status Badges */}
+                <div className="flex-1 flex flex-wrap gap-3 w-full md:w-auto">
+                  <div className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2">
+                    <CheckCircle2 size={14} className="text-emerald-400" />
+                    <span className="text-xs font-bold text-emerald-300">Cuaderno SIEX Al Día</span>
+                  </div>
+                  {numExplotaciones === 0 && (
+                    <div className="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center gap-2">
+                      <AlertTriangle size={14} className="text-amber-400" />
+                      <span className="text-xs font-bold text-amber-300">Sin parcelas</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+                  <Link href={`/technician/farmer/${f.id}/cuaderno`} className="w-full md:w-auto">
+                    <button className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl transition-all active:scale-95">
+                      <FileText size={16} className="text-white/50" />
+                      Gestionar Cuaderno
+                      <ArrowRight size={16} className="text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
                     </button>
                   </Link>
-                  <button className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all border bg-indigo-500/10 text-indigo-400 border-indigo-500/20 hover:bg-indigo-500/20">
-                    Nueva Tarea
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {farmers.length === 0 && (
-              <tr>
-                <td colSpan={3} className="px-6 py-12 text-center text-white/30 text-sm">
-                  No tienes agricultores asignados.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </GlassCard>
+                </div>
+
+              </div>
+            </GlassCard>
+          );
+        })}
+
+        {filteredFarmers.length === 0 && (
+          <div className="py-16 text-center border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
+            <User size={32} className="text-white/20 mx-auto mb-3" />
+            <p className="text-white/60 font-bold">No se encontraron agricultores</p>
+            <p className="text-white/40 text-sm mt-1">Busca otro nombre o pide al administrador que te asigne clientes.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

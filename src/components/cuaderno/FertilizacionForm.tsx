@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { createClient } from '@/lib/supabase/client';
+import { VoiceRecorderButton } from '@/components/cuaderno/VoiceRecorderButton';
 import { Droplets, Check, ChevronDown } from 'lucide-react';
 
 interface FertilizacionFormProps {
@@ -33,6 +34,25 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
   });
 
   const tiposAbono = ['Mineral sólido', 'Mineral líquido', 'Orgánico', 'Organomineral', 'Fertirrigación', 'Foliar'];
+
+  const handleAIDataExtracted = (data: any) => {
+    if (!data) return;
+    
+    let pId = form.parcela_id;
+    if (data.parcela) {
+      const found = parcelas.find(p => p.nombre.toLowerCase().includes(data.parcela.toLowerCase()));
+      if (found) pId = found.id;
+    }
+
+    setForm(prev => ({
+      ...prev,
+      parcela_id: pId,
+      fecha: data.fecha || prev.fecha,
+      tipo_abono: data.fertilizante || prev.tipo_abono,
+      dosis: data.dosis ? String(data.dosis) : prev.dosis,
+      unidad_dosis: data.unidad_dosis || prev.unidad_dosis,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,9 +99,15 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
         <div className="w-16 h-16 bg-violet-500/10 rounded-xl flex items-center justify-center border border-violet-500/10 shrink-0">
           <Droplets className="w-8 h-8 text-violet-400" />
         </div>
-        <div>
+        <div className="flex-1">
           <h3 className="text-xl font-black text-white tracking-tight">Nueva Fertilización</h3>
           <p className="text-sm text-white/60 font-bold">Registro de abonado • Plan de fertilización</p>
+        </div>
+        <div className="shrink-0">
+          <VoiceRecorderButton 
+            type="fertilizacion" 
+            onDataExtracted={handleAIDataExtracted} 
+          />
         </div>
       </div>
 

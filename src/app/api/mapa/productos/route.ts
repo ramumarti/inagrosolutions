@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 
 export interface ProductoMAPA {
   numRegistro: string;
@@ -17,28 +18,50 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // ----------------------------------------------------------------------------------
-    // TODO: Conectar con el WebService / Origen Oficial del MAPA
-    // Muchos agricultores utilizan la descarga CSV/XML masiva del ministerio
-    // o APIs de terceros. Por problemas de CORS con el SOAP oficial, se hace desde el backend.
-    // ----------------------------------------------------------------------------------
+    const supabase = await createClient();
     
-    // MOCK DATA: Respuestas estructuradas simulando la base de datos oficial del MAPA.
-    const mockDatabase: ProductoMAPA[] = [
-      { numRegistro: '12345', nombreComercial: 'GLIFOSATO 36%', titular: 'AgroQuímica SL', materiaActiva: 'Glifosato', estado: 'Vigente' },
-      { numRegistro: '24680', nombreComercial: 'ABAMECTINA 1.8%', titular: 'BioPesticidas SA', materiaActiva: 'Abamectina', estado: 'Vigente' },
-      { numRegistro: '13579', nombreComercial: 'COBRE 50%', titular: 'EcoFert SL', materiaActiva: 'Oxicloruro de cobre', estado: 'Vigente' },
-      { numRegistro: '98765', nombreComercial: 'AZUFRE 80%', titular: 'QuimicaAgricola', materiaActiva: 'Azufre', estado: 'Vigente' }
-    ];
+    // Búsqueda en nombre_comercial y materia_activa usando el índice GIN
+    // Nota: supabase textSearch requiere formato tsquery, por lo que adaptamos la búsqueda
+    const tsQuery = query.trim().split(/\s+/).map(word => `${word}:*`).join(' & ');
 
-    const results = mockDatabase.filter(p => 
-      p.nombreComercial.toLowerCase().includes(query.toLowerCase()) || 
-      p.materiaActiva.toLowerCase().includes(query.toLowerCase())
-    );
+    const { data, error } = await supabase
+      .from('productos_fitosanitarios')
+      .select('numero_registro, nombre_comercial, titular, materia_activa, estado')
+      .textSearch('nombre_comercial', tsQuery)
+      .limit(20);
+
+    if (error) {
+      // Si falla el textSearch (por caracteres especiales, etc), hacemos un fallback a ilike
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('productos_fitosanitarios')
+        .select('numero_registro, nombre_comercial, titular, materia_activa, estado')
+        .or(`nombre_comercial.ilike.%${query}%,materia_activa.ilike.%${query}%`)
+        .limit(20);
+
+      if (fallbackError) throw fallbackError;
+
+      const results = fallbackData.map((p: any) => ({
+        numRegistro: p.numero_registro,
+        nombreComercial: p.nombre_comercial,
+        titular: p.titular || 'Desconocido',
+        materiaActiva: p.materia_activa || 'Desconocida',
+        estado: p.estado || 'Vigente'
+      }));
+
+      return NextResponse.json({ success: true, count: results.length, data: results });
+    }
+
+    const results = data.map((p: any) => ({
+      numRegistro: p.numero_registro,
+      nombreComercial: p.nombre_comercial,
+      titular: p.titular || 'Desconocido',
+      materiaActiva: p.materia_activa || 'Desconocida',
+      estado: p.estado || 'Vigente'
+    }));
 
     return NextResponse.json({ success: true, count: results.length, data: results });
-  } catch (error) {
-    console.error('Error fetching from MAPA:', error);
-    return NextResponse.json({ error: 'Fallo al conectar con el servidor del MAPA' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Error fetching from MAPA db:', error);
+    return NextResponse.json({ error: 'Fallo al conectar con la base de datos del Vademécum' }, { status: 500 });
   }
 }

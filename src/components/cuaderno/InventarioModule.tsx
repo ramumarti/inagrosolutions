@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { getInventory, addStock } from '@/lib/actions/inventory';
-import { PackageOpen, Plus, Beaker, Leaf, AlertTriangle, XCircle } from 'lucide-react';
+import { InvoiceScanner } from '@/components/cuaderno/InvoiceScanner';
+import { PackageOpen, Plus, Beaker, Leaf, AlertTriangle, XCircle, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 
 export function InventarioModule({ explotacionId }: { explotacionId: string }) {
@@ -61,6 +62,21 @@ export function InventarioModule({ explotacionId }: { explotacionId: string }) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleInvoiceScanned = (data: any) => {
+    if (!data || !data.articulos || data.articulos.length === 0) return;
+    
+    const art = data.articulos[0];
+    setFormData(prev => ({
+      ...prev,
+      tipo: art.tipo === 'abono' || art.tipo === 'fertilizante' ? 'fertilizante' : 'fitosanitario',
+      nombre_producto: art.nombre_producto || prev.nombre_producto,
+      numero_registro: art.numero_registro_mapa || prev.numero_registro,
+      cantidad: art.cantidad ? String(art.cantidad) : prev.cantidad,
+      unidad: art.unidad === 'kg' ? 'Kg' : art.unidad === 'ud' ? 'uds' : 'L',
+      precio_unitario: art.precio_unitario ? String(art.precio_unitario) : prev.precio_unitario
+    }));
   };
 
   if (loading) return <div className="text-white/50 text-sm font-bold animate-pulse">Cargando almacén...</div>;
@@ -167,6 +183,10 @@ export function InventarioModule({ explotacionId }: { explotacionId: string }) {
             </button>
 
             <h3 className="text-xl font-bold text-white mb-6">Añadir al Inventario</h3>
+
+            <div className="mb-6">
+              <InvoiceScanner onScanComplete={handleInvoiceScanned} />
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

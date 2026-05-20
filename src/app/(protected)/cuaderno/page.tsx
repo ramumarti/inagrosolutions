@@ -25,6 +25,8 @@ import { ParcelasMaster } from '@/components/cuaderno/ParcelasMaster';
 import { createExplotacion, createCampana, deleteExplotacion, updateExplotacion } from '@/lib/actions/agricultural';
 import { SuccessModal } from '@/components/cuaderno/SuccessModal';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { AICreditsWidget } from '@/components/cuaderno/AICreditsWidget';
+import { AICreditsModal } from '@/components/cuaderno/AICreditsModal';
 import { Suspense } from 'react';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { useToast } from '@/components/ui/Toast';
@@ -57,6 +59,7 @@ export default function CuadernoPage() {
   const [editNombre, setEditNombre] = useState('');
   const [editTitular, setEditTitular] = useState('');
   const [editNif, setEditNif] = useState('');
+  const [showAICreditsModal, setShowAICreditsModal] = useState(false);
 
   // Initialize selection
   useEffect(() => {
@@ -497,6 +500,13 @@ export default function CuadernoPage() {
   return (
     <div className="flex h-full overflow-hidden">
       <Suspense fallback={null}><SuccessModal /></Suspense>
+      <AICreditsModal
+        isOpen={showAICreditsModal}
+        onClose={() => setShowAICreditsModal(false)}
+        creditsRemaining={0}
+        creditsNeeded={1}
+        featureName="IA"
+      />
       {/* Module sidebar */}
       <aside className="hidden lg:flex w-56 shrink-0 border-r border-white/5 flex-col py-6 overflow-y-auto">
         <div className="px-4 mb-6">
@@ -525,6 +535,11 @@ export default function CuadernoPage() {
             );
           })}
         </nav>
+
+        {/* AI Credits Widget */}
+        <div className="px-2 mt-auto pt-4 border-t border-white/5">
+          <AICreditsWidget onBuyCredits={() => setShowAICreditsModal(true)} />
+        </div>
       </aside>
 
       {/* Main Content */}
