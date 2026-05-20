@@ -34,12 +34,14 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
       labores: 24
     };
   }, [profile, explotacionId]);
+  const [exportFormat, setExportFormat] = useState<'xlsx' | 'xml'>('xlsx');
 
   const handleExportSiex = async () => {
     if (!explotacionId || !campanaId) return;
     setIsExporting(true);
     
     try {
+      // Import the server action just to validate data before redirecting to download
       const { generateSiexData } = await import('@/lib/actions/export-siex');
       const data = await generateSiexData(explotacionId, campanaId);
 
@@ -57,44 +59,10 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
           return;
         }
       }
-      
-      const fileName = `SIEX_Export_${data.explotacion?.nombre || 'Finca'}_${new Date().getFullYear()}`;
 
-      // Tratamientos Fitosanitarios
-      const tratamientosData = data.tratamientos.map((t: any) => ({
-        "ID_EXPLOTACION": data.explotacion?.nif_cif || '---',
-        "FECHA_TRATAMIENTO": new Date(t.fecha).toLocaleDateString('es-ES'),
-        "NUM_REGISTRO_MAPA": t.producto ? t.producto.match(/\\d{5}/)?.[0] || 'N/A' : 'N/A',
-        "NOMBRE_PRODUCTO": t.producto,
-        "METODO_APLICACION": t.metodo_aplicacion || 'Pulverización',
-        "DOSIS_CANTIDAD": t.dosis_cantidad || 0,
-        "DOSIS_UNIDAD": t.dosis_unidad || 'L/ha',
-        "MAQUINARIA": t.maquinaria_id || 'Manual',
-        "OPERARIO": t.operario_id || 'Propio titular',
-        "PLAZO_SEGURIDAD": t.plazo_seguridad_dias || 0
-      }));
-
-      // Parcelas
-      const parcelasData = data.parcelas.map((p: any) => ({
-        "ID_EXPLOTACION": data.explotacion?.nif_cif || '---',
-        "PROVINCIA": p.provincia || '00',
-        "MUNICIPIO": p.municipio || '000',
-        "POLIGONO": p.poligono || '0',
-        "PARCELA": p.parcela || '0',
-        "RECINTO": p.recinto || 1,
-        "SUPERFICIE_HA": p.hectareas || 0,
-        "CULTIVO_PRINCIPAL": p.cultivo || 'No especificado',
-        "SISTEMA_EXPLOTACION": p.sistema_riego === 'Regadío' ? 'R' : 'S'
-      }));
-
-      const wb = XLSX.utils.book_new();
-      const wsParcelas = XLSX.utils.json_to_sheet(parcelasData.length > 0 ? parcelasData : [{ "Mensaje": "Sin datos de parcelas" }]);
-      const wsTratamientos = XLSX.utils.json_to_sheet(tratamientosData.length > 0 ? tratamientosData : [{ "Mensaje": "Sin tratamientos reportados" }]);
-
-      XLSX.utils.book_append_sheet(wb, wsParcelas, "PARCELAS");
-      XLSX.utils.book_append_sheet(wb, wsTratamientos, "TRATAMIENTOS");
-
-      XLSX.writeFile(wb, `${fileName}.xlsx`, { bookType: 'xlsx' });
+      // Si es válido, disparamos la descarga
+      const url = `/api/export/siex?explotacionId=${explotacionId}&campanaId=${campanaId}&format=${exportFormat}`;
+      window.open(url, '_blank');
       
     } catch (e: any) {
       console.error(e);
@@ -181,22 +149,28 @@ export function ExportacionModule({ profile, explotacionId, campanaId }: Exporta
                 <h4 className="text-lg font-black text-white">Configuración del Archivo Oficial</h4>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-5 bg-white/5 border border-white/10 rounded-2xl hover:border-emerald-500/30 transition-all cursor-pointer">
+                    <div 
+                        onClick={() => setExportFormat('xlsx')}
+                        className={`p-5 bg-white/5 border rounded-2xl hover:border-emerald-500/30 transition-all cursor-pointer ${exportFormat === 'xlsx' ? 'border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'border-white/10'}`}
+                    >
                         <div className="flex justify-between mb-4">
                             <FileBox className="text-emerald-400" size={24} />
-                            <div className="w-5 h-5 border-2 border-white/10 rounded-full group-hover:border-emerald-500 transition-colors" />
+                            <div className={`w-5 h-5 border-2 rounded-full transition-colors ${exportFormat === 'xlsx' ? 'border-emerald-500 bg-emerald-500/20' : 'border-white/10'}`} />
                         </div>
                         <h5 className="text-sm font-black text-white mb-1">Cuaderno Fitosanitario (CUE)</h5>
-                        <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Formato MAPA RD 1311/2012</p>
+                        <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Formato Oficial Excel (.xlsx)</p>
                     </div>
 
-                    <div className="p-5 bg-white/5 border border-white/10 rounded-2xl hover:border-blue-500/30 transition-all cursor-pointer">
+                    <div 
+                        onClick={() => setExportFormat('xml')}
+                        className={`p-5 bg-white/5 border rounded-2xl hover:border-blue-500/30 transition-all cursor-pointer ${exportFormat === 'xml' ? 'border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.1)]' : 'border-white/10'}`}
+                    >
                         <div className="flex justify-between mb-4">
                             <Database className="text-blue-400" size={24} />
-                            <div className="w-5 h-5 border-2 border-white/10 rounded-full" />
+                            <div className={`w-5 h-5 border-2 rounded-full transition-colors ${exportFormat === 'xml' ? 'border-blue-500 bg-blue-500/20' : 'border-white/10'}`} />
                         </div>
                         <h5 className="text-sm font-black text-white mb-1">Carga Masiva SIEX</h5>
-                        <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Formato CSV Delimitado por Comas</p>
+                        <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Formato Estructurado (.xml)</p>
                     </div>
 
                     <div className="p-5 bg-white/5 border border-white/10 rounded-2xl hover:border-amber-500/30 transition-all cursor-pointer">
