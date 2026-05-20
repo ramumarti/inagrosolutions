@@ -46,11 +46,94 @@ export async function getAssignedFarmers() {
   return farmersList;
 }
 
-export async function getTechnicianStats() {
+export async function getTechnicianDashboardData() {
+  const supabase = await getSupabase();
   const farmers = await getAssignedFarmers();
+  const totalFarmers = farmers.length;
+  const totalExplotaciones = farmers.reduce((acc: number, f: any) => acc + (f.explotaciones?.[0]?.count || 0), 0);
+  
+  if (totalFarmers === 0) {
+    return { totalFarmers: 0, totalExplotaciones: 0, cuadernosPendientes: 0, recentActivity: [] };
+  }
+
+  const farmerIds = farmers.map((f: any) => f.id);
+
+  // Fetch recent activities across all assigned farmers
+  // Using parallel requests for performance
+  const [tratamientosRes, fertilizacionesRes] = await Promise.all([
+    supabase
+      .from('tratamientos_fitosanitarios')
+      .select('id, fecha, nombre_producto, user_id, created_at')
+      .in('user_id', farmerIds)
+      .order('created_at', { ascending: false })
+      .limit(10),
+    supabase
+      .from('fertilizaciones')
+      .select('id, fecha, tipo_abono, user_id, created_at')
+      .in('user_id', farmerIds)
+      .order('created_at', { ascending: false })
+      .limit(10)
+  ]);
+
+  let allActivities: any[] = [];
+
+  const trats = tratamientosRes.data || [];
+  trats.forEach((t: any) => {
+    const farmer = farmers.find((f: any) => f.id === t.user_id);
+    allActivities.push({
+      type: 'Tratamiento',
+      farmer: farmer ? `${farmer.first_name} ${farmer.last_name}` : 'Desconocido',
+      item: t.nombre_producto || 'Fitosanitario',
+      time: t.created_at,
+      icon: 'Bug',
+      color: 'text-blue-400',
+      bg: 'bg-blue-500/10'
+    });
+  });
+
+  const ferts = fertilizacionesRes.data || [];
+  ferts.forEach((f: any) => {
+    const farmer = farmers.find((fa: any) => fa.id === f.user_id);
+    allActivities.push({
+      type: 'Abonado',
+      farmer: farmer ? `${farmer.first_name} ${farmer.last_name}` : 'Desconocido',
+      item: f.tipo_abono || 'Fertilizante',
+      time: f.created_at,
+      icon: 'Droplets',
+      color: 'text-violet-400',
+      bg: 'bg-violet-500/10'
+    });
+  });
+
+  // Sort combined by created_at desc
+  allActivities.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+  const recentActivity = allActivities.slice(0, 5).map(act => {
+    // Format "Hace X horas"
+    const diffMs = new Date().getTime() - new Date(act.time).getTime();
+    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHrs / 24);
+    
+    let timeStr = 'Hace un momento';
+    if (diffDays > 0) timeStr = `Hace ${diffDays} días`;
+    else if (diffHrs > 0) timeStr = `Hace ${diffHrs} horas`;
+    else if (diffMs > 60000) timeStr = `Hace ${Math.floor(diffMs / 60000)} min`;
+    
+    return { ...act, time: timeStr };
+  });
+
+  // Cálculo de cuadernos pendientes reales (ej: fincas sin actividad reciente)
+  // Como aproximación real para la v1.0, calculamos cuántos farmers NO han tenido actividad
+  const activeFarmerIds = new Set([
+    ...trats.map((t: any) => t.user_id),
+    ...ferts.map((f: any) => f.user_id)
+  ]);
+  
+  const cuadernosPendientes = totalFarmers - activeFarmerIds.size;
+
   return {
-    totalFarmers: farmers?.length || 0,
-    totalAssignedFarms: farmers?.reduce((acc: number, f: any) => acc + (f.explotaciones?.[0]?.count || 0), 0) || 0,
-    pendingTasks: 0, // Placeholder
+    totalFarmers,
+    totalExplotaciones,
+    cuadernosPendientes: cuadernosPendientes > 0 ? cuadernosPendientes : 0,
+    recentActivity
   };
 }

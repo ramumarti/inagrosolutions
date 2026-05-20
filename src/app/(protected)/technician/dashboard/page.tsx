@@ -11,21 +11,20 @@ export default function TechnicianDashboardPage() {
     totalExplotaciones: 0,
     cuadernosPendientes: 0,
   });
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // En un caso real, estas métricas se sacarían de un aggregate query complejo.
-    // Aquí hacemos un aproach simulado basado en los farmers cargados.
-    getAssignedFarmers().then(data => {
-      const farmers = data || [];
-      const totalExplotaciones = farmers.reduce((acc, f) => acc + (f.explotaciones?.[0]?.count || 0), 0);
-      
-      setStats({
-        totalFarmers: farmers.length,
-        totalExplotaciones,
-        cuadernosPendientes: Math.floor(farmers.length * 0.3), // Simulación del 30% pendientes
-      });
-      setLoading(false);
+    import('@/lib/actions/technician').then(m => {
+      m.getTechnicianDashboardData().then(data => {
+        setStats({
+          totalFarmers: data.totalFarmers,
+          totalExplotaciones: data.totalExplotaciones,
+          cuadernosPendientes: data.cuadernosPendientes,
+        });
+        setRecentActivity(data.recentActivity);
+        setLoading(false);
+      }).catch(console.error);
     });
   }, []);
 
@@ -88,26 +87,28 @@ export default function TechnicianDashboardPage() {
           <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6">Actividad Reciente (Global)</h3>
           
           <div className="space-y-4">
-            {[
-              { type: 'Tratamiento', farmer: 'Juan Pérez', item: 'Cobre Nordox 75 WG', time: 'Hace 2 horas', icon: Bug, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-              { type: 'Abonado', farmer: 'María Gómez', item: 'N-P-K 20-10-5', time: 'Hace 5 horas', icon: Droplets, color: 'text-violet-400', bg: 'bg-violet-500/10' },
-              { type: 'Labor', farmer: 'Finca Los Olivos', item: 'Poda', time: 'Ayer', icon: Leaf, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-            ].map((act, i) => (
-              <div key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${act.bg}`}>
-                  <act.icon size={16} className={act.color} />
+            {recentActivity.length === 0 && (
+              <p className="text-xs text-white/40 text-center py-4">No hay actividad reciente.</p>
+            )}
+            {recentActivity.map((act, i) => {
+              const IconComponent = act.icon === 'Bug' ? Bug : (act.icon === 'Droplets' ? Droplets : Leaf);
+              return (
+                <div key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${act.bg}`}>
+                    <IconComponent size={16} className={act.color} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-white truncate">{act.farmer}</p>
+                    <p className="text-[11px] text-white/50 uppercase tracking-wider font-bold truncate">
+                      {act.type} • {act.item}
+                    </p>
+                  </div>
+                  <div className="text-[10px] text-white/30 font-bold whitespace-nowrap">
+                    {act.time}
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-white truncate">{act.farmer}</p>
-                  <p className="text-[11px] text-white/50 uppercase tracking-wider font-bold truncate">
-                    {act.type} • {act.item}
-                  </p>
-                </div>
-                <div className="text-[10px] text-white/30 font-bold whitespace-nowrap">
-                  {act.time}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </GlassCard>
 
