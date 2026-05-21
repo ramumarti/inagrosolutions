@@ -124,6 +124,10 @@ function FarmerSignupContent() {
         )}
 
         <div className="mt-12 flex flex-col items-center gap-3 text-xs w-full pt-6 border-t border-white/5">
+          <span className="text-white/30 uppercase font-black">¿Ya tienes cuenta?</span>
+          <Link href="/login" className="text-emerald-400 font-bold hover:underline uppercase flex items-center gap-1 mb-4">
+            Inicia Sesión aquí
+          </Link>
           <span className="text-white/30 uppercase font-black">¿Eres una Entidad/Partner?</span>
           <Link href="/partner/signup" className="text-indigo-400 font-bold hover:underline uppercase flex items-center gap-1">
             <Building2 className="w-3 h-3" /> Registra tu Plataforma

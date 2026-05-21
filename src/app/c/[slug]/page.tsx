@@ -114,7 +114,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             <a href="#contacto" className="hover:text-white transition-colors">Contacto</a>
           </div>
           <div className="flex gap-4 items-center">
-            <Link href="/login" className="px-5 py-2.5 text-sm font-bold text-white/70 hover:text-white transition-colors hidden sm:block">
+            <Link href={`/login?tenant=${tenant.slug}`} className="px-5 py-2.5 text-sm font-bold text-white/70 hover:text-white transition-colors hidden sm:block">
               Acceso
             </Link>
             <Link href={`/planes?tenant=${tenant.slug}`}>
