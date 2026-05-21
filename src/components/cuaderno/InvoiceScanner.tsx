@@ -92,7 +92,7 @@ export function InvoiceScanner({ onScanComplete, className = '' }: InvoiceScanne
       <GlassCard className={`p-6 flex flex-col items-center justify-center text-center gap-4 ${className}`}>
         <div className="relative">
           {previewUrl && (
-            <img src={previewUrl} alt="Factura preview" className="w-24 h-32 object-cover rounded-lg opacity-40 grayscale" />
+            <img src={previewUrl} alt="Factura preview" className="w-24 h-32 object-cover rounded-lg opacity-40 grayscale" style={{ imageOrientation: 'from-image' }} />
           )}
           <div className="absolute inset-0 flex items-center justify-center">
             <Loader2 size={32} className="text-violet-400 animate-spin" />

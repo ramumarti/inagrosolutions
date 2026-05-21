@@ -120,6 +120,7 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
         unidad_dosis: form.unidad_dosis,
         n_p_k: form.n_p_k || null,
         superficie_tratada: form.superficie_tratada ? Number(form.superficie_tratada) : null,
+        inventario_id: form.inventario_id || null,
         user_id: userProfile?.userId || null,
         tenant_id: userProfile?.tenant_id || null,
       });

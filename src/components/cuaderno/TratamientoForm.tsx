@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { getInventory, deductStock } from '@/lib/actions/inventory';
 import { VoiceRecorderButton } from '@/components/cuaderno/VoiceRecorderButton';
 import { VademecumAlert, type VademecumValidationResult } from '@/components/cuaderno/VademecumAlert';
-import { Bug, Calendar, Beaker, Ruler, Tractor, User, Check, AlertTriangle, ChevronDown, PackageOpen } from 'lucide-react';
+import { Bug, Calendar, Beaker, Ruler, Tractor, User, Check, AlertTriangle, ChevronDown, PackageOpen, ThermometerSun, Wind } from 'lucide-react';
 
 interface TratamientoFormProps {
   parcelas: any[];
@@ -34,6 +34,8 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
     superficie_tratada: '',
     maquinaria_usada: '',
     operario: '',
+    temperatura: '',
+    velocidad_viento: '',
   });
 
   const [vademecumResult, setVademecumResult] = useState<VademecumValidationResult | null>(null);
@@ -48,6 +50,35 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
       }).catch(console.error);
     }
   }, [parcelas]);
+
+  // Load Weather Data
+  useEffect(() => {
+    const fetchWeather = async (lat: number, lng: number) => {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,wind_speed_10m&timezone=auto`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data?.current) {
+          setForm(prev => ({
+            ...prev,
+            temperatura: String(data.current.temperature_2m),
+            velocidad_viento: String(data.current.wind_speed_10m)
+          }));
+        }
+      } catch (e) {
+        console.error('Weather error:', e);
+      }
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+        () => fetchWeather(37.8882, -4.7794) // Fallback: Córdoba
+      );
+    } else {
+      fetchWeather(37.8882, -4.7794);
+    }
+  }, []);
 
   useEffect(() => {
     if (initialParcelaId) {
@@ -187,6 +218,9 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
         superficie_tratada: form.superficie_tratada ? Number(form.superficie_tratada) : null,
         maquinaria_usada: form.maquinaria_usada || null,
         operario: form.operario || null,
+        temperatura: form.temperatura ? Number(form.temperatura) : null,
+        velocidad_viento: form.velocidad_viento ? Number(form.velocidad_viento) : null,
+        inventario_id: form.inventario_id || null,
         user_id: userProfile?.userId || null,
         tenant_id: userProfile?.tenant_id || null,
       });
@@ -400,6 +434,35 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
             value={form.operario}
             onChange={e => setForm({...form, operario: e.target.value})}
           />
+        </div>
+
+        {/* Meteorología SIEX */}
+        <div className="md:col-span-2 p-5 bg-sky-500/10 border border-sky-500/20 rounded-2xl">
+          <p className="text-[10px] text-sky-400 font-bold uppercase tracking-widest mb-3">Condiciones Meteorológicas (SIEX)</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}><ThermometerSun size={14} className="inline mr-1 text-sky-400" />Temperatura (°C)</label>
+              <input
+                type="number"
+                step="0.1"
+                className={inputClass}
+                placeholder="Ej: 24.5"
+                value={form.temperatura}
+                onChange={e => setForm({...form, temperatura: e.target.value})}
+              />
+            </div>
+            <div>
+              <label className={labelClass}><Wind size={14} className="inline mr-1 text-sky-400" />Viento (km/h)</label>
+              <input
+                type="number"
+                step="0.1"
+                className={inputClass}
+                placeholder="Ej: 12.0"
+                value={form.velocidad_viento}
+                onChange={e => setForm({...form, velocidad_viento: e.target.value})}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

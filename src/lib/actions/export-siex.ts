@@ -10,9 +10,9 @@ export async function generateSiexData(explotacionId: string, campanaId: string)
   const [parcelasRes, explotacionRes, tratamientosRes, laboresRes, fertRes] = await Promise.all([
     supabase.from('parcelas').select('*').eq('explotacion_id', explotacionId),
     supabase.from('explotaciones').select('*').eq('id', explotacionId).single(),
-    supabase.from('tratamientos_fitosanitarios').select('*').eq('campana_id', campanaId).eq('explotacion_id', explotacionId),
-    supabase.from('labores').select('*').eq('campana_id', campanaId).eq('explotacion_id', explotacionId),
-    supabase.from('fertilizaciones').select('*').eq('campana_id', campanaId).eq('explotacion_id', explotacionId)
+    supabase.from('tratamientos_fitosanitarios').select('*, parcelas!inner(explotacion_id, nombre, provincia, municipio, poligono, parcela, recinto, cultivo)').eq('campana_id', campanaId).eq('parcelas.explotacion_id', explotacionId),
+    supabase.from('labores').select('*, parcelas!inner(explotacion_id, nombre, provincia, municipio, poligono, parcela, recinto, cultivo)').eq('campana_id', campanaId).eq('parcelas.explotacion_id', explotacionId),
+    supabase.from('fertilizaciones').select('*, parcelas!inner(explotacion_id, nombre, provincia, municipio, poligono, parcela, recinto, cultivo)').eq('campana_id', campanaId).eq('parcelas.explotacion_id', explotacionId)
   ]);
 
   const parcelas = parcelasRes.data || [];

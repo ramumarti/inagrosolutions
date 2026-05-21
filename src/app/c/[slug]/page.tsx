@@ -12,6 +12,43 @@ import {
 } from 'lucide-react';
 import { TIER_CONFIG } from '@/lib/modules';
 import { TenantPricing } from '@/components/cuaderno/TenantPricing';
+import { Metadata, ResolvingMetadata } from 'next';
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createClient();
+
+  const { data: tenant } = await supabase
+    .from('tenants')
+    .select('name, public_description, logo_url')
+    .eq('slug', slug)
+    .single();
+
+  if (!tenant) return {};
+
+  const title = `${tenant.name} | Cuaderno de Campo Digital SIEX`;
+  const description = tenant.public_description || `Plataforma agrícola oficial de ${tenant.name}.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: tenant.logo_url ? [tenant.logo_url] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: tenant.logo_url ? [tenant.logo_url] : [],
+    }
+  };
+}
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0; // Disable cache to show branding changes immediately

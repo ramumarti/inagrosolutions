@@ -38,19 +38,17 @@ export function validateTratamientos(tratamientos: any[], productos_mapa: any[])
 
   tratamientos.forEach((t, i) => {
      // Checking registry number format
-     const hasRegistro = t.producto && t.producto.match(/\\d{5}/);
+     const hasRegistro = t.producto_mapa_id && t.producto_mapa_id.match(/\d{5}/);
      if (!hasRegistro) {
         result.isValid = false;
-        result.errors.push(`Tratamiento ${t.fecha} (${t.producto || 'Sin producto'}): No contiene un número de registro MAPA válido.`);
+        result.errors.push(`Tratamiento ${t.fecha} (${t.nombre_producto || 'Sin producto'}): No contiene un número de registro MAPA válido.`);
      }
 
-     if (!t.dosis_cantidad) {
+     if (!t.dosis) {
         result.warnings.push(`Tratamiento ${t.fecha}: Dosis no especificada, podría ser requerido por el SIEX.`);
      }
 
-     if (!t.plazo_seguridad_dias) {
-        result.warnings.push(`Tratamiento ${t.fecha}: Plazo de seguridad no especificado.`);
-     }
+     // Removed plazo_seguridad check as it doesn't exist directly on the table
   });
 
   return result;

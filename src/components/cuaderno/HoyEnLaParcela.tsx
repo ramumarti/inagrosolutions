@@ -15,6 +15,31 @@ interface HoyEnLaParcelaProps {
 }
 
 export function HoyEnLaParcela({ resumen, alertasPendientes, onAction }: HoyEnLaParcelaProps) {
+  const [weather, setWeather] = React.useState<{temp: number, precip: number} | null>(null);
+
+  React.useEffect(() => {
+    const fetchWeather = async (lat: number, lng: number) => {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,precipitation&timezone=auto`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data?.current) {
+          setWeather({ temp: data.current.temperature_2m, precip: data.current.precipitation });
+        }
+      } catch (e) {
+        console.error('Weather error:', e);
+      }
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+        () => fetchWeather(37.8882, -4.7794) // Fallback: Córdoba
+      );
+    } else {
+      fetchWeather(37.8882, -4.7794);
+    }
+  }, []);
   const hora = new Date().getHours();
   const saludo = hora < 12 ? 'Buenos días' : hora < 20 ? 'Buenas tardes' : 'Buenas noches';
 
@@ -40,11 +65,11 @@ export function HoyEnLaParcela({ resumen, alertasPendientes, onAction }: HoyEnLa
         <div className="flex gap-3">
           <div className="flex items-center gap-2 px-5 py-3 bg-white/10 rounded-xl border border-white/10">
             <Sun size={20} className="text-amber-400" />
-            <span className="text-sm font-bold text-white">24°C</span>
+            <span className="text-sm font-bold text-white">{weather ? `${weather.temp}°C` : '--'}</span>
           </div>
           <div className="flex items-center gap-2 px-5 py-3 bg-white/10 rounded-xl border border-white/10">
             <CloudRain size={20} className="text-blue-400" />
-            <span className="text-sm font-bold text-white">0%</span>
+            <span className="text-sm font-bold text-white">{weather ? `${weather.precip}mm` : '--'}</span>
           </div>
         </div>
       </div>

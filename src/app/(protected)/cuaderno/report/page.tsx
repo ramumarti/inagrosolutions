@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { getFullNotebookData } from '@/lib/actions/reports';
 import { SIEXReportTemplate } from '@/components/reports/SIEXReportTemplate';

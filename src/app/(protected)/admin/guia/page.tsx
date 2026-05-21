@@ -1,126 +1,187 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { BookOpen, CheckCircle2, Star, Rocket, Zap, Users, ShieldCheck, Palette } from 'lucide-react';
+import { 
+  BookOpen, LayoutGrid, Palette, Link as LinkIcon, Users, 
+  Megaphone, ShieldCheck, Zap, ChevronDown, ChevronRight, CheckCircle2 
+} from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 
 export default function GuidePage() {
   const { language } = useI18n();
+  const [activeSection, setActiveSection] = useState<string | null>('panel');
 
-  const sections = [
+  const toggleSection = (id: string) => {
+    if (activeSection === id) {
+      setActiveSection(null);
+    } else {
+      setActiveSection(id);
+    }
+  };
+
+  const manualSections = [
     {
-      title: language === 'en' ? 'Branding & Identity' : 'Identidad y Marca Blanca',
-      icon: <Palette className="text-emerald-400" />,
-      content: language === 'en' 
-        ? 'Upload a high-quality logo and match your corporate colors. This builds trust with your farmers as they will see your brand, not ours.' 
-        : 'Sube un logo de alta resolución y ajusta los colores corporativos. Esto genera confianza en tus socios, ya que verán tu marca y no la nuestra.',
-      items: [
-        language === 'en' ? 'Transparent PNG/SVG logo' : 'Logo PNG/SVG transparente',
-        language === 'en' ? 'Primary color for buttons' : 'Color primario para botones',
-        language === 'en' ? 'Custom domain configuration' : 'Configuración de dominio propio'
-      ]
+      id: 'panel',
+      title: '1. Descripción del Panel de Administración',
+      icon: <LayoutGrid className="text-blue-400" />,
+      content: (
+        <div className="space-y-4 text-white/70">
+          <p>Tu panel lateral izquierdo es el centro de mando de toda la cooperativa. Desde aquí puedes gestionar a tus agricultores y técnicos.</p>
+          <ul className="space-y-3 pl-4">
+            <li><strong className="text-white">Resumen Empresa (Dashboard):</strong> Un panel visual rápido para ver el número total de socios registrados, hectáreas controladas y la actividad reciente.</li>
+            <li><strong className="text-white">Mi Marca Blanca:</strong> El lugar donde configuras tu logotipo oficial, el color principal de la plataforma y el eslogan que verán tus agricultores.</li>
+            <li><strong className="text-white">Supervisión Cuadernos:</strong> Una vista de "Gran Hermano" donde puedes entrar a los Cuadernos de Explotación de cualquier socio, revisar si les faltan tratamientos por anotar o si tienen avisos legales de dosis excesivas.</li>
+            <li><strong className="text-white">Gestión de Socios:</strong> Lista de todos los agricultores que se han unido a tu Entidad. Desde aquí puedes invitar a nuevos, editar sus datos o darlos de baja.</li>
+            <li><strong className="text-white">Asignar Técnicos:</strong> Si cuentas con Ingenieros Agrónomos en tu plantilla, aquí puedes crearles cuentas (rol de "Técnico") y asignarles un grupo concreto de agricultores para que supervisen.</li>
+            <li><strong className="text-white">Facturación y Comisiones:</strong> (Si aplica) Muestra los ingresos generados por los agricultores que han contratado planes premium bajo el paraguas de tu Entidad.</li>
+          </ul>
+        </div>
+      )
     },
     {
-      title: language === 'en' ? 'Farmer Onboarding' : 'Captación de Agricultores',
-      icon: <Users className="text-blue-400" />,
-      content: language === 'en'
-        ? 'Use your personalized landing page to invite farmers via WhatsApp or email. Faster registration means faster compliance.'
-        : 'Usa tu página de aterrizaje personalizada para invitar a los socios por WhatsApp o email. Un registro rápido garantiza el cumplimiento normativo.',
-      items: [
-        language === 'en' ? 'Share your /c/[slug] URL' : 'Comparte tu URL de /c/[slug]',
-        language === 'en' ? 'Bulk import from Excel' : 'Carga masiva desde Excel',
-        language === 'en' ? 'Onboarding assistance' : 'Asistencia en el registro inicial'
-      ]
+      id: 'configuracion',
+      title: '2. Configuración Inicial y Marca Blanca',
+      icon: <Palette className="text-purple-400" />,
+      content: (
+        <div className="space-y-4 text-white/70">
+          <p>Para generar confianza, el agricultor debe sentir que está utilizando un software oficial proporcionado por vosotros, no por terceros.</p>
+          <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+            <h4 className="font-bold text-white mb-2 flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-400"/> Sube tu Logotipo</h4>
+            <p className="text-sm">Ve a <strong>Mi Marca Blanca</strong>. Sube el logotipo corporativo (se recomienda un archivo PNG con fondo transparente). Elige el color principal de tu marca. Automáticamente todos los botones y acentos visuales de la plataforma cambiarán a ese color.</p>
+          </div>
+          <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+            <h4 className="font-bold text-white mb-2 flex items-center gap-2"><LinkIcon size={16} className="text-emerald-400"/> Tu Página Pública (Landing Page)</h4>
+            <p className="text-sm">El sistema genera automáticamente una web promocional para tu cooperativa: <code>inagrosolutions.com/c/tu-nombre</code>. Puedes personalizar el título, la descripción y los beneficios desde <strong>Mi Marca Blanca</strong>.</p>
+          </div>
+        </div>
+      )
     },
     {
-      title: language === 'en' ? 'Technical Supervision' : 'Supervisión Técnica SIEX',
-      icon: <ShieldCheck className="text-amber-400" />,
-      content: language === 'en'
-        ? 'The real power is monitoring all notebooks from one place. identify who is missing treatments or has warnings.'
-        : 'El verdadero potencial está en monitorizar todos los cuadernos desde un solo sitio. Identifica quién no ha anotado tratamientos o tiene avisos.',
-      items: [
-        language === 'en' ? 'Weekly notebook review' : 'Revisión semanal de cuadernos',
-        language === 'en' ? 'MAPA registry validation' : 'Validación de registros del MAPA',
-        language === 'en' ? 'Direct technical advising' : 'Asesoramiento técnico directo'
-      ]
+      id: 'promocion',
+      title: '3. Promoción y Captación de Agricultores',
+      icon: <Megaphone className="text-amber-400" />,
+      content: (
+        <div className="space-y-4 text-white/70">
+          <p>La adopción del Cuaderno Digital Oficial depende de una buena comunicación con tus socios.</p>
+          <ul className="space-y-4 list-decimal pl-5">
+            <li>
+              <strong className="text-white block mb-1">WhatsApp y Correo Electrónico</strong>
+              Copia el enlace de tu Landing Page pública (ej. <code>/c/tu-cooperativa</code>) y envíalo masivamente. Al entrar a esa web, los agricultores verán los beneficios, tu logotipo y un botón directo de "Registrarse como Socio".
+            </li>
+            <li>
+              <strong className="text-white block mb-1">Alta Manual desde Oficina</strong>
+              Si un agricultor acude físicamente a la cooperativa, puedes ir a <strong>Gestión de Socios</strong>, darle a "Nuevo Socio" y crearle tú mismo la cuenta con su correo. El sistema le enviará una contraseña automáticamente.
+            </li>
+            <li>
+              <strong className="text-white block mb-1">Estrategia de Comunicación</strong>
+              Explica a tus socios que el uso de esta herramienta garantiza que cumplirán con la legalidad vigente (normativa SIEX) sin dolores de cabeza informáticos, además de estar respaldados por los técnicos de la cooperativa en todo momento.
+            </li>
+          </ul>
+        </div>
+      )
     },
     {
-      title: language === 'en' ? 'Monetization' : 'Monetización (Revenue Share)',
-      icon: <Zap className="text-orange-400" />,
-      content: language === 'en'
-        ? 'Earn 50% of subscriptions from your farmers. We handle the technical part, you handle the professional service.'
-        : 'Gana el 50% de las suscripciones de tus agricultores. Nosotros ponemos la tecnología, tú pones el servicio profesional.',
-      items: [
-        language === 'en' ? 'Automatic commissions' : 'Comisiones automáticas',
-        language === 'en' ? 'Zero maintenance costs' : 'Cero costes de mantenimiento',
-        language === 'en' ? 'Premium feature upsell' : 'Venta de módulos premium'
-      ]
+      id: 'roles',
+      title: '4. Gestión de Roles y Permisos',
+      icon: <Users className="text-emerald-400" />,
+      content: (
+        <div className="space-y-4 text-white/70">
+          <p>Existen distintos tipos de usuario dentro de la plataforma. Es crucial asignar el rol adecuado a cada persona:</p>
+          <div className="grid gap-4 mt-2">
+            <div className="p-3 bg-white/5 rounded-lg border-l-2 border-blue-400">
+              <strong className="text-white block">Administrador (Tú)</strong>
+              Control total. Puede ver todos los cuadernos, editar la marca blanca, facturación y dar de alta a técnicos y socios.
+            </div>
+            <div className="p-3 bg-white/5 rounded-lg border-l-2 border-emerald-400">
+              <strong className="text-white block">Técnico Asesor (Ingeniero Agrónomo)</strong>
+              Solo tiene acceso a la pantalla "Mis Clientes" y "Dashboard de Técnico". Podrá ver un flujo cronológico de la actividad de los agricultores que se le hayan asignado y corregir errores. No puede ver la facturación ni la marca blanca.
+            </div>
+            <div className="p-3 bg-white/5 rounded-lg border-l-2 border-orange-400">
+              <strong className="text-white block">Agricultor (Socio)</strong>
+              Solo ve su propio Cuaderno de Campo Digital. Se encarga de anotar tratamientos, compras y labores.
+            </div>
+            <div className="p-3 bg-white/5 rounded-lg border-l-2 border-gray-400">
+              <strong className="text-white block">Operario de Campo (Tractorista)</strong>
+              El agricultor puede crear sub-cuentas para sus tractoristas. Solo pueden abrir la aplicación móvil para indicar que han completado una tarea (ej. "Acabo de aplicar 20L de herbicida"). No ven los costes ni las facturas.
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'supervision',
+      title: '5. Supervisión Técnica y Asesoramiento',
+      icon: <ShieldCheck className="text-rose-400" />,
+      content: (
+        <div className="space-y-4 text-white/70">
+          <p>El núcleo de valor para la cooperativa reside en poder verificar el trabajo de los socios en tiempo real para evitar sanciones del MAPA.</p>
+          <ul className="space-y-3 pl-4">
+            <li><strong className="text-white">Alerta de Inactividad:</strong> En tu Dashboard o en el del Técnico, el sistema detecta si un agricultor lleva más de una semana sin registrar actividad. Puedes contactarle para recordarle su obligación legal.</li>
+            <li><strong className="text-white">Verificación de Dosis (IA):</strong> El sistema avisa si el socio intenta registrar un tratamiento de Fitosanitario cuya dosis excede los máximos fijados por el Vademécum Oficial.</li>
+            <li><strong className="text-white">Aprobación SIEX:</strong> Antes del volcado al ministerio, entra en <strong>Supervisión Cuadernos</strong>, busca al agricultor y revisa su historial de campaña en modo Excel para confirmar que no falten datos obligatorios (ej. N° Registro de maquinaria, Carnet aplicador).</li>
+          </ul>
+        </div>
+      )
     }
   ];
 
   return (
-    <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <header className="space-y-4 text-center max-w-3xl mx-auto">
-        <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group">
-            <Rocket className="w-8 h-8 text-emerald-500 group-hover:animate-bounce" />
+    <div className="p-4 sm:p-8 max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      
+      <header className="space-y-4 mb-10 border-b border-white/10 pb-8">
+        <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6">
+            <BookOpen className="w-8 h-8 text-blue-400" />
         </div>
-        <h1 className="text-4xl md:text-6xl font-black tracking-tight glow-text">
-          {language === 'en' ? 'Partner Success Guide' : 'Guía de Éxito para Partners'}
+        <h1 className="text-4xl md:text-5xl font-black tracking-tight glow-text">
+          Manual de Instrucciones
         </h1>
-        <p className="text-xl text-white/50 font-medium leading-relaxed">
-          {language === 'en' 
-            ? 'Everything you need to know to lead the digital transformation of your farmers.' 
-            : 'Todo lo que necesitas para liderar la transformación digital de tus agricultores y sacar el máximo provecho a tu portal.'}
+        <p className="text-xl text-white/50 font-medium leading-relaxed max-w-3xl">
+          Guía operativa completa para la gestión integral de la cooperativa. Aprende a dominar el panel de control, captar agricultores y garantizar el cumplimiento normativo.
         </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {sections.map((section, idx) => (
-          <GlassCard key={idx} className="p-8 space-y-6 hover:border-white/20 transition-all group border-white/5 bg-white/[0.02]">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/5 rounded-xl group-hover:scale-110 transition-transform">
-                {section.icon}
+      <div className="space-y-4">
+        {manualSections.map((section) => (
+          <GlassCard key={section.id} className="border-white/5 bg-white/[0.02] overflow-hidden transition-all duration-300">
+            <button 
+              onClick={() => toggleSection(section.id)}
+              className="w-full p-6 flex items-center justify-between text-left focus:outline-none hover:bg-white/[0.02]"
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-white/5 rounded-xl">
+                  {section.icon}
+                </div>
+                <h2 className="text-xl font-bold text-white">{section.title}</h2>
               </div>
-              <h3 className="text-2xl font-black text-white">{section.title}</h3>
-            </div>
+              <div className={`p-2 rounded-full transition-transform duration-300 ${activeSection === section.id ? 'rotate-180 bg-white/10' : 'bg-transparent'}`}>
+                <ChevronDown className="w-5 h-5 text-white/50" />
+              </div>
+            </button>
             
-            <p className="text-white/60 leading-relaxed font-medium">
-              {section.content}
-            </p>
-
-            <ul className="space-y-3 pt-4">
-              {section.items.map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-sm text-white/40 group-hover:text-white/60 transition-colors">
-                  <CheckCircle2 size={16} className="text-[var(--color-primary)]" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <div 
+              className={`transition-all duration-500 ease-in-out ${
+                activeSection === section.id ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+              }`}
+            >
+              <div className="p-6 pt-0 border-t border-white/5 mt-4">
+                {section.content}
+              </div>
+            </div>
           </GlassCard>
         ))}
       </div>
 
-      <GlassCard className="p-10 border-[var(--color-primary)]/20 bg-[var(--color-primary)]/5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-12 opacity-5">
-           <Star size={200} />
+      <div className="mt-12 p-8 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <h3 className="text-xl font-black text-white mb-2">¿Necesitas soporte técnico adicional?</h3>
+          <p className="text-white/60">Nuestro equipo está listo para ayudarte con integraciones avanzadas o dudas operativas.</p>
         </div>
-        <div className="relative z-10 grid md:grid-cols-3 gap-12 items-center text-center md:text-left">
-           <div className="md:col-span-2 space-y-4">
-              <h2 className="text-3xl font-black text-white">¿Necesitas soporte personalizado?</h2>
-              <p className="text-white/60 font-medium">Nuestro equipo técnico está a tu disposición para ayudarte con la configuración avanzada de dominios o integraciones específicas de tu cooperativa.</p>
-           </div>
-           <div className="flex justify-center md:justify-end">
-              <button className="px-8 py-4 bg-white text-black font-black uppercase tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all shadow-2xl">
-                Contactar soporte
-              </button>
-           </div>
-        </div>
-      </GlassCard>
+        <button className="px-6 py-3 bg-white text-black font-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] shrink-0">
+          Contactar Soporte
+        </button>
+      </div>
 
-      <footer className="py-12 text-center">
-         <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">InagroSolutions Enterprise Program • 2026</p>
-      </footer>
     </div>
   );
 }

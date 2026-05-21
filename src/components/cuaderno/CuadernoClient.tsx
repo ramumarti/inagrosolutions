@@ -333,11 +333,12 @@ export default function CuadernoPage() {
               explotacionId={selectedExplotacionId || ''}
               campanaId={selectedCampanaId}
               parcelas={profile.parcelas.filter(p => !selectedExplotacionId || p.explotacion_id === selectedExplotacionId)}
+              onNavigateToCosechas={() => setActiveTab('cosechas')}
             />
           );
         case 'cosechas':
           return profile.explotaciones[0] ? (
-            <CosechasModule explotacionId={profile.explotaciones[0].id} parcelas={profile.parcelas} />
+            <CosechasModule explotacionId={profile.explotaciones[0].id} campanaId={selectedCampanaId} parcelas={profile.parcelas} />
           ) : <p className="text-white/40 text-sm">No hay explotaciones configuradas</p>;
         case 'trazabilidad':
           return profile.explotaciones[0] ? (

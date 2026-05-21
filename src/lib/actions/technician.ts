@@ -22,27 +22,44 @@ export async function getAssignedFarmers() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Unauthorized');
 
-  const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
+  const { data: userData } = await supabase.from('users').select('tenant_id, platform_role').eq('id', user.id).single();
   const tenantId = userData?.tenant_id;
+  const role = userData?.platform_role;
   if (!tenantId) throw new Error('No tenant associated');
 
-  // Fetch from assignments table properly
-  const { data, error } = await supabase
-    .from('technician_assignments')
-    .select(`
-      farmer:users!technician_assignments_farmer_id_fkey(
+  let farmersList: any[] = [];
+
+  if (role === 'tenant_admin' || role === 'superadmin') {
+    // Los administradores de la cooperativa ven a TODOS los agricultores de su tenant
+    const { data, error } = await supabase
+      .from('users')
+      .select(`
         id, email, first_name, last_name, phone,
         explotaciones:explotaciones(count)
-      )
-    `)
-    .eq('tenant_id', tenantId)
-    .eq('technician_id', user.id)
-    .eq('is_active', true);
+      `)
+      .eq('tenant_id', tenantId)
+      .eq('platform_role', 'farmer');
+    
+    if (error) throw error;
+    farmersList = data || [];
+  } else {
+    // Los técnicos rasos solo ven a los que tienen asignados
+    const { data, error } = await supabase
+      .from('technician_assignments')
+      .select(`
+        farmer:users!technician_assignments_farmer_id_fkey(
+          id, email, first_name, last_name, phone,
+          explotaciones:explotaciones(count)
+        )
+      `)
+      .eq('tenant_id', tenantId)
+      .eq('technician_id', user.id)
+      .eq('is_active', true);
 
-  if (error) throw error;
-  
-  // Extraer un array plano de "farmers"
-  const farmersList = data.map((d: any) => d.farmer).filter(Boolean);
+    if (error) throw error;
+    farmersList = data.map((d: any) => d.farmer).filter(Boolean);
+  }
+
   return farmersList;
 }
 
@@ -60,7 +77,7 @@ export async function getTechnicianDashboardData() {
 
   // Fetch recent activities across all assigned farmers
   // Using parallel requests for performance
-  const [tratamientosRes, fertilizacionesRes] = await Promise.all([
+  const [tratamientosRes, fertilizacionesRes, cosechasRes] = await Promise.all([
     supabase
       .from('tratamientos_fitosanitarios')
       .select('id, fecha, nombre_producto, user_id, created_at')
@@ -70,6 +87,12 @@ export async function getTechnicianDashboardData() {
     supabase
       .from('fertilizaciones')
       .select('id, fecha, tipo_abono, user_id, created_at')
+      .in('user_id', farmerIds)
+      .order('created_at', { ascending: false })
+      .limit(10),
+    supabase
+      .from('cosechas')
+      .select('id, fecha, producto, user_id, created_at')
       .in('user_id', farmerIds)
       .order('created_at', { ascending: false })
       .limit(10)
@@ -105,6 +128,20 @@ export async function getTechnicianDashboardData() {
     });
   });
 
+  const cos = cosechasRes.data || [];
+  cos.forEach((c: any) => {
+    const farmer = farmers.find((fa: any) => fa.id === c.user_id);
+    allActivities.push({
+      type: 'Cosecha',
+      farmer: farmer ? `${farmer.first_name} ${farmer.last_name}` : 'Desconocido',
+      item: c.producto || 'Recolección',
+      time: c.created_at,
+      icon: 'Leaf',
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-500/10'
+    });
+  });
+
   // Sort combined by created_at desc
   allActivities.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
   const recentActivity = allActivities.slice(0, 5).map(act => {
@@ -125,7 +162,8 @@ export async function getTechnicianDashboardData() {
   // Como aproximación real para la v1.0, calculamos cuántos farmers NO han tenido actividad
   const activeFarmerIds = new Set([
     ...trats.map((t: any) => t.user_id),
-    ...ferts.map((f: any) => f.user_id)
+    ...ferts.map((f: any) => f.user_id),
+    ...cos.map((c: any) => c.user_id)
   ]);
   
   const cuadernosPendientes = totalFarmers - activeFarmerIds.size;

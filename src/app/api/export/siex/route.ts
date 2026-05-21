@@ -32,14 +32,35 @@ export async function GET(req: NextRequest) {
       const tratamientosData = data.tratamientos.map((t: any) => ({
         "ID_EXPLOTACION": data.explotacion.nif_cif || '---',
         "FECHA_TRATAMIENTO": new Date(t.fecha).toLocaleDateString('es-ES'),
-        "NUM_REGISTRO_MAPA": t.producto ? t.producto.match(/\d{5}/)?.[0] || 'N/A' : 'N/A',
-        "NOMBRE_PRODUCTO": t.producto,
-        "METODO_APLICACION": t.metodo_aplicacion || 'Pulverización',
-        "DOSIS_CANTIDAD": t.dosis_cantidad || 0,
-        "DOSIS_UNIDAD": t.dosis_unidad || 'L/ha',
-        "MAQUINARIA": t.maquinaria_id || 'Manual',
-        "OPERARIO": t.operario_id || 'Propio titular',
-        "PLAZO_SEGURIDAD": t.plazo_seguridad_dias || 0
+        "PARCELA_NOMBRE": t.parcelas?.nombre || 'Desconocida',
+        "NUM_REGISTRO_MAPA": t.producto_mapa_id || 'N/A',
+        "NOMBRE_PRODUCTO": t.nombre_producto || 'N/A',
+        "DOSIS_CANTIDAD": t.dosis || 0,
+        "DOSIS_UNIDAD": t.unidad_dosis || 'L/ha',
+        "SUPERFICIE_TRATADA_HA": t.superficie_tratada || t.parcelas?.hectareas || 0,
+        "MAQUINARIA": t.maquinaria_usada || 'Manual',
+        "OPERARIO": t.operario || 'Propio titular',
+        "TEMPERATURA_C": t.temperatura || '',
+        "VELOCIDAD_VIENTO": t.velocidad_viento || ''
+      }));
+
+      const laboresData = data.labores.map((l: any) => ({
+        "ID_EXPLOTACION": data.explotacion.nif_cif || '---',
+        "FECHA_LABOR": new Date(l.fecha).toLocaleDateString('es-ES'),
+        "PARCELA_NOMBRE": l.parcelas?.nombre || 'Desconocida',
+        "TIPO_LABOR": l.tipo_labor || 'N/A',
+        "DESCRIPCION": l.descripcion || '',
+        "SUPERFICIE_AFECTADA_HA": l.superficie_afectada || l.parcelas?.hectareas || 0
+      }));
+
+      const fertData = data.fertilizaciones.map((f: any) => ({
+        "ID_EXPLOTACION": data.explotacion.nif_cif || '---',
+        "FECHA_FERTILIZACION": new Date(f.fecha).toLocaleDateString('es-ES'),
+        "PARCELA_NOMBRE": f.parcelas?.nombre || 'Desconocida',
+        "TIPO_ABONO": f.tipo_abono || 'N/A',
+        "NPK": f.n_p_k || 'N/A',
+        "DOSIS_CANTIDAD": f.dosis || 0,
+        "DOSIS_UNIDAD": f.unidad_dosis || 'kg/ha'
       }));
 
       const parcelasData = data.parcelas.map((p: any) => ({
@@ -57,9 +78,13 @@ export async function GET(req: NextRequest) {
       const wb = XLSX.utils.book_new();
       const wsParcelas = XLSX.utils.json_to_sheet(parcelasData.length > 0 ? parcelasData : [{ "Mensaje": "Sin datos de parcelas" }]);
       const wsTratamientos = XLSX.utils.json_to_sheet(tratamientosData.length > 0 ? tratamientosData : [{ "Mensaje": "Sin tratamientos reportados" }]);
+      const wsLabores = XLSX.utils.json_to_sheet(laboresData.length > 0 ? laboresData : [{ "Mensaje": "Sin labores reportadas" }]);
+      const wsFertilizacion = XLSX.utils.json_to_sheet(fertData.length > 0 ? fertData : [{ "Mensaje": "Sin fertilizaciones reportadas" }]);
 
       XLSX.utils.book_append_sheet(wb, wsParcelas, "PARCELAS");
       XLSX.utils.book_append_sheet(wb, wsTratamientos, "TRATAMIENTOS");
+      XLSX.utils.book_append_sheet(wb, wsLabores, "LABORES");
+      XLSX.utils.book_append_sheet(wb, wsFertilizacion, "FERTILIZACION");
 
       const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
 
@@ -97,11 +122,38 @@ export async function GET(req: NextRequest) {
       data.tratamientos.forEach((t: any) => {
         tratamientosNode.ele('Tratamiento')
           .ele('Fecha').txt(t.fecha).up()
-          .ele('Producto').txt(t.producto || '').up()
-          .ele('Dosis').txt(String(t.dosis_cantidad || '')).up()
+          .ele('ParcelaNombre').txt(t.parcelas?.nombre || '').up()
+          .ele('Producto').txt(t.nombre_producto || '').up()
+          .ele('RegistroMAPA').txt(t.producto_mapa_id || '').up()
+          .ele('Dosis').txt(String(t.dosis || '')).up()
+          .ele('Unidad').txt(t.unidad_dosis || '').up()
         .up();
       });
       tratamientosNode.up();
+
+      const laboresNode = doc.ele('Labores');
+      data.labores.forEach((l: any) => {
+        laboresNode.ele('Labor')
+          .ele('Fecha').txt(l.fecha).up()
+          .ele('ParcelaNombre').txt(l.parcelas?.nombre || '').up()
+          .ele('Tipo').txt(l.tipo_labor || '').up()
+          .ele('Descripcion').txt(l.descripcion || '').up()
+        .up();
+      });
+      laboresNode.up();
+
+      const fertNode = doc.ele('Fertilizaciones');
+      data.fertilizaciones.forEach((f: any) => {
+        fertNode.ele('Fertilizacion')
+          .ele('Fecha').txt(f.fecha).up()
+          .ele('ParcelaNombre').txt(f.parcelas?.nombre || '').up()
+          .ele('Abono').txt(f.tipo_abono || '').up()
+          .ele('NPK').txt(f.n_p_k || '').up()
+          .ele('Dosis').txt(String(f.dosis || '')).up()
+          .ele('Unidad').txt(f.unidad_dosis || '').up()
+        .up();
+      });
+      fertNode.up();
 
       doc.up().up();
 

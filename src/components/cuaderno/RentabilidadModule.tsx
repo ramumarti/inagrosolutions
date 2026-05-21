@@ -14,9 +14,10 @@ interface RentabilidadModuleProps {
   explotacionId: string;
   campanaId: string | null;
   parcelas: any[];
+  onNavigateToCosechas?: () => void;
 }
 
-export function RentabilidadModule({ explotacionId, campanaId, parcelas }: RentabilidadModuleProps) {
+export function RentabilidadModule({ explotacionId, campanaId, parcelas, onNavigateToCosechas }: RentabilidadModuleProps) {
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState({
     totalGastos: 0,
@@ -35,9 +36,12 @@ export function RentabilidadModule({ explotacionId, campanaId, parcelas }: Renta
       const { data: inventario } = await supabase.from('inventario_insumos').select('*').eq('explotacion_id', explotacionId);
       const { data: cosechas } = await supabase.from('cosechas').select('*').eq('campana_id', campanaId);
       
-      // Mock calculation for demonstration
+      // Real calculation for income
       const totalGastos = (inventario || []).reduce((acc, curr) => acc + ((curr.cantidad_inicial - curr.cantidad_actual) * (curr.precio_unitario || 0)), 0);
-      const totalIngresos = (cosechas || []).reduce((acc, curr) => acc + (curr.ingreso_estimado || 0), 0);
+      const totalIngresos = (cosechas || []).reduce((acc, curr) => {
+        const ingresos = curr.ingreso_estimado || (curr.cantidad_kg * Math.max(curr.precio_real || 0, curr.precio_estimado || 0)) || 0;
+        return acc + ingresos;
+      }, 0);
       
       const totalHa = parcelas.reduce((acc, p) => acc + (p.hectareas || 0), 0);
       const gastoMedioHa = totalHa > 0 ? totalGastos / totalHa : 0;
@@ -176,7 +180,7 @@ export function RentabilidadModule({ explotacionId, campanaId, parcelas }: Renta
                   <p className="text-sm text-white/40 font-medium">Registra los pesajes para calcular el beneficio neto final.</p>
               </div>
           </div>
-          <GlowButton className="px-10 py-4 h-auto rounded-2xl font-black uppercase text-xs tracking-widest">Registrar Cosecha</GlowButton>
+          <GlowButton className="px-10 py-4 h-auto rounded-2xl font-black uppercase text-xs tracking-widest" onClick={onNavigateToCosechas}>Registrar Cosecha</GlowButton>
       </div>
     </div>
   );

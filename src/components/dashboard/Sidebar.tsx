@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { 
   Hexagon, LayoutGrid, ChevronLeft, ChevronRight, Home, CreditCard, 
   Shield, Mail, Leaf, Bug, Droplets, MapPin, Wallet, Crown, 
-  BookOpen, FileDown, Bell, Users, Building2, Scale, Package, FileJson, History, Truck, Layers, ShieldAlert, Star
+  BookOpen, FileDown, Bell, Users, Building2, Scale, Package, FileJson, History, Truck, Layers, ShieldAlert, Star, Database
 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
@@ -62,6 +62,12 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
         href: '/superadmin/plans',
         icon: CreditCard,
         isActive: pathname.startsWith('/superadmin/plans')
+      },
+      {
+        label: 'Vademécum',
+        href: '/superadmin/vademecum',
+        icon: Database,
+        isActive: pathname.startsWith('/superadmin/vademecum')
       },
       {
         label: 'CMS Landing',
@@ -190,6 +196,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
     { label: language === 'en' ? 'Plans' : 'Planes', href: '/cuaderno/suscripcion', icon: Crown, isActive: pathname === '/cuaderno/suscripcion' },
     { label: language === 'en' ? 'SIEX Registry' : 'Registro SIEX', href: '/cuaderno', icon: FileJson, isActive: false },
     { label: language === 'en' ? 'Export' : 'Exportación PAC', href: '/cuaderno', icon: FileDown, isActive: false },
+    { label: language === 'en' ? 'Help & Manual' : 'Ayuda y Manual', href: '/cuaderno/ayuda', icon: BookOpen, isActive: pathname === '/cuaderno/ayuda' },
   ];
 
   const bottomNav: typeof navItems = [];

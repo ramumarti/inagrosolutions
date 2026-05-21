@@ -8,10 +8,11 @@ import { Tractor, Plus, ChevronDown, Check, Scale } from 'lucide-react';
 
 interface CosechasModuleProps {
   explotacionId: string;
+  campanaId: string | null;
   parcelas: any[];
 }
 
-export function CosechasModule({ explotacionId, parcelas }: CosechasModuleProps) {
+export function CosechasModule({ explotacionId, campanaId, parcelas }: CosechasModuleProps) {
   const [cosechas, setCosechas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
@@ -22,6 +23,8 @@ export function CosechasModule({ explotacionId, parcelas }: CosechasModuleProps)
     parcela_id: '',
     fecha: new Date().toISOString().split('T')[0],
     kilos_recolectados: '',
+    precio_estimado: '',
+    precio_real: '',
     albaran_cooperativa: '',
     destino: '',
   });
@@ -55,24 +58,23 @@ export function CosechasModule({ explotacionId, parcelas }: CosechasModuleProps)
       // Intentamos insertar. Asumiremos que la tabla 'cosechas' está creada.
       const { error } = await supabase.from('cosechas').insert({
         parcela_id: form.parcela_id,
+        campana_id: campanaId,
         fecha: new Date(form.fecha).toISOString(),
-        kilos_recolectados: Number(form.kilos_recolectados),
-        albaran_cooperativa: form.albaran_cooperativa || null,
-        destino: form.destino || null,
+        cantidad_kg: Number(form.kilos_recolectados),
+        precio_estimado: form.precio_estimado ? Number(form.precio_estimado) : 0,
+        precio_real: form.precio_real ? Number(form.precio_real) : null,
+        notas: form.albaran_cooperativa || null,
+        comprador: form.destino || null,
       });
       if (error) {
-        if (error.code === '42P01') {
-          console.warn("Tabla cosechas no existe aún en la DB. Mostrando UI simulada.");
-        } else {
-          throw error;
-        }
+        throw error;
       }
       
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
         setIsAdding(false);
-        setForm({ ...form, kilos_recolectados: '', albaran_cooperativa: '' });
+        setForm({ ...form, kilos_recolectados: '', albaran_cooperativa: '', precio_estimado: '', precio_real: '' });
         loadCosechas();
       }, 1500);
     } catch (err) {
@@ -142,11 +144,21 @@ export function CosechasModule({ explotacionId, parcelas }: CosechasModuleProps)
           </div>
 
           <div>
+            <label className={labelClass}>Precio Estimado (€/kg)</label>
+            <input type="number" step="0.01" className={inputClass} placeholder="Ej: 0.85" value={form.precio_estimado} onChange={e => setForm({...form, precio_estimado: e.target.value})} />
+          </div>
+
+          <div>
+            <label className={labelClass}>Precio Real Liquidación (€/kg)</label>
+            <input type="number" step="0.01" className={inputClass} placeholder="Dejar vacío si no se sabe" value={form.precio_real} onChange={e => setForm({...form, precio_real: e.target.value})} />
+          </div>
+
+          <div>
             <label className={labelClass}>Nº Albarán Cooperativa (Opcional)</label>
             <input type="text" className={inputClass} placeholder="Ej: ALB-2024-889" value={form.albaran_cooperativa} onChange={e => setForm({...form, albaran_cooperativa: e.target.value})} />
           </div>
 
-          <div className="md:col-span-2">
+          <div>
             <label className={labelClass}>Destino de la Cosecha</label>
             <div className="relative">
               <select className={`${inputClass} appearance-none cursor-pointer`} value={form.destino} onChange={e => setForm({...form, destino: e.target.value})}>
@@ -171,9 +183,10 @@ export function CosechasModule({ explotacionId, parcelas }: CosechasModuleProps)
   // Agrupamos cosechas por parcela para ver el total
   const totalesPorParcela = cosechas.reduce((acc, curr) => {
     if (!acc[curr.parcela_id]) {
-      acc[curr.parcela_id] = { ...curr.parcelas, total_kilos: 0, entregas: 0 };
+      acc[curr.parcela_id] = { ...curr.parcelas, total_kilos: 0, total_ingresos: 0, entregas: 0 };
     }
-    acc[curr.parcela_id].total_kilos += Number(curr.kilos_recolectados);
+    acc[curr.parcela_id].total_kilos += Number(curr.cantidad_kg || 0);
+    acc[curr.parcela_id].total_ingresos += Number(curr.ingreso_estimado || 0);
     acc[curr.parcela_id].entregas += 1;
     return acc;
   }, {} as Record<string, any>);
@@ -225,7 +238,11 @@ export function CosechasModule({ explotacionId, parcelas }: CosechasModuleProps)
                     </div>
                     <div className="grid grid-cols-2 gap-2 pt-3 border-t border-white/5">
                       <div>
-                        <p className="text-[9px] text-white/30 font-bold uppercase">Rendimiento</p>
+                        <p className="text-[9px] text-white/30 font-bold uppercase">Rendimiento Económico</p>
+                        <p className="text-xs font-black text-emerald-400">{t.total_ingresos.toFixed(2)} €</p>
+                      </div>
+                      <div>
+                        <p className="text-[9px] text-white/30 font-bold uppercase">Rendimiento Físico</p>
                         <p className="text-xs font-black text-white">{kgPorHa} kg/ha</p>
                       </div>
                       <div>
@@ -258,10 +275,10 @@ export function CosechasModule({ explotacionId, parcelas }: CosechasModuleProps)
                       <tr key={c.id || c.fecha} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                         <td className="p-3 text-xs text-white/60 font-mono">{new Date(c.fecha).toLocaleDateString('es-ES')}</td>
                         <td className="p-3 text-xs text-white/80 font-bold">{c.parcelas?.nombre || 'Desconocida'}</td>
-                        <td className="p-3 text-[11px] font-black text-amber-400 text-right">+{c.kilos_recolectados} kg</td>
+                        <td className="p-3 text-[11px] font-black text-amber-400 text-right">+{c.cantidad_kg} kg</td>
                         <td className="p-3 text-[10px] text-white/50">
-                          {c.albaran_cooperativa && <span className="mr-2 text-white/70">Ref: {c.albaran_cooperativa}</span>}
-                          {c.destino}
+                          {c.notas && <span className="mr-2 text-white/70">Ref: {c.notas}</span>}
+                          {c.comprador}
                         </td>
                       </tr>
                     ))}

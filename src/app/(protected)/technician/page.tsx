@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getTechnicianStats } from '@/lib/actions/technician';
+import { getTechnicianDashboardData } from '@/lib/actions/technician';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Users, Map, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ export default function TechnicianPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getTechnicianStats().then(data => {
+    getTechnicianDashboardData().then(data => {
       setStats(data);
       setLoading(false);
     });
@@ -21,8 +21,8 @@ export default function TechnicianPage() {
 
   const kpis = [
     { label: 'Agricultores Asignados', value: stats.totalFarmers || 0, icon: Users, color: 'text-indigo-400' },
-    { label: 'Explotaciones Supervisadas', value: stats.totalAssignedFarms || 0, icon: Map, color: 'text-emerald-400' },
-    { label: 'Tareas por Revisar', value: stats.pendingTasks || 0, icon: CheckCircle2, color: 'text-amber-400' },
+    { label: 'Explotaciones Supervisadas', value: stats.totalExplotaciones || 0, icon: Map, color: 'text-emerald-400' },
+    { label: 'Cuadernos Pendientes', value: stats.cuadernosPendientes || 0, icon: CheckCircle2, color: 'text-amber-400' },
   ];
 
   return (
@@ -66,6 +66,40 @@ export default function TechnicianPage() {
                 <span className="text-xs text-white/40">Crear recetas fitosanitarias y tareas agronómicas</span>
               </div>
             </Link>
+          </div>
+        </GlassCard>
+      </div>
+
+      <div className="mt-8">
+        <GlassCard className="p-6 border-white/5">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-bold text-white">Actividad Reciente en tus Explotaciones</h3>
+            <Link href="/technician/tasks" className="text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+              Ver todo
+            </Link>
+          </div>
+          
+          <div className="space-y-4">
+            {stats.recentActivity && stats.recentActivity.length > 0 ? (
+              stats.recentActivity.map((act: any, i: number) => (
+                <div key={i} className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors">
+                  <div className={`p-3 rounded-xl ${act.bg}`}>
+                    <CheckCircle2 className={`w-5 h-5 ${act.color}`} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start">
+                      <h4 className="font-bold text-white text-sm">{act.type}: {act.item}</h4>
+                      <span className="text-xs font-bold text-white/40">{act.time}</span>
+                    </div>
+                    <p className="text-sm text-white/60 mt-1">Agricultor: <span className="font-bold text-white/80">{act.farmer}</span></p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="py-8 text-center border border-dashed border-white/10 rounded-xl bg-white/[0.01]">
+                <p className="text-white/40 text-sm font-bold">No hay actividad reciente registrada por tus agricultores.</p>
+              </div>
+            )}
           </div>
         </GlassCard>
       </div>

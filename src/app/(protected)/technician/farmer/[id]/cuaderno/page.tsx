@@ -13,7 +13,8 @@ interface PageProps {
 }
 
 export default async function TecnicoCuadernoPage({ params, searchParams }: PageProps) {
-  const { id } = params;
+  const { id } = await params;
+  const searchParamsData = await searchParams;
   const profile = await getFarmerFullProfile(id);
   
   if (!profile) {
@@ -28,7 +29,7 @@ export default async function TecnicoCuadernoPage({ params, searchParams }: Page
     );
   }
 
-  const campanaId = searchParams.campanaId || (profile.campanas?.[0]?.id);
+  const campanaId = searchParamsData.campanaId || (profile.campanas?.[0]?.id);
   const validationStatus = await getFarmerCuadernoStatus(id, campanaId || '');
 
   return (
