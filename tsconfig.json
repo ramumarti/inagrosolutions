@@ -30,5 +30,17 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "backend-cuaderno"]
+  "exclude": [
+    "node_modules",
+    "backend-cuaderno",
+    "check-stripe-v2.ts",
+    "check-stripe.ts",
+    "check_db.ts",
+    "check_stripe.ts",
+    "check_workers.ts",
+    "fix_db.ts",
+    "generate-stripe-link.ts",
+    "reset_farmer.ts",
+    "test_stripe_fix.ts"
+  ]
 }

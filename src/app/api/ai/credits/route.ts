@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Crear sesión de Stripe Checkout para pago puntual
-    const stripe = (await import('@/lib/stripe')).default;
+    const { stripe } = await import('@/lib/stripe');
     const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.inagrosolutions.com';
 
     const sessionParams: any = {

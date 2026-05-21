@@ -118,11 +118,16 @@ export function useAgriProfile() {
           .select('*, parcelas(*)')
           .eq(actualTenantId ? 'tenant_id' : 'user_id', actualTenantId || user.id);
 
-        const { data: campanasData } = await supabase
-          .from('campanas')
-          .select('*')
-          .eq(actualTenantId ? 'tenant_id' : 'explotacion_id', actualTenantId ? actualTenantId : (explotaciones?.[0]?.id || ''))
-          .order('anio_inicio', { ascending: false });
+        let campanasData = null;
+        if (actualTenantId || (explotaciones && explotaciones.length > 0)) {
+          const { data } = await supabase
+            .from('campanas')
+            .select('*')
+            .eq(actualTenantId ? 'tenant_id' : 'explotacion_id', actualTenantId ? actualTenantId : (explotaciones?.[0]?.id || ''))
+            .order('anio_inicio', { ascending: false });
+          campanasData = data;
+        }
+
 
         const today = new Date().toISOString().split('T')[0];
         const [alertasData, tratsHoy, labsHoy] = await Promise.all([

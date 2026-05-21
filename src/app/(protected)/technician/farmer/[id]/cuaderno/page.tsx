@@ -8,8 +8,8 @@ import { ShieldAlert } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 interface PageProps {
-  params: { id: string };
-  searchParams: { campanaId?: string };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ campanaId?: string }>;
 }
 
 export default async function TecnicoCuadernoPage({ params, searchParams }: PageProps) {

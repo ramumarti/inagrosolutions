@@ -18,12 +18,25 @@ async function getSupabase() {
   );
 }
 
+async function getEffectiveTenantId(supabase: any, userId: string): Promise<string | null> {
+  const { data: userData } = await supabase.from('users').select('tenant_id, platform_role').eq('id', userId).maybeSingle();
+  if (!userData) return null;
+  
+  if (userData.platform_role === 'superadmin') {
+    const cookieStore = await cookies();
+    return cookieStore.get('x-impersonate-tenant')?.value || null;
+  }
+  
+  return userData.tenant_id || null;
+}
+
 export async function getTenantTasks() {
   const supabase = await getSupabase();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Unauthorized');
 
-  const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
+  const tenantId = await getEffectiveTenantId(supabase, user.id);
+  if (!tenantId) return []; // Gracefully return empty array if no active tenant context
 
   const { data, error } = await supabase
     .from('tasks')
@@ -32,7 +45,7 @@ export async function getTenantTasks() {
       assigned_to:users!tasks_assigned_to_fkey(email),
       assigned_by:users!tasks_assigned_by_fkey(email)
     `)
-    .eq('tenant_id', userData?.tenant_id)
+    .eq('tenant_id', tenantId)
     .order('created_at', { ascending: false });
 
   if (error) throw error;
@@ -51,14 +64,15 @@ export async function createTask(task: {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Unauthorized');
   
-  const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
+  const tenantId = await getEffectiveTenantId(supabase, user.id);
+  if (!tenantId) throw new Error('No active cooperative context');
   
   const { error } = await supabase
     .from('tasks')
     .insert([
       { 
         ...task, 
-        tenant_id: userData?.tenant_id,
+        tenant_id: tenantId,
         assigned_by: user.id
       }
     ]);

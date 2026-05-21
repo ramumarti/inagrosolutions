@@ -48,7 +48,7 @@ export function AISupportWidget() {
         body: JSON.stringify({ 
           message: userMessage.content,
           history: messages.map(m => ({ role: m.role, content: m.content })),
-          userRole: profile.role
+          userRole: profile.platform_role
         }),
       });
       
@@ -88,7 +88,7 @@ export function AISupportWidget() {
           </div>
           <div>
             <h3 className="font-bold text-white text-sm">Ayuda (Soporte IA)</h3>
-            <p className="text-[10px] text-white/50">{profile.role === 'tenant_admin' ? 'Soporte a Cooperativas' : 'Soporte al Agricultor'}</p>
+            <p className="text-[10px] text-white/50">{profile.platform_role === 'tenant_admin' ? 'Soporte a Cooperativas' : 'Soporte al Agricultor'}</p>
           </div>
         </div>
         <button onClick={() => setIsOpen(false)} className="text-white/50 hover:text-white transition-colors">

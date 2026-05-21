@@ -24,6 +24,13 @@ export interface TenantData {
   contact_phone?: string;
   hero_title?: string;
   hero_subtitle?: string;
+  address?: string;
+  social_links?: any;
+  legal_notice_url?: string;
+  privacy_policy_url?: string;
+  terms_url?: string;
+  legal_email?: string;
+  dpo_name?: string;
 }
 
 export interface AuthUser extends User {
@@ -52,6 +59,8 @@ const AuthContext = createContext<AuthContextType>({
   tenant: null,
   isLoading: true,
   isSuperadmin: false,
+  onboardedAgri: false,
+  explotaciones: [],
   hasRole: () => false,
 });
 
@@ -84,24 +93,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             onboarded_agri,
             stripe_customer_id,
             stripe_subscription_id,
-            tenants (
-              id,
-              name,
-              type,
-              subscription_tier,
-              active_modules,
-              logo_url,
-              primary_color,
-              secondary_color,
-              custom_domain,
-              slug,
-              show_public_page,
-              public_description,
-              contact_email,
-              contact_phone,
-              hero_title,
-              hero_subtitle
-            )`)
+            tenants (*)
+          `)
           .eq('id', session.user.id)
           .single();
 
@@ -126,6 +119,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           ...session.user,
           platform_role: userData?.platform_role as PlatformRole,
           tenant_id: tenantIdToUse,
+          onboarded_agri: userData?.onboarded_agri || false,
+          stripe_customer_id: userData?.stripe_customer_id,
+          stripe_subscription_id: userData?.stripe_subscription_id,
         };
 
         setUser(authUser);
@@ -165,6 +161,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         tenant,
         isLoading,
         isSuperadmin: user?.platform_role === 'superadmin',
+        onboardedAgri: user?.onboarded_agri || false,
+        stripe_customer_id: user?.stripe_customer_id,
+        stripe_subscription_id: user?.stripe_subscription_id,
+        explotaciones: [],
         hasRole,
       }}
     >

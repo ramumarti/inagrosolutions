@@ -43,7 +43,7 @@ export default function OnboardingPage() {
       // Check role to escape onboarding if admin
       const { data: userData } = await supabase
         .from('users')
-        .select('platform_role')
+        .select('platform_role, tenant_id')
         .eq('id', user.id)
         .single();
 
