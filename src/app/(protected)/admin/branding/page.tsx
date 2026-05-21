@@ -8,7 +8,7 @@ import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/Toast';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
 import { createClient } from '@/lib/supabase/client';
-import { Palette, Upload, Eye, Save, Globe, Eraser, Blocks } from 'lucide-react';
+import { Palette, Upload, Eye, Save, Globe, Eraser, Blocks, ShieldCheck } from 'lucide-react';
 import { updateTenantModules } from '@/lib/actions/tenant-settings';
 
 const AVAILABLE_MODULES = [
@@ -43,6 +43,14 @@ export default function BrandingPage() {
   const [socialInstagram, setSocialInstagram] = useState('');
   const [socialLinkedin, setSocialLinkedin] = useState('');
   const [showPublicPage, setShowPublicPage] = useState(true);
+  
+  // Novedades RGPD
+  const [legalNoticeUrl, setLegalNoticeUrl] = useState('');
+  const [privacyPolicyUrl, setPrivacyPolicyUrl] = useState('');
+  const [termsUrl, setTermsUrl] = useState('');
+  const [legalEmail, setLegalEmail] = useState('');
+  const [dpoName, setDpoName] = useState('');
+  
   const [origin, setOrigin] = useState('');
 
   // Safety timeout to prevent infinite loading screen
@@ -78,6 +86,11 @@ export default function BrandingPage() {
       setSocialInstagram(links.instagram || '');
       setSocialLinkedin(links.linkedin || '');
       setShowPublicPage(tenant.show_public_page ?? true);
+      setLegalNoticeUrl(tenant.legal_notice_url || '');
+      setPrivacyPolicyUrl(tenant.privacy_policy_url || '');
+      setTermsUrl(tenant.terms_url || '');
+      setLegalEmail(tenant.legal_email || '');
+      setDpoName(tenant.dpo_name || '');
     }
   }, [tenant]);
 
@@ -109,6 +122,11 @@ export default function BrandingPage() {
           linkedin: socialLinkedin
         },
         show_public_page: showPublicPage,
+        legal_notice_url: legalNoticeUrl,
+        privacy_policy_url: privacyPolicyUrl,
+        terms_url: termsUrl,
+        legal_email: legalEmail,
+        dpo_name: dpoName,
         updated_at: new Date().toISOString()
       })
       .eq('id', tenant.id);
@@ -355,6 +373,69 @@ export default function BrandingPage() {
                 <p className="text-xs text-white/40 italic">
                   {language === 'en' ? 'Used for backgrounds and secondary elements.' : 'Usado para fondos y elementos secundarios.'}
                 </p>
+              </div>
+            </div>
+
+            <hr className="border-white/10 my-6" />
+
+            <h2 className="text-xl font-semibold flex items-center gap-2 mb-4 text-amber-400">
+              <ShieldCheck className="w-5 h-5" />
+              {language === 'en' ? 'Legal Compliance (GDPR)' : 'Cumplimiento Normativo (RGPD)'}
+            </h2>
+
+            <div className="space-y-6">
+              <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                <p className="text-sm text-amber-200">
+                  {language === 'en' 
+                    ? 'Important: To register farmers, you must provide your legal policies. If omitted, registrations will be blocked.' 
+                    : 'Importante: Para poder captar socios, tu cooperativa debe enlazar sus políticas legales para asumir la responsabilidad de los datos. Si están vacíos, se bloqueará el registro de nuevos agricultores.'}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white/70">URL Política de Privacidad</label>
+                  <Input 
+                    value={privacyPolicyUrl} 
+                    onChange={(e) => setPrivacyPolicyUrl(e.target.value)} 
+                    placeholder="https://tucooperativa.com/privacidad"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white/70">URL Aviso Legal</label>
+                  <Input 
+                    value={legalNoticeUrl} 
+                    onChange={(e) => setLegalNoticeUrl(e.target.value)} 
+                    placeholder="https://tucooperativa.com/aviso-legal"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white/70">URL Términos y Condiciones</label>
+                  <Input 
+                    value={termsUrl} 
+                    onChange={(e) => setTermsUrl(e.target.value)} 
+                    placeholder="https://tucooperativa.com/terminos"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white/70">Responsable / Delegado de Protección (DPO)</label>
+                  <Input 
+                    value={dpoName} 
+                    onChange={(e) => setDpoName(e.target.value)} 
+                    placeholder="Ej. Juan Pérez - Director Técnico"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white/70">Email Legal (RGPD)</label>
+                  <Input 
+                    value={legalEmail} 
+                    onChange={(e) => setLegalEmail(e.target.value)} 
+                    placeholder="rgpd@tucooperativa.com"
+                  />
+                </div>
               </div>
             </div>
 

@@ -464,14 +464,23 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             <GlassCard className="p-10 border-white/10 text-center space-y-6 bg-white/5">
               <h3 className="text-2xl font-bold text-white">Únete a {tenant.name}</h3>
               <p className="text-gray-400">Simplifica tu día a día en el campo con la garantía de tu cooperativa y la tecnología más avanzada.</p>
-              <Link href={`/planes?tenant=${tenant.slug}#planes`} className="block">
-                <button
-                  className="w-full py-4 rounded-xl font-bold text-black transition-transform hover:scale-105 shadow-xl"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  Regístrate como Socio
-                </button>
-              </Link>
+              
+              {!tenant.privacy_policy_url || !tenant.legal_notice_url ? (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+                  <ShieldCheck className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p><strong>Registro Temporalmente Suspendido</strong></p>
+                  <p className="mt-1 opacity-80">La entidad aún no ha configurado sus políticas de privacidad y protección de datos (RGPD). Vuelve más tarde.</p>
+                </div>
+              ) : (
+                <Link href={`/planes?tenant=${tenant.slug}#planes`} className="block">
+                  <button
+                    className="w-full py-4 rounded-xl font-bold text-black transition-transform hover:scale-105 shadow-xl"
+                    style={{ backgroundColor: primaryColor }}
+                  >
+                    Regístrate como Socio
+                  </button>
+                </Link>
+              )}
             </GlassCard>
           </div>
         </section>
@@ -481,10 +490,24 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
         <p className="text-sm text-gray-600">
           © {new Date().getFullYear()} {tenant.name}. Todos los derechos reservados.
         </p>
-        <div className="flex items-center justify-center gap-4 text-[11px] text-gray-600">
-          <Link href={`/privacy-policy?tenant=${tenant.slug}`} className="hover:text-white transition-colors">Política de Privacidad</Link>
-          <Link href={`/cookie-policy?tenant=${tenant.slug}`} className="hover:text-white transition-colors">Política de Cookies</Link>
-          <Link href={`/legal-notice?tenant=${tenant.slug}`} className="hover:text-white transition-colors">Aviso Legal</Link>
+        <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500 max-w-2xl mx-auto leading-relaxed">
+          <span>{tenant.dpo_name ? `DPO: ${tenant.dpo_name}` : ''}</span>
+          {tenant.legal_email && <span>| Contacto RGPD: <a href={`mailto:${tenant.legal_email}`} className="underline">{tenant.legal_email}</a></span>}
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-400 mt-2">
+          {tenant.privacy_policy_url ? (
+            <a href={tenant.privacy_policy_url} target="_blank" rel="noreferrer" className="hover:text-white transition-colors underline">Política de Privacidad</a>
+          ) : (
+            <span className="opacity-50 line-through">Política de Privacidad (Pendiente)</span>
+          )}
+          {tenant.terms_url && (
+            <a href={tenant.terms_url} target="_blank" rel="noreferrer" className="hover:text-white transition-colors underline">Términos y Condiciones</a>
+          )}
+          {tenant.legal_notice_url ? (
+            <a href={tenant.legal_notice_url} target="_blank" rel="noreferrer" className="hover:text-white transition-colors underline">Aviso Legal</a>
+          ) : (
+            <span className="opacity-50 line-through">Aviso Legal (Pendiente)</span>
+          )}
         </div>
       </footer>
     </div>

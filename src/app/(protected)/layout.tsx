@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { AuthProvider } from '@/lib/auth/tenant-context';
 import { MobilePWAWidget } from '@/components/cuaderno/MobilePWAWidget';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
+import { AISupportWidget } from '@/components/ui/AISupportWidget';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -127,6 +128,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
         />
         
         <MobilePWAWidget />
+        <AISupportWidget />
 
       {/* Sidebar */}
       <Sidebar 
