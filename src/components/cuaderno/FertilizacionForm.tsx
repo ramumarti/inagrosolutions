@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { createClient } from '@/lib/supabase/client';
-import { getInventory, deductStock } from '@/lib/actions/inventory';
+import { getInventory } from '@/lib/actions/inventory';
 import { VoiceRecorderButton } from '@/components/cuaderno/VoiceRecorderButton';
-import { Droplets, Check, ChevronDown, PackageOpen, AlertTriangle } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
+import { useSyncStore } from '@/store/syncStore';
+import { Droplets, Check, ChevronDown, PackageOpen, AlertTriangle, WifiOff } from 'lucide-react';
 
 interface FertilizacionFormProps {
   parcelas: any[];
@@ -17,8 +19,13 @@ interface FertilizacionFormProps {
 
 export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onSuccess }: FertilizacionFormProps) {
   const supabase = createClient();
+  const { toast } = useToast();
+  const isOffline = useSyncStore(state => state.isOffline);
+  const addMutation = useSyncStore(state => state.addMutation);
+
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [savedOffline, setSavedOffline] = useState(false);
 
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [inventory, setInventory] = useState<any[]>([]);
@@ -110,39 +117,56 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
     setValidationErrors(errors);
     if (errors.length > 0) return;
 
+    const dataToSave = {
+      parcela_id: form.parcela_id,
+      fecha: form.fecha,
+      tipo_abono: form.tipo_abono,
+      dosis: Number(form.dosis),
+      unidad_dosis: form.unidad_dosis,
+      n_p_k: form.n_p_k || null,
+      superficie_tratada: form.superficie_tratada ? Number(form.superficie_tratada) : null,
+      inventario_id: form.inventario_id || null,
+      user_id: userProfile?.userId || null,
+      tenant_id: userProfile?.tenant_id || null,
+    };
+
     setSaving(true);
+
+    if (isOffline) {
+      try {
+        await addMutation('fertilizacion', dataToSave, toast);
+        setSavedOffline(true);
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          setSavedOffline(false);
+          onSuccess();
+        }, 2500);
+      } catch (err) {
+        setValidationErrors(['Error al encolar la fertilización en el almacenamiento local.']);
+      } finally {
+        setSaving(false);
+      }
+      return;
+    }
+
     try {
       const { error } = await supabase.from('fertilizaciones').insert({
-        parcela_id: form.parcela_id,
+        ...dataToSave,
         fecha: new Date(form.fecha).toISOString(),
-        tipo_abono: form.tipo_abono,
-        dosis: Number(form.dosis),
-        unidad_dosis: form.unidad_dosis,
-        n_p_k: form.n_p_k || null,
-        superficie_tratada: form.superficie_tratada ? Number(form.superficie_tratada) : null,
-        inventario_id: form.inventario_id || null,
-        user_id: userProfile?.userId || null,
-        tenant_id: userProfile?.tenant_id || null,
       });
       if (error) throw error;
 
-      if (form.inventario_id) {
-        const p = parcelas.find(x => x.id === form.parcela_id);
-        const usedHa = form.superficie_tratada ? Number(form.superficie_tratada) : (p ? Number(p.hectareas) : 1);
-        let totalUsedVolume = usedHa * Number(form.dosis);
-        
-        if (form.unidad_dosis === 't/ha') totalUsedVolume *= 1000;
-
-        await deductStock(form.inventario_id, totalUsedVolume).catch(err => {
-          console.error("No se pudo descontar del stock: ", err);
-        });
-      }
-
       setSuccess(true);
       setTimeout(() => { setSuccess(false); onSuccess(); }, 1500);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setValidationErrors(['Error al guardar la fertilización.']);
+      const dbMessage = err.message || err.details || '';
+      if (dbMessage.includes('Stock insuficiente') || dbMessage.includes('inventario')) {
+        setValidationErrors([dbMessage]);
+      } else {
+        setValidationErrors(['Error al guardar la fertilización.']);
+      }
     } finally {
       setSaving(false);
     }
@@ -154,10 +178,31 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
   if (success) {
     return (
       <GlassCard className="p-12 flex flex-col items-center gap-6 animate-in zoom-in-95 duration-500">
-        <div className="w-20 h-20 bg-violet-500/20 border border-violet-500/30 rounded-3xl flex items-center justify-center">
-          <Check className="w-10 h-10 text-violet-400" />
-        </div>
-        <h3 className="text-xl font-black text-white">Fertilización Registrada</h3>
+        {savedOffline ? (
+          <>
+            <div className="w-20 h-20 bg-amber-500/20 border border-amber-500/30 rounded-3xl flex items-center justify-center">
+              <WifiOff className="w-10 h-10 text-amber-400 animate-pulse" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-black text-white mb-2">Guardado Local (Offline)</h3>
+              <p className="text-xs text-amber-300/80 font-bold uppercase tracking-widest leading-relaxed">
+                Registrado en tu móvil. Se subirá a SIEX automáticamente cuando recuperes cobertura.
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="w-20 h-20 bg-violet-500/20 border border-violet-500/30 rounded-3xl flex items-center justify-center">
+              <Check className="w-10 h-10 text-violet-400" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-black text-white mb-2">Fertilización Registrada</h3>
+              <p className="text-xs text-white/40 font-bold uppercase tracking-widest text-center mt-1">
+                Conforme con la normativa SIEX y descontado del stock
+              </p>
+            </div>
+          </>
+        )}
       </GlassCard>
     );
   }

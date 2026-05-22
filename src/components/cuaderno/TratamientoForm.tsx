@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { createClient } from '@/lib/supabase/client';
-import { getInventory, deductStock } from '@/lib/actions/inventory';
+import { getInventory } from '@/lib/actions/inventory';
 import { VoiceRecorderButton } from '@/components/cuaderno/VoiceRecorderButton';
 import { VademecumAlert, type VademecumValidationResult } from '@/components/cuaderno/VademecumAlert';
-import { Bug, Calendar, Beaker, Ruler, Tractor, User, Check, AlertTriangle, ChevronDown, PackageOpen, ThermometerSun, Wind } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
+import { useSyncStore } from '@/store/syncStore';
+import { Bug, Calendar, Beaker, Ruler, Tractor, User, Check, AlertTriangle, ChevronDown, PackageOpen, ThermometerSun, Wind, WifiOff } from 'lucide-react';
 
 interface TratamientoFormProps {
   parcelas: any[];
@@ -18,8 +20,13 @@ interface TratamientoFormProps {
 
 export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuccess }: TratamientoFormProps) {
   const supabase = createClient();
+  const { toast } = useToast();
+  const isOffline = useSyncStore(state => state.isOffline);
+  const addMutation = useSyncStore(state => state.addMutation);
+  
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [savedOffline, setSavedOffline] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [inventory, setInventory] = useState<any[]>([]);
   
@@ -206,50 +213,63 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
     setValidationErrors(errors);
     if (errors.length > 0) return;
 
+    const dataToSave = {
+      parcela_id: form.parcela_id,
+      fecha: form.fecha,
+      nombre_producto: form.nombre_producto,
+      producto_mapa_id: form.producto_mapa_id || null,
+      dosis: Number(form.dosis),
+      unidad_dosis: form.unidad_dosis,
+      superficie_tratada: form.superficie_tratada ? Number(form.superficie_tratada) : null,
+      maquinaria_usada: form.maquinaria_usada || null,
+      operario: form.operario || null,
+      temperatura: form.temperatura ? Number(form.temperatura) : null,
+      velocidad_viento: form.velocidad_viento ? Number(form.velocidad_viento) : null,
+      inventario_id: form.inventario_id || null,
+      user_id: userProfile?.userId || null,
+      tenant_id: userProfile?.tenant_id || null,
+    };
+
     setSaving(true);
+
+    if (isOffline) {
+      try {
+        await addMutation('tratamiento', dataToSave, toast);
+        setSavedOffline(true);
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          setSavedOffline(false);
+          onSuccess();
+        }, 2500);
+      } catch (err) {
+        setValidationErrors(['Error al encolar el tratamiento en el almacenamiento local.']);
+      } finally {
+        setSaving(false);
+      }
+      return;
+    }
+
     try {
       const { error } = await supabase.from('tratamientos_fitosanitarios').insert({
-        parcela_id: form.parcela_id,
+        ...dataToSave,
         fecha: new Date(form.fecha).toISOString(),
-        nombre_producto: form.nombre_producto,
-        producto_mapa_id: form.producto_mapa_id || null,
-        dosis: Number(form.dosis),
-        unidad_dosis: form.unidad_dosis,
-        superficie_tratada: form.superficie_tratada ? Number(form.superficie_tratada) : null,
-        maquinaria_usada: form.maquinaria_usada || null,
-        operario: form.operario || null,
-        temperatura: form.temperatura ? Number(form.temperatura) : null,
-        velocidad_viento: form.velocidad_viento ? Number(form.velocidad_viento) : null,
-        inventario_id: form.inventario_id || null,
-        user_id: userProfile?.userId || null,
-        tenant_id: userProfile?.tenant_id || null,
       });
       if (error) throw error;
-
-      // Restar del inventario SI aplica
-      if (form.inventario_id) {
-        const p = parcelas.find(x => x.id === form.parcela_id);
-        const usedHa = form.superficie_tratada ? Number(form.superficie_tratada) : (p ? Number(p.hectareas) : 1);
-        let totalUsedVolume = usedHa * Number(form.dosis);
-        
-        // Conversión guarra en MVP (Si dosis es mL o cc, pasar a L)
-        if (form.unidad_dosis.startsWith('mL') || form.unidad_dosis.startsWith('cc')) totalUsedVolume /= 1000;
-        if (form.unidad_dosis.startsWith('g')) totalUsedVolume /= 1000;
-
-        await deductStock(form.inventario_id, totalUsedVolume).catch(err => {
-          console.error("No se pudo descontar del stock: ", err);
-          // Opcional: mostrar un warning pero no petar el flujo
-        });
-      }
 
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
         onSuccess();
       }, 1500);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setValidationErrors(['Error al guardar el tratamiento. Inténtelo de nuevo.']);
+      const dbMessage = err.message || err.details || '';
+      if (dbMessage.includes('Stock insuficiente') || dbMessage.includes('inventario')) {
+        setValidationErrors([dbMessage]);
+      } else {
+        setValidationErrors(['Error al guardar el tratamiento. Inténtelo de nuevo.']);
+      }
     } finally {
       setSaving(false);
     }
@@ -261,13 +281,29 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
   if (success) {
     return (
       <GlassCard className="p-12 flex flex-col items-center gap-6 animate-in zoom-in-95 duration-500">
-        <div className="w-20 h-20 bg-emerald-500/20 border border-emerald-500/30 rounded-3xl flex items-center justify-center">
-          <Check className="w-10 h-10 text-emerald-400" />
-        </div>
-        <div className="text-center">
-          <h3 className="text-xl font-black text-white mb-2">Tratamiento Registrado</h3>
-          <p className="text-xs text-white/40 font-bold uppercase tracking-widest">Conforme con la normativa SIEX y descontado del stock</p>
-        </div>
+        {savedOffline ? (
+          <>
+            <div className="w-20 h-20 bg-amber-500/20 border border-amber-500/30 rounded-3xl flex items-center justify-center">
+              <WifiOff className="w-10 h-10 text-amber-400 animate-pulse" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-black text-white mb-2">Guardado Local (Offline)</h3>
+              <p className="text-xs text-amber-300/80 font-bold uppercase tracking-widest leading-relaxed">
+                Registrado en tu móvil. Se subirá a SIEX automáticamente cuando recuperes cobertura.
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="w-20 h-20 bg-emerald-500/20 border border-emerald-500/30 rounded-3xl flex items-center justify-center">
+              <Check className="w-10 h-10 text-emerald-400" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-black text-white mb-2">Tratamiento Registrado</h3>
+              <p className="text-xs text-white/40 font-bold uppercase tracking-widest">Conforme con la normativa SIEX y descontado del stock</p>
+            </div>
+          </>
+        )}
       </GlassCard>
     );
   }

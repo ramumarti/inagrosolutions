@@ -5,6 +5,52 @@ import { Camera, Upload, Loader2, Sparkles, FileText, CheckCircle2, AlertCircle 
 import { useToast } from '@/components/ui/Toast';
 import { GlassCard } from '@/components/ui/GlassCard';
 
+async function compressImageFile(file: File): Promise<Blob> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return resolve(file);
+
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            resolve(blob || file);
+          },
+          'image/jpeg',
+          0.75
+        );
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+}
+
 interface InvoiceScannerProps {
   onScanComplete: (data: any) => void;
   className?: string;
@@ -28,20 +74,38 @@ export function InvoiceScanner({ onScanComplete, className = '' }: InvoiceScanne
     }
 
     setState('uploading');
-    
-    // Crear preview
-    const objectUrl = URL.createObjectURL(file);
-    setPreviewUrl(objectUrl);
 
-    // Convertir a base64
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = async () => {
-      const base64data = reader.result as string;
-      const base64Image = base64data.split(',')[1];
+    try {
+      const compressedBlob = await compressImageFile(file);
+      const compressedFile = new File([compressedBlob], file.name, { type: 'image/jpeg' });
 
-      await processImage(base64Image, file.type);
-    };
+      // Crear preview
+      const objectUrl = URL.createObjectURL(compressedFile);
+      setPreviewUrl(objectUrl);
+
+      // Convertir a base64
+      const reader = new FileReader();
+      reader.readAsDataURL(compressedFile);
+      reader.onloadend = async () => {
+        const base64data = reader.result as string;
+        const base64Image = base64data.split(',')[1];
+
+        await processImage(base64Image, 'image/jpeg');
+      };
+    } catch (err) {
+      console.error('Error compressing image, uploading original:', err);
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        const base64data = reader.result as string;
+        const base64Image = base64data.split(',')[1];
+
+        await processImage(base64Image, file.type);
+      };
+    }
   };
 
   const processImage = async (base64Image: string, mimeType: string) => {
