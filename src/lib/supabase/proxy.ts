@@ -40,7 +40,9 @@ export async function updateSession(request: NextRequest) {
     '/legal-notice',
     '/partner-policy',
     '/planes',
-    '/demo'
+    '/demo',
+    '/partner/signup',
+    '/partner/login'
   ]
   const isPublicRoute = publicPaths.includes(pathname) || 
                        pathname.startsWith('/api') || 
