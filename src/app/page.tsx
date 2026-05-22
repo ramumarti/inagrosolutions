@@ -124,7 +124,7 @@ export default function HomePage() {
             <span className="hover:text-[var(--color-primary)] transition-colors">UPA</span>
             <span className="hover:text-[var(--color-primary)] transition-colors">COAG</span>
             <span className="hover:text-[var(--color-primary)] transition-colors">ASAJA</span>
-            <span className="hover:text-[var(--color-primary)] transition-colors text-base md:text-xl">La Remediadora S. Coop. And.</span>
+            <span className="hover:text-[var(--color-primary)] transition-colors text-base md:text-xl">La Remediadora SCA</span>
           </div>
         </div>
       </section>
