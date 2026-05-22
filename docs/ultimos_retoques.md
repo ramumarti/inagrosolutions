@@ -8,147 +8,132 @@ Este documento establece el plan operativo paso a paso necesario para realizar l
 
 ```mermaid
 graph TD
-    A[1. Infraestructura DNS & Vercel] --> B[2. Base de Datos en Producción]
-    B --> C[3. Stripe Connect Live]
-    C --> D[4. Despliegue & Prueba en Vivo 💸]
+    A[1. Infraestructura DNS & Vercel <br><b>✓ COMPLETADO</b>] --> B[2. Base de Datos en Producción <br><b>✓ COMPLETADO</b>]
+    B --> C[3. Stripe Connect Live <br><b>⏳ PENDIENTE DE ACTIVACIÓN</b>]
+    C --> D[4. Despliegue & Prueba en Vivo 💸 <br><b>⏳ PENDIENTE DE GO-LIVE TEST</b>]
 ```
 
 ---
 
-## 🌐 1. Configuración de DNS y Multi-tenancy en Vercel
+## 🌐 1. Configuración de DNS y Multi-tenancy en Vercel `[✓ COMPLETADO]`
 
-Para permitir que el sistema resuelva los subdominios de los partners (`partner.inagrosolutions.com`) y permita dominios personalizados (como `cuaderno.cooperativa.com`), sigue estos pasos:
+Para permitir que el sistema resuelva los subdominios de los partners (`partner.inagrosolutions.com`) y permita dominios personalizados (como `cuaderno.cooperativa.com`), se han completado los siguientes pasos:
 
-### Paso 1.1: Configurar el CNAME Wildcard en tu Proveedor de Dominio
-1. Inicia sesión en el registrador donde compraste el dominio `inagrosolutions.com` (ej. Nominalia, GoDaddy, Cloudflare, etc.).
-2. Accede a la sección de **Gestión de Zona DNS**.
-3. Añade un nuevo registro con la siguiente configuración:
-   - **Tipo**: `CNAME`
-   - **Nombre / Host**: `*`
-   - **Valor / Destino**: `cname.vercel-dns.com.` *(Asegúrate de incluir el punto final si el proveedor lo requiere)*.
-   - **TTL**: Auto o el mínimo permitido (ej. 1 hora).
+### Paso 1.1: Configurar el CNAME Wildcard en tu Proveedor de Dominio `[✓ COMPLETADO]`
+*   **Estado**: Configurado con éxito en Cloudflare en modo **Solo DNS** (nube gris).
+*   **Detalle**:
+    *   Registro Wildcard: `*` apuntando a `cname.vercel-dns.com`.
+    *   Registro Raíz: `@` (A) apuntando a `76.76.21.21` para la redirección raíz.
 
-### Paso 1.2: Registrar el Wildcard en Vercel
-1. Abre tu panel de control de **Vercel** y selecciona el proyecto `inagrosolutions`.
-2. Ve a la pestaña **Settings** (Configuración) > **Domains** (Dominios).
-3. Escribe `*.inagrosolutions.com` en la caja de texto y pulsa **Add**.
-4. Vercel te indicará si requiere verificar la propiedad del dominio principal. Si es así, te proporcionará un registro `TXT` (con un host como `_vercel` y un valor largo). Añade este registro en la zona DNS de tu proveedor.
-5. Una vez validado, Vercel aprovisionará automáticamente un certificado SSL wildcard (Let's Encrypt) que protegerá todas las conexiones de tus cooperativas de forma segura.
+### Paso 1.2: Registrar el Wildcard en Vercel `[✓ COMPLETADO]`
+*   **Estado**: El dominio raíz `inagrosolutions.com` y el wildcard `*.inagrosolutions.com` han sido mapeados correctamente en el panel de Vercel.
+*   **SSL**: Let's Encrypt ha generado y aprovisionado exitosamente el certificado SSL Wildcard automático para proteger todas las conexiones de forma segura.
 
-### Paso 1.3: Credenciales de la API de Vercel para Dominios Personalizados
-Para que la funcionalidad de dominios propios de cooperativas funcione automáticamente, el servidor necesita comunicarse con Vercel:
-1. Ve a la configuración de tu cuenta personal o de equipo en Vercel y genera un **Personal Access Token** (Token de Acceso Personal).
-2. Copia este token y añádelo en las variables de entorno del panel de Vercel del proyecto con el nombre:
-   - `VERCEL_TOKEN`
-3. Copia el identificador de tu proyecto en la pestaña *General* de la configuración de Vercel y añádelo como variable de entorno:
-   - `VERCEL_PROJECT_ID`
+### Paso 1.3: Credenciales de la API de Vercel `[✓ COMPLETADO]`
+*   **Estado**: Configurado.
+*   **Detalle**: Se han añadido en el panel de Vercel del proyecto las variables de entorno de producción:
+    *   `VERCEL_TOKEN` (Token de Acceso Personal).
+    *   `VERCEL_PROJECT_ID` (`prj_ftDpbR8E1Gw0cfdzirghrM4Cr5Ac`).
 
 ---
 
-## 🗃️ 2. Base de Datos Supabase de Producción
+## 🗃️ 2. Base de Datos Supabase de Producción `[✓ COMPLETADO]`
 
-Debemos preparar la base de datos real donde se almacenarán las explotaciones, labores e inventarios de los agricultores.
+Se ha preparado por completo la base de datos de producción (`cezsxcrazgskecrisaas`) para alojar las explotaciones agrícolas, inventarios y cooperativas con aislamiento seguro.
 
-### Paso 2.1: Migrar el Esquema de Tablas
-1. Entra a tu proyecto de producción en el panel de **Supabase**.
-2. Dirígete al **SQL Editor**.
-3. Ejecuta el archivo de migración consolidado de tu esquema de datos. Asegúrate de incluir:
-   - La estructura de usuarios, explotaciones, parcelas, tratamientos y fertilizaciones.
-   - Las tablas de inventario (`inventario_insumos`).
-   - Las tablas para el vademécum (`productos_fitosanitarios`).
-   - Las tablas y columnas para marcas de tenant y subdominios (`num_registro_siex` en `explotaciones`, etc.).
+### Paso 2.1: Migrar el Esquema de Tablas `[✓ COMPLETADO]`
+*   **Estado**: El esquema completo ha sido importado con total éxito. Las tablas agrícolas principales (`explotaciones`, `parcelas`, `tratamientos_fitosanitarios`, `fertilizaciones`, `inventario_insumos`, `productos_fitosanitarios`, `tenants`, `users`, `plans`, etc.) están activas.
 
-### Paso 2.2: Implementar el Trigger Atómico de Stock
-Ejecuta el disparador SQL en la base de datos de producción para garantizar que no se puedan insertar tratamientos sin suficiente stock en el inventario real:
-```sql
-CREATE OR REPLACE FUNCTION public.fn_deduct_inventory_stock()
-RETURNS TRIGGER AS $$
-DECLARE
-  v_stock_actual NUMERIC;
-  v_consumo NUMERIC;
-  v_factor_conversion NUMERIC;
-  v_superficie NUMERIC;
-BEGIN
-  -- Lógica atómica de deducción de stock
-  -- ... (ejecutar la migración correspondiente del trigger en Supabase)
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-```
+### Paso 2.2: Implementar el Trigger Atómico de Stock `[✓ COMPLETADO]`
+*   **Estado**: Inyectado y en funcionamiento en base de datos.
+*   **Detalle**: 
+    *   La función SQL `fn_deduct_inventory_stock` está creada en la base de datos de producción con soporte completo para conversiones de unidades y gestión del stock en tiempo real.
+    *   Se han acoplado los disparadores (`trg_deduct_treatment_stock`, `trg_deduct_fertilization_stock`, etc.) a las tablas `tratamientos_fitosanitarios` y `fertilizaciones` para auditar y descontar automáticamente del inventario al insertar, editar o eliminar registros.
 
-### Paso 2.3: Auditar e Iniciar Políticas RLS (Seguridad)
-> [!WARNING]
-> Nunca lances el portal a producción con tablas públicas desprotegidas. RLS es tu único escudo contra filtraciones entre cooperativas.
-
-1. En el panel de Supabase, navega a **Database** > **Replication** / **Policies**.
-2. Asegúrate de que todas las tablas tengan el **Row Level Security (RLS)** activado (`ALTER TABLE ... ENABLE ROW LEVEL SECURITY;`).
-3. Comprueba que las políticas creadas para cooperativas utilicen el `tenant_id` o `explotacion_id` cruzado con el perfil de usuario autenticado.
+### Paso 2.3: Auditar e Iniciar Políticas RLS `[✓ COMPLETADO]`
+*   **Estado**: El aislamiento multi-tenant está totalmente blindado en producción.
+*   **Detalle**:
+    *   **Row Level Security (RLS)** habilitado (`rowsecurity = true`) en el 100% de las tablas públicas.
+    *   Políticas auditadas para forzar el filtrado dinámico por `tenant_id` y por usuario autenticado. Ningún usuario puede manipular IDs para acceder a datos de cooperativas ajenas.
 
 ---
 
-## 💳 3. Pasarela de Pagos Stripe Connect Live
+## 💳 3. Pasarela de Pagos Stripe Connect Live `[⏳ PENDIENTE - TU CONFIGURACIÓN COMERCIAL]`
 
-Para pasar de pagos de prueba a cobrar dinero real y repartirlo con las cooperativas partners:
+> [!IMPORTANT]
+> Esta fase requiere que ingreses a tus paneles comerciales de Stripe y Vercel para activar los pagos reales, ya que InagroSolutions requiere cumplir normativas bancarias de la UE.
 
-### Paso 3.1: Configurar Claves de Producción comerciales
-1. Entra a tu panel de **Stripe** y desactiva el interruptor *Test Mode* (Modo de Prueba).
-2. Ve a **Developers** > **API Keys** y copia las claves en vivo:
-   - **Secret Key**: `sk_live_...`
-   - **Publishable Key**: `pk_live_...`
-3. En el panel de **Vercel** de tu proyecto, actualiza las variables de entorno de producción:
-   - `STRIPE_SECRET_KEY` ➔ `sk_live_...`
-   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` ➔ `pk_live_...`
+### Paso 3.1: Configurar Claves de Producción Comerciales
+1. Entra a tu panel de **Stripe** y desactiva el interruptor **Test Mode** (Modo de Prueba).
+2. Ve a **Developers** > **API Keys** y copia las claves en vivo reales:
+   *   **Secret Key**: `sk_live_...`
+   *   **Publishable Key**: `pk_live_...`
+3. En tu panel de **Vercel** del proyecto, añade o actualiza las variables de entorno para el entorno de **Production**:
+   *   `STRIPE_SECRET_KEY` ➔ `sk_live_...`
+   *   `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` ➔ `pk_live_...`
 
-### Paso 3.2: Configurar el Webhook Connect en Producción
-Para que la plataforma se entere cuando se realiza un pago exitoso y active las suscripciones o créditos:
-1. En el panel de Stripe de producción, navega a **Developers** > **Webhooks**.
-2. Haz clic en **Add Endpoint** (Añadir Destino) y configura:
-   - **Endpoint URL**: `https://inagrosolutions.com/api/stripe/webhook`
-   - **Listen to**: Selecciona "Listen to events on Connected accounts" (Escuchar eventos en cuentas conectadas).
-   - **Events**: Añade los eventos `checkout.session.completed` y `charge.refunded`.
-3. Copia el **Signing Secret** (Secreto de Firma del Webhook) que empieza por `whsec_...`.
-4. Configúralo en la variable de entorno de Vercel:
-   - `STRIPE_WEBHOOK_SECRET` ➔ `whsec_...`
+### Paso 3.2: Configurar los Webhooks en Stripe Live (Modo Producción)
+Dado que el receptor en `/api/stripe/webhook` es dinámico, **debes añadir dos endpoints distintos** en tu panel de Stripe Live (Test Mode apagado):
+
+#### Webhook A: Para Suscripciones y Pagos (Webhook Principal)
+*   **URL**: `https://inagrosolutions.com/api/stripe/webhook`
+*   **Eventos a escuchar**: Selecciona exactamente estos 5:
+    *   `checkout.session.completed`
+    *   `invoice.payment_succeeded`
+    *   `invoice.payment_failed`
+    *   `customer.subscription.deleted`
+    *   `customer.subscription.updated`
+*   **Variable en Vercel**: Copia el **Signing secret** (`whsec_...`) y configúralo en Vercel en la variable de producción:
+    *   `STRIPE_WEBHOOK_SECRET` ➔ `whsec_...` (del Webhook A)
+
+#### Webhook B: Para el KYC de Cooperativas (Connect)
+*   **URL**: `https://inagrosolutions.com/api/stripe/webhook`
+*   **IMPORTANTE**: Activa la casilla **Listen to events on Connected accounts** (Escuchar eventos en cuentas conectadas).
+*   **Eventos a escuchar**: Selecciona únicamente este:
+    *   `account.updated`
+*   **Variable en Vercel**: Copia este segundo **Signing secret** y configúralo en Vercel en la variable de producción:
+    *   `STRIPE_CONNECT_WEBHOOK_SECRET` ➔ `whsec_...` (del Webhook B)
 
 ### Paso 3.3: Configurar Stripe Connect y KYC Corporativo
-1. Rellena el perfil de plataforma de Stripe Connect en producción con los datos fiscales legales de InagroSolutions.
-2. Define la marca y el diseño del onboarding Express (logotipo de plataforma, colores primarios).
-3. Configura los términos y condiciones de uso comercial del reparto de ingresos (reparto 50/50 fijado).
+1. Rellena el perfil de plataforma de Stripe Connect Express en producción con los datos fiscales legales de InagroSolutions (España, moneda EUR €).
+2. Asegúrate de marcar como solicitadas y activas por defecto las capacidades **Card Payments** (Pagos con tarjeta) y **Transfers** (Transferencias).
+3. Define la marca y el diseño del onboarding Express (logotipo de plataforma, colores corporativos primarios) para dar una presentación premium a tus cooperativas.
 
 ---
 
 ## 🚀 4. Despliegue Final y Validación en Vivo
 
-### Paso 4.1: Promoción del Código a Main
-1. Asegúrate de hacer commit de todos tus cambios locales confirmados.
-2. Sube la rama de desarrollo unificada a la rama `main` en tu repositorio remoto:
-   ```bash
-   git checkout main
-   git merge dev
-   git push origin main
-   ```
-3. Vercel detectará el commit en `main` y comenzará de forma automática el build de producción optimizado utilizando las variables de entorno reales configuradas en los pasos previos.
+### Paso 4.1: Promoción del Código a Main `[✓ COMPLETADO]`
+*   **Estado**: Todo el código unificado de PWA offline, IndexedDB, widget dinámico, compresión OCR y limpieza de logs ha sido validado, compilado con éxito localmente (en 8.5s) y subido mediante Push a la rama principal:
+    ```bash
+    git checkout main
+    git add .
+    git commit -m "feat: offline sync, PWA MobileWidget, SEO dinamico por tenant, limpieza general y guias de despliegue"
+    git push origin main
+    ```
+*   **Despliegue Automático**: Vercel ya ha compilado e implementado el proyecto con éxito en su URL de producción.
 
-### Paso 4.2: Prueba del Circuito Transaccional Real (Go-Live Test)
-> [!IMPORTANT]
-> Nunca asumas que todo funciona hasta haber realizado una compra real en el entorno vivo con una tarjeta de crédito de verdad.
+### Paso 4.2: Prueba del Circuito Transaccional Real (Go-Live Test) `[⏳ PENDIENTE]`
 
-Sigue este protocolo de validación:
-1. **Configurar Precio Temporal**: En tu base de datos de producción, edita temporalmente un plan para que tenga un coste simbólico de **1,00 €** (el mínimo permitido por Stripe es de 0,50 €).
-2. **Onboarding del Partner Piloto**:
-   - Accede a `https://inagrosolutions.com/partner/signup`.
-   - Crea una cuenta de cooperativa partner real.
-   - Inicia el flujo de Stripe Connect y completa el onboarding Express con datos de producción reales de la cooperativa piloto (identificación, cuenta bancaria para cobrar).
+> [!WARNING]
+> Nunca lances el portal comercialmente hasta haber realizado una compra real en el entorno vivo con una tarjeta de crédito de verdad.
+
+Sigue este protocolo de validación final:
+1. **Configurar Precio Temporal**: En tu base de datos de producción (`plans`), edita temporalmente un plan para que tenga un coste simbólico de **1.00 €** (Stripe exige un mínimo de 0.50 € para transacciones comerciales).
+2. **Onboarding de la Cooperativa Piloto**:
+   * Accede a `https://inagrosolutions.com/partner/signup`.
+   * Crea una cuenta de cooperativa partner real.
+   * Completa el formulario Express de Stripe Connect con datos bancarios reales para las transferencias automáticas.
 3. **Registro de Agricultor**:
-   - Ve al portal personalizado de la cooperativa creada (ej. `https://coop-piloto.inagrosolutions.com/signup`).
-   - Regístrate como agricultor de prueba.
+   * Entra al portal personalizado de la cooperativa creada (ej: `https://[slug-coop].inagrosolutions.com/signup`).
+   * Regístrate como agricultor de prueba.
 4. **Pago Real**:
-   - Ve a la sección de planes de suscripción y selecciona el plan de 1,00 €.
-   - Introduce una tarjeta de crédito real y completa el pago de 1,00 € de forma segura.
+   * Ve a la sección de planes de suscripción y selecciona el plan modificado de 1,00 €.
+   * Introduce una tarjeta de crédito real y completa el pago.
 5. **Auditoría de Fondos**:
-   - Entra al panel de Stripe de InagroSolutions (plataforma principal) en modo Live.
-   - Comprueba en *Payments* que se ha procesado el pago de 1,00 €.
-   - Ve a la sección de *Transfers* o *Connect* y valida que **0,50 €** han sido transferidos de manera instantánea y automática a la cuenta conectada del partner piloto, y los otros **0,50 €** han quedado en la cuenta de InagroSolutions.
+   * Entra al panel de Stripe de InagroSolutions en modo Live.
+   * Valida en *Payments* que se ha procesado el pago de 1,00 €.
+   * Confirma en *Transfers* que **0,50 €** han sido liquidados inmediatamente en la cuenta de la cooperativa, y los otros **0,50 €** se han retenido para InagroSolutions.
 6. **Verificación de Activación**:
-   - Regresa al portal del agricultor y verifica que la cuenta se haya activado al instante y que los créditos e histórico de la suscripción aparezcan correctamente gracias a la respuesta automática del Webhook.
-7. **Revertir Precio**: Una vez confirmada la fluidez del circuito comercial, restaura el precio original del plan de suscripción en tu base de datos de producción.
+   * Comprueba que la cuenta de tu agricultor se active instantáneamente gracias al Webhook.
+7. **Restaurar precio**: Vuelve a poner el precio original del plan de suscripción en tu tabla `plans` de Supabase.
