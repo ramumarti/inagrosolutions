@@ -101,6 +101,58 @@ export default function BrandingPage() {
     }
     setLoading(true);
 
+    let finalDomain = tenant.custom_domain || '';
+
+    // Detectamos si el dominio personalizado ha cambiado
+    const normalizedNewDomain = customDomain.trim().toLowerCase();
+    const normalizedOldDomain = (tenant.custom_domain || '').trim().toLowerCase();
+
+    if (normalizedNewDomain !== normalizedOldDomain) {
+      try {
+        const action = normalizedNewDomain ? 'add' : 'remove';
+        const response = await fetch('/api/admin/domains', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action,
+            tenantId: tenant.id,
+            domain: normalizedNewDomain,
+          }),
+        });
+
+        const resData = await response.json();
+
+        if (!response.ok || resData.error) {
+          toast(
+            language === 'en' 
+              ? `Hosting Error: ${resData.error || 'Failed to update domain'}` 
+              : `Error de Hosting: ${resData.error || 'No se pudo actualizar el dominio'}`,
+            'error'
+          );
+          setLoading(false);
+          return;
+        }
+
+        finalDomain = action === 'add' ? resData.domain : '';
+
+        // Avisar del estado de Vercel
+        if (!resData.vercel_configured) {
+          console.log("Vercel no configurado en este entorno. Simulación exitosa.");
+        }
+      } catch (err: any) {
+        toast(
+          language === 'en'
+            ? 'Network error synchronizing hosting domain.'
+            : 'Error de red al sincronizar el dominio en el hosting.',
+          'error'
+        );
+        setLoading(false);
+        return;
+      }
+    }
+
     const { error } = await supabase
       .from('tenants')
       .update({
@@ -108,7 +160,7 @@ export default function BrandingPage() {
         primary_color: primaryColor,
         secondary_color: secondaryColor,
         logo_url: logoUrl,
-        custom_domain: customDomain,
+        custom_domain: finalDomain || null,
         hero_title: heroTitle,
         hero_subtitle: heroSubtitle,
         public_description: publicDescription,
@@ -136,7 +188,12 @@ export default function BrandingPage() {
     if (error) {
       toast(error.message, 'error');
     } else {
-      toast(language === 'en' ? 'Branding updated successfully' : 'Marca actualizada correctamente', 'success');
+      toast(
+        language === 'en' 
+          ? 'Branding updated and synchronized successfully' 
+          : 'Marca actualizada y sincronizada correctamente', 
+        'success'
+      );
       if (refreshProfile) refreshProfile();
       // Apply CSS variables instantly to the root
       document.documentElement.style.setProperty('--color-primary', primaryColor);
