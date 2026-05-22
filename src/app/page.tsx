@@ -439,7 +439,7 @@ export default function HomePage() {
                     Crear mi plataforma gratis
                   </GlowButton>
                 </Link>
-                <Link href="/partner/signup" className="w-full sm:w-auto">
+                <Link href="/demo" className="w-full sm:w-auto">
                   <GlowButton variant="secondary" className="text-lg px-8 py-6 h-auto w-full sm:w-auto">
                     Solicitar demo técnica
                   </GlowButton>
