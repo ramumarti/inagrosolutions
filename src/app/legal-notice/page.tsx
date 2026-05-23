@@ -120,6 +120,8 @@ function LegalNoticeContent() {
   );
 }
 
+export const dynamic = 'force-dynamic';
+
 export default function LegalNoticePage() {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-white">Cargando...</div>}>
