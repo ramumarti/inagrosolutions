@@ -57,7 +57,13 @@ export async function completePartnerOnboarding(data: {
     public_description: data.public_description || null,
     subscription_tier: 'basico', // Default for now
     show_public_page: true,
-    active_modules: ['siex', 'fitosanitarios', 'fertilizacion', 'labores', 'parcelas'] // default modules
+    active_modules: ['siex', 'fitosanitarios', 'fertilizacion', 'labores', 'parcelas'], // default modules
+    fiscal_cif: rawMetadata.nif_cif || null,
+    fiscal_name: companyName,
+    fiscal_address: rawMetadata.address || null,
+    fiscal_email: email,
+    legal_email: email,
+    dpo_name: rawMetadata.first_name ? `${rawMetadata.first_name} ${rawMetadata.last_name || ''}`.trim() : null
   }).select('id').single();
 
   if (insertError) {

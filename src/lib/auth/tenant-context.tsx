@@ -31,6 +31,10 @@ export interface TenantData {
   terms_url?: string;
   legal_email?: string;
   dpo_name?: string;
+  fiscal_cif?: string;
+  fiscal_name?: string;
+  fiscal_address?: string;
+  fiscal_email?: string;
 }
 
 export interface AuthUser extends User {

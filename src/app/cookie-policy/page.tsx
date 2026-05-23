@@ -12,20 +12,26 @@ function CookiePolicyContent() {
   const { t, language } = useI18n();
   const searchParams = useSearchParams();
   const tenantSlug = searchParams.get('tenant');
-  const [tenantName, setTenantName] = useState<string | null>(null);
+  const [tenantData, setTenantData] = useState<any | null>(null);
 
   useEffect(() => {
     if (tenantSlug) {
       const fetchTenant = async () => {
         const supabase = createClient();
-        const { data } = await supabase.from('tenants').select('name').eq('slug', tenantSlug).single();
-        if (data) setTenantName(data.name);
+        const { data } = await supabase
+          .from('tenants')
+          .select('name, fiscal_name, fiscal_cif, fiscal_address, fiscal_email, contact_email, address, dpo_name, legal_email')
+          .eq('slug', tenantSlug)
+          .single();
+        if (data) setTenantData(data);
       };
       fetchTenant();
     }
   }, [tenantSlug]);
 
-  const entityName = tenantName || 'InagroSolutions';
+  const tenantName = tenantData?.name || null;
+  const entityName = tenantData?.name || 'InagroSolutions';
+  const fiscalName = tenantData?.fiscal_name || tenantData?.name || 'InagroSolutions';
   
   return (
     <main className="min-h-screen w-full bg-[var(--color-base-100)] py-20 px-4 flex justify-center">
@@ -51,7 +57,7 @@ function CookiePolicyContent() {
           <div className="prose prose-invert max-w-none flex flex-col gap-6 text-white/70">
             {language === 'es' ? (
               <>
-                <p>En {entityName} {tenantName ? '' : '(operando bajo inagrosolutions.com)'}, utilizamos cookies instrumentales y de sesión para garantizar la seguridad y funcionalidad de nuestra plataforma SaaS Multi-Entidad.</p>
+                <p>En <strong>{fiscalName}</strong> {tenantData ? '' : '(operando bajo inagrosolutions.com)'}, utilizamos cookies instrumentales y de sesión para garantizar la seguridad y funcionalidad de nuestra plataforma SaaS Multi-Entidad.</p>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Naturaleza de nuestras cookies</h2>
                   <p>Al ser una plataforma B2B (Business-to-Business) orientada a la gestión agronómica en la nube, {entityName} <strong>no emplea cookies publicitarias ni rastreadores de terceros</strong> con fines comerciales. Todas nuestras cookies están orientadas a la operativa y seguridad del sistema.</p>
@@ -72,7 +78,7 @@ function CookiePolicyContent() {
               </>
             ) : (
               <>
-                <p>At {entityName} {tenantName ? '' : '(operating at inagrosolutions.com)'}, we use instrumental and session cookies to ensure the security and functionality of our Multi-Tenant SaaS platform.</p>
+                <p>At <strong>{fiscalName}</strong> {tenantData ? '' : '(operating at inagrosolutions.com)'}, we use instrumental and session cookies to ensure the security and functionality of our Multi-Tenant SaaS platform.</p>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Nature of our cookies</h2>
                   <p>Being a B2B (Business-to-Business) platform focused on cloud agronomic management, {entityName} <strong>does not use advertising cookies or third-party trackers</strong> for commercial purposes. All our cookies are oriented towards system operations and security.</p>

@@ -51,6 +51,12 @@ export default function BrandingPage() {
   const [legalEmail, setLegalEmail] = useState('');
   const [dpoName, setDpoName] = useState('');
   
+  // Datos de Identificación y Fiscales
+  const [fiscalCif, setFiscalCif] = useState('');
+  const [fiscalName, setFiscalName] = useState('');
+  const [fiscalAddress, setFiscalAddress] = useState('');
+  const [fiscalEmail, setFiscalEmail] = useState('');
+  
   const [origin, setOrigin] = useState('');
 
   // Safety timeout to prevent infinite loading screen
@@ -91,6 +97,10 @@ export default function BrandingPage() {
       setTermsUrl(tenant.terms_url || '');
       setLegalEmail(tenant.legal_email || '');
       setDpoName(tenant.dpo_name || '');
+      setFiscalCif(tenant.fiscal_cif || '');
+      setFiscalName(tenant.fiscal_name || '');
+      setFiscalAddress(tenant.fiscal_address || '');
+      setFiscalEmail(tenant.fiscal_email || '');
     }
   }, [tenant]);
 
@@ -179,6 +189,10 @@ export default function BrandingPage() {
         terms_url: termsUrl,
         legal_email: legalEmail,
         dpo_name: dpoName,
+        fiscal_cif: fiscalCif || null,
+        fiscal_name: fiscalName || null,
+        fiscal_address: fiscalAddress || null,
+        fiscal_email: fiscalEmail || null,
         updated_at: new Date().toISOString()
       })
       .eq('id', tenant.id);
@@ -441,57 +455,104 @@ export default function BrandingPage() {
             </h2>
 
             <div className="space-y-6">
-              <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+              <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl space-y-2">
                 <p className="text-sm text-amber-200">
                   {language === 'en' 
-                    ? 'Important: To register farmers, you must provide your legal policies. If omitted, registrations will be blocked.' 
-                    : 'Importante: Para poder captar socios, tu cooperativa debe enlazar sus políticas legales para asumir la responsabilidad de los datos. Si están vacíos, se bloqueará el registro de nuevos agricultores.'}
+                    ? 'Important: To register farmers, you must provide your legal policies or fill out the identification data below. If left empty, the platform will automatically host and parameterize dynamic policies for your brand.' 
+                    : 'Importante: Para poder captar socios, tu cooperativa debe disponer de políticas legales. Si dejas las URLs de abajo vacías, la plataforma alojará y generará dinámicamente tu Aviso Legal, Política de Privacidad y Términos con los datos fiscales que especifiques a continuación, sin que tengas que redactar nada.'}
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/70">URL Política de Privacidad</label>
-                  <Input 
-                    value={privacyPolicyUrl} 
-                    onChange={(e) => setPrivacyPolicyUrl(e.target.value)} 
-                    placeholder="https://tucooperativa.com/privacidad"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/70">URL Aviso Legal</label>
-                  <Input 
-                    value={legalNoticeUrl} 
-                    onChange={(e) => setLegalNoticeUrl(e.target.value)} 
-                    placeholder="https://tucooperativa.com/aviso-legal"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/70">URL Términos y Condiciones</label>
-                  <Input 
-                    value={termsUrl} 
-                    onChange={(e) => setTermsUrl(e.target.value)} 
-                    placeholder="https://tucooperativa.com/terminos"
-                  />
+              <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl space-y-4">
+                <h3 className="text-sm font-bold text-[var(--color-primary)] uppercase tracking-wider">Datos Fiscales e Identificación (Para políticas autogeneradas)</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">Razón Social / Nombre Fiscal de la Entidad</label>
+                    <Input 
+                      value={fiscalName} 
+                      onChange={(e) => setFiscalName(e.target.value)} 
+                      placeholder="Ej. Cooperativa Agrícola Nuestra Señora S.C.A."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">NIF / CIF de la Cooperativa o Entidad</label>
+                    <Input 
+                      value={fiscalCif} 
+                      onChange={(e) => setFiscalCif(e.target.value)} 
+                      placeholder="Ej. F-12345678"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">Dirección Social / Sede Fiscal</label>
+                    <Input 
+                      value={fiscalAddress} 
+                      onChange={(e) => setFiscalAddress(e.target.value)} 
+                      placeholder="Ej. Avda de la Constitución, 12, Jaén"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">Email Fiscal / Legal</label>
+                    <Input 
+                      value={fiscalEmail} 
+                      onChange={(e) => setFiscalEmail(e.target.value)} 
+                      placeholder="Ej. administracion@cooperativa.es"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/70">Responsable / Delegado de Protección (DPO)</label>
-                  <Input 
-                    value={dpoName} 
-                    onChange={(e) => setDpoName(e.target.value)} 
-                    placeholder="Ej. Juan Pérez - Director Técnico"
-                  />
+              <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl space-y-4">
+                <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wider">¿Tienes tus propias URLs? (Opcional)</h3>
+                <p className="text-xs text-white/40">Si ya tienes subidos los documentos legales a tu web corporativa, pégalos aquí. Si no, déjalos en blanco para usar la generación automática.</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">URL Política de Privacidad</label>
+                    <Input 
+                      value={privacyPolicyUrl} 
+                      onChange={(e) => setPrivacyPolicyUrl(e.target.value)} 
+                      placeholder="https://tucooperativa.com/privacidad"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">URL Aviso Legal</label>
+                    <Input 
+                      value={legalNoticeUrl} 
+                      onChange={(e) => setLegalNoticeUrl(e.target.value)} 
+                      placeholder="https://tucooperativa.com/aviso-legal"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">URL Términos y Condiciones</label>
+                    <Input 
+                      value={termsUrl} 
+                      onChange={(e) => setTermsUrl(e.target.value)} 
+                      placeholder="https://tucooperativa.com/terminos"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/70">Email Legal (RGPD)</label>
-                  <Input 
-                    value={legalEmail} 
-                    onChange={(e) => setLegalEmail(e.target.value)} 
-                    placeholder="rgpd@tucooperativa.com"
-                  />
+              </div>
+
+              <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl space-y-4">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Responsables de Privacidad (RGPD)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">Responsable / Delegado de Protección (DPO)</label>
+                    <Input 
+                      value={dpoName} 
+                      onChange={(e) => setDpoName(e.target.value)} 
+                      placeholder="Ej. Juan Pérez - Director Técnico"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/70">Email Legal (RGPD - Ejercicio de Derechos)</label>
+                    <Input 
+                      value={legalEmail} 
+                      onChange={(e) => setLegalEmail(e.target.value)} 
+                      placeholder="rgpd@tucooperativa.com"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

@@ -12,20 +12,31 @@ function PrivacyPolicyContent() {
   const { t, language } = useI18n();
   const searchParams = useSearchParams();
   const tenantSlug = searchParams.get('tenant');
-  const [tenantName, setTenantName] = useState<string | null>(null);
+  const [tenantData, setTenantData] = useState<any | null>(null);
 
   useEffect(() => {
     if (tenantSlug) {
       const fetchTenant = async () => {
         const supabase = createClient();
-        const { data } = await supabase.from('tenants').select('name').eq('slug', tenantSlug).single();
-        if (data) setTenantName(data.name);
+        const { data } = await supabase
+          .from('tenants')
+          .select('name, fiscal_name, fiscal_cif, fiscal_address, fiscal_email, contact_email, address, dpo_name, legal_email')
+          .eq('slug', tenantSlug)
+          .single();
+        if (data) setTenantData(data);
       };
       fetchTenant();
     }
   }, [tenantSlug]);
 
-  const entityName = tenantName || 'InagroSolutions';
+  const tenantName = tenantData?.name || null;
+  const entityName = tenantData?.name || 'InagroSolutions';
+  const fiscalName = tenantData?.fiscal_name || tenantData?.name || 'InagroSolutions';
+  const fiscalCif = tenantData?.fiscal_cif || '';
+  const fiscalAddress = tenantData?.fiscal_address || tenantData?.address || '';
+  const contactEmail = tenantData?.contact_email || '';
+  const legalEmail = tenantData?.legal_email || 'legal@inagrosolutions.com';
+  const dpoName = tenantData?.dpo_name || '';
   
   return (
     <main className="min-h-screen w-full bg-[var(--color-base-100)] py-20 px-4 flex justify-center">
@@ -53,7 +64,11 @@ function PrivacyPolicyContent() {
               <>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Responsable del Tratamiento</h2>
-                  <p>{entityName} {tenantName ? '' : '(operando bajo inagrosolutions.com), con domicilio en España,'} es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protección de sus datos o privacidad en nuestra plataforma SaaS, puede contactarnos en {tenantName ? 'los canales oficiales de la entidad' : 'legal@inagrosolutions.com'}.</p>
+                  {tenantData ? (
+                    <p><strong>{fiscalName}</strong> {fiscalCif ? `(con CIF/NIF ${fiscalCif})` : ''}, con domicilio social en {fiscalAddress || 'España'}, es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protección de sus datos o privacidad en nuestra plataforma SaaS, puede contactarnos a través de su email legal <strong>{legalEmail}</strong> {dpoName ? `o a través de su Delegado de Protección de Datos (DPO) asignado: ${dpoName}` : ''}.</p>
+                  ) : (
+                    <p>{entityName} (operando bajo inagrosolutions.com), con domicilio en España, es el responsable del tratamiento de sus datos personales. Para cualquier consulta sobre la protección de sus datos o privacidad en nuestra plataforma SaaS, puede contactarnos en legal@inagrosolutions.com.</p>
+                  )}
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">2. Datos que Recopilamos</h2>
@@ -80,14 +95,18 @@ function PrivacyPolicyContent() {
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">5. Tus Derechos</h2>
-                  <p>Tienes en todo momento derecho a acceder, rectificar, solicitar la portabilidad o supresión de tus datos. Al tratarse de una plataforma SaaS Multi-Entidad, los agricultores vinculados a un Partner podrán canalizar sus solicitudes directamente a su Entidad o contactar con {tenantName ? 'soporte técnico' : 'soporte@inagrosolutions.com'}.</p>
+                  <p>Tienes en todo momento derecho a acceder, rectificar, solicitar la portabilidad o supresión de tus datos. Al tratarse de una plataforma SaaS Multi-Entidad, los agricultores vinculados a un Partner podrán canalizar sus solicitudes directamente a su Entidad (a través del correo <strong>{contactEmail || legalEmail}</strong>) o contactar con {tenantData ? 'soporte técnico de la entidad' : 'soporte@inagrosolutions.com'}.</p>
                 </section>
               </>
             ) : (
               <>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">1. Data Controller</h2>
-                  <p>{entityName} {tenantName ? '' : '(operating at inagrosolutions.com), based in Spain,'} is the controller of your personal data. For any questions regarding your data protection or privacy on our SaaS platform, you can contact us at {tenantName ? 'the official channels of the entity' : 'legal@inagrosolutions.com'}.</p>
+                  {tenantData ? (
+                    <p><strong>{fiscalName}</strong> {fiscalCif ? `(with ID/CIF ${fiscalCif})` : ''}, with registered address at {fiscalAddress || 'Spain'}, is the controller of your personal data. For any questions regarding your data protection or privacy on our SaaS platform, you can contact us at their legal email <strong>{legalEmail}</strong> {dpoName ? `or through the assigned Data Protection Officer (DPO): ${dpoName}` : ''}.</p>
+                  ) : (
+                    <p>{entityName} (operating at inagrosolutions.com), based in Spain, is the controller of your personal data. For any questions regarding your data protection or privacy on our SaaS platform, you can contact us at legal@inagrosolutions.com.</p>
+                  )}
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">2. Data We Collect</h2>
@@ -114,7 +133,7 @@ function PrivacyPolicyContent() {
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-3">5. Your Rights</h2>
-                  <p>You have the right to access, rectify, request portability, or delete your data at any time. Due to our Multi-Tenant SaaS structure, farmers linked to a Partner may route their requests directly to their managing Entity or contact {tenantName ? 'technical support' : 'support@inagrosolutions.com'}.</p>
+                  <p>You have the right to access, rectify, request portability, or delete your data at any time. Due to our Multi-Tenant SaaS structure, farmers linked to a Partner may route their requests directly to their managing Entity (via email <strong>{contactEmail || legalEmail}</strong>) or contact {tenantData ? 'their technical support' : 'support@inagrosolutions.com'}.</p>
                 </section>
               </>
             )}
