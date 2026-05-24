@@ -20,23 +20,23 @@ export function TenantPricing({ tenantSlug, primaryColor }: { tenantSlug: string
     intermedio: [
       "Todo lo del plan Básico",
       "Validación de dosis por IA",
-      "Supervisado técnicamente",
-      "Soporte prioritario por WhatsApp",
+      "Supervisión inteligente automatizada",
+      "Asistencia virtual 24/7 con CDC",
       "Control de ecorregímenes y abonos"
     ],
     avanzado: [
       "Todo lo del plan Intermedio",
-      "Soporte multiusuario (Operarios)",
-      "Control de maquinaria y equipos",
-      "Asesoramiento personalizado",
-      "Atención preferente"
+      "Soporte de operarios y equipos",
+      "Control de maquinaria y fincas",
+      "Supervisión de cultivos inteligente",
+      "Soporte por email preferente"
     ],
     premium: [
       "Todo lo del plan Avanzado",
-      "Soporte telefónico 24/7",
-      "Revisión de expediente PAC",
-      "Informes de rentabilidad",
-      "Atención prioritaria VIP"
+      "Soporte prioritario 24/7",
+      "Revisión automática de expediente PAC",
+      "Informes de rentabilidad avanzados",
+      "Asistencia prioritaria VIP"
     ]
   };
 

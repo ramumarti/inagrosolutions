@@ -423,24 +423,16 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
                 <div className="flex flex-col gap-2 text-sm text-gray-400">
                   {tenant?.address ? <span>📍 {tenant.address}</span> : <span>📍 Más de 50 Cooperativas asociadas.</span>}
                   {tenant?.contact_email && <span>✉️ {tenant.contact_email}</span>}
-                  {tenant?.contact_phone && <span>📞 {tenant.contact_phone}</span>}
                   <span>🚀 Tu Cuaderno SIEX hoy más fácil que nunca.</span>
                 </div>
               </div>
               <div className="flex-shrink-0 w-full md:w-auto">
-                {tenant?.contact_phone ? (
-                  <a href={`https://wa.me/${tenant.contact_phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer">
-                    <button className="w-full md:w-auto bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(22,163,74,0.4)]">
-                      <Smartphone className="w-5 h-5" />
-                      Contactar con mi Entidad Asesora
-                    </button>
-                  </a>
-                ) : (
-                  <button className="w-full md:w-auto bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(22,163,74,0.4)]">
+                <Link href="/dashboard" className="w-full md:w-auto">
+                  <button className="w-full md:w-auto bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-black px-8 py-4 rounded-xl font-black transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,255,102,0.4)]">
                     <HeartHandshake className="w-5 h-5" />
-                    Localizar un Partner
+                    Acceder al Asistente Virtual CDC
                   </button>
-                )}
+                </Link>
               </div>
             </div>
           </GlassCard>

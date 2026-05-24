@@ -249,18 +249,18 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             <span className="text-xs font-black uppercase tracking-widest" style={{ color: primaryColor }}>Tranquilidad Garantizada</span>
             <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
               Tú haces tu trabajo en el campo.<br />
-              <span style={{ color: primaryColor }}>Nosotros te respaldamos con el Cuaderno.</span>
+              <span style={{ color: primaryColor }}>Tu Asistente Virtual CDC se encarga del Cuaderno.</span>
             </h2>
             <p className="text-lg text-gray-400 leading-relaxed">
-              El Cuaderno Digital de Campo no tiene por qué ser una tortura. Nuestra plataforma simplificada te permite registrar lo indispensable en dos clics. Y lo mejor de todo: **el equipo técnico de tu cooperativa está detrás para revisar y validar cada apunte** antes de que sea enviado al SIEX.
+              El Cuaderno Digital de Campo no tiene por qué ser una tortura. Nuestra plataforma simplificada te permite registrar lo indispensable en dos clics. Y lo mejor de todo: **nuestro asistente virtual inteligente CDC te guía paso a paso** para validar cada apunte antes de que sea enviado al SIEX.
             </p>
 
             <div className="space-y-4">
               {[
                 { title: "Gestión simplificada", desc: "Registra tus tratamientos y abonos en segundos, incluso por voz desde el tractor." },
-                { title: "Validación técnica integrada", desc: "Nuestros técnicos agrícolas revisan tus datos para confirmar que cumples con el ecorregímen." },
+                { title: "Validación inteligente integrada", desc: "El asistente virtual CDC revisa tus datos al instante para confirmar que cumples con la normativa." },
                 { title: "Listo para inspecciones", desc: "Con un botón descargas el PDF/Excel legal oficial listo para presentar a Sanidad Vegetal." },
-                { title: "Atención directa por WhatsApp", desc: "¿Una duda con un producto? Nos mandas una foto del albarán por WhatsApp y te ayudamos." }
+                { title: "Asistencia virtual 24/7", desc: "¿Una duda con un producto? Pregúntale a CDC, nuestro asistente virtual inteligente, y te ayudará al instante." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-4 items-start">
                   <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-1" style={{ backgroundColor: `${primaryColor}20`, color: primaryColor }}>
@@ -495,7 +495,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
               },
               {
                 q: 'No me llevo bien con la informática, ¿podré usarlo?',
-                a: 'Totalmente. El sistema se ha diseñado específicamente para ser operado con facilidad extrema por agricultores de todas las edades. Cuenta con botones grandes, opción de dictar labores por voz y, lo más importante, el respaldo presencial o por WhatsApp de los técnicos de tu cooperativa.'
+                a: 'Totalmente. El sistema se ha diseñado específicamente para ser operado con facilidad extrema por agricultores de todas las edades. Cuenta con botones grandes, opción de dictar labores por voz y, lo más importante, la ayuda interactiva de nuestro asistente virtual inteligente CDC.'
               },
               {
                 q: '¿Sirve para superar inspecciones oficiales de Sanidad Vegetal?',
@@ -503,7 +503,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
               },
               {
                 q: '¿Cómo envío los datos de mis tratamientos y compras?',
-                a: 'Puedes anotarlos en el momento desde la app móvil en tu tractor. Si lo prefieres, también puedes hacer una foto a los albaranes de compra y enviárnoslos directamente por WhatsApp para que la cooperativa te guíe en el registro.'
+                a: 'Puedes anotarlos en el momento desde la app móvil en tu tractor. Si lo prefieres, también puedes dictar el albarán por voz o escanearlo con inteligencia artificial desde la propia aplicación para que se registre al instante.'
               }
             ].map((faq, i) => (
               <details key={i} className="group border-b border-white/10 pb-4">

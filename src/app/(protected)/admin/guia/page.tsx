@@ -66,7 +66,7 @@ export default function GuidePage() {
           <p>La adopción del Cuaderno Digital Oficial depende de una buena comunicación con tus socios.</p>
           <ul className="space-y-4 list-decimal pl-5">
             <li>
-              <strong className="text-white block mb-1">WhatsApp y Correo Electrónico</strong>
+              <strong className="text-white block mb-1">Mensajería y Correo Electrónico</strong>
               Copia el enlace de tu Landing Page pública (ej. <code>/c/tu-cooperativa</code>) y envíalo masivamente. Al entrar a esa web, los agricultores verán los beneficios, tu logotipo y un botón directo de "Registrarse como Socio".
             </li>
             <li>
@@ -75,7 +75,7 @@ export default function GuidePage() {
             </li>
             <li>
               <strong className="text-white block mb-1">Estrategia de Comunicación</strong>
-              Explica a tus socios que el uso de esta herramienta garantiza que cumplirán con la legalidad vigente (normativa SIEX) sin dolores de cabeza informáticos, además de estar respaldados por los técnicos de la cooperativa en todo momento.
+              Explica a tus socios que el uso de esta herramienta garantiza que cumplirán con la legalidad vigente (normativa SIEX) sin dolores de cabeza informáticos, además de contar con la ayuda inteligente del asistente virtual CDC en todo momento.
             </li>
           </ul>
         </div>
