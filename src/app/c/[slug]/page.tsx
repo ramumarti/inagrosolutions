@@ -5,13 +5,9 @@ import Link from 'next/link';
 import { GlassCard } from '@/components/ui/GlassCard';
 import {
   MapPin, Mail, Phone, ArrowRight, CheckCircle2, Leaf, Users,
-  Target, ShieldCheck,
-  Globe, Clock, AlertTriangle, FileCheck, ThumbsUp, Star,
-  WifiOff, Droplets, Tractor, Sparkles, Layout, Navigation,
-  Smartphone, Headset, FileSpreadsheet, Map
+  ShieldCheck, Globe, Star, Tractor, AlertTriangle, FileCheck,
+  ThumbsUp, Headset, FileSpreadsheet, Map, MessageSquare, Check
 } from 'lucide-react';
-import { TIER_CONFIG } from '@/lib/modules';
-import { TenantPricing } from '@/components/cuaderno/TenantPricing';
 import { Metadata, ResolvingMetadata } from 'next';
 
 export async function generateMetadata(
@@ -29,8 +25,8 @@ export async function generateMetadata(
 
   if (!tenant) return {};
 
-  const title = `${tenant.name} | Cuaderno de Campo Digital SIEX`;
-  const description = tenant.public_description || `Plataforma agrícola oficial de ${tenant.name}.`;
+  const title = `${tenant.name} | Cuaderno Digital de Campo, SIEX y PAC Olivar`;
+  const description = tenant.public_description || `Asegura tu PAC e inspecciones agrícolas sin papeleos. Gestión profesional del cuaderno de campo digital especializado en olivar para socios de ${tenant.name}.`;
 
   return {
     title,
@@ -68,12 +64,6 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
     notFound();
   }
 
-  const { data: testimonials } = await supabase
-    .from('site_testimonials')
-    .select('*')
-    .eq('tenant_id', tenant.id)
-    .order('created_at', { ascending: false });
-
   // Define brand styles based on tenant colors
   const primaryColor = tenant.primary_color || '#10B981';
   const secondaryColor = tenant.secondary_color || '#065F46';
@@ -83,412 +73,625 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
   const finalLegalNoticeUrl = tenant.legal_notice_url || `/legal-notice?tenant=${tenant.slug}`;
   const finalTermsUrl = tenant.terms_url || `/terms-conditions?tenant=${tenant.slug}`;
 
+  // WhatsApp link generator helper
+  const cleanPhone = tenant.contact_phone ? tenant.contact_phone.replace(/\s+/g, '') : '';
+  const whatsAppLink = cleanPhone 
+    ? `https://wa.me/${cleanPhone.startsWith('+') ? cleanPhone : '+34' + cleanPhone}?text=Hola,%20soy%20agricultor%20y%20quiero%20saber%20mas%20sobre%20el%20Cuaderno%20Digital%20CDC` 
+    : '#contacto';
+
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white/20 relative overflow-hidden">
-      {/* Background gradients aligned with planes page */}
+    <div className="min-h-screen bg-[#07090e] text-white selection:bg-white/20 relative overflow-hidden font-sans">
+      {/* Background radial glow effects */}
       <div
-        className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[120px] pointer-events-none opacity-20"
+        className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full blur-[150px] pointer-events-none opacity-20"
         style={{ backgroundColor: primaryColor }}
       />
       <div
-        className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[40%] rounded-full blur-[120px] pointer-events-none opacity-10"
+        className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full blur-[150px] pointer-events-none opacity-10"
         style={{ backgroundColor: secondaryColor }}
       />
 
       {/* Navbar */}
-      <nav className="absolute top-0 w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-md">
+      <nav className="absolute top-0 w-full z-50 border-b border-white/5 bg-[#07090e]/70 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <Link href={`/c/${tenant.slug}`} className="flex items-center gap-3">
             {logoUrl ? (
-              <div className="bg-white/10 p-2 rounded-xl backdrop-blur-md border border-white/5">
-                <img src={logoUrl} alt={tenant.name} className="h-8 object-contain" />
+              <div className="bg-white/5 p-1.5 rounded-xl border border-white/10 backdrop-blur-md">
+                <img src={logoUrl} alt={tenant.name} className="h-9 object-contain" />
               </div>
             ) : (
               <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: primaryColor }}>
                 <Globe className="text-black w-6 h-6" />
               </div>
             )}
-            <span className="font-bold text-xl tracking-tight hidden sm:block text-white">
+            <span className="font-black text-xl tracking-tight hidden sm:block text-white">
               {tenant.name}
             </span>
           </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
-            <a href="#ventajas" className="hover:text-white transition-colors">Ventajas</a>
-            <a href="#planes" className="hover:text-white transition-colors">Planes</a>
-            <a href="#contacto" className="hover:text-white transition-colors">Contacto</a>
+          <div className="hidden md:flex items-center gap-8 text-sm font-bold text-white/70">
+            <a href="#problemas" className="hover:text-white transition-colors">El Reto</a>
+            <a href="#solucion" className="hover:text-white transition-colors">Nuestra Solución</a>
+            <a href="#olivar" className="hover:text-white transition-colors">Especialistas Olivar</a>
+            <a href="#precios" className="hover:text-white transition-colors">Precios</a>
+            <a href="#funcionamiento" className="hover:text-white transition-colors">Cómo Funciona</a>
+            <a href="#faq" className="hover:text-white transition-colors">Preguntas</a>
           </div>
-          <div className="flex gap-4 items-center">
-            <Link href={`/login?tenant=${tenant.slug}`} className="px-5 py-2.5 text-sm font-bold text-white/70 hover:text-white transition-colors hidden sm:block">
-              Acceso
+          <div className="flex gap-3 items-center">
+            <Link href={`/login?tenant=${tenant.slug}`} className="px-4 py-2 text-sm font-bold text-white/70 hover:text-white transition-colors hidden sm:block">
+              Acceso Socio
             </Link>
             <Link href={`/planes?tenant=${tenant.slug}`}>
               <button
-                className="px-6 py-2.5 text-sm font-bold rounded-xl transition-all shadow-lg hover:brightness-110 flex items-center gap-2"
+                className="px-5 py-2.5 text-xs sm:text-sm font-black rounded-xl transition-all shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2"
                 style={{ backgroundColor: primaryColor, color: '#000' }}
               >
-                Únete ahora <ArrowRight size={16} />
+                Registrar Explotación <ArrowRight size={16} />
               </button>
             </Link>
           </div>
         </div>
       </nav>
 
-      <main>
-        {/* 1. HERO SECTION (Centered, like Planes page) */}
-        <section className="relative pt-40 pb-20 px-6 w-full text-center z-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 min-h-[70vh] flex flex-col justify-center overflow-hidden border-b border-white/5">
-          <div className="absolute inset-0 z-0 pointer-events-none">
-            <img
-              src="/images/hero_cooperativa_v2.png"
-              alt="Fondo de campo"
-              className="w-full h-full object-cover opacity-40 mix-blend-luminosity scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/90 to-black"></div>
+      {/* 1. HERO SECTION */}
+      <section className="relative pt-40 pb-28 px-6 w-full text-center z-10 animate-in fade-in duration-1000 min-h-[90vh] flex flex-col justify-center overflow-hidden border-b border-white/5">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <img
+            src="/images/hero_olivos_v2.png"
+            alt="Paisaje de olivar tradicional en Andalucía"
+            className="w-full h-full object-cover opacity-25 mix-blend-luminosity scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#07090e]/90 via-[#07090e]/95 to-[#07090e]"></div>
+        </div>
+
+        <div className="relative z-10 max-w-5xl mx-auto">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-black uppercase tracking-wider mb-8"
+            style={{
+              backgroundColor: `${primaryColor}10`,
+              borderColor: `${primaryColor}25`,
+              color: primaryColor
+            }}
+          >
+            <Leaf className="w-4 h-4" />
+            <span>Soporte Oficial SIEX y PAC para Olivareros</span>
           </div>
 
-          <div className="relative z-10 max-w-7xl mx-auto">
-            <div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm font-semibold mb-8"
-              style={{
-                backgroundColor: `${primaryColor}15`,
-                borderColor: `${primaryColor}30`,
-                color: primaryColor
-              }}
-            >
-              <Leaf className="w-4 h-4" />
-              <span>Plataforma Agrícola Oficial</span>
-            </div>
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight mb-8 text-white leading-tight">
+            Olvídate del papeleo en tu olivar.
+            <br />
+            <span style={{ color: primaryColor, textShadow: `0 0 40px ${primaryColor}30` }}>
+              Tu Cuaderno de Campo Digital, al día y sin dolores de cabeza.
+            </span>
+          </h1>
 
-            <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 text-white leading-tight">
-              {tenant.hero_title ? (
-                <span style={{ color: primaryColor, textShadow: `0 0 30px ${primaryColor}50` }}>
-                  {tenant.hero_title}
-                </span>
-              ) : (
-                <>
-                  Digitalización total para <br className="hidden md:block" />
-                  <span style={{ color: primaryColor, textShadow: `0 0 30px ${primaryColor}50` }}>{tenant.name}</span>
-                </>
-              )}
-            </h1>
+          <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto mb-12 leading-relaxed">
+            Cumple con la normativa oficial SIEX, asegura tus subvenciones de la PAC y supera cualquier inspección de fitosanitarios. Con la sencillez del móvil y el asesoramiento constante de tu cooperativa.
+          </p>
 
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed">
-              {tenant.hero_subtitle || 'Optimiza tus parcelas y cumple con la normativa utilizando nuestro Cuaderno de Campo Digital oficial. Nosotros nos encargamos de configurarlo para que tú solo te preocupes de tu cosecha.'}
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm sm:text-base text-gray-300 font-bold mb-12">
+            <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: primaryColor }} /> Sin tecleados complejos</span>
+            <span className="hidden sm:block text-gray-700">•</span>
+            <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: primaryColor }} /> 100% Homologado SIEX / MAPA</span>
+            <span className="hidden sm:block text-gray-700">•</span>
+            <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: primaryColor }} /> Supervisado por Ingenieros Agrónomos</span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 max-w-md mx-auto sm:max-w-none">
+            <Link href="#precios" className="w-full sm:w-auto">
+              <button
+                className="w-full sm:w-auto h-14 px-8 text-base font-black rounded-xl transition-all shadow-[0_0_30px_rgba(255,255,255,0.05)] hover:scale-105 active:scale-95"
+                style={{ backgroundColor: primaryColor, color: '#000' }}
+              >
+                Ver Tarifas y Planes
+              </button>
+            </Link>
+            {tenant.contact_phone && (
+              <a href={`tel:${cleanPhone}`} className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto h-14 px-8 rounded-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-3 backdrop-blur-md">
+                  <Phone className="w-5 h-5" />
+                  Llamar a la Cooperativa ({tenant.contact_phone})
+                </button>
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* 2. BLOQUE DE PROBLEMAS REALES */}
+      <section id="problemas" className="py-24 relative border-b border-white/5 bg-gradient-to-b from-transparent to-[#0a0d14]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <span className="text-xs font-black uppercase tracking-widest text-red-500">El Reto del Campo Actual</span>
+            <h2 className="text-3xl md:text-5xl font-black mt-2 mb-4 text-white">¿Te roban más tiempo las leyes que tus propios olivos?</h2>
+            <p className="text-gray-400 text-lg">
+              La burocracia agrícola en España no para de aumentar. Llevar al día las fincas ya no consiste solo en labrar, abonar y cosechar; ahora exige convertirse en administrativo.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Miedo a sanciones e inspecciones",
+                desc: "Un simple error al apuntar la dosis de un fitosanitario o el número de registro de la maquinaria puede acarrear multas de miles de euros o el bloqueo de tu explotación."
+              },
+              {
+                title: "Riesgo real de perder la PAC",
+                desc: "Las nuevas normativas exigen declarar de forma telemática tus tratamientos. Si hay descuadres con el SIGPAC, tus ayudas directas de la PAC se retrasarán o denegarán."
+              },
+              {
+                title: "Fines de semana perdidos en la oficina",
+                desc: "Pasar tus valiosos ratos libres rodeado de albaranes, facturas de abonos, libretas de campo y carpetas de tratamientos en lugar de descansar con tu familia."
+              },
+              {
+                title: "La informática no es tu fuerte",
+                desc: "Los portales de la administración y las aplicaciones complejas no están pensadas para el día a día real en el tractor o en mitad del olivar. Son frustrantes y lentos."
+              },
+              {
+                title: "Cambios normativos constantes",
+                desc: "Vademécum, materias activas prohibidas de un mes para otro, ecorregímenes... Estar al día de lo que permite el ministerio es casi un trabajo a tiempo completo."
+              },
+              {
+                title: "Estrés y agobio administrativo",
+                desc: "La constante sensación de que te falta algún documento técnico por registrar y la preocupación constante ante la llamada de un inspector de Sanidad Vegetal."
+              }
+            ].map((problem, i) => (
+              <GlassCard key={i} className="p-8 border-white/5 hover:border-red-500/20 hover:bg-red-500/[0.01] transition-all text-left group">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-6 bg-red-500/10 text-red-500">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <h3 className="font-bold text-lg mb-3 text-white">{problem.title}</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">{problem.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 3. LA SOLUCIÓN */}
+      <section id="solucion" className="py-24 relative overflow-hidden border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+          <div className="space-y-8">
+            <span className="text-xs font-black uppercase tracking-widest" style={{ color: primaryColor }}>Tranquilidad Garantizada</span>
+            <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
+              Tú haces tu trabajo en el campo.<br />
+              <span style={{ color: primaryColor }}>Nosotros te respaldamos con el Cuaderno.</span>
+            </h2>
+            <p className="text-lg text-gray-400 leading-relaxed">
+              El Cuaderno Digital de Campo no tiene por qué ser una tortura. Nuestra plataforma simplificada te permite registrar lo indispensable en dos clics. Y lo mejor de todo: **el equipo técnico de tu cooperativa está detrás para revisar y validar cada apunte** antes de que sea enviado al SIEX.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm md:text-base text-gray-300 font-medium mb-12">
-              <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5" style={{ color: primaryColor }} /> Sin complicaciones informáticas</div>
-              <div className="hidden sm:block" style={{ color: primaryColor }}>•</div>
-              <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5" style={{ color: primaryColor }} /> Adaptado a la normativa SIEX</div>
-              <div className="hidden sm:block" style={{ color: primaryColor }}>•</div>
-              <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5" style={{ color: primaryColor }} /> Soporte directo de tu Entidad</div>
+            <div className="space-y-4">
+              {[
+                { title: "Gestión simplificada", desc: "Registra tus tratamientos y abonos en segundos, incluso por voz desde el tractor." },
+                { title: "Validación técnica integrada", desc: "Nuestros ingenieros agrónomos revisan tus datos para confirmar que cumples con el ecorregímen." },
+                { title: "Listo para inspecciones", desc: "Con un botón descargas el PDF/Excel legal oficial listo para presentar a Sanidad Vegetal." },
+                { title: "Atención directa por WhatsApp", desc: "¿Una duda con un producto? Nos mandas una foto del albarán por WhatsApp y te ayudamos." }
+              ].map((item, i) => (
+                <div key={i} className="flex gap-4 items-start">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-1" style={{ backgroundColor: `${primaryColor}20`, color: primaryColor }}>
+                    <Check size={14} className="stroke-[3]" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white text-base">{item.title}</h4>
+                    <p className="text-sm text-gray-400 mt-1">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link href={`/planes?tenant=${tenant.slug}#planes`} className="w-full sm:w-auto">
-                <button
-                  className="w-full sm:w-auto h-14 px-8 text-lg font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:scale-105"
-                  style={{ backgroundColor: primaryColor, color: '#000' }}
-                >
-                  Ver Planes para Socios
-                </button>
-              </Link>
-              <a href="#contacto" className="w-full sm:w-auto">
-                <button className="w-full sm:w-auto h-14 px-8 rounded-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-colors flex items-center justify-center gap-2 backdrop-blur-sm">
-                  <Phone className="w-5 h-5" />
-                  Contactar a la Entidad
-                </button>
+            <div className="pt-6">
+              <a href={whatsAppLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-emerald-500 text-black font-black hover:scale-105 active:scale-95 transition-all shadow-lg">
+                <MessageSquare className="w-5 h-5 fill-current" />
+                Resolver dudas por WhatsApp
               </a>
             </div>
           </div>
-        </section>
 
-        {/* 1.5. ABOUT US SECTION (Public Description) */}
-        {tenant.public_description && (
-          <section className="py-24 relative overflow-hidden border-y border-[var(--color-primary)]/20 bg-[var(--color-primary)]/5">
-            <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-              <div className="relative order-2 md:order-1">
-                <div className="absolute inset-0 rounded-full blur-[100px] opacity-10" style={{ backgroundColor: primaryColor }} />
-                <img
-                  src="/images/olivar_cooperativa.png"
-                  alt="Nuestra Historia"
-                  className="relative z-10 w-full aspect-[4/3] object-cover rounded-[2rem] border border-white/10 grayscale hover:grayscale-0 transition-all duration-700 shadow-2xl"
-                />
-                <div className="absolute -top-6 -right-6 w-32 h-32 rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl flex items-center justify-center z-20">
-                  <div className="text-center">
-                    <p className="text-3xl font-black" style={{ color: primaryColor }}>30+</p>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Años de Exp.</p>
-                  </div>
-                </div>
+          <div className="relative">
+            <div className="absolute inset-0 rounded-full blur-[120px] opacity-15" style={{ backgroundColor: primaryColor }} />
+            <div className="relative z-10 border border-white/10 rounded-[2.5rem] bg-[#0c0f15]/80 p-8 shadow-2xl skew-y-1">
+              <img
+                src="/images/agricultor_app_v2.png"
+                alt="Aplicación móvil del Cuaderno Digital en el olivar"
+                className="w-full h-auto rounded-2xl border border-white/5 object-cover"
+              />
+              <div className="absolute -bottom-6 -right-6 p-6 rounded-3xl bg-black/80 backdrop-blur-xl border border-white/10 shadow-2xl z-20 max-w-[240px]">
+                <p className="text-2xl font-black" style={{ color: primaryColor }}>100%</p>
+                <p className="text-xs font-bold text-white mt-1">Sincronización Automática</p>
+                <p className="text-[10px] text-gray-400 mt-1 leading-normal">Funciona sin cobertura en el campo y se guarda al conectar a internet.</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="space-y-8 order-1 md:order-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border border-white/10 bg-white/5 text-gray-300">
-                  <Users size={14} style={{ color: primaryColor }} /> Sobre Nosotros
-                </div>
-                <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
-                  Nuestra <span style={{ color: primaryColor }}>Cooperativa</span>
-                </h2>
-                <p className="text-lg text-gray-400 leading-relaxed whitespace-pre-wrap">
-                  {tenant.public_description}
+      {/* 4. ESPECIALIZACIÓN EN OLIVAR */}
+      <section id="olivar" className="py-24 relative border-b border-white/5 bg-[#090b10]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-20 max-w-3xl mx-auto">
+            <span className="text-xs font-black uppercase tracking-widest" style={{ color: primaryColor }}>Especialistas en Olivar</span>
+            <h2 className="text-3xl md:text-5xl font-black mt-2 mb-4 text-white">Diseñado por y para Olivareros profesionales</h2>
+            <p className="text-gray-400 text-lg">
+              No somos un software genérico para cualquier cultivo. Entendemos los retos específicos de la olivicultura de nuestro territorio, sea cual sea tu tipo de explotación.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+            <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] hover:border-white/10 transition-all flex gap-6">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}>
+                <Tractor className="w-6 h-6" />
+              </div>
+              <div className="space-y-3">
+                <h3 className="font-bold text-xl text-white">Tipos de Olivar Controlados</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Totalmente optimizado para **olivar tradicional** (de secano o regadío, mecanizable o no), **olivar intensivo** y **olivar superintensivo** en seto. Registra marcos de plantación, calles e interlíneas de forma rápida.
                 </p>
-                <div className="pt-4 flex gap-4">
-                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                    <p className="text-white font-bold">Confianza</p>
-                    <p className="text-xs text-gray-500 mt-1">Servicio cercano y personalizado.</p>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                    <p className="text-white font-bold">Innovación</p>
-                    <p className="text-xs text-gray-500 mt-1">Lo último en tecnología agrícola.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 2. VALUE PROP CARDS */}
-        <section id="ventajas" className="py-20 relative border-y border-white/5 bg-white/[0.02]">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">¿Por qué usar el Cuaderno a través nuestro?</h2>
-              <p className="text-gray-400 max-w-2xl mx-auto">Te ofrecemos ventajas exclusivas como socio, además de acompañarte en todo el proceso para que nunca te quedes atascado.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                { icon: ShieldCheck, title: "Nosotros lo preparamos", desc: "No partes de cero. Cargamos tus parcelas y explotaciones directamente desde el SIGPAC." },
-                { icon: Smartphone, title: "Llévalo en el tractor", desc: "Apunta tus tratamientos fitosanitarios y labores directamente desde tu teléfono móvil." },
-                { icon: FileCheck, title: "Garantía de cumplimiento", desc: "Te avisamos de alertas de dosis y generamos los Excel legales que te pedirá la administración." },
-                { icon: Headset, title: "Soporte de confianza", desc: "Si tienes dudas, nos llamas. Tu entidad de siempre respaldándote con la nueva tecnología." },
-                { icon: Tractor, title: "Control de costes", desc: "Lleva el control de lo que gastas en cada finca de manera automática al registrar tus insumos." },
-                { icon: Users, title: "Precio preferente", desc: "Al ser socio te beneficias de un modelo colaborativo a precio de volumen." }
-              ].map((benefit, i) => (
-                <GlassCard key={i} className="p-8 border-white/5 hover:border-white/20 transition-all text-left group">
-                  <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110" style={{ backgroundColor: `${primaryColor}20`, color: primaryColor }}>
-                    <benefit.icon className="w-7 h-7" />
-                  </div>
-                  <h3 className="font-bold text-xl mb-3 text-white">{benefit.title}</h3>
-                  <p className="text-sm text-gray-400 leading-relaxed">{benefit.desc}</p>
-                </GlassCard>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 3. INCLUDED SERVICES BLOCK */}
-        <section className="py-24 max-w-7xl mx-auto px-6 relative">
-          <div className="flex flex-col md:flex-row gap-16 items-center">
-            <div className="flex-1">
-              <div className="relative aspect-square max-w-md mx-auto">
-                <div className="absolute inset-0 rounded-full blur-[80px] opacity-20 animate-pulse-slow" style={{ backgroundColor: primaryColor }} />
-                <img src="/images/woman_olive_grove_smartphone.png" className="relative z-10 w-full h-full object-cover rounded-[40px] border border-white/10 shadow-2xl skew-y-2 hover:skew-y-0 transition-transform duration-700" alt="Agricultora usando aplicación móvil en el campo" />
-
-                <div className="absolute -bottom-6 -left-6 p-6 rounded-3xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl z-20">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-black font-black" style={{ backgroundColor: primaryColor }}>
-                      SIEX
-                    </div>
-                    <div>
-                      <p className="text-lg font-black text-white">100% Legal</p>
-                      <p className="text-xs text-gray-400">Exportación automática</p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
 
-            <div className="flex-1 space-y-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border border-white/10 bg-white/5 text-gray-300">
-                <Star size={14} style={{ color: primaryColor }} /> Tecnología de Vanguardia
+            <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] hover:border-white/10 transition-all flex gap-6">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}>
+                <Leaf className="w-6 h-6" />
               </div>
-              <h2 className="text-4xl md:text-5xl font-black text-white leading-tight">
-                Más que una app,<br />es tu tranquilidad
-              </h2>
-              <div className="space-y-6">
-                <div className="flex gap-4 items-start p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <div className="mt-1 shrink-0"><CheckCircle2 size={24} style={{ color: primaryColor }} /></div>
-                  <div>
-                    <h4 className="text-lg font-bold text-white">Registro Offline en el Campo</h4>
-                    <p className="text-gray-400 leading-relaxed text-sm mt-1">Aunque no tengas cobertura entre los olivos o viñedos, podrás apuntar tus labores y se sincronizará al llegar a casa.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4 items-start p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <div className="mt-1 shrink-0"><CheckCircle2 size={24} style={{ color: primaryColor }} /></div>
-                  <div>
-                    <h4 className="text-lg font-bold text-white">Calculadora de Dosis</h4>
-                    <p className="text-gray-400 leading-relaxed text-sm mt-1">Nuestro sistema te avisa si el producto que intentas aplicar no está autorizado o excede los límites legales.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4 items-start p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <div className="mt-1 shrink-0"><CheckCircle2 size={24} style={{ color: primaryColor }} /></div>
-                  <div>
-                    <h4 className="text-lg font-bold text-white">Inventario en Tiempo Real</h4>
-                    <p className="text-gray-400 leading-relaxed text-sm mt-1">Lleva el control de tu almacén y de lo que gastas sin usar Excel ni perder facturas.</p>
-                  </div>
-                </div>
+              <div className="space-y-3">
+                <h3 className="font-bold text-xl text-white">Fitosanitarios y Vademécum de Olivar</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Control estricto de tratamientos específicos: **mosca del olivo, repilo, algodoncillo, prays, barrenillo**. El sistema comprueba al instante si el producto está autorizado para olivar y valida las dosis máximas permitidas.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] hover:border-white/10 transition-all flex gap-6">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}>
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <div className="space-y-3">
+                <h3 className="font-bold text-xl text-white">Fertilización y Ecorregímenes</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Lleva el control de unidades de nitrógeno, fósforo y potasio. Ideal para el cumplimiento de las cubiertas vegetales (vivas e inertes) y para justificar los cobros adicionales de la PAC en ecorregímenes.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] hover:border-white/10 transition-all flex gap-6">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${primaryColor}15`, color: primaryColor }}>
+                <FileSpreadsheet className="w-6 h-6" />
+              </div>
+              <div className="space-y-3">
+                <h3 className="font-bold text-xl text-white">Trazabilidad en Almazara</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Tus tratamientos y parcelas se vinculan directamente con las entregas de aceituna en la almazara de la cooperativa, asegurando la trazabilidad alimentaria necesaria para aceites premium y DOP.
+                </p>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* 4. PLANS */}
-        <section id="planes" className="py-24 relative bg-[#0B0F15] border-y border-white/5">
-          <TenantPricing tenantSlug={tenant.slug} primaryColor={primaryColor} />
-        </section>
-
-        {/* 4.5. TESTIMONIALS */}
-        {testimonials && testimonials.length > 0 && (
-          <section className="py-24 bg-white/[0.02]">
-            <div className="max-w-7xl mx-auto px-6 text-center">
-              <h2 className="text-3xl font-bold mb-12 text-white">Lo que dicen nuestros socios</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                {testimonials.map((t: any) => (
-                  <GlassCard key={t.id} className="p-8 text-left relative overflow-hidden">
-                    <div className="text-8xl text-white/5 absolute -top-4 right-2 font-serif">"</div>
-                    <p className="text-gray-300 italic mb-6 relative z-10 text-sm leading-relaxed">
-                      {t.content}
-                    </p>
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full border flex items-center justify-center font-bold" style={{ backgroundColor: `${primaryColor}20`, borderColor: primaryColor, color: primaryColor }}>
-                        {t.author_name.substring(0, 2).toUpperCase()}
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-white">{t.author_name}</h4>
-                        <p className="text-xs text-gray-400">{t.author_role}</p>
-                      </div>
-                    </div>
-                  </GlassCard>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 4.6. FAQ */}
-        <section className="py-24 bg-black border-t border-white/5">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-3xl font-bold mb-12 text-center text-white">Preguntas Frecuentes</h2>
-            <div className="space-y-4">
-              {[
-                {
-                  q: '¿Qué validez legal tiene este cuaderno?',
-                  a: 'El Cuaderno Digital generado a través de nuestra plataforma cumple al 100% con la normativa SIEX (Sistema de información de explotaciones agrícolas) y está preparado para cualquier inspección del MAPA o CC.AA.'
-                },
-                {
-                  q: '¿Necesito conocimientos de informática avanzados?',
-                  a: 'En absoluto. El sistema está diseñado para que cualquier persona que sepa usar un smartphone pueda gestionar su explotación con un par de clics. Además, cuentas con nuestro soporte técnico directo.'
-                },
-                {
-                  q: '¿Qué pasa si mi finca no tiene cobertura móvil?',
-                  a: 'Puedes apuntar los tratamientos en el campo con nuestra app móvil. Los datos se guardarán localmente y se sincronizarán automáticamente en cuanto recuperes la conexión a internet.'
-                },
-                {
-                  q: '¿Puedo cambiar de plan más adelante?',
-                  a: 'Sí, puedes ampliar tu plan en cualquier momento si tus necesidades crecen. El cambio se aplica de forma automática y solo pagas la diferencia proporcional.'
-                }
-              ].map((faq, i) => (
-                <GlassCard key={i} className="p-6 border-white/10 hover:border-white/20 transition-all">
-                  <h3 className="font-bold text-lg mb-2 text-white flex items-center gap-3">
-                    <span style={{ color: primaryColor }}>Q.</span> {faq.q}
-                  </h3>
-                  <p className="text-gray-400 text-sm leading-relaxed pl-8">
-                    {faq.a}
-                  </p>
-                </GlassCard>
-              ))}
-            </div>
+      {/* 5. PRECIOS */}
+      <section id="precios" className="py-24 relative bg-[#06080c] border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <span className="text-xs font-black uppercase tracking-widest text-amber-500">Tarifas Transparentes</span>
+            <h2 className="text-3xl md:text-5xl font-black mt-2 mb-4 text-white">¿Cuánto cuesta tu tranquilidad?</h2>
+            <p className="text-gray-400 text-lg">
+              Sin sorpresas, sin cuotas ocultas y adaptado al tamaño real de tu explotación. Selecciona el plan que se ajusta a tus olivos.
+            </p>
           </div>
-        </section>
 
-        {/* 5. CONTACT & FOOTER */}
-        <section id="contacto" className="py-24 px-6 relative bg-black">
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8">
-              <h2 className="text-4xl font-black text-white">Contacta con Nosotros</h2>
-              <p className="text-gray-400 leading-relaxed">
-                ¿Tienes dudas sobre cómo empezar o qué plan elegir? Nuestro equipo técnico está para ayudarte en todo momento.
-              </p>
-              <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm text-gray-500 font-bold uppercase">Dirección</h4>
-                    <p className="text-white font-medium">{tenant.address || 'Sede principal'}</p>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+            {/* Plan Pequeño */}
+            <GlassCard className="p-8 flex flex-col justify-between hover:border-white/20 transition-all border-white/5 bg-white/[0.01] relative">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-6">
+                  <Leaf className="w-6 h-6" />
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                    <Phone className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm text-gray-500 font-bold uppercase">Teléfono</h4>
-                    <p className="text-white font-medium">{tenant.contact_phone || 'No disponible'}</p>
-                  </div>
+                <h3 className="text-xl font-black text-white">Explotación Familiar</h3>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 mb-6">HASTA 5 HECTÁREAS</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-black text-white">4,99 €</span>
+                  <span className="text-gray-500 text-sm font-medium">/mes + IVA</span>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                    <Mail className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm text-gray-500 font-bold uppercase">Email</h4>
-                    <p className="text-white font-medium">{tenant.contact_email || 'Contacto vía web'}</p>
-                  </div>
-                </div>
-
-                {/* Social Links */}
-                {tenant.social_links && Object.values(tenant.social_links as any).some(v => !!v) && (
-                  <div className="pt-4 flex gap-4">
-                    {(tenant.social_links as any).facebook && (
-                      <a href={(tenant.social_links as any).facebook} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors text-gray-400 hover:text-white" title="Facebook">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-                      </a>
-                    )}
-                    {(tenant.social_links as any).twitter && (
-                      <a href={(tenant.social_links as any).twitter} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors text-gray-400 hover:text-white" title="Twitter / X">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
-                      </a>
-                    )}
-                    {(tenant.social_links as any).instagram && (
-                      <a href={(tenant.social_links as any).instagram} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors text-gray-400 hover:text-white" title="Instagram">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                      </a>
-                    )}
-                    {(tenant.social_links as any).linkedin && (
-                      <a href={(tenant.social_links as any).linkedin} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors text-gray-400 hover:text-white" title="LinkedIn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-                      </a>
-                    )}
-                  </div>
-                )}
+                <p className="text-sm text-gray-400 leading-relaxed mb-8">
+                  Perfecto para agricultores a tiempo parcial, huertos familiares o pequeñas fincas de olivar tradicional de secano.
+                </p>
+                <ul className="space-y-3.5 border-t border-white/5 pt-6 text-sm text-gray-300">
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Registro básico de tratamientos</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Importación SIGPAC automática</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Exportación en PDF/Excel legal</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Soporte por email</li>
+                </ul>
               </div>
-            </div>
+              <div className="mt-8 pt-4">
+                <Link href={`/signup?plan=basico&tenant=${tenant.slug}`} className="w-full block">
+                  <button className="w-full py-3.5 rounded-xl font-black text-sm text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                    Activar Plan Básico
+                  </button>
+                </Link>
+              </div>
+            </GlassCard>
 
-            <GlassCard className="p-10 border-white/10 text-center space-y-6 bg-white/5">
-              <h3 className="text-2xl font-bold text-white">Únete a {tenant.name}</h3>
-              <p className="text-gray-400">Simplifica tu día a día en el campo con la garantía de tu cooperativa y la tecnología más avanzada.</p>
-              
-              <Link href={`/planes?tenant=${tenant.slug}#planes`} className="block">
-                <button
-                  className="w-full py-4 rounded-xl font-bold text-black transition-transform hover:scale-105 shadow-xl"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  Regístrate como Socio
-                </button>
-              </Link>
+            {/* Plan Mediano */}
+            <GlassCard className="p-8 flex flex-col justify-between hover:border-white/20 transition-all border-emerald-500/30 bg-[#0c1219]/90 relative shadow-[0_0_30px_rgba(16,185,129,0.05)] scale-105">
+              <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-500 text-black">
+                RECOMENDADO
+              </div>
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-6">
+                  <Star className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black text-white">Agricultor Profesional</h3>
+                <p className="text-xs font-bold uppercase tracking-widest mt-1 mb-6" style={{ color: primaryColor }}>HASTA 20 HECTÁREAS</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-black text-white">19,99 €</span>
+                  <span className="text-gray-500 text-sm font-medium">/mes + IVA</span>
+                </div>
+                <p className="text-sm text-gray-300 leading-relaxed mb-8">
+                  El plan estándar para la gran mayoría de olivicultores. Acceso completo y el mayor nivel de acompañamiento.
+                </p>
+                <ul className="space-y-3.5 border-t border-white/5 pt-6 text-sm text-gray-200">
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> **Validación de dosis por IA**</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> **Supervisión de técnicos agrícolas**</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Ayuda en la declaración de la PAC</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Control de ecorregímenes y abonos</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> **Soporte prioritario por WhatsApp**</li>
+                </ul>
+              </div>
+              <div className="mt-8 pt-4">
+                <Link href={`/signup?plan=intermedio&tenant=${tenant.slug}`} className="w-full block">
+                  <button className="w-full py-4 rounded-xl font-black text-sm text-black hover:scale-[1.03] transition-all" style={{ backgroundColor: primaryColor }}>
+                    Activar Plan Profesional
+                  </button>
+                </Link>
+              </div>
+            </GlassCard>
+
+            {/* Plan Grande */}
+            <GlassCard className="p-8 flex flex-col justify-between hover:border-white/20 transition-all border-white/5 bg-white/[0.01] relative">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-6">
+                  <Tractor className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black text-white">Gran Explotación</h3>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 mb-6">HASTA 50 / 100 HA</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-black text-white">49,99 €</span>
+                  <span className="text-gray-500 text-sm font-medium">/mes + IVA</span>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed mb-8">
+                  Pensado para grandes fincas integradas, olivar en seto superintensivo o empresas de servicios agrícolas con varios tractores.
+                </p>
+                <ul className="space-y-3.5 border-t border-white/5 pt-6 text-sm text-gray-300">
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Todo lo del plan Profesional</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> **Multiusuario (Tractoristas/Operarios)**</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Control de flotas y maquinaria</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Informes y analíticas avanzadas</li>
+                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Atención telefónica 24/7</li>
+                </ul>
+              </div>
+              <div className="mt-8 pt-4">
+                <Link href={`/signup?plan=avanzado&tenant=${tenant.slug}`} className="w-full block">
+                  <button className="w-full py-3.5 rounded-xl font-black text-sm text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                    Activar Plan Avanzado
+                  </button>
+                </Link>
+              </div>
             </GlassCard>
           </div>
-        </section>
-      </main>
 
-      <footer className="py-8 px-6 border-t border-white/5 text-center bg-black space-y-3">
+          {/* Advertencia / Alerta persuasiva */}
+          <div className="mt-16 max-w-4xl mx-auto p-6 rounded-2xl border border-amber-500/20 bg-amber-500/5 flex flex-col sm:flex-row items-center gap-4 text-left">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="font-bold text-white text-base">Haz cuentas: El coste de la tranquilidad</h4>
+              <p className="text-sm text-gray-300 mt-1 leading-relaxed">
+                El precio mensual de un plan profesional es **menor que el coste de llenar un solo depósito de gasoil** de tu tractor, o la mitad de lo que perderías por un solo día de retraso en la PAC. Estar protegido ante una multa de 3.000€ es la decisión financiera más inteligente para tu olivar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. CÓMO FUNCIONA */}
+      <section id="funcionamiento" className="py-24 relative border-b border-white/5 bg-[#080a0f]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-20 max-w-3xl mx-auto">
+            <span className="text-xs font-black uppercase tracking-widest" style={{ color: primaryColor }}>Proceso Sencillo</span>
+            <h2 className="text-3xl md:text-5xl font-black mt-2 mb-4 text-white">¿Cómo empezamos a trabajar?</h2>
+            <p className="text-gray-400 text-lg">
+              Solo necesitas 3 pasos muy simples para olvidarte de las libretas de papel y los apuntes de oficina.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto relative">
+            {/* Step 1 */}
+            <div className="text-center space-y-4 group">
+              <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center font-black text-2xl bg-white/5 border border-white/10 group-hover:border-emerald-500/30 transition-all" style={{ color: primaryColor }}>
+                1
+              </div>
+              <h3 className="font-bold text-xl text-white">Sube tus datos SIGPAC</h3>
+              <p className="text-sm text-gray-400 leading-relaxed max-w-xs mx-auto">
+                Nosotros cargamos tus parcelas directamente desde el catastro. No tienes que meter coordenadas, recintos ni hectáreas a mano.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="text-center space-y-4 group">
+              <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center font-black text-2xl bg-white/5 border border-white/10 group-hover:border-emerald-500/30 transition-all" style={{ color: primaryColor }}>
+                2
+              </div>
+              <h3 className="font-bold text-xl text-white">Apunta con un par de clics</h3>
+              <p className="text-sm text-gray-400 leading-relaxed max-w-xs mx-auto">
+                Registra tus fitosanitarios, labores y abonos en nuestra app móvil simplificada o dictándolo por voz directamente en el tractor.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="text-center space-y-4 group">
+              <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center font-black text-2xl bg-white/5 border border-white/10 group-hover:border-emerald-500/30 transition-all" style={{ color: primaryColor }}>
+                3
+              </div>
+              <h3 className="font-bold text-xl text-white">Tú tranquilo, nosotros revisamos</h3>
+              <p className="text-sm text-gray-400 leading-relaxed max-w-xs mx-auto">
+                El equipo técnico de la cooperativa supervisa tus datos de forma automatizada y se encarga del volcado legal al SIEX sin que te enteres.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. TESTIMONIOS */}
+      <section className="py-24 relative border-b border-white/5 bg-white/[0.01]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <span className="text-xs font-black uppercase tracking-widest" style={{ color: primaryColor }}>Opiniones Reales</span>
+            <h2 className="text-3xl md:text-5xl font-black mt-2 mb-4 text-white">Lo que dicen los olivareros</h2>
+            <p className="text-gray-400 text-lg">
+              Compañeros de tu zona que ya han dado el paso para digitalizar su explotación y quitarse el agobio de los papeles.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <GlassCard className="p-8 text-left relative overflow-hidden flex flex-col justify-between">
+              <div className="text-8xl text-white/5 absolute -top-4 right-2 font-serif">"</div>
+              <p className="text-gray-300 italic mb-8 relative z-10 text-sm leading-relaxed">
+                "Al principio le tenía pánico a esto del cuaderno digital. Yo con los ordenadores me llevo regular, pero con la aplicación móvil es facilísimo. Apunto lo que tiro de abono o veneno en el mismo día desde el olivo y me olvido. Y si me equivoco, mi ingeniero en la cooperativa me avisa."
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full flex items-center justify-center font-black" style={{ backgroundColor: `${primaryColor}20`, color: primaryColor }}>
+                  FJ
+                </div>
+                <div>
+                  <h4 className="font-bold text-white text-sm">Francisco J. Galán</h4>
+                  <p className="text-xs text-gray-400">Olivarero Tradicional (Úbeda, Jaén)</p>
+                </div>
+              </div>
+            </GlassCard>
+
+            <GlassCard className="p-8 text-left relative overflow-hidden flex flex-col justify-between">
+              <div className="text-8xl text-white/5 absolute -top-4 right-2 font-serif">"</div>
+              <p className="text-gray-300 italic mb-8 relative z-10 text-sm leading-relaxed">
+                "Llevo 40 hectáreas de olivar superintensivo y el control de fitosanitarios era un infierno de albaranes. Con el cuaderno de campo digital, no solo voy al día ante inspecciones de sanidad vegetal, sino que llevo un control exacto de los costes por finca. Ha sido un cambio brutal."
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full flex items-center justify-center font-black" style={{ backgroundColor: `${primaryColor}20`, color: primaryColor }}>
+                  MM
+                </div>
+                <div>
+                  <h4 className="font-bold text-white text-sm">Manuel Muñoz</h4>
+                  <p className="text-xs text-gray-400">Explotación Profesional (Priego de Córdoba)</p>
+                </div>
+              </div>
+            </GlassCard>
+
+            <GlassCard className="p-8 text-left relative overflow-hidden flex flex-col justify-between">
+              <div className="text-8xl text-white/5 absolute -top-4 right-2 font-serif">"</div>
+              <p className="text-gray-300 italic mb-8 relative z-10 text-sm leading-relaxed">
+                "Tener la tranquilidad de que nuestros ingenieros agrónomos de la cooperativa están supervisando el cuaderno antes de subirlo al SIEX nos da una paz mental increíble. Sabes que cobras la PAC seguro y sin retrasos por errores técnicos."
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full flex items-center justify-center font-black" style={{ backgroundColor: `${primaryColor}20`, color: primaryColor }}>
+                  AG
+                </div>
+                <div>
+                  <h4 className="font-bold text-white text-sm">Antonio Gutiérrez</h4>
+                  <p className="text-xs text-gray-400">Socio de Cooperativa (Baena, Córdoba)</p>
+                </div>
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+      </section>
+
+      {/* 9. FAQ */}
+      <section id="faq" className="py-24 bg-[#06080c] border-b border-white/5">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-3xl md:text-5xl font-black mb-16 text-center text-white">Preguntas Frecuentes</h2>
+          <div className="space-y-4">
+            {[
+              {
+                q: '¿Es obligatorio llevar el Cuaderno Digital en el olivar?',
+                a: 'Sí, la normativa del Ministerio de Agricultura (MAPA) establece la obligatoriedad progresiva del cuaderno de campo digital para todas las explotaciones que realicen tratamientos fitosanitarios o soliciten ayudas de la PAC. No disponer de él puede bloquear tus ayudas y provocar sanciones.'
+              },
+              {
+                q: '¿Qué ocurre si no registro mis tratamientos a tiempo?',
+                a: 'La administración cruza datos telemáticamente. Los retrasos o la falta de concordancia en los tratamientos fitosanitarios de olivar y el uso de maquinaria pueden suspender el abono de la PAC o generar inspecciones sorpresa por parte de las comunidades autónomas.'
+              },
+              {
+                q: 'No me llevo bien con la informática, ¿podré usarlo?',
+                a: 'Totalmente. El sistema se ha diseñado específicamente para ser operado con facilidad extrema por agricultores de todas las edades. Cuenta con botones grandes, opción de dictar labores por voz y, lo más importante, el respaldo presencial o por WhatsApp de los técnicos de tu cooperativa.'
+              },
+              {
+                q: '¿Sirve para superar inspecciones oficiales de Sanidad Vegetal?',
+                a: 'Sí. El cuaderno digital exporta al instante los modelos oficiales homologados por el MAPA y el SIEX. Al incluir todas las materias activas autorizadas en el olivar, las dosis máximas y los aplicadores con carnet en vigor, pasarás cualquier inspección sin ningún problema.'
+              },
+              {
+                q: '¿Cómo envío los datos de mis tratamientos y compras?',
+                a: 'Puedes anotarlos en el momento desde la app móvil en tu tractor. Si lo prefieres, también puedes hacer una foto a los albaranes de compra y enviárnoslos directamente por WhatsApp para que la cooperativa te guíe en el registro.'
+              }
+            ].map((faq, i) => (
+              <details key={i} className="group border-b border-white/10 pb-4">
+                <summary className="font-bold text-lg text-white flex items-center justify-between cursor-pointer list-none py-3 select-none">
+                  <span className="flex items-center gap-3">
+                    <span style={{ color: primaryColor }}>•</span> {faq.q}
+                  </span>
+                  <span className="transition-transform duration-300 group-open:rotate-180 text-gray-500">
+                    ▼
+                  </span>
+                </summary>
+                <div className="text-gray-400 text-sm leading-relaxed pl-6 pt-2 animate-in fade-in duration-300">
+                  {faq.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 10. CTA FINAL */}
+      <section className="py-28 px-6 text-center relative bg-gradient-to-t from-black to-[#07090e]">
+        <div className="max-w-4xl mx-auto relative z-10 space-y-8">
+          <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-black" style={{ backgroundColor: primaryColor }}>
+            <ShieldCheck className="w-8 h-8" />
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black text-white leading-tight">
+            El campo no espera,<br />tu tranquilidad tampoco.
+          </h2>
+          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            Protege tus ayudas PAC, olvídate de las sanciones de una vez por todas y dedica tu tiempo a lo que de verdad importa: tus cosechas.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto sm:max-w-none pt-4">
+            <Link href={`/planes?tenant=${tenant.slug}`} className="w-full sm:w-auto">
+              <button
+                className="w-full sm:w-auto h-14 px-10 text-lg font-black rounded-xl transition-all shadow-[0_0_35px_rgba(255,255,255,0.05)] hover:scale-105 active:scale-95"
+                style={{ backgroundColor: primaryColor, color: '#000' }}
+              >
+                Empezar con mi Cuaderno Digital
+              </button>
+            </Link>
+            {tenant.contact_phone && (
+              <a href={whatsAppLink} target="_blank" rel="noreferrer" className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto h-14 px-8 rounded-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-3">
+                  <MessageSquare className="w-5 h-5" />
+                  Escríbenos por WhatsApp
+                </button>
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="py-12 px-6 border-t border-white/5 text-center bg-[#05060a] space-y-4">
         <p className="text-sm text-gray-600">
           © {new Date().getFullYear()} {tenant.name}. Todos los derechos reservados.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500 max-w-2xl mx-auto leading-relaxed">
-          <span>{tenant.dpo_name ? `DPO: ${tenant.dpo_name}` : ''}</span>
-          {tenant.legal_email && <span>| Contacto RGPD: <a href={`mailto:${tenant.legal_email}`} className="underline">{tenant.legal_email}</a></span>}
+          {tenant.address && <span>Dirección: {tenant.address}</span>}
+          {tenant.contact_phone && <span>| Teléfono: {tenant.contact_phone}</span>}
+          {tenant.contact_email && <span>| Email: <a href={`mailto:${tenant.contact_email}`} className="underline">{tenant.contact_email}</a></span>}
         </div>
         <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-400 mt-2">
           <a href={finalPrivacyUrl} target="_blank" rel="noreferrer" className="hover:text-white transition-colors underline">Política de Privacidad</a>
