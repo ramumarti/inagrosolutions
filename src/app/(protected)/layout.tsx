@@ -29,6 +29,27 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     setMobileSidebarOpen(false);
   }, [pathname]);
 
+  // Programmatic cache-busting & service worker unregistration for updates
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        let hasServiceWorker = false;
+        for (const registration of registrations) {
+          registration.unregister();
+          hasServiceWorker = true;
+        }
+        if (hasServiceWorker) {
+          if ('caches' in window) {
+            caches.keys().then((keys) => {
+              keys.forEach((key) => caches.delete(key));
+            });
+          }
+          window.location.reload();
+        }
+      });
+    }
+  }, []);
+
   useEffect(() => {
     // Initial fetch
     supabase.auth.getUser().then(({ data: { user } }) => {
