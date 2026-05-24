@@ -200,22 +200,6 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
               </div>
             </div>
             
-            {/* RGPD CHECKBOX */}
-            {tenant && (
-              <div className="mt-8 p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-xl flex items-start gap-4">
-                <input 
-                  type="checkbox" 
-                  id="gdpr-check" 
-                  checked={gdprAccepted}
-                  onChange={(e) => setGdprAccepted(e.target.checked)}
-                  className="w-5 h-5 mt-0.5 rounded border-emerald-500/50 bg-black/40 text-emerald-500 focus:ring-emerald-500 cursor-pointer"
-                />
-                <label htmlFor="gdpr-check" className="text-sm text-gray-300 cursor-pointer leading-relaxed">
-                  He leído y acepto la <a href={finalPrivacyUrl} target="_blank" className="text-emerald-400 hover:underline font-bold">Política de Privacidad</a> y consiento el tratamiento de mis datos personales para la creación y gestión de mi Cuaderno Digital bajo la responsabilidad de {partnerName}.
-                </label>
-              </div>
-            )}
-            
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
@@ -292,10 +276,9 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
               <PlanFeatures costes={true} cosechas={true} traz={false} dash={false} iot={false} alertas={true} />
               
               <div className="mt-8 pt-8 border-t border-white/5 mt-auto">
-                <Link href={getSignupUrl('intermedio')} onClick={(e) => { if (!gdprAccepted && tenant) e.preventDefault(); }}>
+                <Link href={getSignupUrl('intermedio')} className="w-full block">
                   <button 
-                    disabled={!gdprAccepted && !!tenant}
-                    className="w-full py-4 rounded-xl font-bold text-black transition-colors shadow-lg hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 rounded-xl font-bold text-black transition-all shadow-lg hover:scale-[1.02] active:scale-95"
                     style={{ backgroundColor: primaryColor }}
                   >
                     Seleccionar Intermedio
@@ -336,10 +319,9 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
               <PlanFeatures costes={true} cosechas={true} traz={true} dash={true} iot={false} alertas={true} />
               
               <div className="mt-8 pt-8 border-t border-white/5 mt-auto">
-                <Link href={getSignupUrl('avanzado')} onClick={(e) => { if (!gdprAccepted && tenant) e.preventDefault(); }}>
+                <Link href={getSignupUrl('avanzado')} className="w-full block">
                   <button 
-                    disabled={!gdprAccepted && !!tenant}
-                    className="w-full py-4 rounded-xl font-bold text-black transition-colors shadow-lg hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 rounded-xl font-bold text-black transition-all shadow-lg hover:scale-[1.02] active:scale-95"
                     style={{ backgroundColor: primaryColor }}
                   >
                     Seleccionar Avanzado
@@ -381,10 +363,9 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
               <PlanFeatures costes={true} cosechas={true} traz={true} dash={true} iot={true} alertas={true} />
               
               <div className="mt-8 pt-8 border-t border-white/5 mt-auto">
-                <Link href={getSignupUrl('premium')} onClick={(e) => { if (!gdprAccepted && tenant) e.preventDefault(); }}>
+                <Link href={getSignupUrl('premium')} className="w-full block">
                   <button 
-                    disabled={!gdprAccepted && !!tenant}
-                    className="w-full py-4 rounded-xl font-bold text-black transition-colors shadow-lg hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 rounded-xl font-bold text-black transition-all shadow-lg hover:scale-[1.02] active:scale-95"
                     style={{ backgroundColor: primaryColor }}
                   >
                     Seleccionar Premium

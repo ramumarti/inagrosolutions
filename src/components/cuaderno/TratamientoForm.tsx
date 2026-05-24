@@ -234,7 +234,7 @@ export function TratamientoForm({ parcelas, userProfile, initialParcelaId, onSuc
 
     if (isOffline) {
       try {
-        await addMutation('tratamiento', dataToSave, toast);
+        await addMutation('tratamiento', dataToSave, (msg, type) => toast(msg, type === 'error' ? 'error' : 'success'));
         setSavedOffline(true);
         setSuccess(true);
         setTimeout(() => {

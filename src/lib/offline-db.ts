@@ -23,7 +23,8 @@ export async function getOfflineDB() {
 
 export async function saveMutation(mutation: PendingMutation): Promise<number> {
   const db = await getOfflineDB();
-  return db.add(STORE_NAME, mutation);
+  const res = await db.add(STORE_NAME, mutation);
+  return res as number;
 }
 
 export async function getPendingMutations(): Promise<PendingMutation[]> {
@@ -38,7 +39,8 @@ export async function deleteMutation(id: number): Promise<void> {
 
 export async function updateMutation(mutation: PendingMutation): Promise<number> {
   const db = await getOfflineDB();
-  return db.put(STORE_NAME, mutation);
+  const res = await db.put(STORE_NAME, mutation);
+  return res as number;
 }
 
 export async function clearQueue(): Promise<void> {

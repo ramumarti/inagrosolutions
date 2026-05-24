@@ -134,7 +134,7 @@ export function FertilizacionForm({ parcelas, userProfile, initialParcelaId, onS
 
     if (isOffline) {
       try {
-        await addMutation('fertilizacion', dataToSave, toast);
+        await addMutation('fertilizacion', dataToSave, (msg, type) => toast(msg, type === 'error' ? 'error' : 'success'));
         setSavedOffline(true);
         setSuccess(true);
         setTimeout(() => {
