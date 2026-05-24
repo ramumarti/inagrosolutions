@@ -292,7 +292,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             <div className="absolute inset-0 rounded-full blur-[120px] opacity-15" style={{ backgroundColor: primaryColor }} />
             <div className="relative z-10 border border-white/10 rounded-[2.5rem] bg-[#0c0f15]/80 p-8 shadow-2xl skew-y-1">
               <img
-                src="/images/agricultor_app_v2.png"
+                src="/images/olivar_grower_app.png"
                 alt="Aplicación móvil del Cuaderno Digital en el olivar"
                 className="w-full h-auto rounded-2xl border border-white/5 object-cover"
               />
