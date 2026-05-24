@@ -48,4 +48,3 @@ backend-cuaderno/node_modules/
 backend-cuaderno/dist/
 
 # generated service worker
-/public/sw.js*
