@@ -311,7 +311,8 @@ function CuadernoContent() {
                 nombre: `Campaña ${currentYear}`, 
                 anio_inicio: currentYear,
                 anio_fin: currentYear,
-                explotacion_id: profile.explotaciones[0].id
+                explotacion_id: profile.explotaciones[0].id,
+                tenant_id: profile.tenant_id
               });
               reload();
             }}

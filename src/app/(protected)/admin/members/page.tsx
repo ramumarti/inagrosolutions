@@ -8,7 +8,7 @@ import { useI18n } from '@/lib/i18n';
 import { useToast } from '@/components/ui/Toast';
 import { useAgriProfile } from '@/hooks/useAgriProfile';
 import { createClient } from '@/lib/supabase/client';
-import { setTenantUserRole, removeTenantInvitation } from '@/lib/actions/tenant-users';
+import { setTenantUserRole, removeTenantInvitation, removeTenantUser } from '@/lib/actions/tenant-users';
 import { 
   Users, 
   UserPlus, 
@@ -45,7 +45,7 @@ interface Invitation {
 }
 
 export default function MembersPage() {
-  const { tenant, loading: profileLoading } = useAgriProfile();
+  const { profile, tenant, loading: profileLoading } = useAgriProfile();
   const { t, language } = useI18n();
   const { toast } = useToast();
   const supabase = createClient();
@@ -104,6 +104,17 @@ export default function MembersPage() {
       fetchMembers();
     } catch(e) {
       toast('Error al eliminar la invitación', 'error');
+    }
+  };
+
+  const handleRemoveMember = async (userId: string) => {
+    if (!confirm(language === 'en' ? 'Are you sure you want to remove this member from the cooperative?' : '¿Seguro que quieres desvincular a este socio de la cooperativa?')) return;
+    try {
+      await removeTenantUser(userId);
+      toast(language === 'en' ? 'Member removed successfully' : 'Socio desvinculado correctamente', 'success');
+      fetchMembers();
+    } catch(e) {
+      toast('Error al desvincular al socio', 'error');
     }
   };
 
@@ -270,9 +281,17 @@ export default function MembersPage() {
                          <p className="text-sm font-black">{member.total_hectareas || 0} ha</p>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button className="p-2 hover:bg-white/10 rounded-lg text-white/40 hover:text-white transition-colors">
-                          <MoreVertical size={16} />
-                        </button>
+                        {profile && member.id !== profile.userId ? (
+                          <button 
+                            onClick={() => handleRemoveMember(member.id)}
+                            className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+                            title={language === 'en' ? 'Remove member' : 'Desvincular socio'}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        ) : (
+                          <span className="text-[10px] font-black text-white/20 uppercase tracking-widest px-2 select-none">Tú</span>
+                        )}
                       </td>
                     </tr>
                   ))}

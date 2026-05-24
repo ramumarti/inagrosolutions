@@ -160,3 +160,34 @@ export async function removeTenantInvitation(id: string) {
   if (error) throw error;
   return { success: true };
 }
+
+export async function removeTenantUser(userId: string) {
+  const supabase = await getSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data: actingUser } = await supabase.from('users').select('tenant_id, platform_role').eq('id', user.id).single();
+  if (!actingUser || (actingUser.platform_role !== 'tenant_admin' && actingUser.platform_role !== 'superadmin')) {
+    throw new Error('Forbidden');
+  }
+
+  // 1. Unlink user's explotaciones from the tenant
+  await supabase
+    .from('explotaciones')
+    .update({ tenant_id: null })
+    .eq('user_id', userId)
+    .eq('tenant_id', actingUser.tenant_id);
+
+  // 2. Unlink the user profile from the tenant and reset platform role to 'farmer'
+  const { error } = await supabase
+    .from('users')
+    .update({ 
+      tenant_id: null,
+      platform_role: 'farmer'
+    })
+    .eq('id', userId)
+    .eq('tenant_id', actingUser.tenant_id); // Security boundary
+
+  if (error) throw error;
+  return { success: true };
+}
