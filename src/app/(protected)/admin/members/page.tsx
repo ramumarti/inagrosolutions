@@ -227,37 +227,39 @@ export default function MembersPage() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left">
+              <table className="w-full text-left table-auto">
                 <thead className="bg-white/[0.02] text-[10px] font-bold uppercase tracking-widest text-white/40">
                   <tr>
-                    <th className="px-6 py-4">{language === 'en' ? 'Member' : 'Socio'}</th>
-                    <th className="px-6 py-4">{language === 'en' ? 'Role' : 'Rol'}</th>
-                    <th className="px-6 py-4">{language === 'en' ? 'Status' : 'Estado'}</th>
-                    <th className="px-6 py-4">{language === 'en' ? 'Joined' : 'Alta'}</th>
-                    <th className="px-6 py-4">{language === 'en' ? 'Volume' : 'Volumen'}</th>
-                    <th className="px-6 py-4"></th>
+                    <th className="px-4 py-3">{language === 'en' ? 'Member' : 'Socio'}</th>
+                    <th className="px-4 py-3">{language === 'en' ? 'Role' : 'Rol'}</th>
+                    <th className="px-4 py-3">{language === 'en' ? 'Joined' : 'Alta'}</th>
+                    <th className="px-4 py-3">{language === 'en' ? 'Volume' : 'Volumen'}</th>
+                    <th className="px-4 py-3 text-right"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {filteredMembers.map((member) => (
                     <tr key={member.id} className="hover:bg-white/[0.02] transition-colors group">
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center font-bold text-[var(--color-primary)]">
+                          <div className="w-9 h-9 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center font-bold text-[var(--color-primary)] text-sm shrink-0">
                             {member.first_name?.[0]}{member.last_name?.[0]}
                           </div>
                           <div>
-                            <p className="font-bold text-sm">{member.first_name} {member.last_name}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-bold text-sm">{member.first_name} {member.last_name}</p>
+                              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title={language === 'en' ? 'Active' : 'Activo'} />
+                            </div>
                             <p className="text-xs text-white/40">{member.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-3">
                         {member.platform_role !== 'superadmin' ? (
                           <select
                             value={member.platform_role || 'farmer'}
                             onChange={(e) => handleRoleChange(member.id, e.target.value)}
-                            className="bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-sm text-white outline-none focus:border-[var(--color-primary)] hover:border-[var(--color-primary)]/50 transition-colors cursor-pointer"
+                            className="bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-xs text-white outline-none focus:border-[var(--color-primary)] hover:border-[var(--color-primary)]/50 transition-colors cursor-pointer"
                           >
                             <option value="tenant_admin">Admin. Entidad</option>
                             <option value="technician">Técnico</option>
@@ -268,19 +270,13 @@ export default function MembersPage() {
                           <span className="text-indigo-400 font-bold text-[10px] uppercase flex items-center justify-center w-full">Superadmin</span>
                         )}
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-extrabold uppercase">
-                          <CheckCircle2 size={12} />
-                          {language === 'en' ? 'Active' : 'Activo'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-xs font-medium text-white/60">
+                      <td className="px-4 py-3 text-xs font-medium text-white/60">
                          {new Date(member.created_at).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-3">
                          <p className="text-sm font-black">{member.total_hectareas || 0} ha</p>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-4 py-3 text-right">
                         {profile && member.id !== profile.userId ? (
                           <button 
                             onClick={() => handleRemoveMember(member.id)}
@@ -299,31 +295,30 @@ export default function MembersPage() {
                   {/* Invitaciones Pendientes */}
                   {invitations.map((invite) => (
                     <tr key={invite.id} className="bg-amber-500/[0.02] border-l-2 border-amber-500/30">
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-3">
                         <div className="flex items-center gap-3 opacity-50">
-                          <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
-                            <Mail size={18} />
+                          <div className="w-9 h-9 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
+                            <Mail size={16} />
                           </div>
                           <div>
-                            <p className="font-bold text-sm italic">{invite.email}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-bold text-sm italic">{invite.email}</p>
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[8px] font-extrabold uppercase animate-pulse shrink-0">
+                                Enviada
+                              </span>
+                            </div>
                             <p className="text-[10px] uppercase font-bold tracking-tighter">Pendiente de registro</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-3">
                         <span className="text-white/40 text-[10px] uppercase font-bold px-2">{invite.role?.replace('_', ' ') || 'Farmer'}</span>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-extrabold uppercase animate-pulse">
-                          <Clock size={12} />
-                          Enviada
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-xs font-medium text-white/30">
+                      <td className="px-4 py-3 text-xs font-medium text-white/30">
                         {new Date(invite.created_at).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4">—</td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-4 py-3">—</td>
+                      <td className="px-4 py-3 text-right">
                          <div className="flex items-center justify-end gap-3">
                            <button className="text-[10px] font-bold text-amber-400/50 hover:text-amber-400">Recordar</button>
                            <button 
