@@ -49,7 +49,7 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
 
   const finalPrivacyUrl = tenant?.privacy_policy_url || (tenantSlug ? `/privacy-policy?tenant=${tenantSlug}` : '/privacy-policy');
 
-  const getSignupUrl = (plan: string) => `/signup?plan=${plan}${tenantSlug ? `&tenant=${tenantSlug}` : ''}`;
+  const getSignupUrl = (plan: string) => `/signup?plan=${plan}${tenantSlug ? `&tenant=${tenantSlug}` : ''}${annualBilling ? '&billing=annual' : ''}`;
 
   return (
     <div className="py-20 bg-black text-white selection:bg-white/20 overflow-hidden relative">

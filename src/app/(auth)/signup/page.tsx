@@ -15,6 +15,7 @@ function FarmerSignupContent() {
   const searchParams = useSearchParams();
   const planSlug = searchParams.get('plan');
   const tenantSlug = searchParams.get('tenant');
+  const billing = searchParams.get('billing');
   
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -88,14 +89,17 @@ function FarmerSignupContent() {
       email,
       password,
       options: {
-        emailRedirectTo: `${origin}/auth/confirm`,
+        emailRedirectTo: `${origin}/auth/confirm?tenant=${tenant.slug}`,
         data: {
           first_name: firstName,
           last_name: lastName,
           is_business: false,
           platform_role: 'farmer',
           tenant_id: tenant.id,
+          tenant_slug: tenant.slug,
+          plan_id: planSlug || 'basico',
           plan_slug: planSlug || 'basico',
+          billing_interval: billing === 'annual' ? 'year' : 'month',
         }
       }
     });

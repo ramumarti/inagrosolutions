@@ -33,7 +33,7 @@ export async function GET(request: Request) {
       // ---------------------------------------------------------------
 
       // -- Flujo para Agricultores (Auto-vinculación a /c/[slug] y/o asignación de Plan) --
-      const isFarmerReg = metadata?.is_partner_reg === false || metadata?.is_business === false;
+      const isFarmerReg = metadata?.is_partner_reg === false || metadata?.is_business === false || metadata?.platform_role === 'farmer';
       
       if (isFarmerReg) {
         let updateData: any = {};
@@ -41,21 +41,30 @@ export async function GET(request: Request) {
         // Asignar el rol siempre a tenant_member (o el que venga en el auth)
         updateData.platform_role = metadata?.platform_role || 'farmer';
         
-        // Asignar plan_id si existe
-        if (metadata?.plan_id) {
-          updateData.agri_tier = metadata.plan_id;
+        // Asignar plan_id o plan_slug si existe
+        const planId = (metadata?.plan_id || metadata?.plan_slug) as AgriTier | undefined;
+        if (planId) {
+          updateData.agri_tier = planId;
         }
 
-        // Si viene desde un tenant, obtenemos el tenant_id
-        if (metadata?.tenant_slug) {
+        // Si viene desde un tenant con id o slug, obtenemos el tenant_id
+        let resolvedTenantId: string | null = metadata?.tenant_id || null;
+        
+        // Fallback: buscar tenant por slug en metadata o en searchParams de la URL
+        const tenantSlugParam = searchParams.get('tenant') || metadata?.tenant_slug;
+
+        if (resolvedTenantId) {
+          updateData.tenant_id = resolvedTenantId;
+        } else if (tenantSlugParam) {
           const { data: targetTenant } = await supabase
             .from('tenants')
             .select('id')
-            .eq('slug', metadata.tenant_slug)
+            .eq('slug', tenantSlugParam.toLowerCase().trim())
             .single();
             
           if (targetTenant) {
             updateData.tenant_id = targetTenant.id;
+            resolvedTenantId = targetTenant.id;
           }
         }
 
@@ -67,24 +76,21 @@ export async function GET(request: Request) {
         // ── FLUJO DE PAGO AUTOMÁTICO ──
         // Si el agricultor eligió un plan al registrarse, iniciamos el checkout de Stripe
         // automáticamente para que complete el pago antes de entrar al cuaderno.
-        const planId = metadata?.plan_id as AgriTier | undefined;
         if (planId && TIER_CONFIG[planId]) {
           try {
             const adminSupabase = getAdminSupabase();
             const tierInfo = TIER_CONFIG[planId];
             
-            // Obtener o resolver tenant y su cuenta Connect
-            let tenantId: string | null = null;
             let stripeAccountId: string | null = null;
-
-            if (metadata?.tenant_slug) {
+            
+            // Buscar tenant por id para ver si tiene Connect configurado
+            if (resolvedTenantId) {
               const { data: tenant } = await adminSupabase
                 .from('tenants')
                 .select('id, stripe_account_id, stripe_charges_enabled')
-                .eq('slug', metadata.tenant_slug)
+                .eq('id', resolvedTenantId)
                 .single();
               if (tenant) {
-                tenantId = tenant.id;
                 if (tenant.stripe_account_id && tenant.stripe_charges_enabled) {
                   stripeAccountId = tenant.stripe_account_id;
                 }
@@ -114,6 +120,11 @@ export async function GET(request: Request) {
                 .eq('id', authData.user.id);
             }
 
+            // Determinar intervalo de facturación (mensual o anual)
+            const isAnnual = metadata?.billing_interval === 'year';
+            const price = isAnnual ? tierInfo.price_annual : tierInfo.price_monthly;
+            const interval = isAnnual ? 'year' : 'month';
+
             // Crear Checkout Session de Stripe
             const sessionParams: any = {
               customer: customerId,
@@ -122,10 +133,12 @@ export async function GET(request: Request) {
                   currency: 'eur',
                   product_data: {
                     name: `Cuaderno Digital - Plan ${tierInfo.label_es}`,
-                    description: `Suscripción mensual al Cuaderno Digital. Acceso SIEX completo.`,
+                    description: isAnnual
+                      ? `Suscripción anual al Cuaderno Digital. Acceso SIEX completo.`
+                      : `Suscripción mensual al Cuaderno Digital. Acceso SIEX completo.`,
                   },
-                  unit_amount: Math.round(tierInfo.price_monthly * 100),
-                  recurring: { interval: 'month' },
+                  unit_amount: Math.round(price * 100),
+                  recurring: { interval },
                 },
                 quantity: 1,
               }],
@@ -134,14 +147,14 @@ export async function GET(request: Request) {
               cancel_url: `${safeOrigin}/cuaderno`,
               metadata: {
                 userId: authData.user.id,
-                tenantId: tenantId || '',
+                tenantId: resolvedTenantId || '',
                 plan: planId,
-                interval: 'month',
+                interval,
               },
               subscription_data: {
                 metadata: {
                   userId: authData.user.id,
-                  tenantId: tenantId || '',
+                  tenantId: resolvedTenantId || '',
                 },
               },
               locale: 'es',
