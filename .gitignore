@@ -46,3 +46,6 @@ next-env.d.ts
 # backend-cuaderno
 backend-cuaderno/node_modules/
 backend-cuaderno/dist/
+
+# generated service worker
+/public/sw.js*
