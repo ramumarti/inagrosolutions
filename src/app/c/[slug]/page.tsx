@@ -9,6 +9,7 @@ import {
   ThumbsUp, Headset, FileSpreadsheet, Map, MessageSquare, Check
 } from 'lucide-react';
 import { Metadata, ResolvingMetadata } from 'next';
+import { TenantPricing } from '@/components/cuaderno/TenantPricing';
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> },
@@ -370,128 +371,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
 
       {/* 5. PRECIOS */}
       <section id="precios" className="py-24 relative bg-[#06080c] border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <span className="text-xs font-black uppercase tracking-widest text-amber-500">Tarifas Transparentes</span>
-            <h2 className="text-3xl md:text-5xl font-black mt-2 mb-4 text-white">¿Cuánto cuesta tu tranquilidad?</h2>
-            <p className="text-gray-400 text-lg">
-              Sin sorpresas, sin cuotas ocultas y adaptado al tamaño real de tu explotación. Selecciona el plan que se ajusta a tus olivos.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
-            {/* Plan Pequeño */}
-            <GlassCard className="p-8 flex flex-col justify-between hover:border-white/20 transition-all border-white/5 bg-white/[0.01] relative">
-              <div>
-                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-6">
-                  <Leaf className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-black text-white">Explotación Familiar</h3>
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 mb-6">HASTA 5 HECTÁREAS</p>
-                <div className="mb-6">
-                  <span className="text-4xl font-black text-white">4,99 €</span>
-                  <span className="text-gray-500 text-sm font-medium">/mes + IVA</span>
-                </div>
-                <p className="text-sm text-gray-400 leading-relaxed mb-8">
-                  Perfecto para agricultores a tiempo parcial, huertos familiares o pequeñas fincas de olivar tradicional de secano.
-                </p>
-                <ul className="space-y-3.5 border-t border-white/5 pt-6 text-sm text-gray-300">
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Registro básico de tratamientos</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Importación SIGPAC automática</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Exportación en PDF/Excel legal</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Soporte por email</li>
-                </ul>
-              </div>
-              <div className="mt-8 pt-4">
-                <Link href={`/signup?plan=basico&tenant=${tenant.slug}`} className="w-full block">
-                  <button className="w-full py-3.5 rounded-xl font-black text-sm text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-                    Activar Plan Básico
-                  </button>
-                </Link>
-              </div>
-            </GlassCard>
-
-            {/* Plan Mediano */}
-            <GlassCard className="p-8 flex flex-col justify-between hover:border-white/20 transition-all border-emerald-500/30 bg-[#0c1219]/90 relative shadow-[0_0_30px_rgba(16,185,129,0.05)] scale-105">
-              <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-500 text-black">
-                RECOMENDADO
-              </div>
-              <div>
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-6">
-                  <Star className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-black text-white">Agricultor Profesional</h3>
-                <p className="text-xs font-bold uppercase tracking-widest mt-1 mb-6" style={{ color: primaryColor }}>HASTA 20 HECTÁREAS</p>
-                <div className="mb-6">
-                  <span className="text-4xl font-black text-white">19,99 €</span>
-                  <span className="text-gray-500 text-sm font-medium">/mes + IVA</span>
-                </div>
-                <p className="text-sm text-gray-300 leading-relaxed mb-8">
-                  El plan estándar para la gran mayoría de olivicultores. Acceso completo y el mayor nivel de acompañamiento.
-                </p>
-                <ul className="space-y-3.5 border-t border-white/5 pt-6 text-sm text-gray-200">
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> **Validación de dosis por IA**</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> **Supervisión de técnicos agrícolas**</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Ayuda en la declaración de la PAC</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Control de ecorregímenes y abonos</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> **Soporte prioritario por WhatsApp**</li>
-                </ul>
-              </div>
-              <div className="mt-8 pt-4">
-                <Link href={`/signup?plan=intermedio&tenant=${tenant.slug}`} className="w-full block">
-                  <button className="w-full py-4 rounded-xl font-black text-sm text-black hover:scale-[1.03] transition-all" style={{ backgroundColor: primaryColor }}>
-                    Activar Plan Profesional
-                  </button>
-                </Link>
-              </div>
-            </GlassCard>
-
-            {/* Plan Grande */}
-            <GlassCard className="p-8 flex flex-col justify-between hover:border-white/20 transition-all border-white/5 bg-white/[0.01] relative">
-              <div>
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-6">
-                  <Tractor className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-black text-white">Gran Explotación</h3>
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1 mb-6">HASTA 50 / 100 HA</p>
-                <div className="mb-6">
-                  <span className="text-4xl font-black text-white">49,99 €</span>
-                  <span className="text-gray-500 text-sm font-medium">/mes + IVA</span>
-                </div>
-                <p className="text-sm text-gray-400 leading-relaxed mb-8">
-                  Pensado para grandes fincas integradas, olivar en seto superintensivo o empresas de servicios agrícolas con varios tractores.
-                </p>
-                <ul className="space-y-3.5 border-t border-white/5 pt-6 text-sm text-gray-300">
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Todo lo del plan Profesional</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> **Multiusuario (Tractoristas/Operarios)**</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Control de flotas y maquinaria</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Informes y analíticas avanzadas</li>
-                  <li className="flex items-center gap-2.5"><CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" /> Atención telefónica 24/7</li>
-                </ul>
-              </div>
-              <div className="mt-8 pt-4">
-                <Link href={`/signup?plan=avanzado&tenant=${tenant.slug}`} className="w-full block">
-                  <button className="w-full py-3.5 rounded-xl font-black text-sm text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-                    Activar Plan Avanzado
-                  </button>
-                </Link>
-              </div>
-            </GlassCard>
-          </div>
-
-          {/* Advertencia / Alerta persuasiva */}
-          <div className="mt-16 max-w-4xl mx-auto p-6 rounded-2xl border border-amber-500/20 bg-amber-500/5 flex flex-col sm:flex-row items-center gap-4 text-left">
-            <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="font-bold text-white text-base">Haz cuentas: El coste de la tranquilidad</h4>
-              <p className="text-sm text-gray-300 mt-1 leading-relaxed">
-                El precio mensual de un plan profesional es **menor que el coste de llenar un solo depósito de gasoil** de tu tractor, o la mitad de lo que perderías por un solo día de retraso en la PAC. Estar protegido ante una multa de 3.000€ es la decisión financiera más inteligente para tu olivar.
-              </p>
-            </div>
-          </div>
-        </div>
+        <TenantPricing tenantSlug={tenant.slug} primaryColor={primaryColor} />
       </section>
 
       {/* 6. CÓMO FUNCIONA */}
