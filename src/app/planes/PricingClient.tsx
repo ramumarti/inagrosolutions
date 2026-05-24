@@ -89,8 +89,6 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
           <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5" style={{ color: primaryColor }} /> Sin complicaciones informáticas</div>
           <div className="hidden sm:block" style={{ color: primaryColor }}>•</div>
           <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5" style={{ color: primaryColor }} /> Adaptado a la normativa SIEX</div>
-          <div className="hidden sm:block" style={{ color: primaryColor }}>•</div>
-          <div className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5" style={{ color: primaryColor }} /> Soporte humano real</div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -102,10 +100,6 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
               Ver Planes de Precios
             </button>
           </a>
-          <button className="w-full sm:w-auto h-14 px-8 rounded-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-colors flex items-center justify-center gap-2 backdrop-blur-sm">
-            <Headset className="w-5 h-5" />
-            Hablar con un Asesor
-          </button>
         </div>
       </section>
 
@@ -151,7 +145,7 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
             { icon: ShieldCheck, title: "Cumple las normativas", desc: "Evita multas. Tu cuaderno siempre adaptado a la legislación (SIEX/REGEPA)." },
             { icon: Smartphone, title: "Desde el propio campo", desc: "Registra los tratamientos o las labores desde el móvil, en el mismo instante." },
             { icon: Map, title: "Todo en un solo lugar", desc: "Parcelas, riegos, maquinaria y abonos, centralizados de un vistazo rápido." },
-            { icon: Headset, title: "No estás solo", desc: "Soporte humano. Si te surge cualquier duda o te atascas, estamos al otro lado." },
+            { icon: Headset, title: "Soporte prioritario", desc: "Si te surge cualquier duda o te atascas, estamos al otro lado para guiarte." },
             { icon: Leaf, title: "Calculadora de Dosis", desc: "Control automático de volúmenes de caldo y compatibilidades en cada parcela." }
           ].map((benefit, i) => (
             <div key={i} className="flex gap-4 p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
@@ -508,10 +502,6 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
                 Comenzar Hoy Mismo
               </button>
             </a>
-            <button className="w-full sm:w-auto h-16 px-10 rounded-xl font-bold text-white bg-white/5 border border-white/20 hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
-              <Headset className="w-6 h-6" />
-              Hablar con un Agente
-            </button>
           </div>
         </div>
       </section>
