@@ -28,6 +28,7 @@ import { GlassCard } from '@/components/ui/GlassCard';
 import { AICreditsWidget } from '@/components/cuaderno/AICreditsWidget';
 import { AICreditsModal } from '@/components/cuaderno/AICreditsModal';
 import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { useToast } from '@/components/ui/Toast';
 import { TIER_CONFIG } from '@/lib/modules';
@@ -48,10 +49,18 @@ const ICON_MAP: Record<string, any> = {
   Package: Package, Sprout: Sprout
 };
 
-export default function CuadernoPage() {
+function CuadernoContent() {
   const { profile, modulos: rawModulos, resumen, loading, hasModule, canAccess, reload } = useAgriProfile();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<TabKey>('inicio');
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab') as TabKey | null;
+
+  useEffect(() => {
+    if (tabParam) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
   const [selectedExplotacionId, setSelectedExplotacionId] = useState<string | null>(null);
   const [selectedCampanaId, setSelectedCampanaId] = useState<string | null>(null);
   const [preSelectedPlotId, setPreSelectedPlotId] = useState<string | null>(null);
@@ -507,40 +516,7 @@ export default function CuadernoPage() {
         creditsNeeded={1}
         featureName="IA"
       />
-      {/* Module sidebar */}
-      <aside className="hidden lg:flex w-56 shrink-0 border-r border-white/5 flex-col py-6 overflow-y-auto">
-        <div className="px-4 mb-6">
-          <h2 className="text-sm font-extrabold text-white/50 uppercase tracking-widest">Cuaderno Digital</h2>
-        </div>
-        <nav className="flex-1 px-2 space-y-0.5">
-          {tabs.map(tab => {
-            const Icon = tab.icon;
-            const isLocked = 'locked' in tab && tab.locked;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => !isLocked && setActiveTab(tab.key)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all group ${
-                  activeTab === tab.key
-                    ? 'bg-emerald-500/10 text-white border border-emerald-500/20'
-                    : isLocked
-                    ? 'text-white/15 cursor-not-allowed border border-transparent'
-                    : 'text-white/40 hover:text-white hover:bg-white/5 border border-transparent'
-                }`}
-              >
-                <Icon size={20} className={activeTab === tab.key ? 'text-emerald-400' : isLocked ? 'text-white/10' : 'text-white/50 group-hover:text-white'} />
-                <span className="text-sm font-bold truncate flex-1">{tab.label}</span>
-                {isLocked && <Lock size={14} className="text-white/10 shrink-0" />}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* AI Credits Widget */}
-        <div className="px-2 mt-auto pt-4 border-t border-white/5">
-          <AICreditsWidget onBuyCredits={() => setShowAICreditsModal(true)} />
-        </div>
-      </aside>
+      {/* The sub-sidebar has been removed on desktop to prevent visual redundancies with the main sidebar. Mobile navigation remains via top horizontal tabs. */}
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
@@ -642,5 +618,20 @@ export default function CuadernoPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function CuadernoPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen bg-[#050510]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
+          <p className="text-sm text-white/70 font-bold uppercase tracking-wide">Cargando Cuaderno...</p>
+        </div>
+      </div>
+    }>
+      <CuadernoContent />
+    </Suspense>
   );
 }

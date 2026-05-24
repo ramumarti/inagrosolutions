@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/dashboard/Sidebar';
@@ -131,12 +131,14 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
         <AISupportWidget />
 
       {/* Sidebar */}
-      <Sidebar 
-        isCollapsed={isSidebarCollapsed} 
-        toggleCollapse={() => setSidebarCollapsed(!isSidebarCollapsed)} 
-        isMobileOpen={isMobileSidebarOpen}
-        closeMobile={() => setMobileSidebarOpen(false)}
-      />
+      <Suspense fallback={<div className="w-64 bg-[var(--color-base-200)]/80" />}>
+        <Sidebar 
+          isCollapsed={isSidebarCollapsed} 
+          toggleCollapse={() => setSidebarCollapsed(!isSidebarCollapsed)} 
+          isMobileOpen={isMobileSidebarOpen}
+          closeMobile={() => setMobileSidebarOpen(false)}
+        />
+      </Suspense>
 
       {/* Main Content Area */}
       <div 

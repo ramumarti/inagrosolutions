@@ -9,8 +9,9 @@ import {
 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useAuthContext } from '@/lib/auth/tenant-context';
+import { AICreditsWidget } from '@/components/cuaderno/AICreditsWidget';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -23,6 +24,8 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
   const { language, t } = useI18n();
   const { user, hasRole, isSuperadmin, tenant } = useAuthContext();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get('tab');
   const [cuadernoOpen, setCuadernoOpen] = useState(pathname.startsWith('/cuaderno'));
 
   const handleExitImpersonation = async () => {
@@ -187,15 +190,15 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
 
   // Cuaderno Digital section
   const cuadernoItems: Array<{ label: string; href: string; icon: any; isActive: boolean }> = [
-    { label: language === 'en' ? 'Overview' : 'Panel / Inicio', href: '/cuaderno', icon: BookOpen, isActive: pathname === '/cuaderno' },
-    { label: language === 'en' ? 'Parcels' : 'Gestión de Parcelas', href: '/cuaderno', icon: MapPin, isActive: false },
-    { label: language === 'en' ? 'Treatments' : 'Fitosanitarios', href: '/cuaderno', icon: Bug, isActive: false },
+    { label: language === 'en' ? 'Overview' : 'Panel / Inicio', href: '/cuaderno?tab=inicio', icon: BookOpen, isActive: pathname === '/cuaderno' && (!activeTab || activeTab === 'inicio') },
+    { label: language === 'en' ? 'Parcels' : 'Gestión de Parcelas', href: '/cuaderno?tab=parcelas', icon: MapPin, isActive: pathname === '/cuaderno' && activeTab === 'parcelas' },
+    { label: language === 'en' ? 'Treatments' : 'Fitosanitarios', href: '/cuaderno?tab=fitosanitarios', icon: Bug, isActive: pathname === '/cuaderno' && activeTab === 'fitosanitarios' },
     { label: language === 'en' ? 'Inventory' : 'Almacén de Insumos', href: '/cuaderno/recursos', icon: Package, isActive: pathname === '/cuaderno/recursos' },
-    { label: language === 'en' ? 'Fertilization' : 'Fertilización', href: '/cuaderno', icon: Droplets, isActive: false },
-    { label: language === 'en' ? 'Agricultural Tasks' : 'Labores Agrícolas', href: '/cuaderno', icon: Leaf, isActive: false },
+    { label: language === 'en' ? 'Fertilization' : 'Fertilización', href: '/cuaderno?tab=fertilizacion', icon: Droplets, isActive: pathname === '/cuaderno' && activeTab === 'fertilizacion' },
+    { label: language === 'en' ? 'Agricultural Tasks' : 'Labores Agrícolas', href: '/cuaderno?tab=labores', icon: Leaf, isActive: pathname === '/cuaderno' && activeTab === 'labores' },
     { label: language === 'en' ? 'Plans' : 'Planes', href: '/cuaderno/suscripcion', icon: Crown, isActive: pathname === '/cuaderno/suscripcion' },
-    { label: language === 'en' ? 'SIEX Registry' : 'Registro SIEX', href: '/cuaderno', icon: FileJson, isActive: false },
-    { label: language === 'en' ? 'Export' : 'Exportación PAC', href: '/cuaderno', icon: FileDown, isActive: false },
+    { label: language === 'en' ? 'SIEX Registry' : 'Registro SIEX', href: '/cuaderno?tab=exportacion', icon: FileJson, isActive: pathname === '/cuaderno' && activeTab === 'exportacion' },
+    { label: language === 'en' ? 'Export' : 'Exportación PAC', href: '/cuaderno?tab=exportacion', icon: FileDown, isActive: pathname === '/cuaderno' && activeTab === 'exportacion' },
     { label: language === 'en' ? 'Help & Manual' : 'Ayuda y Manual', href: '/cuaderno/ayuda', icon: BookOpen, isActive: pathname === '/cuaderno/ayuda' },
   ];
 
@@ -337,6 +340,15 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* AI Credits Widget */}
+          {(!hasRole(['tenant_admin']) || isSuperadmin) && (!isCollapsed || isMobileOpen) && (
+            <div className="px-2 mt-4 pt-4 border-t border-white/5">
+              <AICreditsWidget onBuyCredits={() => {
+                window.location.href = '/cuaderno/suscripcion';
+              }} />
             </div>
           )}
 
