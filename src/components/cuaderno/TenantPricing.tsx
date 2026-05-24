@@ -20,7 +20,7 @@ export function TenantPricing({ tenantSlug, primaryColor }: { tenantSlug: string
     intermedio: [
       "Todo lo del plan Básico",
       "Validación de dosis por IA",
-      "Supervisión de técnicos agrícolas",
+      "Supervisado técnicamente",
       "Soporte prioritario por WhatsApp",
       "Control de ecorregímenes y abonos"
     ],

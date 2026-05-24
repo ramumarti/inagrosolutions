@@ -174,7 +174,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             <span className="hidden sm:block text-gray-700">•</span>
             <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: primaryColor }} /> 100% Homologado SIEX / MAPA</span>
             <span className="hidden sm:block text-gray-700">•</span>
-            <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: primaryColor }} /> Supervisado por Ingenieros Agrónomos</span>
+            <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: primaryColor }} /> Supervisado técnicamente</span>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 max-w-md mx-auto sm:max-w-none">
@@ -264,7 +264,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             <div className="space-y-4">
               {[
                 { title: "Gestión simplificada", desc: "Registra tus tratamientos y abonos en segundos, incluso por voz desde el tractor." },
-                { title: "Validación técnica integrada", desc: "Nuestros ingenieros agrónomos revisan tus datos para confirmar que cumples con el ecorregímen." },
+                { title: "Validación técnica integrada", desc: "Nuestros técnicos agrícolas revisan tus datos para confirmar que cumples con el ecorregímen." },
                 { title: "Listo para inspecciones", desc: "Con un botón descargas el PDF/Excel legal oficial listo para presentar a Sanidad Vegetal." },
                 { title: "Atención directa por WhatsApp", desc: "¿Una duda con un producto? Nos mandas una foto del albarán por WhatsApp y te ayudamos." }
               ].map((item, i) => (
@@ -469,7 +469,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             <GlassCard className="p-8 text-left relative overflow-hidden flex flex-col justify-between">
               <div className="text-8xl text-white/5 absolute -top-4 right-2 font-serif">"</div>
               <p className="text-gray-300 italic mb-8 relative z-10 text-sm leading-relaxed">
-                "Tener la tranquilidad de que nuestros ingenieros agrónomos de la cooperativa están supervisando el cuaderno antes de subirlo al SIEX nos da una paz mental increíble. Sabes que cobras la PAC seguro y sin retrasos por errores técnicos."
+                "Tener la tranquilidad de que todo está supervisado técnicamente por la cooperativa antes de subirlo al SIEX nos da una paz mental increíble. Sabes que cobras la PAC seguro y sin retrasos por errores técnicos."
               </p>
               <div className="flex items-center gap-4">
                 <div className="w-11 h-11 rounded-full flex items-center justify-center font-black" style={{ backgroundColor: `${primaryColor}20`, color: primaryColor }}>
