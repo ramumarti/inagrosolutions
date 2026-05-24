@@ -75,7 +75,7 @@ export function buildEmailTemplate(options: {
         <tr>
             <td align="center" style="padding-bottom: 24px;">
                 <div style="display: inline-block; background: linear-gradient(135deg, #EF4444, #DC2626, #F472B6); border-radius: 12px; padding: 8px 20px;">
-                    <span style="color: #ffffff; font-weight: 800; font-size: 16px; letter-spacing: 0.05em;">✦ INAGROSOLUTIONS</span>
+                    <span style="color: #ffffff; font-weight: 800; font-size: 16px; letter-spacing: 0.05em;">✦ CUADERNO DIGITAL DE CAMPO</span>
                 </div>
             </td>
         </tr>
@@ -141,8 +141,10 @@ export async function sendWelcomeEmail(options: {
   planName: string;
   password?: string;
   loginUrl: string;
+  tenantName?: string;
 }): Promise<{ success: boolean; message: string }> {
   try {
+    const platformName = options.tenantName || 'CUADERNO DIGITAL DE CAMPO';
     const bodyLines = [
       `Tu plan <strong>${options.planName}</strong> ha sido activado exitosamente.`,
     ];
@@ -154,7 +156,7 @@ export async function sendWelcomeEmail(options: {
     bodyLines.push('Ya puedes acceder a todas las herramientas de IA incluidas en tu plan.');
 
     const html = buildEmailTemplate({
-      title: '¡Bienvenido a INAGROSOLUTIONS!',
+      title: `¡Bienvenido a ${platformName}!`,
       greeting: `Hola ${options.firstName},`,
       bodyLines,
       ctaText: 'Acceder al Portal',
@@ -164,7 +166,7 @@ export async function sendWelcomeEmail(options: {
 
     return await sendEmail({
       to: options.to,
-      subject: '¡Bienvenido a INAGROSOLUTIONS! Tu acceso está listo',
+      subject: `¡Bienvenido a ${platformName}! Tu acceso está listo`,
       html
     });
   } catch (error: unknown) {
