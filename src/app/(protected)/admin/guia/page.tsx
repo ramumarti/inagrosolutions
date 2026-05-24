@@ -174,11 +174,14 @@ export default function GuidePage() {
 
       <div className="mt-12 p-8 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
         <div>
-          <h3 className="text-xl font-black text-white mb-2">¿Necesitas soporte técnico adicional?</h3>
-          <p className="text-white/60">Nuestro equipo está listo para ayudarte con integraciones avanzadas o dudas operativas.</p>
+          <h3 className="text-xl font-black text-white mb-2">¿Necesitas soporte?</h3>
+          <p className="text-white/60">Inicialmente, el soporte se dará a través de nuestro asistente virtual. Aquí tienes el asistente virtual CDC para aclarar cualquier duda.</p>
         </div>
-        <button className="px-6 py-3 bg-white text-black font-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] shrink-0">
-          Contactar Soporte
+        <button 
+          onClick={() => window.dispatchEvent(new Event('open-ai-support'))}
+          className="px-6 py-3 bg-white text-black font-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] shrink-0"
+        >
+          Abrir Asistente CDC
         </button>
       </div>
 

@@ -18,11 +18,18 @@ export function AISupportWidget() {
   const [messages, setMessages] = useState<Message[]>([{
     id: '1',
     role: 'assistant',
-    content: '¡Hola! Soy Ayuda, el asistente virtual de InagroSolutions. ¿En qué puedo ayudarte hoy con tu Cuaderno?'
+    content: '¡Hola! Soy CDC, el asistente virtual para tu Cuaderno Digital de Campo. ¿En qué puedo ayudarte hoy con tu Cuaderno?'
   }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Open widget via custom event
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('open-ai-support', handleOpen);
+    return () => window.removeEventListener('open-ai-support', handleOpen);
+  }, []);
 
   // Auto-scroll
   useEffect(() => {
@@ -73,7 +80,7 @@ export function AISupportWidget() {
         className="fixed bottom-6 right-6 p-4 rounded-full bg-[var(--color-primary)] text-black shadow-2xl hover:scale-110 transition-transform z-50 animate-in fade-in slide-in-from-bottom-4 group flex items-center gap-2"
       >
         <Bot size={24} />
-        <span className="font-bold hidden group-hover:block whitespace-nowrap px-2 overflow-hidden w-0 group-hover:w-auto animate-in slide-in-from-right-2">Soporte Ayuda</span>
+        <span className="font-bold hidden group-hover:block whitespace-nowrap px-2 overflow-hidden w-0 group-hover:w-auto animate-in slide-in-from-right-2">Asistente CDC</span>
       </button>
     );
   }
@@ -87,7 +94,7 @@ export function AISupportWidget() {
             <Bot size={18} />
           </div>
           <div>
-            <h3 className="font-bold text-white text-sm">Ayuda (Soporte IA)</h3>
+            <h3 className="font-bold text-white text-sm">CDC (Asistente IA)</h3>
             <p className="text-[10px] text-white/50">{profile.platform_role === 'tenant_admin' ? 'Soporte a Cooperativas' : 'Soporte al Agricultor'}</p>
           </div>
         </div>
