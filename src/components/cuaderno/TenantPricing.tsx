@@ -83,7 +83,7 @@ export function TenantPricing({ tenantSlug, primaryColor }: { tenantSlug: string
           return (
             <GlassCard 
               key={tier} 
-              className={`p-8 flex flex-col justify-between hover:border-white/20 transition-all text-left relative h-full ${
+              className={`p-8 flex flex-col justify-start hover:border-white/20 transition-all text-left relative h-full ${
                 isRecommended 
                   ? 'border-emerald-500/30 bg-[#0c1219]/90 shadow-[0_0_30px_rgba(16,185,129,0.05)] md:scale-105 z-10' 
                   : 'border-white/5 bg-white/[0.01]'
@@ -109,39 +109,15 @@ export function TenantPricing({ tenantSlug, primaryColor }: { tenantSlug: string
                 </div>
                 
                 {annualBilling && (
-                  <p className="text-emerald-400 text-xs font-bold mb-6">
+                  <p className="text-emerald-400 text-xs font-bold">
                     Facturado anualmente ({info.price_annual.toFixed(2).replace('.', ',')} €/año)
                   </p>
                 )}
                 {!annualBilling && (
-                  <p className="text-gray-500 text-xs font-medium mb-6">
+                  <p className="text-gray-500 text-xs font-medium">
                     Pago mensual recurrente
                   </p>
                 )}
-
-                <ul className="space-y-3.5 border-t border-white/5 pt-6 text-sm text-gray-300">
-                  {features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-2.5">
-                      <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400 mt-0.5" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="mt-8 pt-4">
-                <Link href={`/signup?plan=${tier}&tenant=${tenantSlug}`} className="w-full block">
-                  <button 
-                    className={`w-full py-3.5 rounded-xl font-black text-sm transition-all hover:scale-[1.02] active:scale-95 ${
-                      isRecommended 
-                        ? 'text-black shadow-lg' 
-                        : 'bg-white/5 border border-white/10 hover:bg-white/10 text-white'
-                    }`}
-                    style={isRecommended ? { backgroundColor: primaryColor } : {}}
-                  >
-                    Activar Plan {info.label_es}
-                  </button>
-                </Link>
               </div>
             </GlassCard>
           )
