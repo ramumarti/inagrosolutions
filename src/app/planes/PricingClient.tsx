@@ -230,14 +230,25 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
               <h3 className="text-2xl font-black mb-1">Básico</h3>
               <p className="text-xs font-bold text-gray-500 tracking-widest uppercase mb-6">HASTA 5 HA</p>
               
-              <div className="mb-10">
-                <span className="text-5xl font-black">
-                  {annualBilling
-                    ? TIER_CONFIG.basico.price_annual.toFixed(2).replace('.', ',')
-                    : TIER_CONFIG.basico.price_monthly.toFixed(2).replace('.', ',')} €
-                </span>
-                <span className="text-gray-500 font-medium ml-1">/{annualBilling ? 'año' : 'mes'}</span>
-                <p className="text-xs text-white/40 mt-1 text-center">+ IVA</p>
+              <div className="mb-10 text-center">
+                <div className="flex items-baseline justify-center gap-2">
+                  <span className="text-5xl font-black text-white">
+                    {annualBilling
+                      ? (TIER_CONFIG.basico.price_annual / 12).toFixed(2).replace('.', ',')
+                      : TIER_CONFIG.basico.price_monthly.toFixed(2).replace('.', ',')} €
+                  </span>
+                  <span className="text-gray-500 font-medium text-sm">/mes <span className="text-[10px] text-white/30">+ IVA</span></span>
+                </div>
+                {annualBilling && (
+                  <p className="text-emerald-400 text-xs font-bold mt-2">
+                    Facturado anualmente ({TIER_CONFIG.basico.price_annual.toFixed(2).replace('.', ',')} €/año)
+                  </p>
+                )}
+                {!annualBilling && (
+                  <p className="text-gray-500 text-xs font-medium mt-2">
+                    Pago mensual recurrente
+                  </p>
+                )}
               </div>
               
               <PlanFeatures costes={false} cosechas={false} traz={false} dash={false} iot={false} alertas={false} />
@@ -257,14 +268,25 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
               <h3 className="text-2xl font-black mb-1">Intermedio</h3>
               <p className="text-xs font-bold text-gray-500 tracking-widest uppercase mb-6">HASTA 20 HA</p>
               
-              <div className="mb-10">
-                <span className="text-5xl font-black">
-                  {annualBilling
-                    ? TIER_CONFIG.intermedio.price_annual.toFixed(2).replace('.', ',')
-                    : TIER_CONFIG.intermedio.price_monthly.toFixed(2).replace('.', ',')} €
-                </span>
-                <span className="text-gray-500 font-medium ml-1">/{annualBilling ? 'año' : 'mes'}</span>
-                <p className="text-xs text-white/40 mt-1 text-center">+ IVA</p>
+              <div className="mb-10 text-center">
+                <div className="flex items-baseline justify-center gap-2">
+                  <span className="text-5xl font-black text-white">
+                    {annualBilling
+                      ? (TIER_CONFIG.intermedio.price_annual / 12).toFixed(2).replace('.', ',')
+                      : TIER_CONFIG.intermedio.price_monthly.toFixed(2).replace('.', ',')} €
+                  </span>
+                  <span className="text-gray-500 font-medium text-sm">/mes <span className="text-[10px] text-white/30">+ IVA</span></span>
+                </div>
+                {annualBilling && (
+                  <p className="text-emerald-400 text-xs font-bold mt-2">
+                    Facturado anualmente ({TIER_CONFIG.intermedio.price_annual.toFixed(2).replace('.', ',')} €/año)
+                  </p>
+                )}
+                {!annualBilling && (
+                  <p className="text-gray-500 text-xs font-medium mt-2">
+                    Pago mensual recurrente
+                  </p>
+                )}
               </div>
               
               <PlanFeatures costes={true} cosechas={true} traz={false} dash={false} iot={false} alertas={true} />
@@ -290,14 +312,25 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
               <h3 className="text-2xl font-black mb-1">Avanzado</h3>
               <p className="text-xs font-bold text-gray-500 tracking-widest uppercase mb-6">HASTA 50 HA</p>
               
-              <div className="mb-10">
-                <span className="text-5xl font-black">
-                  {annualBilling
-                    ? TIER_CONFIG.avanzado.price_annual.toFixed(2).replace('.', ',')
-                    : TIER_CONFIG.avanzado.price_monthly.toFixed(2).replace('.', ',')} €
-                </span>
-                <span className="text-gray-500 font-medium ml-1">/{annualBilling ? 'año' : 'mes'}</span>
-                <p className="text-xs text-white/40 mt-1 text-center">+ IVA</p>
+              <div className="mb-10 text-center">
+                <div className="flex items-baseline justify-center gap-2">
+                  <span className="text-5xl font-black text-white">
+                    {annualBilling
+                      ? (TIER_CONFIG.avanzado.price_annual / 12).toFixed(2).replace('.', ',')
+                      : TIER_CONFIG.avanzado.price_monthly.toFixed(2).replace('.', ',')} €
+                  </span>
+                  <span className="text-gray-500 font-medium text-sm">/mes <span className="text-[10px] text-white/30">+ IVA</span></span>
+                </div>
+                {annualBilling && (
+                  <p className="text-emerald-400 text-xs font-bold mt-2">
+                    Facturado anualmente ({TIER_CONFIG.avanzado.price_annual.toFixed(2).replace('.', ',')} €/año)
+                  </p>
+                )}
+                {!annualBilling && (
+                  <p className="text-gray-500 text-xs font-medium mt-2">
+                    Pago mensual recurrente
+                  </p>
+                )}
               </div>
               
               <PlanFeatures costes={true} cosechas={true} traz={true} dash={true} iot={false} alertas={true} />
@@ -324,14 +357,25 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
               <h3 className="text-2xl font-black mb-1 text-white">Premium</h3>
               <p className="text-xs font-bold text-gray-500 tracking-widest uppercase mb-6">HASTA 100 HA</p>
               
-              <div className="mb-10">
-                <span className="text-5xl font-black text-white">
-                  {annualBilling
-                    ? TIER_CONFIG.premium.price_annual.toFixed(2).replace('.', ',')
-                    : TIER_CONFIG.premium.price_monthly.toFixed(2).replace('.', ',')} €
-                </span>
-                <span className="text-gray-500 font-medium ml-1">/{annualBilling ? 'año' : 'mes'}</span>
-                <p className="text-xs text-white/40 mt-1 text-center">+ IVA</p>
+              <div className="mb-10 text-center">
+                <div className="flex items-baseline justify-center gap-2">
+                  <span className="text-5xl font-black text-white">
+                    {annualBilling
+                      ? (TIER_CONFIG.premium.price_annual / 12).toFixed(2).replace('.', ',')
+                      : TIER_CONFIG.premium.price_monthly.toFixed(2).replace('.', ',')} €
+                  </span>
+                  <span className="text-gray-500 font-medium text-sm">/mes <span className="text-[10px] text-white/30">+ IVA</span></span>
+                </div>
+                {annualBilling && (
+                  <p className="text-emerald-400 text-xs font-bold mt-2">
+                    Facturado anualmente ({TIER_CONFIG.premium.price_annual.toFixed(2).replace('.', ',')} €/año)
+                  </p>
+                )}
+                {!annualBilling && (
+                  <p className="text-gray-500 text-xs font-medium mt-2">
+                    Pago mensual recurrente
+                  </p>
+                )}
               </div>
               
               <PlanFeatures costes={true} cosechas={true} traz={true} dash={true} iot={true} alertas={true} />
