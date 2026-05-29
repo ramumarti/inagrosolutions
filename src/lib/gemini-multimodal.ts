@@ -8,7 +8,7 @@ const getGenAI = () => {
 };
 
 // Usamos gemini-2.5-flash o gemini-2.0-flash para soporte multimodal (audio, imagen)
-const MODEL_NAME = 'gemini-2.0-flash'; 
+const MODEL_NAME = 'gemini-2.5-flash'; 
 
 /**
  * Transcribe un archivo de audio y extrae datos estructurados usando Gemini Multimodal.

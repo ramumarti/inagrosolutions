@@ -4,7 +4,7 @@ import { canUseAIFeature, consumeCredits } from '@/lib/ai-credits';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY || '');
-const MODEL_NAME = 'gemini-2.0-flash';
+const MODEL_NAME = 'gemini-2.5-flash';
 
 export async function POST(req: NextRequest) {
   try {
