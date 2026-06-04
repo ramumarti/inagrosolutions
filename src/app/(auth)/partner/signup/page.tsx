@@ -52,38 +52,53 @@ function PartnerSignupContent() {
 
     setLoading(true);
     
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://inagrosolutions.com';
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/confirm`,
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-          is_business: true,
-          company_name: companyName,
-          platform_role: 'tenant_admin',
-          is_partner_reg: true,
-          plan_id: null,
-          tenant_slug: null,
-          nif_cif: cif,
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          password,
+          firstName,
+          lastName,
+          isBusiness: true,
+          platformRole: 'tenant_admin',
+          companyName,
+          nifCif: cif,
           phone,
           address,
           province,
-          estimated_members: estimatedMembers
-        }
+          estimatedMembers
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || result.error) {
+        setLoading(false);
+        toast(result.error || (language === 'en' ? 'Registration failed.' : 'Error al registrar la entidad.'), 'error');
+        return;
       }
-    });
-    
-    setLoading(false);
-    
-    if (error) {
-      toast(error.message, 'error');
-    } else {
-      toast(language === 'en' ? 'Check your email to confirm.' : 'Confirma tu email para configurar tu entidad.', 'success');
-      router.push('/signup/success');
+
+      // Auto sign-in
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      setLoading(false);
+
+      if (signInError) {
+        toast(language === 'en' ? 'Account created. Please log in.' : 'Cuenta creada. Por favor, inicia sesión.', 'warning');
+        router.push('/login');
+      } else {
+        toast(language === 'en' ? 'Registration completed successfully!' : '¡Registro completado con éxito!', 'success');
+        router.push('/dashboard');
+        router.refresh();
+      }
+    } catch (err: any) {
+      setLoading(false);
+      toast(err.message || (language === 'en' ? 'Connection error' : 'Error de conexión'), 'error');
     }
   };
 

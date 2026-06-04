@@ -83,34 +83,52 @@ function FarmerSignupContent() {
     }
 
     setLoading(true);
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://inagrosolutions.com';
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/confirm?tenant=${tenant.slug}`,
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-          is_business: false,
-          platform_role: 'farmer',
-          tenant_id: tenant.id,
-          tenant_slug: tenant.slug,
-          plan_id: planSlug || 'basico',
-          plan_slug: planSlug || 'basico',
-          billing_interval: billing === 'annual' ? 'year' : 'month',
-        }
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          password,
+          firstName,
+          lastName,
+          isBusiness: false,
+          platformRole: 'farmer',
+          tenantId: tenant.id,
+          tenantSlug: tenant.slug,
+          planId: planSlug || 'basico',
+          billingInterval: billing === 'annual' ? 'year' : 'month'
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || result.error) {
+        setLoading(false);
+        toast(result.error || 'Error al completar el registro.', 'error');
+        return;
       }
-    });
 
-    setLoading(false);
+      // Auto sign-in on the client side since the account is pre-confirmed
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-    if (error) {
-      toast(error.message, 'error');
-    } else {
-      toast('¡Cuenta creada con éxito! Por favor, revisa tu correo electrónico para verificar tu cuenta y comenzar.', 'success');
-      router.push('/signup/success');
+      setLoading(false);
+
+      if (signInError) {
+        toast('Cuenta creada con éxito. Por favor, inicia sesión con tus credenciales.', 'warning');
+        router.push('/login');
+      } else {
+        toast('¡Registro completado con éxito!', 'success');
+        router.push('/dashboard');
+        router.refresh();
+      }
+    } catch (err: any) {
+      setLoading(false);
+      toast(err.message || 'Error de conexión', 'error');
     }
   };
 
