@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { CheckCircle2, Leaf, Smartphone, Headset, ShieldCheck, Star, HeartHandshake, Map, Tractor, FileSpreadsheet, Check, X } from 'lucide-react';
+import { CheckCircle2, Leaf, Smartphone, Headset, ShieldCheck, Star, HeartHandshake, Map, Tractor, FileSpreadsheet, Check, X, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { TIER_CONFIG } from '@/lib/modules';
+import { FarmerDemoModal } from '@/components/cuaderno/FarmerDemoModal';
 
 const PlanFeatures = ({ costes, cosechas, traz, dash, iot, alertas }: { costes: boolean, cosechas: boolean, traz: boolean, dash: boolean, iot: boolean, alertas: boolean }) => {
   const Feature = ({ name, active, isLegal }: { name: string, active: boolean, isLegal?: boolean }) => (
@@ -41,6 +42,7 @@ const PlanFeatures = ({ costes, cosechas, traz, dash, iot, alertas }: { costes: 
 export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?: string }) {
   const [annualBilling, setAnnualBilling] = useState(false);
   const [gdprAccepted, setGdprAccepted] = useState(false);
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
 
   const primaryColor = tenant?.primary_color || '#10B981';
   const partnerName = tenant?.name || "Plataforma Oficial";
@@ -100,6 +102,14 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
               Ver Planes de Precios
             </button>
           </a>
+          <button 
+            onClick={() => setIsDemoOpen(true)}
+            className="w-full sm:w-auto h-14 px-8 text-lg font-bold rounded-xl transition-all border text-white/90 hover:text-white flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
+            style={{ borderColor: primaryColor, backgroundColor: `${primaryColor}10`, boxShadow: `0 0 15px ${primaryColor}20` }}
+          >
+            <Sparkles className="w-5 h-5" style={{ color: primaryColor }} />
+            Probar Demo Interactiva
+          </button>
         </div>
       </section>
 
@@ -497,6 +507,12 @@ export function PricingClient({ tenant, tenantSlug }: { tenant: any, tenantSlug?
           </div>
         </div>
       </section>
+      <FarmerDemoModal 
+        isOpen={isDemoOpen} 
+        onClose={() => setIsDemoOpen(false)} 
+        tenant={tenant} 
+        primaryColor={primaryColor} 
+      />
     </div>
   );
 }
