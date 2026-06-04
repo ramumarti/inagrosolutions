@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import { Metadata, ResolvingMetadata } from 'next';
 import { TenantPricing } from '@/components/cuaderno/TenantPricing';
+import { FarmerDemoButton } from '@/components/cuaderno/FarmerDemoButton';
+
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> },
@@ -182,12 +184,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                 Ver Tarifas y Planes
               </button>
             </Link>
-            <Link href={`/planes?tenant=${tenant.slug}`} className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto h-14 px-8 rounded-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-3 backdrop-blur-md">
-                <FileCheck className="w-5 h-5" style={{ color: primaryColor }} />
-                Consigue tu Cuaderno Digital
-              </button>
-            </Link>
+            <FarmerDemoButton tenant={tenant} primaryColor={primaryColor} variant="hero" />
           </div>
         </div>
       </section>
@@ -275,10 +272,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
             </div>
 
             <div className="pt-6">
-              <Link href={`/planes?tenant=${tenant.slug}`} className="inline-flex items-center gap-3 px-6 py-4 rounded-xl font-black hover:scale-105 active:scale-95 transition-all shadow-lg" style={{ backgroundColor: primaryColor, color: '#000' }}>
-                Consigue tu Cuaderno Digital
-                <ArrowRight className="w-5 h-5" />
-              </Link>
+              <FarmerDemoButton tenant={tenant} primaryColor={primaryColor} variant="solution" />
             </div>
           </div>
 
@@ -545,12 +539,7 @@ export default async function TenantPublicPage({ params }: { params: Promise<{ s
                 Empezar con mi Cuaderno Digital
               </button>
             </Link>
-            <Link href={`/planes?tenant=${tenant.slug}`} className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto h-14 px-8 rounded-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-3">
-                <FileCheck className="w-5 h-5" style={{ color: primaryColor }} />
-                Consigue tu Cuaderno Digital
-              </button>
-            </Link>
+            <FarmerDemoButton tenant={tenant} primaryColor={primaryColor} variant="cta" />
           </div>
         </div>
       </section>
