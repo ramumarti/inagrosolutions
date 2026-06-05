@@ -9,6 +9,8 @@ import { GlowButton } from '@/components/ui/GlowButton';
 import { Input } from '@/components/ui/Input';
 import { useToast } from '@/components/ui/Toast';
 import { createClient } from '@/lib/supabase/client';
+import { createCheckoutSession } from '@/lib/actions/stripe';
+import { TIER_CONFIG, AgriTier } from '@/lib/modules';
 
 function FarmerSignupContent() {
   const router = useRouter();
@@ -28,6 +30,11 @@ function FarmerSignupContent() {
   const [email, setEmail] = useState(emailParam || '');
   const [password, setPassword] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
+
+  // Plan selection states
+  const initialPlan = (planSlug && ['basico', 'intermedio', 'avanzado', 'premium'].includes(planSlug) ? planSlug : 'basico') as AgriTier;
+  const [selectedPlan, setSelectedPlan] = useState<AgriTier>(initialPlan);
+  const [selectedBilling, setSelectedBilling] = useState<'month' | 'year'>(billing === 'annual' ? 'year' : 'month');
   
   const { toast } = useToast();
   const supabase = createClient();
@@ -105,8 +112,8 @@ function FarmerSignupContent() {
           platformRole: 'farmer',
           tenantId: tenant.id,
           tenantSlug: tenant.slug,
-          planId: planSlug || 'basico',
-          billingInterval: billing === 'annual' ? 'year' : 'month'
+          planId: selectedPlan,
+          billingInterval: selectedBilling
         })
       });
 
@@ -124,15 +131,28 @@ function FarmerSignupContent() {
         password
       });
 
-      setLoading(false);
-
       if (signInError) {
+        setLoading(false);
         toast('Cuenta creada con éxito. Por favor, inicia sesión con tus credenciales.', 'success');
         router.push('/login');
-      } else {
-        toast('¡Registro completado con éxito!', 'success');
+        return;
+      }
+
+      // Redirigir a Stripe Checkout
+      try {
+        const { url } = await createCheckoutSession(selectedPlan, selectedBilling);
+        setLoading(false);
+        if (url) {
+          toast('¡Registro completado! Redirigiendo al pago...', 'success');
+          window.location.href = url;
+        } else {
+          throw new Error('No se pudo generar la URL de pago.');
+        }
+      } catch (checkoutErr: any) {
+        console.error('Error al iniciar la sesión de Stripe:', checkoutErr);
+        setLoading(false);
+        toast('Registro completado, pero ocurrió un problema al redirigir al pago.', 'error');
         router.push('/dashboard');
-        router.refresh();
       }
     } catch (err: any) {
       setLoading(false);
@@ -206,11 +226,74 @@ function FarmerSignupContent() {
           </>
         ) : (
           <form onSubmit={handleFarmerSignup} className="w-full flex flex-col gap-4 animate-fade-in">
-            {planSlug && (
-              <div className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-center text-xs font-bold text-gray-400 mb-2">
-                Plan Seleccionado: <span className="text-white uppercase">{planSlug}</span>
+            {/* Plan Selector */}
+            <div className="w-full flex flex-col gap-2.5 bg-white/[0.02] border border-white/5 p-4 rounded-2xl mb-1 text-left">
+              <span className="text-[10px] text-white/50 font-black uppercase tracking-widest px-0.5">
+                1. Módulo / Plan del Cuaderno
+              </span>
+              
+              {/* Billing Cycle Toggle */}
+              <div className="flex items-center justify-between p-0.5 bg-white/5 border border-white/10 rounded-xl mb-1 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setSelectedBilling('month')}
+                  className={`flex-1 py-1.5 rounded-lg font-bold transition-all ${
+                    selectedBilling === 'month' 
+                      ? 'bg-white/10 text-white shadow-sm font-black' 
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Mensual
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedBilling('year')}
+                  className={`flex-1 py-1.5 rounded-lg font-bold transition-all flex items-center justify-center gap-1 ${
+                    selectedBilling === 'year' 
+                      ? 'bg-white/10 text-white shadow-sm font-black' 
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Anual <span className="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/10 font-black">-2 MESES</span>
+                </button>
               </div>
-            )}
+
+              {/* Plans Grid */}
+              <div className="grid grid-cols-2 gap-2">
+                {(Object.keys(TIER_CONFIG) as AgriTier[]).map((tier) => {
+                  const info = TIER_CONFIG[tier];
+                  const isSelected = selectedPlan === tier;
+                  const price = selectedBilling === 'year' ? info.price_annual / 12 : info.price_monthly;
+                  return (
+                    <button
+                      key={tier}
+                      type="button"
+                      onClick={() => setSelectedPlan(tier)}
+                      className="flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all duration-300 relative group overflow-hidden cursor-pointer"
+                      style={{
+                        backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.01)',
+                        borderColor: isSelected ? primaryColor : 'rgba(255, 255, 255, 0.08)',
+                        boxShadow: isSelected ? `0 0 10px ${primaryColor}15` : 'none'
+                      }}
+                    >
+                      <span className="text-[11px] font-black uppercase text-white tracking-tight mb-0.5">
+                        {info.label_es}
+                      </span>
+                      <span className="text-[8px] font-bold text-white/40 uppercase tracking-wider mb-1">
+                        {info.max_ha === Infinity ? 'Ilimitado' : `${info.max_ha} HA MAX`}
+                      </span>
+                      <span className="text-xs font-black text-white">
+                        {price.toFixed(2).replace('.', ',')} €<span className="text-[8px] text-white/30 font-medium">/mes</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <span className="text-[10px] text-white/50 font-black uppercase tracking-widest px-0.5 mt-1 text-left">
+              2. Tus datos personales
+            </span>
 
             <div className="grid grid-cols-2 gap-4">
               <Input 
