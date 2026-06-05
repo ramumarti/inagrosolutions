@@ -89,7 +89,7 @@ function PartnerSignupContent() {
       setLoading(false);
 
       if (signInError) {
-        toast(language === 'en' ? 'Account created. Please log in.' : 'Cuenta creada. Por favor, inicia sesión.', 'warning');
+        toast(language === 'en' ? 'Account created. Please log in.' : 'Cuenta creada. Por favor, inicia sesión.', 'success');
         router.push('/login');
       } else {
         toast(language === 'en' ? 'Registration completed successfully!' : '¡Registro completado con éxito!', 'success');

@@ -58,7 +58,7 @@ export async function POST(req: Request) {
         </style>
       </head>
       <body>
-        <div className="card">
+        <div class="card">
           ${logoUrl ? `<img src="${logoUrl}" class="logo" alt="${tenantName}">` : `<h2>${tenantName}</h2>`}
           <h1>¡Tu tiempo vale oro!</h1>
           <p style="font-size: 18px; font-weight: bold; color: #10B981;">Activa ya tu Cuaderno Digital en <strong>${tenantName}</strong>.</p>

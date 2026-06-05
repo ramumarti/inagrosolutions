@@ -16,6 +16,7 @@ function FarmerSignupContent() {
   const planSlug = searchParams.get('plan');
   const tenantSlug = searchParams.get('tenant');
   const billing = searchParams.get('billing');
+  const emailParam = searchParams.get('email');
   
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,12 +25,19 @@ function FarmerSignupContent() {
   // Registration fields
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(emailParam || '');
   const [password, setPassword] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   
   const { toast } = useToast();
   const supabase = createClient();
+
+  // Prefill email if provided in query parameters
+  useEffect(() => {
+    if (emailParam) {
+      setEmail(emailParam);
+    }
+  }, [emailParam]);
 
   // Automatically fetch tenant details if slug is in URL
   useEffect(() => {
@@ -119,7 +127,7 @@ function FarmerSignupContent() {
       setLoading(false);
 
       if (signInError) {
-        toast('Cuenta creada con éxito. Por favor, inicia sesión con tus credenciales.', 'warning');
+        toast('Cuenta creada con éxito. Por favor, inicia sesión con tus credenciales.', 'success');
         router.push('/login');
       } else {
         toast('¡Registro completado con éxito!', 'success');
