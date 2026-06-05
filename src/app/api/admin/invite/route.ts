@@ -40,7 +40,11 @@ export async function POST(req: Request) {
       },
     });
 
-    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/signup?email=${encodeURIComponent(email)}&invite=true&role=farmer&tenant=${tenantSlug || ''}`;
+    const host = req.headers.get('host');
+    const protocol = req.headers.get('x-forwarded-proto') || 'http';
+    const baseUrl = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000');
+
+    const inviteLink = `${baseUrl}/signup?email=${encodeURIComponent(email)}&invite=true&role=farmer&tenant=${tenantSlug || ''}`;
 
     // 3. Diseño del Email White Label
     const htmlContent = `
