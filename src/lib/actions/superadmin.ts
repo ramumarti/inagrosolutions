@@ -75,8 +75,16 @@ export async function getPlatformStats() {
        return acc;
     }, {});
 
+    const PLAN_MAP: Record<string, string> = {
+      'basico': 'basico_agri',
+      'intermedio': 'avanzado_agri',
+      'avanzado': 'profesional_agri',
+      'premium': 'premium_agri'
+    };
+
     const totalMRR = (tierStats || []).reduce((sum, t) => {
-       return sum + (priceMap[t.subscription_tier] || 0);
+       const dbSlug = PLAN_MAP[t.subscription_tier] || t.subscription_tier;
+       return sum + (priceMap[dbSlug] || 0);
     }, 0);
 
     // Fetch activity trend for the last 7 days

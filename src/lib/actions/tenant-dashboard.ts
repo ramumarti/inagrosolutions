@@ -67,7 +67,14 @@ export async function getTenantDashboardMetrics() {
   // Fetch plan price (assuming we join with plans table if needed, or use TIER_CONFIG)
   // For now let's try to find the plan in the DB
   const tier = billing.data?.tenants?.subscription_tier || 'basico';
-  const { data: planData } = await supabase.from('plans').select('price_monthly').eq('slug', tier).single();
+  const PLAN_MAP: Record<string, string> = {
+    'basico': 'basico_agri',
+    'intermedio': 'avanzado_agri',
+    'avanzado': 'profesional_agri',
+    'premium': 'premium_agri'
+  };
+  const dbSlug = PLAN_MAP[tier] || tier;
+  const { data: planData } = await supabase.from('plans').select('price_monthly').eq('slug', dbSlug).single();
 
   return {
     success: true,
