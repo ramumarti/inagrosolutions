@@ -3,7 +3,7 @@
  * 
  * Este script lee de la base de datos de Supabase la información inyectada
  * de la simulación de cooperativas y genera un documento PDF oficial y profesional
- * en docs/informe_simulacion_cuadernos.pdf.
+ * en docs/informe_simulacion_cuadernos_final.pdf.
  */
 
 const PDFDocument = require('pdfkit');
@@ -47,21 +47,13 @@ async function generatePDF() {
   const technicians = (users || []).filter(u => u.platform_role === 'technician');
   const farmers = (users || []).filter(u => u.platform_role === 'farmer');
 
-  // Asignaciones
-  const { data: assignments } = await supabase.from('technician_assignments').select('*').eq('is_active', true);
-
   // Totales de base de datos
   const { count: countExplotaciones } = await supabase.from('explotaciones').select('*', { count: 'exact', head: true });
   const { count: countParcelas } = await supabase.from('parcelas').select('*', { count: 'exact', head: true });
   const { count: countLabores } = await supabase.from('labores').select('*', { count: 'exact', head: true });
   const { count: countTratamientos } = await supabase.from('tratamientos_fitosanitarios').select('*', { count: 'exact', head: true });
   const { count: countFertilizaciones } = await supabase.from('fertilizaciones').select('*', { count: 'exact', head: true });
-  const { count: countCostes } = await supabase.from('costes').select('*', { count: 'exact', head: true });
-  const { count: countCosechas } = await supabase.from('cosechas').select('*', { count: 'exact', head: true });
-  const { count: countTrazabilidad } = await supabase.from('trazabilidad').select('*', { count: 'exact', head: true });
   const { count: countLecturas } = await supabase.from('lecturas_sensores').select('*', { count: 'exact', head: true });
-  const { count: countValidaciones } = await supabase.from('cuaderno_validaciones').select('*', { count: 'exact', head: true });
-  const { count: countTasks } = await supabase.from('tasks').select('*', { count: 'exact', head: true });
 
   console.log('📊 Datos consultados con éxito. Creando documento PDF...');
 
@@ -72,7 +64,7 @@ async function generatePDF() {
     bufferPages: true
   });
 
-  const pdfPath = path.resolve(process.cwd(), 'docs/informe_simulacion_cuadernos.pdf');
+  const pdfPath = path.resolve(process.cwd(), 'docs/informe_simulacion_cuadernos_final.pdf');
   const writeStream = fs.createWriteStream(pdfPath);
   doc.pipe(writeStream);
 
@@ -93,20 +85,31 @@ async function generatePDF() {
       // No dibujar en la portada (página 0)
       if (i === 0) continue;
 
+      // Desactivar temporalmente el auto-wrap de márgenes inferiores
+      const oldBottomMargin = doc.page.margins.bottom;
+      doc.page.margins.bottom = 0;
+
       // Header
       doc.save();
       doc.fillColor(primaryColor).rect(50, 25, 495, 3).fill();
-      doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(8).text('INAGROSOLUTIONS — INFORME DE OPERACIONES', 50, 35);
-      doc.fillColor(textColor).font('Helvetica').fontSize(8).text('Simulación de Gestión Multitenant', 50, 45, { align: 'right' });
+      doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(8);
+      doc.x = 50;
+      doc.text('INAGROSOLUTIONS — INFORME DE OPERACIONES', 50, 35);
+      doc.fillColor(textColor).font('Helvetica').fontSize(8);
+      doc.text('Simulación de Gestión Multitenant', 50, 45, { align: 'right' });
       doc.restore();
 
       // Footer
       doc.save();
       doc.fillColor(borderColor).rect(50, doc.page.height - 45, 495, 1).fill();
-      doc.fillColor(textColor).font('Helvetica').fontSize(8)
-         .text('Este documento es un registro oficial generado por la simulación de InagroSolutions.', 50, doc.page.height - 35);
+      doc.fillColor(textColor).font('Helvetica').fontSize(8);
+      doc.x = 50;
+      doc.text('Este documento es un registro oficial generado por la simulación de InagroSolutions.', 50, doc.page.height - 35);
       doc.text(`Página ${i + 1} de ${range.count}`, 50, doc.page.height - 35, { align: 'right' });
       doc.restore();
+
+      // Restaurar margen inferior original
+      doc.page.margins.bottom = oldBottomMargin;
     }
   };
 
@@ -119,7 +122,7 @@ async function generatePDF() {
   doc.fillColor(darkColor).rect(0, 0, 180, doc.page.height).fill();
   doc.restore();
 
-  // Logotipo en portada (Lado izquierdo blanco sobre fondo oscuro)
+  // Logotipo en portada
   doc.save();
   doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(26).text('Inagro', 30, 200);
   doc.fillColor(primaryColor).text('Solutions', 30, 230);
@@ -168,16 +171,20 @@ async function generatePDF() {
     { align: 'justify', lineGap: 3 }
   );
 
-  // Cuadro de estadísticas consolidadas
-  doc.moveDown(2);
-  doc.fillColor(lightGrey).rect(50, 260, 495, 140).fill();
-  doc.fillColor(borderColor).rect(50, 260, 495, 140).stroke();
+  // Cuadro de estadísticas consolidadas (Comprobar presupuesto de página)
+  if (doc.y + 160 > doc.page.height - 50) {
+    doc.addPage();
+  }
+  
+  const boxStatsY = doc.y + 10;
+  doc.fillColor(lightGrey).rect(50, boxStatsY, 495, 140).fill();
+  doc.fillColor(borderColor).rect(50, boxStatsY, 495, 140).stroke();
 
-  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('MÉTRICAS GLOBALES CONSOLIDADAS DE LA SIMULACIÓN', 70, 275);
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('MÉTRICAS GLOBALES CONSOLIDADAS DE LA SIMULACIÓN', 70, boxStatsY + 15);
   
   // Tabla de métricas
   const startX = 70;
-  const startY = 300;
+  const startY = boxStatsY + 40;
   const colWidth = 220;
   
   doc.fillColor(textColor).fontSize(9);
@@ -200,8 +207,11 @@ async function generatePDF() {
   metrics.forEach(m => {
     doc.fillColor(textColor).font('Helvetica').text(m.name, startX, currentY);
     doc.font('Helvetica-Bold').text(m.val, startX + colWidth, currentY, { align: 'right', width: 220 });
-    currentY += 13;
+    currentY += 11;
   });
+
+  // Ajustar la posición doc.y final después de la caja
+  doc.y = boxStatsY + 150;
 
   doc.addPage();
 
@@ -215,12 +225,12 @@ async function generatePDF() {
     { lineGap: 2 }
   );
 
-  doc.moveDown(1);
-  doc.fillColor(accentColor).font('Helvetica-Bold').text('Personal Técnico Asesor:', 50, doc.y);
-  doc.fillColor(textColor).font('Helvetica').text('• Manuel Gómez (tecnico.pedraza@inagrosolutions.com) — Responsable de Calidad Agronómica.', 60, doc.y + 5);
+  doc.moveDown(0.5);
+  doc.fillColor(accentColor).font('Helvetica-Bold').text('Personal Técnico Asesor:', 50);
+  doc.fillColor(textColor).font('Helvetica').text('• Manuel Gómez (tecnico.pedraza@inagrosolutions.com) — Responsable de Calidad Agronómica.', 60);
 
-  doc.moveDown(1.5);
-  doc.fillColor(darkColor).font('Helvetica-Bold').text('Socios y Cuadernos de Campo Simulados:', 50, doc.y);
+  doc.moveDown(1);
+  doc.fillColor(darkColor).font('Helvetica-Bold').text('Socios y Cuadernos de Campo Simulados:', 50);
   doc.moveDown(0.5);
 
   // Agricultores Pedraza
@@ -232,30 +242,40 @@ async function generatePDF() {
                         val?.estado === 'con_observaciones' ? 'CON OBSERVACIONES' : 
                         val?.estado === 'rechazado' ? 'RECHAZADO' : 'PENDIENTE';
     
-    doc.fillColor(lightGrey).rect(50, doc.y, 495, 95).fill();
-    doc.fillColor(borderColor).rect(50, doc.y, 495, 95).stroke();
+    // Comprobar si cabe en la página
+    if (doc.y + 110 > doc.page.height - 50) {
+      doc.addPage();
+    }
 
-    const boxY = doc.y + 10;
-    doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(10).text(`${f.first_name} ${f.last_name} (${f.email})`, 65, boxY);
+    const startY = doc.y;
+    doc.save();
+    doc.fillColor(lightGrey).strokeColor(borderColor).lineWidth(1)
+       .rect(50, startY, 495, 95).fillAndStroke();
+    doc.restore();
+
+    doc.y = startY + 10;
+    doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(10);
+    doc.x = 65;
+    doc.text(`${f.first_name} ${f.last_name} (${f.email})`);
     
     doc.font('Helvetica').fontSize(9).fillColor(textColor);
-    doc.text(`Plan de Suscripción: ${f.subscription_tier.toUpperCase()}`, 65, boxY + 16);
-    doc.text(`Superficie Declarada: ${f.total_hectareas} hectáreas`, 65, boxY + 28);
-    doc.text(`Explotación REA: ${f.explotaciones?.[0]?.rea_registro || 'REA23192'}`, 65, boxY + 40);
-    
-    doc.font('Helvetica-Bold').text(`Estado de Auditoría Técnica:`, 65, boxY + 54);
+    doc.text(`Plan de Suscripción: ${f.subscription_tier.toUpperCase()}`);
+    doc.text(`Superficie Declarada: ${f.total_hectareas} hectáreas`);
+    doc.text(`Explotación REA: ${f.explotaciones?.[0]?.rea_registro || 'REA23192'}`);
     
     let badgeColor = '#F59E0B';
     if (val?.estado === 'validado') badgeColor = primaryColor;
     else if (val?.estado === 'rechazado') badgeColor = '#EF4444';
 
-    doc.fillColor(badgeColor).text(statusLabel, 215, boxY + 54);
+    doc.font('Helvetica-Bold').text(`Estado de Auditoría Técnica: `, { continued: true });
+    doc.fillColor(badgeColor).text(statusLabel);
     
     if (val?.observaciones) {
-      doc.fillColor(textColor).font('Helvetica-Oblique').text(`"${val.observaciones}"`, 65, boxY + 68, { width: 460 });
+      doc.fillColor(textColor).font('Helvetica-Oblique').text(`"${val.observaciones}"`, { width: 460 });
     }
 
-    doc.moveDown(1.5);
+    // Mover cursor después de la caja
+    doc.y = startY + 105;
   });
 
   doc.addPage();
@@ -270,12 +290,12 @@ async function generatePDF() {
     { lineGap: 2 }
   );
 
-  doc.moveDown(1);
-  doc.fillColor(accentColor).font('Helvetica-Bold').text('Personal Técnico Asesor:', 50, doc.y);
-  doc.fillColor(textColor).font('Helvetica').text('• Sofía Ruiz (tecnico.remediadora@inagrosolutions.com) — Directora de Sanidad Vegetal.', 60, doc.y + 5);
+  doc.moveDown(0.5);
+  doc.fillColor(accentColor).font('Helvetica-Bold').text('Personal Técnico Asesor:', 50);
+  doc.fillColor(textColor).font('Helvetica').text('• Sofía Ruiz (tecnico.remediadora@inagrosolutions.com) — Directora de Sanidad Vegetal.', 60);
 
-  doc.moveDown(1.5);
-  doc.fillColor(darkColor).font('Helvetica-Bold').text('Socios y Cuadernos de Campo Simulados:', 50, doc.y);
+  doc.moveDown(1);
+  doc.fillColor(darkColor).font('Helvetica-Bold').text('Socios y Cuadernos de Campo Simulados:', 50);
   doc.moveDown(0.5);
 
   // Agricultores Remediadora
@@ -287,30 +307,40 @@ async function generatePDF() {
                         val?.estado === 'con_observaciones' ? 'CON OBSERVACIONES' : 
                         val?.estado === 'rechazado' ? 'RECHAZADO' : 'PENDIENTE';
     
-    doc.fillColor(lightGrey).rect(50, doc.y, 495, 95).fill();
-    doc.fillColor(borderColor).rect(50, doc.y, 495, 95).stroke();
+    // Comprobar si cabe en la página
+    if (doc.y + 110 > doc.page.height - 50) {
+      doc.addPage();
+    }
 
-    const boxY = doc.y + 10;
-    doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(10).text(`${f.first_name} ${f.last_name} (${f.email})`, 65, boxY);
+    const startY = doc.y;
+    doc.save();
+    doc.fillColor(lightGrey).strokeColor(borderColor).lineWidth(1)
+       .rect(50, startY, 495, 95).fillAndStroke();
+    doc.restore();
+
+    doc.y = startY + 10;
+    doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(10);
+    doc.x = 65;
+    doc.text(`${f.first_name} ${f.last_name} (${f.email})`);
     
     doc.font('Helvetica').fontSize(9).fillColor(textColor);
-    doc.text(`Plan de Suscripción: ${f.subscription_tier.toUpperCase()}`, 65, boxY + 16);
-    doc.text(`Superficie Declarada: ${f.total_hectareas} hectáreas`, 65, boxY + 28);
-    doc.text(`Explotación REA: ${f.explotaciones?.[0]?.rea_registro || 'REA23282'}`, 65, boxY + 40);
-    
-    doc.font('Helvetica-Bold').text(`Estado de Auditoría Técnica:`, 65, boxY + 54);
+    doc.text(`Plan de Suscripción: ${f.subscription_tier.toUpperCase()}`);
+    doc.text(`Superficie Declarada: ${f.total_hectareas} hectáreas`);
+    doc.text(`Explotación REA: ${f.explotaciones?.[0]?.rea_registro || 'REA23282'}`);
     
     let badgeColor = '#F59E0B';
     if (val?.estado === 'validado') badgeColor = primaryColor;
     else if (val?.estado === 'rechazado') badgeColor = '#EF4444';
 
-    doc.fillColor(badgeColor).text(statusLabel, 215, boxY + 54);
+    doc.font('Helvetica-Bold').text(`Estado de Auditoría Técnica: `, { continued: true });
+    doc.fillColor(badgeColor).text(statusLabel);
     
     if (val?.observaciones) {
-      doc.fillColor(textColor).font('Helvetica-Oblique').text(`"${val.observaciones}"`, 65, boxY + 68, { width: 460 });
+      doc.fillColor(textColor).font('Helvetica-Oblique').text(`"${val.observaciones}"`, { width: 460 });
     }
 
-    doc.moveDown(1.5);
+    // Mover cursor después de la caja
+    doc.y = startY + 105;
   });
 
   doc.addPage();
@@ -325,7 +355,7 @@ async function generatePDF() {
     { lineGap: 2 }
   );
 
-  doc.moveDown(1);
+  doc.moveDown(0.5);
   const sections = [
     { title: '1. Registro SIEX (Básico)', desc: 'Persistencia de datos del titular, REA, NIF e identificador único nacional de explotación para la carga automática telemática.' },
     { title: '2. Fitosanitarios (Básico)', desc: 'Tratamiento fungicida simulado contra Repilo con Cobre Coloidal 50 WP (Nº Reg: 18452). Contiene datos requeridos por ley: dosis, maquinaria, aplicador, velocidad del viento y temperatura.' },
@@ -342,14 +372,17 @@ async function generatePDF() {
     { title: '13. Exportación Legal SIEX (Básico)', desc: 'Estructuración XML oficial y descarga de archivo de Excel de acompañamiento homologados para la firma electrónica del cuaderno.' }
   ];
 
-  sections.forEach((s, idx) => {
-    if (idx === 7) {
+  sections.forEach((s) => {
+    // Check if it fits the page budget
+    if (doc.y + 55 > doc.page.height - 50) {
       doc.addPage();
-      doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('4. Detalle Técnico de Módulos (Continuación)', 50, 80);
-      doc.moveDown(1);
     }
-    doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(10).text(s.title, 50, doc.y);
-    doc.fillColor(textColor).font('Helvetica').fontSize(9).text(s.desc, 60, doc.y + 2, { lineGap: 1 });
+    doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(10);
+    doc.x = 50;
+    doc.text(s.title);
+    doc.fillColor(textColor).font('Helvetica').fontSize(9);
+    doc.x = 60;
+    doc.text(s.desc, { lineGap: 1 });
     doc.moveDown(0.8);
   });
 
@@ -365,8 +398,8 @@ async function generatePDF() {
     { align: 'justify', lineGap: 3 }
   );
 
-  doc.moveDown(1.5);
-  doc.fillColor(darkColor).font('Helvetica-Bold').text('Desglose Financiero de Licencias de Cooperativas:', 50, doc.y);
+  doc.moveDown(1);
+  doc.fillColor(darkColor).font('Helvetica-Bold').text('Desglose Financiero de Licencias de Cooperativas:', 50);
   doc.moveDown(0.5);
 
   // Simulación de MRR global
@@ -379,18 +412,24 @@ async function generatePDF() {
 
   let mrrGlobal = 0;
   
-  // Imprimir líneas de factura ficticia de la plataforma
-  doc.fillColor(lightGrey).rect(50, doc.y, 495, 140).fill();
-  doc.fillColor(borderColor).rect(50, doc.y, 495, 140).stroke();
+  // Comprobar presupuesto de página para la factura
+  if (doc.y + 170 > doc.page.height - 50) {
+    doc.addPage();
+  }
 
-  const mrrY = doc.y + 10;
-  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(9).text('Concepto / Suscripción', 65, mrrY);
-  doc.text('Usuarios', 300, mrrY);
-  doc.text('Tarifa Unit.', 380, mrrY);
-  doc.text('Total MRR', 460, mrrY);
-  doc.fillColor(borderColor).rect(65, mrrY + 12, 460, 1).fill();
+  const billBoxY = doc.y;
+  doc.save();
+  doc.fillColor(lightGrey).strokeColor(borderColor).lineWidth(1)
+     .rect(50, billBoxY, 495, 140).fillAndStroke();
+  doc.restore();
 
-  let lineY = mrrY + 20;
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(9).text('Concepto / Suscripción', 65, billBoxY + 10);
+  doc.text('Usuarios', 300, billBoxY + 10);
+  doc.text('Tarifa Unit.', 380, billBoxY + 10);
+  doc.text('Total MRR', 460, billBoxY + 10);
+  doc.fillColor(borderColor).rect(65, billBoxY + 22, 460, 1).fill();
+
+  let lineY = billBoxY + 30;
   const planCounts = { basico: 2, intermedio: 2, avanzado: 2, premium: 2 }; // 1 de cada uno por coop
   
   Object.keys(planCounts).forEach(k => {
@@ -414,13 +453,14 @@ async function generatePDF() {
   doc.text('99.00 €/mes', 380, lineY);
   doc.font('Helvetica-Bold').text(`${coopLicenseFee.toFixed(2)} €`, 460, lineY);
 
-  lineY += 20;
-  doc.fillColor(borderColor).rect(65, lineY, 460, 1).fill();
-  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('REVENUE RECURRENTE MENSUAL TOTAL (MRR):', 65, lineY + 10);
-  doc.text(`${mrrGlobal.toFixed(2)} € / mes`, 380, lineY + 10, { align: 'right', width: 145 });
+  doc.fillColor(borderColor).rect(65, lineY + 14, 460, 1).fill();
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('REVENUE RECURRENTE MENSUAL TOTAL (MRR):', 65, lineY + 22);
+  doc.text(`${mrrGlobal.toFixed(2)} € / mes`, 380, lineY + 22, { align: 'right', width: 145 });
 
-  doc.moveDown(5);
-  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(11).text('Mecanismo de Comisión Stripe Connect (50/50 Split):', 50, doc.y);
+  doc.y = billBoxY + 155;
+
+  doc.moveDown(1);
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(11).text('Mecanismo de Comisión Stripe Connect (50/50 Split):', 50);
   doc.fillColor(textColor).font('Helvetica').fontSize(10).text(
     'La plataforma aplica una comisión compartida automática mediante Stripe Connect Express. El 50% de las tarifas recaudadas de los agricultores de cooperativa se depositan de forma instantánea en la cuenta conectada del tenant correspondiente, sirviendo el Superadmin de puente liquidador y facturando únicamente el fee de infraestructura SaaS restante.',
     { align: 'justify', lineGap: 2 }
@@ -439,7 +479,7 @@ async function generatePDF() {
     { lineGap: 2 }
   );
 
-  doc.moveDown(1);
+  doc.moveDown(0.5);
   const checklistPoints = [
     'El aislamiento de inquilinos (Multitenancy) mediante políticas RLS y contextos variables de tenant funciona sin fisuras. No hay cruces de información entre Pedraza y La Remediadora.',
     'La validación técnica formal mediante firma electrónica del agrónomo en cuaderno_validaciones permite emitir certificaciones legales de la PAC de forma integrada.',
@@ -449,21 +489,35 @@ async function generatePDF() {
   ];
 
   checklistPoints.forEach(p => {
-    doc.fillColor(primaryColor).font('Helvetica-Bold').text('✓', 55, doc.y);
-    doc.fillColor(textColor).font('Helvetica').text(p, 70, doc.y - 10, { width: 470, lineGap: 2 });
-    doc.moveDown(1);
+    if (doc.y + 40 > doc.page.height - 50) {
+      doc.addPage();
+    }
+    doc.x = 50;
+    doc.fillColor(primaryColor).font('Helvetica-Bold').text('✓  ', { continued: true });
+    doc.fillColor(textColor).font('Helvetica').text(p, { width: 475, lineGap: 2 });
+    doc.moveDown(0.5);
   });
 
-  doc.moveDown(2);
-  doc.fillColor(lightGrey).rect(50, doc.y, 495, 90).fill();
-  doc.fillColor(borderColor).rect(50, doc.y, 495, 90).stroke();
+  // Comprobar presupuesto de página para el certificado final
+  if (doc.y + 110 > doc.page.height - 50) {
+    doc.addPage();
+  }
 
-  const signatureY = doc.y + 15;
-  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(10).text('CERTIFICADO DE COMPORTAMIENTO SAAS', 65, signatureY);
+  const certY = doc.y + 10;
+  doc.save();
+  doc.fillColor(lightGrey).strokeColor(borderColor).lineWidth(1)
+     .rect(50, certY, 495, 90).fillAndStroke();
+  doc.restore();
+
+  doc.y = certY + 15;
+  doc.x = 65;
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(10).text('CERTIFICADO DE COMPORTAMIENTO SAAS');
   doc.fillColor(textColor).font('Helvetica').fontSize(8.5).text(
     'InagroSolutions valida que todos los componentes de base de datos Postgres (migraciones 01 y 02), APIs de servidor de Next.js, lógica de negocios y componentes UI cumplen formalmente con los requerimientos estipulados por el Ministerio de Agricultura, Pesca y Alimentación (MAPA) español.',
     { width: 460, align: 'justify', lineGap: 1 }
   );
+
+  doc.y = certY + 95;
 
   // Ejecutar el dibujado final de cabecera y pie de página en todo el búfer
   totalPages();
@@ -473,7 +527,7 @@ async function generatePDF() {
   
   return new Promise((resolve, reject) => {
     writeStream.on('finish', () => {
-      console.log('✅ Archivo PDF generado exitosamente en docs/informe_simulacion_cuadernos.pdf');
+      console.log('✅ Archivo PDF generado exitosamente en docs/informe_simulacion_cuadernos_final.pdf');
       resolve();
     });
     writeStream.on('error', reject);
