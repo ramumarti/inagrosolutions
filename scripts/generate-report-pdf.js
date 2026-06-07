@@ -27,6 +27,69 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
 
+// Helper para dibujar tablas agronómicas
+function drawNotebookTable(doc, title, headers, rows, startX, colWidths, darkColor, lightGrey, borderColor, textColor) {
+  const height = rows.length * 15 + 40;
+  if (doc.y + height > doc.page.height - 50) {
+    doc.addPage();
+  }
+  
+  const startY = doc.y;
+  doc.save();
+  
+  // Title
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(10).text(title, startX, startY);
+  
+  // Header row
+  let headerY = startY + 15;
+  doc.fillColor(lightGrey).rect(startX, headerY, 495, 15).fill();
+  doc.fillColor(borderColor).rect(startX, headerY, 495, 15).stroke();
+  
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(8);
+  let currentX = startX + 5;
+  headers.forEach((h, i) => {
+    doc.text(h, currentX, headerY + 4);
+    currentX += colWidths[i];
+  });
+  
+  // Rows
+  let rowY = headerY + 15;
+  doc.font('Helvetica').fontSize(8).fillColor(textColor);
+  rows.forEach(r => {
+    doc.fillColor(borderColor).rect(startX, rowY, 495, 15).stroke();
+    currentX = startX + 5;
+    r.forEach((cell, i) => {
+      doc.text(cell, currentX, rowY + 4);
+      currentX += colWidths[i];
+    });
+    rowY += 15;
+  });
+  
+  doc.restore();
+  doc.y = rowY + 15;
+}
+
+// Helper para dibujar bloques de código (XML, exportación, etc.)
+function drawCodeBlock(doc, title, lines, startX, width) {
+  const height = lines.length * 12 + 25;
+  if (doc.y + height > doc.page.height - 50) {
+    doc.addPage();
+  }
+  const startY = doc.y;
+  doc.save();
+  doc.fillColor('#1E293B').rect(startX, startY, width, height).fill();
+  doc.fillColor('#38BDF8').font('Courier-Bold').fontSize(8.5).text(`// ${title}`, startX + 15, startY + 10);
+  
+  let lineY = startY + 22;
+  doc.fillColor('#E2E8F0').font('Courier').fontSize(7.5);
+  lines.forEach(l => {
+    doc.text(l, startX + 15, lineY);
+    lineY += 11;
+  });
+  doc.restore();
+  doc.y = startY + height + 15;
+}
+
 async function generatePDF() {
   console.log('🏁 Iniciando consulta de datos para el PDF...');
 
@@ -64,7 +127,7 @@ async function generatePDF() {
     bufferPages: true
   });
 
-  const pdfPath = path.resolve(process.cwd(), 'docs/informe_simulacion_cuadernos_final.pdf');
+  const pdfPath = path.resolve(process.cwd(), 'docs/informe_simulacion_cuadernos_completo.pdf');
   const writeStream = fs.createWriteStream(pdfPath);
   doc.pipe(writeStream);
 
@@ -348,50 +411,161 @@ async function generatePDF() {
   // ==========================================
   // SECCIÓN 4: DETALLE TÉCNICO DE MÓDULOS
   // ==========================================
-  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('4. Detalle Técnico de Módulos (Los 13 Módulos del Cuaderno)', 50, 80);
-  doc.moveDown(0.8);
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('4. Detalle de los Módulos del Cuaderno Digital', 50, 80);
+  doc.moveDown(0.5);
   doc.fillColor(textColor).font('Helvetica').fontSize(10).text(
-    'A continuación se detalla cómo se gestionan y verifican los datos simulados en cada uno de los 13 módulos del cuaderno digital InagroSolutions:',
+    'A continuación se presentan las tablas con las muestras exactas de datos inyectados en los módulos clave del cuaderno de campo digital de los agricultores simulados:',
     { lineGap: 2 }
   );
 
-  doc.moveDown(0.5);
-  const sections = [
-    { title: '1. Registro SIEX (Básico)', desc: 'Persistencia de datos del titular, REA, NIF e identificador único nacional de explotación para la carga automática telemática.' },
-    { title: '2. Fitosanitarios (Básico)', desc: 'Tratamiento fungicida simulado contra Repilo con Cobre Coloidal 50 WP (Nº Reg: 18452). Contiene datos requeridos por ley: dosis, maquinaria, aplicador, velocidad del viento y temperatura.' },
-    { title: '3. Fertilización (Básico)', desc: 'Fertilización nitrogenada con Fertiorgánico N-15. Registra el balance N-P-K (15-0-0) y dosis de aporte.' },
-    { title: '4. Labores Agrícolas (Básico)', desc: 'Anotación de labores mecánicas de desbroce y trituración de restos de poda in situ para cumplimiento medioambiental de la PAC.' },
-    { title: '5. Gestión de Parcelas (Básico)', desc: 'Estructuración SIGPAC de recintos de olivar Picual y Arbequina con delimitación espacial, marcos de plantación (7x7 y 8x8) y sistemas de riego (goteo y secano).' },
-    { title: '6. Almacén de Insumos (Básico)', desc: 'Control atómico del inventario de abonos y fitosanitarios con registro de lote de compra, fecha y deducción automática de stock tras las aplicaciones.' },
-    { title: '7. Control de Costes (Intermedio)', desc: 'Consolidación de gastos de explotación clasificando mano de obra directa, combustible de maquinaria y asesoramiento agronómico.' },
-    { title: '8. Gestión de Cosechas (Intermedio)', desc: 'Declaración de aceituna cosechada (Kg, calidad vuelo/suelo, almazara compradora y rendimiento estimado) para control de la PAC.' },
-    { title: '9. Alertas Inteligentes (Intermedio)', desc: 'Algoritmo de alerta temprana integrado. Emite advertencias de riesgo de plagas como la mosca del olivo basándose en datos del entorno.' },
-    { title: '10. Trazabilidad (Avanzado)', desc: 'Mapeo del lote desde la recolección física en la parcela hasta la entrega en la envasadora final, completando la cadena de custodia de la cooperativa.' },
-    { title: '11. Dashboards Pro (Avanzado)', desc: 'Visualización de rendimientos grasos, costes amortizados por hectárea y evolución interanual de cosechas.' },
-    { title: '12. Sensores IoT (Premium)', desc: 'Simulación de lecturas de sondas físicas de suelo (humedad a 30cm y 60cm, temperatura y conductividad eléctrica) para optimizar el riego y el abonado.' },
-    { title: '13. Exportación Legal SIEX (Básico)', desc: 'Estructuración XML oficial y descarga de archivo de Excel de acompañamiento homologados para la firma electrónica del cuaderno.' }
-  ];
+  doc.moveDown(1);
 
-  sections.forEach((s) => {
-    // Check if it fits the page budget
-    if (doc.y + 55 > doc.page.height - 50) {
-      doc.addPage();
-    }
-    doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(10);
-    doc.x = 50;
-    doc.text(s.title);
-    doc.fillColor(textColor).font('Helvetica').fontSize(9);
-    doc.x = 60;
-    doc.text(s.desc, { lineGap: 1 });
-    doc.moveDown(0.8);
-  });
+  // Muestra 1: Tratamientos y Fertilización
+  drawNotebookTable(
+    doc,
+    'Módulo: Fitosanitarios y Fertilización (Plan Básico / Todos)',
+    ['Fecha', 'Parcela', 'Variedad', 'Insumo Aplicado', 'Nº Registro/NPK', 'Dosis'],
+    [
+      ['20/05/2026', 'El Cerro', 'Picual', 'Cobre Coloidal 50 WP', 'Reg: 18452 (MAPA)', '2.5 kg/ha'],
+      ['24/05/2026', 'El Cerro', 'Picual', 'Fertiorgánico Nitrogenado', 'NPK: 15-0-0', '150 kg/ha']
+    ],
+    50,
+    [65, 75, 65, 125, 95, 70],
+    darkColor, lightGrey, borderColor, textColor
+  );
+
+  // Muestra 2: Labores Agrícolas
+  drawNotebookTable(
+    doc,
+    'Módulo: Labores Agrícolas y Actividades Generales (Plan Básico / Todos)',
+    ['Fecha', 'Parcela', 'Tipo de Labor', 'Operario', 'Maquinaria Empleada', 'C. Personal'],
+    [
+      ['10/05/2026', 'El Cerro', 'Poda y aclareo de copas', 'Pedro Martínez', 'Manual (Motosierra Husq)', '120.00 €'],
+      ['18/05/2026', 'El Cerro', 'Desbrozado de cubierta', 'Pedro Martínez', 'Tractor Same + Trituradora', '—']
+    ],
+    50,
+    [65, 75, 125, 85, 105, 40],
+    darkColor, lightGrey, borderColor, textColor
+  );
+
+  // Muestra 3: Costes y Cosechas (Intermedio)
+  drawNotebookTable(
+    doc,
+    'Módulo: Control de Costes y Gestión de Cosechas (Plan Intermedio en adelante)',
+    ['Fecha', 'Concepto / Destino', 'Categoría', 'Cantidad', 'Calidad', 'Importe Neto'],
+    [
+      ['28/05/2026', 'Servicio de asistencia técnica', 'Asesoría', '—', '—', '-180.00 € (Coste)'],
+      ['01/06/2026', 'Recolección aceituna - Almazara', 'Ingreso', '5.200 Kg', 'Vuelo - Extra', '+5.096.00 € (Venta)']
+    ],
+    50,
+    [65, 135, 65, 65, 75, 90],
+    darkColor, lightGrey, borderColor, textColor
+  );
+
+  // Muestra 4: Trazabilidad (Avanzado)
+  drawNotebookTable(
+    doc,
+    'Módulo: Trazabilidad y Cadena de Custodia (Plan Avanzado en adelante)',
+    ['Lote de Cosecha', 'Destino Comercial / Envasadora', 'Cantidad Declarada', 'Fecha de Entrega'],
+    [
+      ['LOT-AVANZADO-01', 'Envasadora Pedraza Premium (Baeza)', '5.200 Kg', '01/06/2026'],
+      ['LOT-PREMIUM-01', 'Distribuidora La Remediadora S.L.', '5.200 Kg', '01/06/2026']
+    ],
+    50,
+    [100, 195, 100, 100],
+    darkColor, lightGrey, borderColor, textColor
+  );
+
+  // Muestra 5: Sensores IoT (Premium)
+  drawNotebookTable(
+    doc,
+    'Módulo: Telemetría de Sensores IoT (Plan Premium)',
+    ['Fecha/Hora Lectura', 'Identificador Sensor', 'Magnitud / Tipo Medición', 'Valor', 'Unidad'],
+    [
+      ['07/06/2026 12:00', 'SENSOR-OLIVAR-MARIA', 'Humedad de Suelo (30cm)', '24.8', '% vol.'],
+      ['07/06/2026 12:00', 'SENSOR-OLIVAR-MARIA', 'Humedad de Suelo (60cm)', '29.5', '% vol.'],
+      ['07/06/2026 12:00', 'SENSOR-OLIVAR-MARIA', 'Conductividad Eléctrica Suelo', '0.38', 'dS/m'],
+      ['07/06/2026 12:00', 'SENSOR-OLIVAR-MARIA', 'Temperatura de Suelo', '19.2', '°C'],
+      ['07/06/2026 12:00', 'SENSOR-OLIVAR-MARIA', 'Tensión Matricial Suelo', '38.0', 'kPa']
+    ],
+    50,
+    [95, 115, 160, 65, 60],
+    darkColor, lightGrey, borderColor, textColor
+  );
 
   doc.addPage();
 
   // ==========================================
-  // SECCIÓN 5: CONTROL FINANCIERO DEL SUPERADMIN
+  // SECCIÓN 5: DATOS EXPORTADOS A LOS ORGANISMOS (SIEX)
   // ==========================================
-  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('5. Control Financiero y Métricas del Superadmin', 50, 80);
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('5. Estructuración y Datos Exportados a Organismos (SIEX)', 50, 80);
+  doc.moveDown(0.8);
+  doc.fillColor(textColor).font('Helvetica').fontSize(10).text(
+    'InagroSolutions realiza la consolidación y exportación de datos agrícolas bajo dos formatos homologados conforme a la normativa española del SIEX (Real Decreto 1054/2022). A continuación se presentan las muestras de salida de la información inyectada:',
+    { align: 'justify', lineGap: 2 }
+  );
+  doc.moveDown(1);
+
+  // Muestra 1: XLSX Columns
+  const xlsxLines = [
+    "Libro: SIEX_Export_Olivar_Juan_Pedraza.xlsx",
+    "-----------------------------------------------------------------------------------------",
+    "Pestaña [PARCELAS]:",
+    "NIF_CIF   | PROVINCIA | MUNICIPIO | POLIGONO | PARCELA | RECINTO | SUPERFICIE | CULTIVO  | RIEGO",
+    "12345678A | Jaén (23) | Baeza (11)| 4        | 12      | 1       | 2.70 ha    | Olivar   | R (Sí)",
+    "-----------------------------------------------------------------------------------------",
+    "Pestaña [TRATAMIENTOS]:",
+    "FECHA      | PARCELA  | PRODUCTO           | N_REGISTRO | DOSIS     | SUP_TRATADA | OPERARIO",
+    "20/05/2026 | El Cerro | Cobre Coloidal 50  | 18452      | 2.5 kg/ha | 2.70 ha     | P. Martínez",
+    "-----------------------------------------------------------------------------------------",
+    "Pestaña [FERTILIZACION]:",
+    "FECHA      | PARCELA  | ABONO / NUTRIENTE  | BALANCE NPK| DOSIS     | UNIDAD      | APLICADOR",
+    "24/05/2026 | El Cerro | Fertiorgánico N-15 | 15-0-0     | 150.00    | kg/ha       | P. Martínez"
+  ];
+  
+  drawCodeBlock(doc, 'Estructura de Columnas del Archivo Excel de Acompañamiento (.xlsx)', xlsxLines, 50, 495);
+
+  // Muestra 2: XML Payload
+  const xmlLines = [
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+    "<MensajeSIEX xmlns=\"http://www.mapa.gob.es/siex\">",
+    "  <Cabecera>",
+    "    <Emisor>12345678A</Emisor>",
+    "    <FechaCreacion>2026-06-07T16:51:00Z</FechaCreacion>",
+    "  </Cabecera>",
+    "  <Explotacion id=\"explotacion_id_01\">",
+    "    <Nombre>Olivar de Juan — Pedraza</Nombre>",
+    "    <REGEPA>REA23192</REGEPA>",
+    "  </Explotacion>",
+    "  <Parcelas>",
+    "    <Parcela>",
+    "      <Provincia>23</Provincia>",
+    "      <Municipio>11</Municipio>",
+    "      <Poligono>4</Poligono>",
+    "      <Parcela>12</Parcela>",
+    "      <Cultivo>1.2 (Olivar)</Cultivo>",
+    "    </Parcela>",
+    "  </Parcelas>",
+    "  <Tratamientos>",
+    "    <Tratamiento>",
+    "      <Fecha>2026-05-20T09:00:00Z</Fecha>",
+    "      <Producto>Cobre Coloidal 50 WP</Producto>",
+    "      <RegistroMAPA>18452</RegistroMAPA>",
+    "      <Dosis>2.5</Dosis>",
+    "      <Unidad>kg/ha</Unidad>",
+    "    </Tratamiento>",
+    "  </Tratamientos>",
+    "</MensajeSIEX>"
+  ];
+
+  drawCodeBlock(doc, 'Mensaje telemático oficial en XML enviado a la plataforma SIEX (MAPA)', xmlLines, 50, 495);
+
+  doc.addPage();
+
+  // ==========================================
+  // SECCIÓN 6: CONTROL FINANCIERO DEL SUPERADMIN
+  // ==========================================
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('6. Control Financiero y Métricas del Superadmin', 50, 80);
   doc.moveDown(1);
   doc.fillColor(textColor).font('Helvetica').fontSize(10).text(
     'El Superadmin audita y monitoriza los flujos financieros de todas las organizaciones en la plataforma. Gracias a la corrección del mapeo de planes efectuada, el MRR (Monthly Recurring Revenue) computa de manera precisa y en tiempo real sobre los datos activos.',
@@ -469,9 +643,9 @@ async function generatePDF() {
   doc.addPage();
 
   // ==========================================
-  // SECCIÓN 6: CONCLUSIONES Y CUMPLIMIENTO SIEX
+  // SECCIÓN 7: CONCLUSIONES Y CUMPLIMIENTO SIEX
   // ==========================================
-  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('6. Conclusiones y Certificado de Cumplimiento', 50, 80);
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('7. Conclusiones y Certificado de Cumplimiento', 50, 80);
   doc.moveDown(1);
   
   doc.fillColor(textColor).font('Helvetica').fontSize(10).text(
@@ -527,7 +701,7 @@ async function generatePDF() {
   
   return new Promise((resolve, reject) => {
     writeStream.on('finish', () => {
-      console.log('✅ Archivo PDF generado exitosamente en docs/informe_simulacion_cuadernos_final.pdf');
+      console.log('✅ Archivo PDF generado exitosamente en docs/informe_simulacion_cuadernos_completo.pdf');
       resolve();
     });
     writeStream.on('error', reject);
