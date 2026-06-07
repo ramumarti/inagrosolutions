@@ -49,7 +49,21 @@ export default function TechnicianFarmersPage() {
       <div className="grid grid-cols-1 gap-4">
         {filteredFarmers.map(f => {
           const numExplotaciones = f.explotaciones?.[0]?.count || 0;
+          const validation = f.validaciones?.[0]; // Última validación
           
+          let badgeColor = 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+          let badgeLabel = 'Pendiente de Revisión';
+          if (validation?.estado === 'validado') {
+            badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+            badgeLabel = 'Validado por Técnico';
+          } else if (validation?.estado === 'con_observaciones') {
+            badgeColor = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+            badgeLabel = 'Con Observaciones';
+          } else if (validation?.estado === 'rechazado') {
+            badgeColor = 'bg-red-500/10 text-red-400 border-red-500/20';
+            badgeLabel = 'Rechazado';
+          }
+
           return (
             <GlassCard key={f.id} className="p-0 overflow-hidden border-white/5 hover:border-white/10 transition-colors group">
               <div className="flex flex-col md:flex-row items-center p-5 gap-6">
@@ -69,14 +83,14 @@ export default function TechnicianFarmersPage() {
 
                 {/* Status Badges */}
                 <div className="flex-1 flex flex-wrap gap-3 w-full md:w-auto">
-                  <div className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-emerald-400" />
-                    <span className="text-xs font-bold text-emerald-300">Cuaderno SIEX Al Día</span>
+                  <div className={`px-3 py-1.5 rounded-lg border flex items-center gap-2 ${badgeColor}`}>
+                    <CheckCircle2 size={14} />
+                    <span className="text-xs font-bold">{badgeLabel}</span>
                   </div>
                   {numExplotaciones === 0 && (
-                    <div className="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center gap-2">
-                      <AlertTriangle size={14} className="text-amber-400" />
-                      <span className="text-xs font-bold text-amber-300">Sin parcelas</span>
+                    <div className="px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
+                      <AlertTriangle size={14} className="text-red-400" />
+                      <span className="text-xs font-bold text-red-300">Sin fincas</span>
                     </div>
                   )}
                 </div>

@@ -44,8 +44,41 @@ const ICON_MAP: Record<string, any> = {
   Package: Package, Sprout: Sprout
 };
 
-export default function CuadernoPage() {
-  const { profile, modulos: rawModulos, resumen, loading, hasModule, canAccess, reload } = useAgriProfile();
+interface CuadernoPageProps {
+  profileOverride?: any;
+}
+
+export default function CuadernoPage({ profileOverride }: CuadernoPageProps = {}) {
+  const contextProfile = useAgriProfile();
+  
+  const profile = profileOverride || contextProfile.profile;
+  const rawModulos = contextProfile.modulos;
+  const resumen = profileOverride 
+    ? {
+        explotacion_id: profileOverride.explotaciones?.[0]?.id || '',
+        nombre_explotacion: profileOverride.explotaciones?.[0]?.nombre || '',
+        total_parcelas: profileOverride.parcelas?.length || 0,
+        total_hectareas: profileOverride.parcelas?.reduce((acc: number, p: any) => acc + (p.hectareas || 0), 0) || 0,
+        tratamientos_hoy: 0,
+        labores_hoy: 0,
+        alertas_pendientes: 0
+      }
+    : contextProfile.resumen;
+    
+  const loading = profileOverride ? false : contextProfile.loading;
+  
+  const hasModule = (slug: string) => {
+    if (profileOverride) return true;
+    return contextProfile.hasModule(slug);
+  };
+  
+  const canAccess = (tierMinimo: AgriTier) => {
+    if (profileOverride) return true;
+    return contextProfile.canAccess(tierMinimo);
+  };
+  
+  const reload = profileOverride ? () => {} : contextProfile.reload;
+
   const [activeTab, setActiveTab] = useState<TabKey>('inicio');
   const [selectedExplotacionId, setSelectedExplotacionId] = useState<string | null>(null);
   const [selectedCampanaId, setSelectedCampanaId] = useState<string | null>(null);

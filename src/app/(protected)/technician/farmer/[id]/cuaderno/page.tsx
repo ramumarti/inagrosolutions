@@ -47,22 +47,11 @@ export default async function TecnicoCuadernoPage({ params, searchParams }: Page
           to be more flexible. For now, let's create a "Lite" version or see if 
           we can pass props.
       */}
-      <div className="opacity-80 pointer-events-none grayscale-[0.2]">
-         <p className="text-[10px] font-black uppercase text-white/20 mb-4 px-6 italic">
-           Vista de solo lectura para el técnico supervisor
+      <div className="opacity-85 pointer-events-none grayscale-[0.1]">
+         <p className="text-[10px] font-black uppercase text-emerald-400/80 mb-4 px-6 italic tracking-wider">
+           Modo de Supervisión Técnico (Vista de solo lectura del Cuaderno de Campo)
          </p>
-         {/* Here we would render the farmer's content segments */}
-         <GlassCard className="p-8">
-            <h3 className="text-white font-bold mb-4">Módulos del Agricultor</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-               {profile.explotaciones.map(e => (
-                 <div key={e.id} className="p-4 rounded-xl bg-white/5 border border-white/5">
-                    <p className="text-xs font-bold text-emerald-400">{e.nombre}</p>
-                    <p className="text-[10px] text-white/40">{e.parcelas?.length || 0} parcelas registradas</p>
-                 </div>
-               ))}
-            </div>
-         </GlassCard>
+         <CuadernoClient profileOverride={profile} />
       </div>
     </div>
   );

@@ -35,7 +35,8 @@ export async function getAssignedFarmers() {
       .from('users')
       .select(`
         id, email, first_name, last_name, phone,
-        explotaciones:explotaciones(count)
+        explotaciones:explotaciones(count),
+        validaciones:cuaderno_validaciones(estado, validated_at, campana_id)
       `)
       .eq('tenant_id', tenantId)
       .eq('platform_role', 'farmer');
@@ -49,7 +50,8 @@ export async function getAssignedFarmers() {
       .select(`
         farmer:users!technician_assignments_farmer_id_fkey(
           id, email, first_name, last_name, phone,
-          explotaciones:explotaciones(count)
+          explotaciones:explotaciones(count),
+          validaciones:cuaderno_validaciones(estado, validated_at, campana_id)
         )
       `)
       .eq('tenant_id', tenantId)
@@ -174,4 +176,41 @@ export async function getTechnicianDashboardData() {
     cuadernosPendientes: cuadernosPendientes > 0 ? cuadernosPendientes : 0,
     recentActivity
   };
+}
+
+export async function validateFarmerNotebook(farmerId: string, campanaId: string, estado: string, observaciones: string) {
+  const supabase = await getSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data, error } = await supabase
+    .from('cuaderno_validaciones')
+    .insert({
+      farmer_id: farmerId,
+      technician_id: user.id,
+      campana_id: campanaId,
+      estado,
+      observaciones,
+      validated_at: new Date().toISOString()
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return { success: true, data };
+}
+
+export async function getFarmerValidations(farmerId: string) {
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from('cuaderno_validaciones')
+    .select(`
+      *,
+      technician:users!cuaderno_validaciones_technician_id_fkey(first_name, last_name, email)
+    `)
+    .eq('farmer_id', farmerId)
+    .order('validated_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
 }
