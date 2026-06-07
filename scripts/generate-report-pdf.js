@@ -409,18 +409,123 @@ async function generatePDF() {
   doc.addPage();
 
   // ==========================================
-  // SECCIÓN 4: DETALLE TÉCNICO DE MÓDULOS
+  // SECCIÓN 4: APARTADOS DEL CUADERNO DIGITAL (UI Y CAMPOS)
   // ==========================================
-  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('4. Detalle de los Módulos del Cuaderno Digital', 50, 80);
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('4. Estructura y Apartados del Cuaderno Digital (UI)', 50, 80);
   doc.moveDown(0.5);
-  doc.fillColor(textColor).font('Helvetica').fontSize(10).text(
-    'A continuación se presentan las tablas con las muestras exactas de datos inyectados en los módulos clave del cuaderno de campo digital de los agricultores simulados:',
+  doc.fillColor(textColor).font('Helvetica').fontSize(9.5).text(
+    'A continuación se detallan cada uno de los 11 módulos funcionales de la interfaz de usuario del cuaderno digital, incluyendo los campos requeridos en sus respectivos formularios, la lógica de negocio y las validaciones automáticas aplicadas en el sistema:',
+    { align: 'justify', lineGap: 2 }
+  );
+  doc.moveDown(1);
+
+  // Módulo 1: Dashboard Principal
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.1 Panel de Inicio (Dashboard Principal)');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Interfaz Visual: Tarjetas translúcidas (Glassmorphism) con fondo oscuro (#111827) y acento verde (#10B981). Muestra métricas de control (Superficie total declarada, Actividades recientes, Alertas activas y Nivel de plan actual).\n' +
+    '• Acciones Rápidas: Botones directos para registrar labores, tratamientos fitosanitarios y exportar el CUE legal.',
+    { lineGap: 2 }
+  );
+  doc.moveDown(0.8);
+
+  // Módulo 2: Gestión de Fincas (Explotaciones)
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.2 Gestión de Fincas (Explotaciones)');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Campos del Formulario: Nombre de la Explotación (Requerido), Número de Registro SIEX/REA (Opcional), Provincia (Selector oficial INE, Requerido), Municipio (Selector oficial INE, Requerido).\n' +
+    '• Lógica de Negocio: Aislamiento estricto de explotaciones mediante políticas de seguridad a nivel de fila (Row Level Security - RLS).',
+    { lineGap: 2 }
+  );
+  doc.moveDown(0.8);
+
+  // Módulo 3: Gestión de Parcelas (SIGPAC)
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.3 Gestión de Parcelas e Integración SIGPAC');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Campos del Formulario: Explotación Asociada (Selector), Nombre de Parcela (Texto, Requerido), Referencia SIGPAC Completa (Texto en formato Provincia.Municipio.Polígono.Parcela.Recinto, Requerido), Superficie Declarada (Numérico en Ha, Requerido), Cultivo Principal (Código oficial MAPA, Requerido), Variedad (Texto, Requerido), Sistema de Riego (Secano/Regadío, Requerido).\n' +
+    '• Validaciones: Expresión regular para la referencia SIGPAC. La superficie total no puede exceder el límite del plan seleccionado.',
+    { lineGap: 2 }
+  );
+  doc.moveDown(0.8);
+
+  // Módulo 4: Tratamientos Fitosanitarios
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.4 Registro de Tratamientos Fitosanitarios');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Campos del Formulario: Parcela Destino (Selector), Fecha de Aplicación (Datetime, Requerido), Producto Comercial (Autocompletar vademécum del MAPA, Requerido), Número de Registro MAPA (Autocompletado, Requerido), Materia Activa (Autocompletado, Requerido), Dosis Aplicada (Numérico, Requerido), Unidad (kg/ha o L/ha), Volumen de Caldo (L/ha, Requerido), Plaga Objetivo (Selector), Maquinaria Usada (Selector), Operario Aplicador (Texto/Selector).\n' +
+    '• Lógica de Negocio: Control de plazos de seguridad de fitosanitarios (bloquea cosechas temporalmente). Validación de dosis máximas permitidas contra la normativa oficial.',
+    { lineGap: 2 }
+  );
+  doc.moveDown(0.8);
+
+  // Módulo 5: Labores y Tareas Agrícolas
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.5 Labores y Tareas Agrícolas');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Campos del Formulario: Parcela(s) (Selector múltiple), Fecha (Fecha, Requerido), Tipo de Labor (Poda, Desbroce, Laboreo, Riego, Cosecha, etc., Requerido), Maquinaria Usada (Selector), Operario (Texto), Descripción Detallada (Texto, Requerido), Superficie Afectada (Ha, Requerido).\n' +
+    '• Lógica de Negocio: Vinculación a los eco-regímenes de la PAC (como cubiertas vegetales y rotación de cultivos).',
+    { lineGap: 2 }
+  );
+  
+  doc.addPage();
+  doc.y = 80;
+
+  // Módulo 6: Abonado y Fertilización (NPK)
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.6 Abonado y Fertilización (NPK)');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Campos del Formulario: Parcela (Selector), Fecha (Fecha, Requerido), Tipo de Fertilizante (Orgánico/Mineral, Requerido), Nombre del Producto (Texto, Requerido), Riqueza N-P-K (Numérico triple, Requerido), Dosis Aplicada (Numérico, Requerido), Unidad (kg/ha, kg/árbol, L/ha), Justificación Técnica (Requerido en Zonas Vulnerables).\n' +
+    '• Lógica de Negocio: Control de unidades de Nitrógeno por hectárea y año para evitar contaminación de acuíferos.',
+    { lineGap: 2 }
+  );
+  doc.moveDown(0.8);
+
+  // Módulo 7: Almacén de Insumos (Inventario)
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.7 Almacén de Insumos (Inventario)');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Campos del Formulario: Nombre del Insumo (Texto, Requerido), Tipo (Selector fitosanitario/fertilizante/semilla), Número de Lote (Texto, Requerido), Cantidad Comprada (Numérico, Requerido), Precio (€/unidad, Requerido), Stock Remanente (Numérico, Calculado).\n' +
+    '• Lógica de Negocio: Descuento automático de existencias del lote tras registrar tratamientos y fertilizaciones. Alerta por stock crítico inferior al 10%.',
+    { lineGap: 2 }
+  );
+  doc.moveDown(0.8);
+
+  // Módulo 8: Control de Costes y Finanzas
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.8 Control de Costes y Finanzas (Plan Intermedio)');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Campos del Formulario: Fecha del Apunte (Fecha, Requerido), Concepto (Texto, Requerido), Categoría (Combustible, Insumos, Mano de obra, Amortización, Asesoría, Ingreso, Requerido), Finca/Parcela (Selector, Opcional), Importe Neto (Numérico, Requerido).\n' +
+    '• Lógica de Negocio: Clasificación y reporte de costes de producción distribuidos en gráficos de rentabilidad.',
+    { lineGap: 2 }
+  );
+  doc.moveDown(0.8);
+
+  // Módulo 9: Gestión de Cosechas
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.9 Gestión de Cosechas y Rendimientos (Plan Intermedio)');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Campos del Formulario: Parcela de Origen (Selector, Requerido), Fecha de Recolección (Fecha, Requerido), Cantidad Recolectada (Kg, Requerido), Rendimiento Graso (%, Opcional), Destino/Almazara (Texto, Requerido), Nº Ticket de Entrada (Texto, Requerido), Lote Asociado (Texto).\n' +
+    '• Lógica de Negocio: Registro e imputación del peso neto de aceituna en el silo de recepción y cálculo del rendimiento graso.',
+    { lineGap: 2 }
+  );
+  doc.moveDown(0.8);
+
+  // Módulo 10: Trazabilidad y Lotes
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.10 Trazabilidad y Cadena de Custodia (Plan Avanzado)');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Campos del Formulario: Código de Lote Comercial (Texto, Requerido), Tickets de Cosecha Asociados (Selector múltiple), Cliente / Envasadora (Texto, Requerido), Fecha de Expedición (Fecha, Requerido), Certificaciones (D.O.P. / Ecológico).\n' +
+    '• Lógica de Negocio: Mapa de flujo que traza de extremo a extremo la procedencia del aceite de oliva hasta su venta.',
+    { lineGap: 2 }
+  );
+  doc.moveDown(0.8);
+
+  // Módulo 11: Sensores IoT y Telemetrías
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('4.11 Integración de Sensores IoT (Plan Premium)');
+  doc.fillColor(textColor).font('Helvetica').fontSize(9).text(
+    '• Mediciones: Humedad volumétrica del suelo a 30 cm y 60 cm (%), Conductividad eléctrica (dS/m), Temperatura de suelo (°C), Tensión matricial (kPa).\n' +
+    '• Lógica de Negocio: Alertas por estrés hídrico basadas en umbrales de tensión matricial de suelo (ej: riego necesario a >60 kPa).',
     { lineGap: 2 }
   );
 
-  doc.moveDown(1);
+  doc.addPage();
+  doc.y = 80;
 
-  // Muestra 1: Tratamientos y Fertilización
+  // Tablas de muestras (mantenidas para consistencia de datos de simulación)
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(12).text('Tablas de Muestra de la Simulación Realizada:');
+  doc.moveDown(0.5);
+
   drawNotebookTable(
     doc,
     'Módulo: Fitosanitarios y Fertilización (Plan Básico / Todos)',
@@ -434,7 +539,6 @@ async function generatePDF() {
     darkColor, lightGrey, borderColor, textColor
   );
 
-  // Muestra 2: Labores Agrícolas
   drawNotebookTable(
     doc,
     'Módulo: Labores Agrícolas y Actividades Generales (Plan Básico / Todos)',
@@ -448,7 +552,6 @@ async function generatePDF() {
     darkColor, lightGrey, borderColor, textColor
   );
 
-  // Muestra 3: Costes y Cosechas (Intermedio)
   drawNotebookTable(
     doc,
     'Módulo: Control de Costes y Gestión de Cosechas (Plan Intermedio en adelante)',
@@ -462,7 +565,6 @@ async function generatePDF() {
     darkColor, lightGrey, borderColor, textColor
   );
 
-  // Muestra 4: Trazabilidad (Avanzado)
   drawNotebookTable(
     doc,
     'Módulo: Trazabilidad y Cadena de Custodia (Plan Avanzado en adelante)',
@@ -476,7 +578,6 @@ async function generatePDF() {
     darkColor, lightGrey, borderColor, textColor
   );
 
-  // Muestra 5: Sensores IoT (Premium)
   drawNotebookTable(
     doc,
     'Módulo: Telemetría de Sensores IoT (Plan Premium)',
@@ -494,17 +595,32 @@ async function generatePDF() {
   );
 
   doc.addPage();
+  doc.y = 80;
 
   // ==========================================
-  // SECCIÓN 5: DATOS EXPORTADOS A LOS ORGANISMOS (SIEX)
+  // SECCIÓN 5: DATOS EXPORTADOS A LOS ORGANISMOS (SIEX/MAPA)
   // ==========================================
-  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('5. Estructuración y Datos Exportados a Organismos (SIEX)', 50, 80);
-  doc.moveDown(0.8);
-  doc.fillColor(textColor).font('Helvetica').fontSize(10).text(
-    'InagroSolutions realiza la consolidación y exportación de datos agrícolas bajo dos formatos homologados conforme a la normativa española del SIEX (Real Decreto 1054/2022). A continuación se presentan las muestras de salida de la información inyectada:',
+  doc.fillColor(darkColor).font('Helvetica-Bold').fontSize(14).text('5. Estructuración y Datos Exportados a Organismos (SIEX/MAPA)', 50, 80);
+  doc.moveDown(0.5);
+  doc.fillColor(textColor).font('Helvetica').fontSize(9.5).text(
+    'InagroSolutions consolida y exporta los cuadernos en dos formatos oficiales requeridos para trámites legales y la solicitud unificada de la PAC. A continuación se detallan las columnas y estructuras de datos exactas generadas por la plataforma:',
     { align: 'justify', lineGap: 2 }
   );
   doc.moveDown(1);
+
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('5.1 Pestañas y Columnas del Archivo de Acompañamiento Excel (.xlsx)');
+  doc.moveDown(0.5);
+
+  doc.fillColor(textColor).font('Helvetica').fontSize(8.5).text(
+    '• Hoja [EXPLOTACION]: NIF_TITULAR | NOMBRE_EXPLOTACION | REGISTRO_REA | PROVINCIA_SEDE | MUNICIPIO_SEDE | FECHA_ALTA\n' +
+    '• Hoja [PARCELAS]: COD_PARCELA | NOMBRE | PROVINCIA | MUNICIPIO | POLIGONO | PARCELA | RECINTO | SUPERFICIE_HA | CULTIVO | VARI_CULTIVO | RIEGO\n' +
+    '• Hoja [TRATAMIENTOS_FITOS]: FECHA | PARCELA | PRODUCTO_COMERCIAL | N_REGISTRO_MAPA | DOSIS | UNIDAD | VOL_CALDO_L_HA | PLAGA_OBJETIVO | MAQUINARIA | APLICADOR_NIF\n' +
+    '• Hoja [LABORES]: FECHA | PARCELA | TIPO_LABOR | SUPERFICIE_HA | MAQUINARIA | OPERARIO | OBSERVACIONES\n' +
+    '• Hoja [FERTILIZACION]: FECHA | PARCELA | PRODUCTO_ABONO | TIPO_ABONO | COMPOSICION_NPK | DOSIS_APLICADA | UNIDAD | PLAN_ABONADO_OK\n' +
+    '• Hoja [COSECHAS]: FECHA | PARCELA | PRODUCTO | CANTIDAD_KG | RENDIMIENTO_PORC | TICKET_N | DESTINO | LOTE_ASOCIADO',
+    { lineGap: 3.5 }
+  );
+  doc.moveDown(1.2);
 
   // Muestra 1: XLSX Columns
   const xlsxLines = [
@@ -525,40 +641,56 @@ async function generatePDF() {
   
   drawCodeBlock(doc, 'Estructura de Columnas del Archivo Excel de Acompañamiento (.xlsx)', xlsxLines, 50, 495);
 
+  doc.addPage();
+  doc.y = 80;
+
+  doc.fillColor(primaryColor).font('Helvetica-Bold').fontSize(11).text('5.2 Formato de Transmisión Telemática XML (MensajeSIEX)');
+  doc.moveDown(0.5);
+  doc.fillColor(textColor).font('Helvetica').fontSize(9.5).text(
+    'A continuación se muestra un bloque completo de mensaje estructurado XML conforme al esquema XSD legal v1.4, generado para su carga directa en la sede electrónica del SIEX/MAPA:',
+    { align: 'justify', lineGap: 2 }
+  );
+  doc.moveDown(1);
+
   // Muestra 2: XML Payload
   const xmlLines = [
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-    "<MensajeSIEX xmlns=\"http://www.mapa.gob.es/siex\">",
+    "<MensajeSIEX xmlns=\"http://www.mapa.gob.es/siex\"",
+    "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+    "  xsi:schemaLocation=\"http://www.mapa.gob.es/siex EsquemaSIEX_v1.4.xsd\">",
     "  <Cabecera>",
-    "    <Emisor>12345678A</Emisor>",
-    "    <FechaCreacion>2026-06-07T16:51:00Z</FechaCreacion>",
+    "    <IdentificadorMensaje>MSG-20260607-230911-042</IdentificadorMensaje>",
+    "    <EmisorNIF>12345678A</EmisorNIF>",
+    "    <FechaCreacion>2026-06-07T18:51:00+02:00</FechaCreacion>",
+    "    <VersionEsquema>1.4</VersionEsquema>",
     "  </Cabecera>",
-    "  <Explotacion id=\"explotacion_id_01\">",
-    "    <Nombre>Olivar de Juan — Pedraza</Nombre>",
-    "    <REGEPA>REA23192</REGEPA>",
+    "  <Explotacion id=\"4030158a-0b17-438a-91af-55f8dfcb2abd\">",
+    "    <NombreComercial>Finca Los Olivos</NombreComercial>",
+    "    <CodigoREA>REA23192</CodigoREA>",
     "  </Explotacion>",
-    "  <Parcelas>",
-    "    <Parcela>",
-    "      <Provincia>23</Provincia>",
-    "      <Municipio>11</Municipio>",
-    "      <Poligono>4</Poligono>",
-    "      <Parcela>12</Parcela>",
-    "      <Cultivo>1.2 (Olivar)</Cultivo>",
-    "    </Parcela>",
-    "  </Parcelas>",
-    "  <Tratamientos>",
+    "  <BaseTerritorial>",
+    "    <DeclaracionRecinto id=\"REC-001\">",
+    "      <Provincia>23</Provincia><Municipio>011</Municipio>",
+    "      <Poligono>4</Poligono><Parcela>12</Parcela><Recinto>1</Recinto>",
+    "      <SuperficieDeclaradaHa>2.7000</SuperficieDeclaradaHa>",
+    "      <Cultivo>1.2 (Olivar)</Cultivo><Regadio>true</Regadio>",
+    "    </DeclaracionRecinto>",
+    "  </BaseTerritorial>",
+    "  <TratamientosFitosanitarios>",
     "    <Tratamiento>",
-    "      <Fecha>2026-05-20T09:00:00Z</Fecha>",
-    "      <Producto>Cobre Coloidal 50 WP</Producto>",
-    "      <RegistroMAPA>18452</RegistroMAPA>",
-    "      <Dosis>2.5</Dosis>",
-    "      <Unidad>kg/ha</Unidad>",
+    "      <FechaAplicacion>2026-05-20T09:00:00Z</FechaAplicacion>",
+    "      <RecintoReferencia idRef=\"REC-001\"/>",
+    "      <ProductoFitosanitario>",
+    "        <NombreComercial>Cobre Coloidal 50 WP</NombreComercial>",
+    "        <NumeroRegistroMAPA>18452</NumeroRegistroMAPA>",
+    "      </ProductoFitosanitario>",
+    "      <DosisAplicada><Valor>2.5</Valor><Unidad>kg_ha</Unidad></DosisAplicada>",
     "    </Tratamiento>",
-    "  </Tratamientos>",
+    "  </TratamientosFitosanitarios>",
     "</MensajeSIEX>"
   ];
 
-  drawCodeBlock(doc, 'Mensaje telemático oficial en XML enviado a la plataforma SIEX (MAPA)', xmlLines, 50, 495);
+  drawCodeBlock(doc, 'Mensaje telemático XML enviado a la plataforma SIEX (MAPA) - Esquema Oficial', xmlLines, 50, 495);
 
   doc.addPage();
 
