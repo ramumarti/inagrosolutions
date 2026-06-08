@@ -170,9 +170,10 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
                           handleDelete(p.id);
                         }
                       }}
-                      className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg text-red-400 transition-all cursor-pointer"
+                      className="p-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg text-red-400 transition-all cursor-pointer flex items-center justify-center"
+                      title="Eliminar parcela"
                     >
-                      <Trash2 size={12} />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
