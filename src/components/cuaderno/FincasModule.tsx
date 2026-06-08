@@ -8,6 +8,7 @@ import {
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
 import { deleteExplotacion, updateExplotacion } from '@/lib/actions/agricultural';
+import { createClient } from '@/lib/supabase/client';
 
 interface FincasModuleProps {
   explotaciones: any[];
@@ -23,10 +24,16 @@ export function FincasModule({ explotaciones, tenantId, onRefresh, onSelect }: F
   const handleDelete = async (id: string) => {
     if (confirm('¿Estás seguro de eliminar esta finca? Se perderán todos sus datos asociados.')) {
       try {
-        await deleteExplotacion(id);
+        const supabase = createClient();
+        const { error } = await supabase
+          .from('explotaciones')
+          .delete()
+          .eq('id', id);
+        
+        if (error) throw error;
         onRefresh();
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        alert(err.message || 'Error al eliminar la finca');
       }
     }
   };

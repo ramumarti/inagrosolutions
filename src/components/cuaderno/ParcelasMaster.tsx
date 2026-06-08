@@ -14,6 +14,7 @@ import { ParcelaHistorico } from './ParcelaHistorico';
 import { ExcelParcelImporter } from './ExcelParcelImporter';
 import { AgriMapViewer } from './AgriMapViewer';
 import { deleteParcela } from '@/lib/actions/agricultural';
+import { createClient } from '@/lib/supabase/client';
 
 interface Parcela {
   id: string;
@@ -47,7 +48,13 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteParcela(id);
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('parcelas')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
       onAction('refresh', '');
     } catch (err: any) {
       alert(err.message || 'Error al eliminar la parcela');
