@@ -170,6 +170,18 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
                     <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black text-white/40 uppercase tracking-widest">
                       {Number(p.hectareas).toFixed(2)} ha
                     </span>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm(`¿Estás seguro de que quieres eliminar la parcela "${p.nombre}"?`)) {
+                          handleDelete(p.id);
+                        }
+                      }}
+                      className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg text-red-400 transition-all cursor-pointer flex items-center justify-center shadow-lg"
+                      title="Eliminar parcela"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
 
