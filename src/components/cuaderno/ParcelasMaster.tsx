@@ -163,18 +163,6 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
                     <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black text-white/40 uppercase tracking-widest">
                       {Number(p.hectareas).toFixed(2)} ha
                     </span>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (confirm(`¿Estás seguro de que quieres eliminar la parcela "${p.nombre}"?`)) {
-                          handleDelete(p.id);
-                        }
-                      }}
-                      className="p-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg text-red-400 transition-all cursor-pointer flex items-center justify-center"
-                      title="Eliminar parcela"
-                    >
-                      <Trash2 size={16} />
-                    </button>
                   </div>
                 </div>
 
@@ -214,6 +202,17 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
                     className="flex-1 h-10 bg-white/3 hover:bg-white/10 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-white/40 hover:text-white transition-all uppercase tracking-widest"
                   >
                     <Beaker size={14} className="text-blue-500/70" /> Tratar
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm(`¿Estás seguro de que quieres eliminar la parcela "${p.nombre}"?`)) {
+                        handleDelete(p.id);
+                      }
+                    }}
+                    className="flex-1 h-10 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-red-400 hover:text-red-300 transition-all uppercase tracking-widest cursor-pointer"
+                  >
+                    <Trash2 size={14} /> Borrar
                   </button>
                   <button 
                     onClick={(e) => { e.stopPropagation(); setShowHistoricoId(p.id); }}
