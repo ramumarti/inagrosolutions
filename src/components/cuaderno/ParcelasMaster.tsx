@@ -137,7 +137,7 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
           </div>
           
           <GlowButton className="gap-2 shrink-0 h-[46px]" onClick={() => onAction('new', '')}>
-            <Plus size={18} /> Nueva Parcela
+            <Plus size={18} /> Nueva Explotación
           </GlowButton>
         </div>
       </div>
