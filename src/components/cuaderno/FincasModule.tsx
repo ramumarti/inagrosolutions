@@ -57,7 +57,7 @@ export function FincasModule({ explotaciones, tenantId, onRefresh, onSelect }: F
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {explotaciones.map((finca) => (
           <GlassCard key={finca.id} className="group relative overflow-hidden p-6 border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all">
-            <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+            <div className="absolute top-0 right-0 p-4 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
               <button 
                 onClick={() => { setEditingId(finca.id); setEditNombre(finca.nombre); }}
                 className="p-2 bg-white/10 rounded-lg hover:bg-white/20 text-white/50 hover:text-white transition-all"

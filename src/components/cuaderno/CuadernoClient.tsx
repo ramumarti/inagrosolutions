@@ -88,12 +88,36 @@ export default function CuadernoPage({ profileOverride }: CuadernoPageProps = {}
   const [editTitular, setEditTitular] = useState('');
   const [editNif, setEditNif] = useState('');
 
-  // Initialize selection
+  // Initialize and validate selection
   useEffect(() => {
-    if (profile?.explotaciones && profile.explotaciones.length > 0 && !selectedExplotacionId) {
-      setSelectedExplotacionId(profile.explotaciones[0].id);
+    if (profile?.explotaciones && profile.explotaciones.length > 0) {
+      const exists = profile.explotaciones.some((e: any) => e.id === selectedExplotacionId);
+      if (!selectedExplotacionId || !exists) {
+        setSelectedExplotacionId(profile.explotaciones[0].id);
+      }
+    } else {
+      setSelectedExplotacionId(null);
     }
   }, [profile, selectedExplotacionId]);
+
+  const selectedExplotacion = React.useMemo(() => {
+    return profile?.explotaciones?.find((e: any) => e.id === selectedExplotacionId) || profile?.explotaciones?.[0] || null;
+  }, [profile?.explotaciones, selectedExplotacionId]);
+
+  const activeResumen = React.useMemo(() => {
+    if (!selectedExplotacion) return null;
+    const expParcelas = profile?.parcelas?.filter((p: any) => p.explotacion_id === selectedExplotacion.id) || [];
+    const expHa = expParcelas.reduce((sum: number, p: any) => sum + (Number(p.hectareas) || 0), 0);
+    return {
+      explotacion_id: selectedExplotacion.id,
+      nombre_explotacion: selectedExplotacion.nombre,
+      total_parcelas: expParcelas.length,
+      total_hectareas: expHa,
+      tratamientos_hoy: resumen?.tratamientos_hoy || 0,
+      labores_hoy: resumen?.labores_hoy || 0,
+      alertas_pendientes: resumen?.alertas_pendientes || 0,
+    };
+  }, [selectedExplotacion, profile?.parcelas, resumen]);
 
   const currentCampanas = React.useMemo(() => {
     return profile?.campanas?.filter((c: any) => !selectedExplotacionId || c.explotacion_id === selectedExplotacionId) || [];
@@ -179,6 +203,7 @@ export default function CuadernoPage({ profileOverride }: CuadernoPageProps = {}
 
   const tabs = [
     { key: 'inicio' as TabKey, label: 'Inicio', icon: Home, always: true },
+    { key: 'fincas' as TabKey, label: 'Mis Fincas', icon: Building2, always: true },
     ...modulos.map(m => ({
       key: m.slug as TabKey,
       label: m.nombre_es,
@@ -252,9 +277,9 @@ export default function CuadernoPage({ profileOverride }: CuadernoPageProps = {}
     if (activeTab === 'inicio') {
       return (
         <div className="space-y-8">
-          {resumen && (
+          {activeResumen && (
             <HoyEnLaParcela 
-              resumen={resumen} 
+              resumen={activeResumen} 
               alertasPendientes={profile.alertasPendientes} 
               onAction={(tab) => setActiveTab(tab as TabKey)}
             />

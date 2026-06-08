@@ -191,6 +191,7 @@ export function Sidebar({ isCollapsed, toggleCollapse, isMobileOpen = false, clo
   // Cuaderno Digital section
   const cuadernoItems: Array<{ label: string; href: string; icon: any; isActive: boolean }> = [
     { label: language === 'en' ? 'Overview' : 'Panel / Inicio', href: '/cuaderno?tab=inicio', icon: BookOpen, isActive: pathname === '/cuaderno' && (!activeTab || activeTab === 'inicio') },
+    { label: language === 'en' ? 'Farms' : 'Mis Fincas', href: '/cuaderno?tab=fincas', icon: Building2, isActive: pathname === '/cuaderno' && activeTab === 'fincas' },
     { label: language === 'en' ? 'Parcels' : 'Gestión de Parcelas', href: '/cuaderno?tab=parcelas', icon: MapPin, isActive: pathname === '/cuaderno' && activeTab === 'parcelas' },
     { label: language === 'en' ? 'Treatments' : 'Fitosanitarios', href: '/cuaderno?tab=fitosanitarios', icon: Bug, isActive: pathname === '/cuaderno' && activeTab === 'fitosanitarios' },
     { label: language === 'en' ? 'Inventory' : 'Almacén de Insumos', href: '/cuaderno/recursos', icon: Package, isActive: pathname === '/cuaderno/recursos' },
