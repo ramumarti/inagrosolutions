@@ -56,11 +56,23 @@ export async function createParcela(data: any) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Unauthorized');
 
+  let tenantId = data.tenant_id;
+  if (!tenantId && data.explotacion_id) {
+    const { data: exp } = await supabase
+      .from('explotaciones')
+      .select('tenant_id')
+      .eq('id', data.explotacion_id)
+      .single();
+    if (exp) {
+      tenantId = exp.tenant_id;
+    }
+  }
+
   const { data: res, error } = await supabase
     .from('parcelas')
     .insert([{
       ...data,
-      tenant_id: data.tenant_id // Optional, normally should be set correctly from context
+      tenant_id: tenantId || null
     }])
     .select()
     .single();

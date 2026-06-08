@@ -20,7 +20,15 @@ export function ExcelParcelImporter({ explotacionId, onClose, onSuccess }: Excel
   const [isProcessing, setIsProcessing] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [results, setResults] = useState<{name: string, status: 'pending' | 'success' | 'error', message?: string}[]>([]);
+  const [hasRun, setHasRun] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const getValueByKeys = (row: any, keys: string[]) => {
+    for (const key of keys) {
+      if (row[key] !== undefined && row[key] !== null) return row[key];
+    }
+    return undefined;
+  };
 
   const downloadTemplate = () => {
     const ws = XLSX.utils.json_to_sheet([
@@ -53,8 +61,9 @@ export function ExcelParcelImporter({ explotacionId, onClose, onSuccess }: Excel
       const ws = wb.Sheets[wsname];
       const parsedData = XLSX.utils.sheet_to_json(ws);
       setData(parsedData);
-      setResults(parsedData.map((row: any) => ({ 
-        name: row["Nombre Parcela"] || "Sin nombre", 
+      setHasRun(false);
+      setResults(parsedData.map((row: any, idx: number) => ({ 
+        name: getValueByKeys(row, ["Nombre Parcela", "Nombre", "nombre"]) || `Parcela ${idx + 1}`, 
         status: 'pending' 
       })));
     };
@@ -66,23 +75,38 @@ export function ExcelParcelImporter({ explotacionId, onClose, onSuccess }: Excel
     setIsProcessing(true);
 
     const updatedResults = [...results];
+    let hasError = false;
 
     for (let i = 0; i < data.length; i++) {
         const row = data[i];
+        
+        const nombre = String(getValueByKeys(row, ["Nombre Parcela", "Nombre", "nombre"]) || `Parcela ${i + 1}`);
+        const provincia = getValueByKeys(row, ["Provincia", "provincia"]) ? String(getValueByKeys(row, ["Provincia", "provincia"])) : null;
+        const municipio = getValueByKeys(row, ["Municipio", "municipio"]) ? String(getValueByKeys(row, ["Municipio", "municipio"])) : null;
+        const poligono = getValueByKeys(row, ["Polígono", "Poligono", "poligono"]) ? String(getValueByKeys(row, ["Polígono", "Poligono", "poligono"])) : null;
+        const parcela = getValueByKeys(row, ["Parcela", "parcela"]) ? String(getValueByKeys(row, ["Parcela", "parcela"])) : null;
+        const hectareasVal = getValueByKeys(row, ["Hectáreas", "Hectareas", "hectareas", "Superficie", "superficie", "Has", "has"]);
+        const hectareas = hectareasVal !== undefined ? Number(hectareasVal) : 0;
+        const cultivo = getValueByKeys(row, ["Cultivo", "cultivo"]) ? String(getValueByKeys(row, ["Cultivo", "cultivo"])) : null;
+        const variedad = getValueByKeys(row, ["Variedad", "variedad"]) ? String(getValueByKeys(row, ["Variedad", "variedad"])) : null;
+        const riego = getValueByKeys(row, ["Riego", "riego", "Sistema Riego", "sistema_riego"]) ? String(getValueByKeys(row, ["Riego", "riego", "Sistema Riego", "sistema_riego"])) : null;
+
         try {
             await createParcela({
                 explotacion_id: explotacionId,
-                nombre: row["Nombre Parcela"],
-                provincia: row["Provincia"],
-                municipio: row["Municipio"],
-                poligono: row["Polígono"],
-                parcela: row["Parcela"],
-                hectareas: Number(row["Hectáreas"]),
-                cultivo: row["Cultivo"],
-                variedad: row["Variedad"]
+                nombre,
+                provincia,
+                municipio,
+                poligono,
+                parcela,
+                hectareas: isNaN(hectareas) ? 0 : hectareas,
+                cultivo,
+                variedad,
+                sistema_riego: riego
             });
             updatedResults[i].status = 'success';
         } catch (err: any) {
+            hasError = true;
             updatedResults[i].status = 'error';
             updatedResults[i].message = err.message || 'Error al guardar';
         }
@@ -90,7 +114,11 @@ export function ExcelParcelImporter({ explotacionId, onClose, onSuccess }: Excel
 
     setResults([...updatedResults]);
     setIsProcessing(false);
-    onSuccess();
+    setHasRun(true);
+
+    if (!hasError) {
+        onSuccess();
+    }
   };
 
   return (
@@ -165,19 +193,33 @@ export function ExcelParcelImporter({ explotacionId, onClose, onSuccess }: Excel
                 </div>
 
                 <div className="pt-6 border-t border-white/5 flex gap-3">
-                    <button 
-                        onClick={() => setData([])}
-                        className="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-[10px] font-black text-white/40 hover:text-white uppercase tracking-widest transition-all"
-                    >
-                        Cambiar Archivo
-                    </button>
-                    <GlowButton 
-                        onClick={handleProcess}
-                        disabled={isProcessing}
-                        className="flex-[2] py-4 rounded-2xl"
-                    >
-                        {isProcessing ? <Loader2 className="animate-spin mx-auto" /> : `Importar ${data.length} Parcelas`}
-                    </GlowButton>
+                    {hasRun ? (
+                        <GlowButton 
+                            onClick={() => {
+                                onClose();
+                                onSuccess();
+                            }}
+                            className="w-full py-4 rounded-2xl"
+                        >
+                            Completado (Cerrar)
+                        </GlowButton>
+                    ) : (
+                        <>
+                            <button 
+                                onClick={() => setData([])}
+                                className="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-[10px] font-black text-white/40 hover:text-white uppercase tracking-widest transition-all"
+                            >
+                                Cambiar Archivo
+                            </button>
+                            <GlowButton 
+                                onClick={handleProcess}
+                                disabled={isProcessing}
+                                className="flex-[2] py-4 rounded-2xl"
+                            >
+                                {isProcessing ? <Loader2 className="animate-spin mx-auto" /> : `Importar ${data.length} Parcelas`}
+                            </GlowButton>
+                        </>
+                    )}
                 </div>
             </div>
         )}
