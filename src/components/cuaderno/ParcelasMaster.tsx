@@ -285,11 +285,23 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
         </div>
         
         <div className="flex gap-3 w-full md:w-auto">
-          <button className="flex-1 md:flex-none px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black text-white/60 uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
+          <button 
+            onClick={() => {
+              if (parcelas.length > 0) {
+                setShowHistoricoId(parcelas[0].id);
+              } else {
+                alert('No hay parcelas registradas para ver el histórico.');
+              }
+            }}
+            className="flex-1 md:flex-none px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black text-white/60 uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
+          >
             <History size={14} /> Histórico
           </button>
-          <button className="flex-1 md:flex-none px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black text-white/60 uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
-            <MapIcon size={14} /> Vista Mapa
+          <button 
+            onClick={() => setViewMode(viewMode === 'map' ? 'cards' : 'map')}
+            className="flex-1 md:flex-none px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black text-white/60 uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
+          >
+            <MapIcon size={14} /> {viewMode === 'map' ? 'Vista Lista' : 'Vista Mapa'}
           </button>
         </div>
       </GlassCard>
