@@ -42,12 +42,20 @@ export async function updateExplotacion(id: string, data: { nombre: string, titu
 
 export async function deleteExplotacion(id: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  console.log('[deleteExplotacion] Attempting delete for exploitation:', id, 'by user:', user?.id);
+  if (!user) throw new Error('Usuario no autenticado en el servidor');
+
   const { error } = await supabase
     .from('explotaciones')
     .delete()
     .eq('id', id);
 
-  if (error) throw error;
+  if (error) {
+    console.error('[deleteExplotacion] Database error:', error);
+    throw error;
+  }
+  console.log('[deleteExplotacion] Delete successful for exploitation:', id);
   revalidatePath('/cuaderno');
 }
 
@@ -84,12 +92,20 @@ export async function createParcela(data: any) {
 
 export async function deleteParcela(id: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  console.log('[deleteParcela] Attempting delete for parcel:', id, 'by user:', user?.id);
+  if (!user) throw new Error('Usuario no autenticado en el servidor');
+
   const { error } = await supabase
     .from('parcelas')
     .delete()
     .eq('id', id);
 
-  if (error) throw error;
+  if (error) {
+    console.error('[deleteParcela] Database error:', error);
+    throw error;
+  }
+  console.log('[deleteParcela] Delete successful for parcel:', id);
   revalidatePath('/cuaderno');
 }
 
