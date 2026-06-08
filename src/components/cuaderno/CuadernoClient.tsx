@@ -345,6 +345,7 @@ export default function CuadernoPage({ profileOverride }: CuadernoPageProps = {}
             if (action === 'new') setIsAddingExplotacion(true);
             else if (action === 'tratamiento') setActiveTab('fitosanitarios');
             else if (action === 'labor') setActiveTab('labores');
+            else if (action === 'refresh') reload();
           }}
         />
       );

@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { 
   MapPin, Plus, Search, Filter, MoreHorizontal, 
   Tractor, Bug, Droplets, History, Map as MapIcon,
-  ChevronRight, ArrowUpRight, Beaker, Wheat, FileSpreadsheet, Download, Table
+  ChevronRight, ArrowUpRight, Beaker, Wheat, FileSpreadsheet, Download, Table, Trash2
 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GlowButton } from '@/components/ui/GlowButton';
@@ -13,6 +13,7 @@ import { MassSigpacImporter } from './MassSigpacImporter';
 import { ParcelaHistorico } from './ParcelaHistorico';
 import { ExcelParcelImporter } from './ExcelParcelImporter';
 import { AgriMapViewer } from './AgriMapViewer';
+import { deleteParcela } from '@/lib/actions/agricultural';
 
 interface Parcela {
   id: string;
@@ -43,6 +44,15 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
   const [showHistoricoId, setShowHistoricoId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'cards' | 'map'>('cards');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteParcela(id);
+      onAction('refresh', '');
+    } catch (err: any) {
+      alert(err.message || 'Error al eliminar la parcela');
+    }
+  };
 
   const filteredParcelas = useMemo(() => {
     return parcelas.filter(p => {
@@ -149,10 +159,21 @@ export function ParcelasMaster({ parcelas, campanaId, explotacionId, onAction }:
                   <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/10 text-emerald-400">
                     <MapPin size={24} />
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2">
                     <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black text-white/40 uppercase tracking-widest">
                       {Number(p.hectareas).toFixed(2)} ha
                     </span>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm(`¿Estás seguro de que quieres eliminar la parcela "${p.nombre}"?`)) {
+                          handleDelete(p.id);
+                        }
+                      }}
+                      className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg text-red-400 transition-all cursor-pointer"
+                    >
+                      <Trash2 size={12} />
+                    </button>
                   </div>
                 </div>
 
