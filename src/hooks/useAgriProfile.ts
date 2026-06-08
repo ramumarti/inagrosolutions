@@ -113,27 +113,41 @@ export function useAgriProfile() {
           .select('*')
           .order('orden');
 
+        const isFarmer = userData?.platform_role === 'farmer';
+
         const { data: explotaciones } = await supabase
           .from('explotaciones')
           .select('*, parcelas(*)')
-          .eq(actualTenantId ? 'tenant_id' : 'user_id', actualTenantId || user.id);
+          .eq((actualTenantId && !isFarmer) ? 'tenant_id' : 'user_id', (actualTenantId && !isFarmer) ? actualTenantId : user.id);
 
         let campanasData = null;
-        if (actualTenantId || (explotaciones && explotaciones.length > 0)) {
+        if (actualTenantId && !isFarmer) {
+          // Cooperative staff query all tenant campaigns
           const { data } = await supabase
             .from('campanas')
             .select('*')
-            .eq(actualTenantId ? 'tenant_id' : 'explotacion_id', actualTenantId ? actualTenantId : (explotaciones?.[0]?.id || ''))
+            .eq('tenant_id', actualTenantId)
+            .order('anio_inicio', { ascending: false });
+          campanasData = data;
+        } else if (explotaciones && explotaciones.length > 0) {
+          // Farmers query by their own exploitation IDs
+          const explotacionIds = explotaciones.map((e: any) => e.id);
+          const { data } = await supabase
+            .from('campanas')
+            .select('*')
+            .in('explotacion_id', explotacionIds)
             .order('anio_inicio', { ascending: false });
           campanasData = data;
         }
 
+        const queryField = (actualTenantId && !isFarmer) ? 'tenant_id' : 'user_id';
+        const queryValue = (actualTenantId && !isFarmer) ? actualTenantId : user.id;
 
         const today = new Date().toISOString().split('T')[0];
         const [alertasData, tratsHoy, labsHoy] = await Promise.all([
-          supabase.from('alertas_cuaderno').select('id').eq(actualTenantId ? 'tenant_id' : 'user_id', actualTenantId || user.id).eq('leida', false),
-          supabase.from('tratamientos_fitosanitarios').select('id', { count: 'exact', head: true }).eq(actualTenantId ? 'tenant_id' : 'user_id', actualTenantId || user.id).gte('fecha', today),
-          supabase.from('labores').select('id', { count: 'exact', head: true }).eq(actualTenantId ? 'tenant_id' : 'user_id', actualTenantId || user.id).gte('fecha', today)
+          supabase.from('alertas_cuaderno').select('id').eq(queryField, queryValue).eq('leida', false),
+          supabase.from('tratamientos_fitosanitarios').select('id', { count: 'exact', head: true }).eq(queryField, queryValue).gte('fecha', today),
+          supabase.from('labores').select('id', { count: 'exact', head: true }).eq(queryField, queryValue).gte('fecha', today)
         ]);
 
       const allParcelas = explotaciones?.flatMap((e: any) => e.parcelas || []) || [];

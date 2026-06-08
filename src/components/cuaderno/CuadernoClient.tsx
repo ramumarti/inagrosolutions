@@ -95,6 +95,20 @@ export default function CuadernoPage({ profileOverride }: CuadernoPageProps = {}
     }
   }, [profile, selectedExplotacionId]);
 
+  const currentCampanas = React.useMemo(() => {
+    return profile?.campanas?.filter((c: any) => !selectedExplotacionId || c.explotacion_id === selectedExplotacionId) || [];
+  }, [profile?.campanas, selectedExplotacionId]);
+
+  useEffect(() => {
+    if (currentCampanas.length > 0) {
+      if (!selectedCampanaId || !currentCampanas.some((c: any) => c.id === selectedCampanaId)) {
+        setSelectedCampanaId(currentCampanas[0].id);
+      }
+    } else {
+      setSelectedCampanaId(null);
+    }
+  }, [currentCampanas, selectedCampanaId]);
+
   // Reorder modules: 'parcelas' first, 'exportacion' and 'siex' last
   const modulos = [...rawModulos].sort((a, b) => {
     const getWeight = (slug: string) => {
@@ -324,7 +338,7 @@ export default function CuadernoPage({ profileOverride }: CuadernoPageProps = {}
     if (activeTab === 'parcelas') {
       return (
         <ParcelasMaster 
-          parcelas={profile.parcelas.filter(p => !selectedExplotacionId || p.explotacion_id === selectedExplotacionId)}
+          parcelas={profile.parcelas.filter((p: any) => !selectedExplotacionId || p.explotacion_id === selectedExplotacionId)}
           campanaId={selectedCampanaId}
           explotacionId={selectedExplotacionId || ''}
           onAction={(action, id) => {
@@ -365,7 +379,7 @@ export default function CuadernoPage({ profileOverride }: CuadernoPageProps = {}
             <RentabilidadModule 
               explotacionId={selectedExplotacionId || ''}
               campanaId={selectedCampanaId}
-              parcelas={profile.parcelas.filter(p => !selectedExplotacionId || p.explotacion_id === selectedExplotacionId)}
+              parcelas={profile.parcelas.filter((p: any) => !selectedExplotacionId || p.explotacion_id === selectedExplotacionId)}
               onNavigateToCosechas={() => setActiveTab('cosechas')}
             />
           );
@@ -480,7 +494,7 @@ export default function CuadernoPage({ profileOverride }: CuadernoPageProps = {}
 
             {/* Campaña Selector */}
             <CampanaSelector 
-              campanas={profile.campanas}
+              campanas={currentCampanas}
               selectedId={selectedCampanaId}
               onSelect={setSelectedCampanaId}
               className="shrink-0"

@@ -77,6 +77,20 @@ function CuadernoContent() {
     }
   }, [profile, selectedExplotacionId]);
 
+  const currentCampanas = React.useMemo(() => {
+    return profile?.campanas?.filter((c: any) => !selectedExplotacionId || c.explotacion_id === selectedExplotacionId) || [];
+  }, [profile?.campanas, selectedExplotacionId]);
+
+  useEffect(() => {
+    if (currentCampanas.length > 0) {
+      if (!selectedCampanaId || !currentCampanas.some((c: any) => c.id === selectedCampanaId)) {
+        setSelectedCampanaId(currentCampanas[0].id);
+      }
+    } else {
+      setSelectedCampanaId(null);
+    }
+  }, [currentCampanas, selectedCampanaId]);
+
   // Reorder modules: 'parcelas' first, 'exportacion' and 'siex' last
   const modulos = [...rawModulos].sort((a, b) => {
     const getWeight = (slug: string) => {
@@ -182,6 +196,7 @@ function CuadernoContent() {
   if (isFarmer && subscriptionInactive) {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-[80vh] px-6 text-center animate-in fade-in zoom-in duration-700">
+        <Suspense fallback={null}><SuccessModal /></Suspense>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent opacity-30 pointer-events-none" />
         <GlassCard className="p-12 max-w-2xl border-white/10 relative overflow-hidden group">
           {/* Decorative background 3D element effect */}
@@ -544,7 +559,7 @@ function CuadernoContent() {
 
             {/* Campaña Selector */}
             <CampanaSelector 
-              campanas={profile.campanas}
+              campanas={currentCampanas}
               selectedId={selectedCampanaId}
               onSelect={setSelectedCampanaId}
               className="shrink-0"
