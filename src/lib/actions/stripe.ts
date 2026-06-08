@@ -2,6 +2,7 @@
 
 import { stripe } from '@/lib/stripe';
 import { createServerClient } from '@supabase/ssr';
+import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { TIER_CONFIG, AgriTier } from '@/lib/modules';
 
@@ -27,61 +28,115 @@ export async function createCheckoutSession(tier: AgriTier, interval: 'month' | 
     throw new Error('Debes iniciar sesión para actualizar tu plan');
   }
 
-  // Get user's tenant ID
-  const { data: userData } = await supabase.from('users').select('tenant_id').eq('id', user.id).single();
-  const tenantId = userData?.tenant_id;
-  
+  const adminSupabase = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  // 1. Obtener perfil del usuario
+  const { data: profile } = await supabase
+    .from('users')
+    .select('stripe_customer_id, tenant_id')
+    .eq('id', user.id)
+    .single();
+
+  const tenantId = profile?.tenant_id;
   if (!tenantId) {
     throw new Error('No tienes una organización/tenant asociado');
   }
 
-  // Get tenant info for discount
-  const { data: tenantData } = await supabase
+  // 2. Obtener tenant y Connect info + is_white_label
+  const { data: tenant } = await adminSupabase
     .from('tenants')
-    .select('is_white_label')
+    .select('id, stripe_account_id, stripe_charges_enabled, is_white_label')
     .eq('id', tenantId)
     .single();
-  
-  const isWhiteLabel = tenantData?.is_white_label || false;
+
+  let stripeAccountId: string | null = null;
+  let isWhiteLabel = false;
+  if (tenant) {
+    isWhiteLabel = tenant.is_white_label || false;
+    if (tenant.stripe_account_id && tenant.stripe_charges_enabled) {
+      stripeAccountId = tenant.stripe_account_id;
+    }
+  }
+
+  // 3. Calcular precio con descuento de marca blanca
   const tierInfo = TIER_CONFIG[tier];
+  if (!tierInfo) {
+    throw new Error('Plan no válido');
+  }
   let price = interval === 'month' ? tierInfo.price_monthly : tierInfo.price_annual;
-  
-  // Apply 50% discount for White Label entities
   if (isWhiteLabel) {
     price = price * 0.5;
   }
-  
-  // Create Stripe Checkout Session
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    mode: 'subscription',
-    client_reference_id: tenantId, // Pass the tenant ID to the webhook!
-    customer_email: user.email,
+
+  // 4. Obtener o crear Stripe Customer
+  let customerId = profile?.stripe_customer_id;
+  if (!customerId) {
+    const customerParams: any = {
+      email: user.email!,
+      metadata: { supabaseUUID: user.id },
+    };
+
+    const customer = stripeAccountId
+      ? await stripe.customers.create(customerParams, { stripeAccount: stripeAccountId })
+      : await stripe.customers.create(customerParams);
+
+    customerId = customer.id;
+
+    await adminSupabase
+      .from('users')
+      .update({ stripe_customer_id: customerId })
+      .eq('id', user.id);
+  }
+
+  // 5. Crear Checkout Session
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const sessionParams: any = {
+    customer: customerId,
     line_items: [
       {
         price_data: {
           currency: 'eur',
           product_data: {
-            name: `Inagrosolutions - Plan ${tierInfo.label_es} (${interval === 'month' ? 'Mensual' : 'Anual'})`,
-            description: `Acceso para hasta ${tierInfo.max_ha === Infinity ? 'hectáreas ilimitadas' : tierInfo.max_ha + ' hectáreas'}`,
+            name: `Inagrosolutions - Plan ${tierInfo.label_es}`,
+            description: `Suscripción ${interval === 'year' ? 'Anual' : 'Mensual'} - Cuaderno Digital`,
           },
-          unit_amount: Math.round(price * 100), // Stripe takes cents
+          unit_amount: Math.round(price * 100),
           recurring: {
-            interval: interval,
+            interval: interval === 'year' ? 'year' : 'month',
           },
         },
         quantity: 1,
       },
     ],
-    // metadata is very useful for webhooks
+    mode: 'subscription',
+    success_url: `${siteUrl}/cuaderno?payment=success&upgrade=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${siteUrl}/cuaderno/suscripcion?upgrade=cancelled`,
     metadata: {
-      tenant_id: tenantId,
-      new_tier: tier,
-      billing_interval: interval
+      userId: user.id,
+      tenantId: tenantId,
+      plan: tier,
+      interval: interval === 'year' ? 'year' : 'month',
     },
-    success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/cuaderno?upgrade=success`,
-    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/cuaderno/suscripcion?upgrade=cancelled`,
-  });
+    subscription_data: {
+      metadata: {
+        userId: user.id,
+        tenantId: tenantId,
+      },
+    },
+    locale: 'es',
+    allow_promotion_codes: true,
+  };
+
+  if (stripeAccountId) {
+    sessionParams.subscription_data.application_fee_percent = 50;
+  }
+
+  const session = stripeAccountId
+    ? await stripe.checkout.sessions.create(sessionParams, { stripeAccount: stripeAccountId })
+    : await stripe.checkout.sessions.create(sessionParams);
 
   return { url: session.url };
 }

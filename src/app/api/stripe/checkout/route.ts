@@ -31,8 +31,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Plan no válido' }, { status: 400 });
     }
 
-    const amount = interval === 'year' ? tierInfo.price_annual : tierInfo.price_monthly;
-
     // ── 1. Obtener o crear Stripe Customer ──
     const { data: profile } = await supabase
       .from('users')
@@ -45,16 +43,18 @@ export async function POST(req: NextRequest) {
     // ── 2. Buscar tenant (cooperativa) y su cuenta Connect ──
     let stripeAccountId: string | null = null;
     let tenantId: string | null = profile?.tenant_id || null;
+    let isWhiteLabel = false;
 
     if (tenantSlug) {
       const { data: tenant } = await adminSupabase
         .from('tenants')
-        .select('id, stripe_account_id, stripe_charges_enabled')
+        .select('id, stripe_account_id, stripe_charges_enabled, is_white_label')
         .eq('slug', tenantSlug)
         .single();
 
       if (tenant) {
         tenantId = tenant.id;
+        isWhiteLabel = tenant.is_white_label || false;
         if (tenant.stripe_account_id && tenant.stripe_charges_enabled) {
           stripeAccountId = tenant.stripe_account_id;
         }
@@ -62,13 +62,21 @@ export async function POST(req: NextRequest) {
     } else if (tenantId) {
       const { data: tenant } = await adminSupabase
         .from('tenants')
-        .select('id, stripe_account_id, stripe_charges_enabled')
+        .select('id, stripe_account_id, stripe_charges_enabled, is_white_label')
         .eq('id', tenantId)
         .single();
 
-      if (tenant?.stripe_account_id && tenant.stripe_charges_enabled) {
-        stripeAccountId = tenant.stripe_account_id;
+      if (tenant) {
+        isWhiteLabel = tenant.is_white_label || false;
+        if (tenant.stripe_account_id && tenant.stripe_charges_enabled) {
+          stripeAccountId = tenant.stripe_account_id;
+        }
       }
+    }
+
+    let amount = interval === 'year' ? tierInfo.price_annual : tierInfo.price_monthly;
+    if (isWhiteLabel) {
+      amount = amount * 0.5;
     }
 
     // ── 3. Crear Customer en Stripe (en la cuenta correcta si es Direct Charge) ──

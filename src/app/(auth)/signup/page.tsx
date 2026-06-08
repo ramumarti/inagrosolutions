@@ -9,7 +9,6 @@ import { GlowButton } from '@/components/ui/GlowButton';
 import { Input } from '@/components/ui/Input';
 import { useToast } from '@/components/ui/Toast';
 import { createClient } from '@/lib/supabase/client';
-import { createCheckoutSession } from '@/lib/actions/stripe';
 import { TIER_CONFIG, AgriTier } from '@/lib/modules';
 
 function FarmerSignupContent() {
@@ -140,13 +139,22 @@ function FarmerSignupContent() {
 
       // Redirigir a Stripe Checkout
       try {
-        const { url } = await createCheckoutSession(selectedPlan, selectedBilling);
+        const checkoutRes = await fetch('/api/stripe/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            plan: selectedPlan,
+            interval: selectedBilling === 'year' ? 'year' : 'month',
+            tenantSlug: tenant.slug
+          })
+        });
+        const checkoutData = await checkoutRes.json();
         setLoading(false);
-        if (url) {
+        if (checkoutData.url) {
           toast('¡Registro completado! Redirigiendo al pago...', 'success');
-          window.location.href = url;
+          window.location.href = checkoutData.url;
         } else {
-          throw new Error('No se pudo generar la URL de pago.');
+          throw new Error(checkoutData.error || 'No se pudo generar la URL de pago.');
         }
       } catch (checkoutErr: any) {
         console.error('Error al iniciar la sesión de Stripe:', checkoutErr);
